@@ -1,0 +1,10 @@
+{
+    "name": "ferienpass/ux-theme",
+    "type": "symfony-bundle",
+    "description": "",
+    "keywords": [
+        "symfony-ux"
+    ],
+    "homepage": "https://ferienpass.online",
+    "license": "proprietary"
+}

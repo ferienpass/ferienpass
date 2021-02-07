@@ -1,0 +1,34 @@
+name: Test UX
+
+on: [ push, pull_request ]
+
+env:
+  SYMFONY_PHPUNIT_DIR: '/tmp/.phpunit'
+  SYMFONY_PHPUNIT_VERSION: '8.5'
+
+jobs:
+  coding-style-php:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./ux
+    steps:
+      - uses: actions/checkout@master
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+      - name: php-cs-fixer
+        run: |
+          wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.16.1/php-cs-fixer.phar -q
+          php php-cs-fixer.phar fix --dry-run --diff
+
+  coding-style-js:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./ux
+    steps:
+      - uses: actions/checkout@master
+      - run: yarn
+      - run: yarn check-lint
+      - run: yarn check-format

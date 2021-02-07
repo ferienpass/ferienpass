@@ -1,0 +1,42 @@
+{
+  "name": "ferienpass/fixtures-bundle",
+  "license": "proprietary",
+  "description": "",
+  "type": "contao-bundle",
+  "homepage": "https://ferienpass.online/",
+  "authors": [
+    {
+      "name": "Richard Henkenjohann",
+      "email": "info@ferienpass.online",
+      "homepage": "https://ferienpass.online",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "email": "info@ferienpass.online"
+  },
+  "require": {
+    "php": ">=7.4",
+    "contao/core-bundle": "^4.11",
+    "zenstruck/foundry": "^1.10"
+  },
+  "require-dev": {
+    "contao/manager-plugin": "^2.7"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://packages.ferienpass.online/"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Ferienpass\\FixturesBundle\\": "src/"
+    }
+  },
+  "extra": {
+    "contao-manager-plugin": "Ferienpass\\FixturesBundle\\ContaoManager\\Plugin"
+  }
+}

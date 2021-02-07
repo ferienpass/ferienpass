@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="{{ language }}">
+<head>
+    <meta charset="{{ charset }}">
+    <title>{{ title }}</title>
+    <base href="{{ base }}">
+
+    <meta name="robots" content="{{ robots|default }}">
+    <meta name="description" content="{{ description }}">
+    <meta name="generator" content="Contao Open Source CMS">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180"
+          href="{{ asset('favicon/apple-touch-icon.png', 'ferienpass_core') }}">
+    <link rel="icon" type="image/png" sizes="32x32"
+          href="{{ asset('favicon/favicon-16x16.png', 'ferienpass_core') }}">
+    <link rel="icon" type="image/png" sizes="16x16"
+          href="{{ asset('favicon/favicon-16x16.png', 'ferienpass_core') }} ?>">
+    <link rel="manifest" href="{{ asset ('favicon/site.webmanifest', 'ferienpass_core') }}">
+    <link rel="mask-icon" href="{{ asset('favicon/safari-pinned-tab.svg', 'ferienpass_core') }}"
+          color="#209bc9">
+    <link rel="shortcut icon" href="{{ asset('favicon/favicon.ico', 'ferienpass_core') }}">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-config" content="{{ asset('favicon/browserconfig.xml', 'ferienpass_core') }}">
+    <meta name="theme-color" content="#209bc9">
+
+    {{ theme_link_tags('app') }}
+    {{ theme_script_tags('app') }}
+
+    {{ head|default }}
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-800">
+
+{% block body %}
+
+<div id="wrapper" class="min-h-screen flex flex-col">
+
+    {% include '@FerienpassCore/Page/_flash_banners.html.twig' %}
+
+    <header>
+        {% include '@FerienpassHostPortal/layout/_header.html.twig' %}
+    </header>
+
+    {% include '@FerienpassCore/Page/_flashes.html.twig' %}
+
+    <div class="flex flex-1 flex-col">
+        <main class="flex-1">
+            {% block main %}{{ main|raw }}{% endblock %}
+        </main>
+
+        <footer>
+            {% include '@FerienpassHostPortal/layout/_footer.html.twig' %}
+        </footer>
+    </div>
+
+</div>
+
+{% include '@FerienpassCore/Page/_flash_modals.html.twig' %}
+
+</body>
+
+{% endblock %}
+
+</html>

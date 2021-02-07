@@ -1,0 +1,21 @@
+<div x-data="{ dropdownOpen: false }" @click.away="dropdownOpen = false">
+    <div @click="dropdownOpen = !dropdownOpen"
+         @keydown.escape="dropdownOpen = false"
+         aria-haspopup="true">
+        {% block toggle %}{% endblock %}
+    </div>
+
+    <div x-show="dropdownOpen"
+         x-cloak
+         class="origin-top-right absolute right-0 mt-2 w-48 rounded shadow py-1 bg-white dark:bg-gray-900 ring-1 ring-black ring-opacity-5 divide-y divide-gray-100"
+         x-transition:enter="transition ease-out duration-100"
+         x-transition:enter-start="transform opacity-0 scale-95"
+         x-transition:enter-end="transform opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-75"
+         x-transition:leave-start="transform opacity-100 scale-100"
+         x-transition:leave-end="transform opacity-0 scale-95">
+        <div class="py-1 rounded-md bg-white shadow-xs z-10">
+            {% block dropdown %}{% endblock %}
+        </div>
+    </div>
+</div>

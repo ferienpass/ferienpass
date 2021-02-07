@@ -1,0 +1,24 @@
+{
+    "name": "@ferienpass/ux-theme",
+    "description": "",
+    "license": "proprietary",
+    "version": "1.0.0",
+    "main":  "dist/main.js",
+    "scripts": {
+        "build": "babel src -d dist",
+        "lint": "eslint src"
+    },
+    "dependencies": {
+        "alpinejs": "^2.0.0",
+        "tailwindcss": "^2.0.0",
+        "@tailwindcss/forms": "^0.3.2",
+        "@tailwindcss/typography": "^0.4.0"
+    },
+    "peerDependencies": {
+        "tailwindcss": "^2.0.0"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.12.1",
+        "@babel/core": "^7.12.3"
+    }
+}

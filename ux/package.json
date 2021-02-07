@@ -1,0 +1,38 @@
+{
+    "private": true,
+    "workspaces": [
+        "packages/*/assets"
+    ],
+    "scripts": {
+        "build": "yarn workspaces run build",
+        "lint": "yarn workspaces run lint --fix",
+        "format": "prettier packages/*/assets/src/*.{js,ts} --write",
+        "check-lint": "yarn lint --no-fix",
+        "check-format": "yarn format --no-write --check"
+    },
+    "devDependencies": {
+        "@babel/eslint-parser": "^7.12.1",
+        "eslint": "^7.15.0",
+        "eslint-config-prettier": "^6.15.0",
+        "prettier": "^2.2.1"
+    },
+    "eslintConfig": {
+        "root": true,
+        "parser": "@babel/eslint-parser",
+        "extends": [
+            "eslint:recommended",
+            "prettier"
+        ],
+        "env": {
+            "browser": true,
+            "node": true
+        }
+    },
+    "prettier": {
+        "printWidth": 120,
+        "trailingComma": "es5",
+        "tabWidth": 4,
+        "jsxBracketSameLine": true,
+        "singleQuote": true
+    }
+}

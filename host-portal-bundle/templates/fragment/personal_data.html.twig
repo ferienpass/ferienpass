@@ -1,0 +1,22 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-4 sm:py-6 md:py-12 lg:px-16">
+
+    {% embed '@FerienpassHostPortal/fragment/_box_33_66.html.twig' with {
+        'headline': 'personalData.headline'|trans,
+        'caption': 'personalData.caption'|trans
+    } %}
+        {% trans_default_domain 'contao_default' %}
+        {% block box %}
+
+            {{ form_start(form) }}
+
+            <div class="space-y-6">
+                {% for row in form %}
+                    {{ form_row(row) }}
+                {% endfor %}
+            </div>
+
+            {{ form_end(form) }}
+
+        {% endblock %}
+    {% endembed %}
+</div>

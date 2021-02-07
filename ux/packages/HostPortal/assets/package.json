@@ -1,0 +1,26 @@
+{
+    "name": "@ferienpass/ux-host-portal",
+    "description": "UX components for host-portal-bundle",
+    "license": "proprietary",
+    "version": "1.0.0",
+    "scripts": {
+        "build:js": "tsc",
+        "copy-files": "find ./src/components/ -type f -name '*.css' -exec cp '{}' ./dist/components/ ';'",
+        "build": "yarn build:js && yarn copy-files",
+        "lint": "eslint src --ext .ts"
+    },
+    "main": "dist/index.js",
+    "dependencies": {
+        "@github/catalyst": "^1.0",
+        "litepicker": "^2.0.11",
+        "tailwindcss": "^2.0.0"
+    },
+    "peerDependencies": {
+        "@github/catalyst": "^1.0",
+        "tailwindcss": "^2.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "12",
+        "typescript": "^4.2.4"
+    }
+}

@@ -1,0 +1,92 @@
+name: Test
+
+on: [ push, pull_request ]
+
+env:
+  SYMFONY_PHPUNIT_DIR: '/tmp/.phpunit'
+  SYMFONY_PHPUNIT_VERSION: '8.5'
+
+jobs:
+  coding-style:
+    name: Coding Style
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - core-bundle
+          - host-portal-bundle
+    steps:
+      - uses: actions/checkout@v2
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+      - name: php-cs-fixer
+        working-directory: ./${{ matrix.package }}
+        run: |
+          wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.16.1/php-cs-fixer.phar -q
+          php php-cs-fixer.phar fix --dry-run --diff
+
+  sca:
+    name: Static Code Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          extensions: dom, fileinfo, filter, gd, hash, intl, json, mbstring, pcre, pdo, zlib, imagick
+          tools: flex
+          coverage: none
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install the dependencies
+        run: composer install --no-interaction --no-progress
+      - name: Analyze the code
+        run: ./vendor/bin/psalm --no-suggestions --no-progress
+
+  tests:
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-18.04
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [ 7.4, 8.0 ]
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, fileinfo, filter, gd, hash, intl, json, mbstring, pcre, pdo_mysql, zlib, imagick
+          tools: flex
+          coverage: none
+
+      - name: Initialize the database
+        run: |
+          sudo /etc/init.d/mysql start
+          mysql -uroot -proot -e "CREATE database contao_test"
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install the dependencies
+        run: composer install --no-interaction --no-progress
+
+      - name: Install the application testcase
+        run: |
+          cd vendor/core-bundle/tests/Functional
+          composer install --no-interaction --no-progress
+
+      - name: Load fixtures
+        run: |
+          cd vendor/core-bundle/tests/Functional
+          vendor/bin/contao-console contao:migrate -n
+        env:
+          DATABASE_URL: mysql://root:root@127.0.0.1:3306/contao_test
+
+      - name: Run the tests
+        run: vendor/bin/phpunit --colors=always
+        env:
+          DATABASE_URL: mysql://root:root@127.0.0.1:3306/contao_test

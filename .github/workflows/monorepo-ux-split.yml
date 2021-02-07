@@ -1,0 +1,54 @@
+name: Monorepo UX Split
+
+on:
+  push:
+    tags:
+      - '*'
+    branches:
+      - 3.x
+
+jobs:
+  monorepo-split:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - 'Theme'
+          - 'Host{0}Portal'
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - id: previous_tag
+        if: github.ref != 'refs/heads/3.x'
+        uses: WyriHaximus/github-action-get-previous-tag@master
+
+      - name: 'Monorepo Split of ${{ format(matrix.package, '''') }}'
+        if: github.ref != 'refs/heads/3.x'
+        uses: symplify/monorepo-split-github-action@2.0
+        env:
+          GITHUB_TOKEN: '${{ secrets.MACHINE_ACCESS_TOKEN }}'
+        with:
+          package-directory: 'ux/packages/${{ format(matrix.package, '''') }}'
+          split-repository-organization: ferienpass
+          split-repository-name: 'ux-${{ format(matrix.package, ''-'') }}'
+          branch: 'main'
+          tag: '${{ steps.previous_tag.outputs.tag }}'
+          user-name: github-actions
+          user-email: 41898282+github-actions[bot]@users.noreply.github.com
+
+      - name: 'Monorepo Split of ${{ format(matrix.package, '''') }}'
+        if: github.ref == 'refs/heads/3.x'
+        uses: symplify/monorepo-split-github-action@2.0
+        env:
+          GITHUB_TOKEN: '${{ secrets.MACHINE_ACCESS_TOKEN }}'
+        with:
+          package-directory: 'ux/packages/${{ format(matrix.package, '''') }}'
+          split-repository-organization: ferienpass
+          split-repository-name: 'ux-${{ format(matrix.package, ''-'') }}'
+          branch: 'main'
+          user-name: github-actions
+          user-email: 41898282+github-actions[bot]@users.noreply.github.com

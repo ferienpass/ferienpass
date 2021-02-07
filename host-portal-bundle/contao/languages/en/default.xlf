@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.1">
+    <file>
+        <body>
+            <trans-unit id="PTY.host_follow_invitation.0">
+                <target>Veranstalter-Portal - Einladung annehmen</target>
+            </trans-unit>
+            <trans-unit id="PTY.host_forgot_password.0">
+                <target>Veranstalter-Portal - Passwort zurücksetzen</target>
+            </trans-unit>
+            <trans-unit id="PTY.host_edit_organization.0">
+                <target>Veranstalter-Portal - Stammdaten bearbeiten</target>
+            </trans-unit>
+            <trans-unit id="PTY.host_edit_offer.0">
+                <target>Veranstalter-Portal - Angebot bearbeiten</target>
+            </trans-unit>
+            <trans-unit id="PTY.host_offer_list.0">
+                <target>Veranstalter-Portal - Angebote</target>
+            </trans-unit>
+            <trans-unit id="PTY.host_view_offer.0">
+                <target>Veranstalter-Portal - Angebotsdetails</target>
+            </trans-unit>
+            <trans-unit id="PTY.host_view_organization.0">
+                <target>Veranstalter-Portal - Stammdaten</target>
+            </trans-unit>
+            <trans-unit id="PTY.host_change_password.0">
+                <target>Veranstalter-Portal - Passwort ändern</target>
+            </trans-unit>
+            <trans-unit id="PTY.host_participant_list.0">
+                <target>Veranstalter-Portal - Teilnahmeliste</target>
+            </trans-unit>
+            <trans-unit id="PTY.host_personal_data.0">
+                <target>Veranstalter-Portal - Persönliche Daten</target>
+            </trans-unit>
+            <trans-unit id="PTY.host_privacy_consent.0">
+                <target>Veranstalter-Portal - Datenschutzerklärung</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

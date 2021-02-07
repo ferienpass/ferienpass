@@ -1,0 +1,116 @@
+{{ form_start(form) }}
+
+<div class="sticky z-10 top-0 bg-white dark:bg-gray-900 border-b border-gray-300 shadow-sm py-4 px-4 sm:px-6 md:px-8 lg:px-16">
+
+    <div>
+        <a class="flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 focus:outline-none focus:underline transition duration-150 ease-in-out"
+           href="{{ path('host_offer_list') }}">
+            <span class="flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400">{{ source('@FerienpassHostPortal/icons/chevron-left-solid.svg') }}</span>
+            Zurück
+        </a>
+    </div>
+    <div class="mt-2 md:flex md:items-center md:justify-between">
+        <div class="flex-1 min-w-0">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-gray-50 sm:text-3xl sm:leading-9 sm:truncate">{{ offer.name|default('Neues Angebot') }}</h2>
+            {% if not offer.id %}
+                <p class="text-xl text-gray-500 font-semibold">(noch nicht gespeichert)</p>
+            {% endif %}
+        </div>
+        <div class="mt-5 flex md:flex-row-reverse md:mt-0 md:ml-4">
+            {{ form_widget(form.submit) }}
+        </div>
+    </div>
+
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-4 sm:py-6 md:py-12 lg:px-16">
+    {% block main %}
+
+        {% if not offer.isVariantBase %}
+            <div class="mb-12">
+                {% embed '@FerienpassHostPortal/components/alert/info.html.twig' %}
+                    {% block message %}
+                        <span>
+                        Sie bearbeiten eine Variante von <a class="underline hover:no-underline"
+                                                            href="{{ path(app.request.get('_route'), {'id':offer.variantBase.id}) }}">
+                            Angebot ID {{ offer.variantBase.id }}</a> und können deswegen nicht alle Felder bearbeiten.
+                    </span>
+                    {% endblock %}
+                {% endembed %}
+            </div>
+        {% endif %}
+
+        {% for error in form.errors(true)|default %}
+            <div class="space-y-4">
+                {% include '@FerienpassHostPortal/components/alert/error.html.twig' with {'message': error.message} %}
+            </div>
+        {% endfor %}
+
+        {# render all fieldsets (= widgets that have a legend) #}
+        <div class="space-y-10">
+            {% for fieldset in form.children|filter(v => v.vars.legend|default) %}
+                <div class="mt-10 sm:mt-0">
+                    <div class="md:grid md:grid-cols-3 md:gap-6">
+                        <div class="md:col-span-1">
+                            <div class="px-4 sm:px-0">
+                                <h3 class="text-lg font-medium leading-6 text-gray-900">{{ fieldset.vars.legend|trans }}</h3>
+                                <div class="mt-1 text-sm leading-5 text-gray-500">
+                                    <p>{{ fieldset.vars.help|trans }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-5 md:mt-0 md:col-span-2">
+                            <div class="shadow overflow-hidden sm:rounded-md">
+                                <div class="px-4 py-5 bg-white sm:p-6">
+                                    <div class="space-y-6">
+                                        {% for field in fieldset.children %}
+                                            {{ form_row(field) }}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+
+            {# Image #}
+            <div class="mt-10 sm:mt-0">
+                <div class="md:grid md:grid-cols-3 md:gap-6">
+                    <div class="md:col-span-1">
+                        <div class="px-4 sm:px-0">
+                            <h3 class="text-lg font-medium leading-6 text-gray-900">{{ 'Offer.image_legend'|trans }}</h3>
+                            <div class="mt-1 text-sm leading-5 text-gray-500">
+                                <p>{{ 'Offer.image_help'|trans }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-5 md:mt-0 md:col-span-2">
+                        <div class="shadow overflow-hidden sm:rounded-md">
+                            <div class="px-4 py-5 bg-white sm:p-6">
+                                {% if offer.image is not empty %}
+                                    <h4 class="text-gray-500 uppercase tracking-wide text-sm">Aktuelles Bild</h4>
+                                    <div class="mt-1 mb-4 bg-gray-100 border-2 border-dashed px-6 py-4">
+                                        {{ contao_figure(offer.image, '_host_details_logo') }}
+                                    </div>
+                                {% endif %}
+
+                                <div class="space-y-6">
+                                    {{ form_widget(form.image) }}
+                                    {{ form_row(form.imgCopyright) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# render widgets that do not belong to a fieldset (if any) #}
+        {{ form_rest(form) }}
+
+    {% endblock main %}
+</div>
+
+{{ form_end(form) }}

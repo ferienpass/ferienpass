@@ -1,0 +1,35 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-4 sm:py-6 md:py-12 lg:px-16">
+
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            {% if signed and error is defined %}
+                <div class="mb-6">
+                    {% include '@FerienpassCore/Alert/error.html.twig' with {message: error} %}
+                </div>
+            {% endif %}
+
+            <div class="prose">{{ statement|raw }}</div>
+
+            {% if signed and confirmation is defined %}
+                <div class="mt-6">
+                    {% include '@FerienpassCore/Alert/confirmation.html.twig' with {message: confirmation} %}
+                </div>
+            {% endif %}
+
+            {% if form is defined %}
+                <div class="mt-8">
+                    {{ form_start(form) }}
+
+                    <div class="grid grid-cols-2 gap-6">
+                        {{ form_row(form.firstname) }}
+                        {{ form_row(form.lastname) }}
+                        {{ form_rest(form) }}
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+</div>

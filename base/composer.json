@@ -1,0 +1,22 @@
+{
+    "name": "ferienpass/base",
+    "description": "",
+    "type": "metapackage",
+    "require": {
+        "ferienpass/core-bundle": "self.version",
+        "ferienpass/host-portal-bundle": "self.version",
+        "ferienpass/ux-theme": "self.version",
+
+        "contao/conflicts": "@dev",
+        "contao/manager-bundle": "^4.11",
+        "contao/faq-bundle": "^4.11",
+
+        "richardhj/contao-theme-framework": "^1.0",
+
+        "oneup/contao-sentry-bundle": "^3.0",
+        "richardhj/contao-backup-manager": "^2.0",
+        "richardhj/contao-privacy-dump": "dev-main",
+
+        "richardhj/contao-nc-mailjet-sms": "^0.1"
+    }
+}

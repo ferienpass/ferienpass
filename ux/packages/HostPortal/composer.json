@@ -1,0 +1,24 @@
+{
+    "name": "ferienpass/ux-host-portal",
+    "type": "symfony-bundle",
+    "description": "",
+    "keywords": [
+        "symfony-ux"
+    ],
+    "homepage": "https://ferienpass.online",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Ferienpass\\UX\\HostPortal\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=7.4",
+        "symfony/dependency-injection": "^4.4 || ^5.0",
+        "symfony/form": "^4.4 || ^5.0",
+        "symfony/http-kernel": "^4.4 || ^5.0"
+    },
+    "extra": {
+        "contao-manager-plugin": "Ferienpass\\UX\\HostPortal\\ContaoManager\\Plugin"
+    }
+}
