@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Ferienpass\CoreBundle\Applications;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\FetchMode;
 
 class UnconfirmedApplications
 {
@@ -76,7 +75,6 @@ class UnconfirmedApplications
             ->select(
                 'DISTINCT a.id as attendance_id',
                 'IF(o.cancelled, "error", a.status) as attendance_status',
-                //'a.status as attendance_status',
                 'p.id as participant_id',
                 'p.firstname as participant_firstname',
                 'p.lastname as participant_lastname',
@@ -111,11 +109,13 @@ class UnconfirmedApplications
 
             // Inform attendances that have any status but withdrawn and waiting
             ->andWhere('a.status NOT IN (:status)')
-            ->setParameter('status', ['withdrawn', 'waiting'], Connection::PARAM_STR_ARRAY);
+            ->setParameter('status', ['withdrawn', 'waiting'], Connection::PARAM_STR_ARRAY)
+            ->execute()
+        ;
 
-        $this->attendanceIds = array_map('intval', $statement->execute()->fetchAll(FetchMode::COLUMN));
+        $result = $statement->fetchAllAssociative();
 
-        $result = $statement->execute()->fetchAll(FetchMode::ASSOCIATIVE);
+        $this->attendanceIds = array_map('intval', array_column($result, 'attendance_id'));
 
         $members = [];
         $participants = [];
