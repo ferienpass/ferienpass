@@ -20,7 +20,9 @@ use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvent;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvents;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 final class LoginController extends AbstractFragmentController
 {
@@ -67,5 +69,15 @@ final class LoginController extends AbstractFragmentController
             'login' => $form->createView(),
             'twoFactorEnabled' => $twoFactorEnabled,
         ]);
+    }
+
+    public static function getSubscribedServices()
+    {
+        $services = parent::getSubscribedServices();
+
+        $services['security.authentication_utils'] = AuthenticationUtils::class;
+        $services['security.authorization_checker'] = AuthorizationCheckerInterface::class;
+
+        return $services;
     }
 }
