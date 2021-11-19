@@ -9,7 +9,41 @@
 
             {% block filters %}
 
-                {{ form_start(filters, {method: 'GET'}) }}
+
+                {% for filter in filters %}
+                    {% if filter.vars.value|default %}
+                        <div class="inline-flex rounded-full items-center py-0.5 pl-2.5 pr-1 text-sm bg-green-100 text-green-700">
+                            {{ filter.vars.name }}:&nbsp;<span class="font-medium">"{{ filter.vars.value }}"</span>
+                            <form method="post">
+                                <input type="hidden" name="_method" value="delete">
+                                <input type="hidden" name="REQUEST_TOKEN" value="{{ contao_request_token() }}">
+                                <button type="submit"
+                                        name="filter"
+                                        value="{{ filter.vars.id }}"
+                                        class="flex-shrink-0 ml-0.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-green-400 hover:bg-green-200 hover:text-green-500 focus:outline-none focus:bg-green-500 focus:text-white">
+                                    <span class="sr-only">Filter entfernen</span>
+                                    <svg class="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
+                                        <path stroke-linecap="round" stroke-width="1.5" d="M1 1l6 6m0-6L1 7"/>
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+
+                <button class="flex items-center space-x-1">
+          <span class="text-white bg-blue-300 inline-block rounded-md p-1">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path
+                        fill-rule="evenodd"
+                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                        clip-rule="evenodd"></path></svg>
+          </span>
+                    <span class="font-medium text-sm text-blue-800"> Filtern… </span>
+                </button>
+
+                {{ form_start(filters) }}
+
 
                 {% block filters_form %}
                     <div class="flex justify-between">

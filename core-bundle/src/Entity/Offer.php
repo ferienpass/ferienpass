@@ -195,7 +195,6 @@ class Offer
 
     /**
      * @ORM\OneToMany(targetEntity="Ferienpass\CoreBundle\Entity\OfferDate", mappedBy="offer", cascade={"persist"}, orphanRemoval=true)
-     * @ORM\OrderBy({"begin" = "ASC"})
      *
      * @psalm-var Collection<int, OfferDate>
      */

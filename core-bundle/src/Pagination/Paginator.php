@@ -48,7 +48,8 @@ class Paginator
             $query->setHint(CountWalker::HINT_DISTINCT, false);
         }
 
-        $paginator = new DoctrinePaginator($query, true);
+        // See https://stackoverflow.com/a/54989680.
+        $paginator = new DoctrinePaginator($query, false);
 
         $useOutputWalkers = \count($this->queryBuilder->getDQLPart('join')) > 0
             || \count($this->queryBuilder->getDQLPart('having') ?: []) > 0;

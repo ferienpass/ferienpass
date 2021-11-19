@@ -16,7 +16,7 @@ namespace Ferienpass\CoreBundle\Controller\Fragment;
 use Contao\CoreBundle\Controller\AbstractController;
 use Contao\PageModel;
 use Doctrine\DBAL\Types\Types;
-use Ferienpass\CoreBundle\Form\OfferFiltersType;
+use Ferienpass\CoreBundle\Form\Filter\OfferFilters;
 use Ferienpass\CoreBundle\Pagination\Paginator;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Ferienpass\CoreBundle\Repository\OfferRepository;
@@ -28,11 +28,13 @@ final class OfferListController extends AbstractController
 {
     private EditionRepository $editionRepository;
     private OfferRepository $offerRepository;
+    private OfferFilters $offerFilters;
 
-    public function __construct(EditionRepository $passEditionRepository, OfferRepository $offerRepository)
+    public function __construct(EditionRepository $passEditionRepository, OfferRepository $offerRepository, OfferFilters $offerFilters)
     {
         $this->editionRepository = $passEditionRepository;
         $this->offerRepository = $offerRepository;
+        $this->offerFilters = $offerFilters;
     }
 
     public function __invoke(Request $request, Session $session): Response
@@ -52,80 +54,28 @@ final class OfferListController extends AbstractController
             return $this->render('@FerienpassCore/Fragment/offer_list.html.twig');
         }
 
-        $qb->leftJoin('o.dates', 'dates');
+        $qb
+            ->leftJoin('o.dates', 'dates')
+            ->addGroupBy('o.id')
+            ->orderBy('MIN(dates.begin)')
+        ;
 
-        $filters = $this->createForm(OfferFiltersType::class);
-        $filters->handleRequest($request);
-        foreach ($request->query as $k => $item) {
-            if ($filters->has($k) && $v = $filters->get($k)->getData()) {
-                switch ($k) {
-                    case 'name':
-                        $qb
-                            ->andWhere('o.name LIKE :q_'.$k)
-                            ->setParameter('q_'.$k, '%'.addcslashes($v, '%_').'%')
-                        ;
-                        break;
-                    case 'favorites':
-                        $savedOffers = $session->isStarted()
-                            ? $session->get('saved_offers')
-                            : [];
+        // Only show offers in future or currently running
+        $now = new \DateTimeImmutable();
+        $qb
+            ->andWhere($qb->expr()->orX()->add('dates IS NULL')->add($qb->expr()->orX('dates.begin >= :now', 'dates.end >= :now')))
+            ->setParameter('now', $now, Types::DATETIME_MUTABLE)
+        ;
 
-                        $qb
-                            ->andWhere('o.id IN (:q_'.$k.')')
-                            ->setParameter('q_'.$k, $savedOffers)
-                        ;
-                        break;
-                    case 'fee':
-                        $qb
-                            ->andWhere('o.fee <= :q_'.$k)
-                            ->setParameter('q_'.$k, $v)
-                        ;
-                        break;
-                    case 'age':
-                        $qb
-                            ->andWhere($qb->expr()->andX('o.minAge IS NULL OR o.minAge = 0 OR o.minAge <= :q_'.$k, 'o.maxAge IS NULL OR o.maxAge = 0 OR o.maxAge >= :q_'.$k))
-                            ->setParameter('q_'.$k, $v)
-                        ;
-                        break;
-                    case 'category':
-                        $qb->andWhere($qb->expr()->orX(...array_map(fn ($i) => ':q_'.$i.' MEMBER OF o.categories', array_keys($v->toArray()))));
-                        foreach ($v as $i => $cat) {
-                            $qb->setParameter('q_'.$i, $cat);
-                        }
+        $filtersForm = $this->offerFilters->createForm();
 
-                        break;
-                    case 'base':
-                        $qb
-                            ->andWhere($qb->expr()->orX()->add('o.id = :q_'.$k)->add('o.variantBase = :q_'.$k))
-                            ->setParameter('q_'.$k, $v)
-                        ;
-
-                        break;
-                    case 'earliest_date':
-                        $qb
-                            ->andWhere($qb->expr()->orX()->add('dates IS NULL')->add('dates.begin >= :q_'.$k))
-                            ->setParameter('q_'.$k, $v)
-                        ;
-                        break;
-                    case 'latest_date':
-                        \assert($v instanceof \DateTime);
-                        // < DATE() +1 day has the same effect as <= DATE() 23:59:59
-                        $v->modify('+1 day');
-                        $qb
-                            ->andWhere($qb->expr()->orX()->add('dates IS NULL')->add('dates.end <= :q_'.$k))
-                            ->setParameter('q_'.$k, $v, Types::DATE_MUTABLE)
-                        ;
-                }
-            }
-        }
-
-        $qb->orderBy('dates.begin');
+        $filtersForm->handleRequest($request, $qb);
 
         $paginator = (new Paginator($qb))->paginate($request->query->getInt('page', 1));
 
         return $this->render('@FerienpassCore/Fragment/offer_list.html.twig', [
             'edition' => $edition ?? null,
-            'filters' => $filters->createView(),
+            'filters' => $filtersForm->createView(),
             'pagination' => $paginator,
         ]);
     }

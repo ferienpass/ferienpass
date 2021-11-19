@@ -359,5 +359,29 @@ services:
   Ferienpass\CoreBundle\Cron\SendRemindersListener:
     arguments: [ '@Ferienpass\CoreBundle\Repository\AttendanceRepository', '@messenger.default_bus', '@Ferienpass\CoreBundle\Repository\EventLogRepository' ]
 
+  Ferienpass\CoreBundle\Form\Filter\OfferFilters:
+    arguments: [ '@form.factory', '@router', !tagged { tag: 'ferienpass.offers_filter_type', index_by: 'key' } ]
+
+  Ferienpass\CoreBundle\Form\Filter\AgeType:
+    tags: [ { name: 'ferienpass.offers_filter_type', key: 'age' } ]
+  Ferienpass\CoreBundle\Form\Filter\CategoryType:
+    tags: [ { name: 'ferienpass.offers_filter_type', key: 'category' } ]
+  Ferienpass\CoreBundle\Form\Filter\EarliestDateType:
+    tags: [ { name: 'ferienpass.offers_filter_type', key: 'earliest_date' } ]
+  Ferienpass\CoreBundle\Form\Filter\FavoritesType:
+    arguments: [ '@session' ]
+    tags: [ { name: 'ferienpass.offers_filter_type', key: 'favorites' } ]
+  Ferienpass\CoreBundle\Form\Filter\FeeType:
+    tags: [ { name: 'ferienpass.offers_filter_type', key: 'fee' } ]
+  Ferienpass\CoreBundle\Form\Filter\LatestDateType:
+    tags: [ { name: 'ferienpass.offers_filter_type', key: 'latest_date' } ]
+  Ferienpass\CoreBundle\Form\Filter\SearchType:
+    tags: [ { name: 'ferienpass.offers_filter_type', key: 'name' } ]
+  Ferienpass\CoreBundle\Form\Filter\VariantBaseType:
+    tags: [ { name: 'ferienpass.offers_filter_type', key: 'variant_base' } ]
+  Ferienpass\CoreBundle\Form\Filter\VacanciesType:
+    arguments: [ '@Ferienpass\CoreBundle\Repository\OfferRepository' ]
+    tags: [ { name: 'ferienpass.offers_filter_type', key: 'vacancies' } ]
+
   Monolog\Processor\PsrLogMessageProcessor:
     tags: { name: monolog.processor, handler: sentry }
