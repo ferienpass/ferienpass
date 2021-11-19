@@ -15,7 +15,6 @@
 
         "oneup/contao-sentry-bundle": "^3.0",
         "richardhj/contao-backup-manager": "^2.0",
-        "richardhj/contao-privacy-dump": "dev-main",
 
         "richardhj/contao-nc-mailjet-sms": "^0.1"
     }
