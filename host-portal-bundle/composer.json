@@ -24,7 +24,6 @@
     "ferienpass/ux-host-portal": "self.version",
 
     "adamquaile/symfony-fieldset-bundle": "^1.1",
-    "doctrine/dbal": "^2.10",
     "knplabs/knp-menu-bundle": "^3.0",
     "michelf/php-markdown": "^1.9",
     "psr/log": "^1.1",
