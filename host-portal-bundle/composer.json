@@ -19,7 +19,7 @@
     "php": ">=7.4",
     "ext-json": "*",
 
-    "contao/core-bundle": "^4.11",
+    "contao/core-bundle": "4.x-dev@dev as 4.13.0",
     "ferienpass/core-bundle": "^3.0",
     "ferienpass/ux-host-portal": "self.version",
 
@@ -44,7 +44,6 @@
     "symfony/validator": "^4.4 || ^5.2",
     "twig/twig": "^2.12 || ^3.0",
     "twig/intl-extra": "^2.14 || ^3.0",
-    "twig/extra-bundle": "^2.14 || ^3.0"
   },
   "require-dev": {
     "contao/manager-plugin": "^2.7",
