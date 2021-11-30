@@ -6,6 +6,7 @@
         "ferienpass/core-bundle": "self.version",
         "ferienpass/host-portal-bundle": "self.version",
         "ferienpass/ux-theme": "self.version",
+        "ferienpass/deployer-recipes": "self.version",
 
         "contao/conflicts": "@dev",
         "contao/manager-bundle": "^4.11",
