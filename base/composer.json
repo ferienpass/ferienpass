@@ -12,7 +12,7 @@
         "contao/manager-bundle": "^4.11",
         "contao/faq-bundle": "^4.11",
 
-        "richardhj/contao-theme-framework": "^1.0",
+        "richardhj/contao-theme-framework": "^2.0",
 
         "oneup/contao-sentry-bundle": "^3.0",
         "richardhj/contao-backup-manager": "^2.0",

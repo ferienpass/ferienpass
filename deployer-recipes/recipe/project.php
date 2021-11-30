@@ -13,6 +13,7 @@ add('exclude', [
     'package.json',
     'package-lock.json',
     'yarn.lock',
+    'tailwind-preset.js',
     '/node_modules',
 ]);
 
