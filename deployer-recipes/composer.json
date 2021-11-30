@@ -1,0 +1,27 @@
+{
+  "name": "ferienpass/deployer-recipes",
+  "description": "",
+  "type": "library",
+  "keywords": [],
+  "homepage": "https://github.com/ferienpass/deployer-recipes",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Richard Henkenjohann",
+      "email": "info@ferienpass.online",
+      "homepage": "https://ferienpass.online",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=7.1"
+  },
+  "require-dev": {
+    "deployer/deployer": "^7.0.0@beta"
+  },
+  "autoload": {
+    "files": [
+      "autoload.php"
+    ]
+  }
+}

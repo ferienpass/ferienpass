@@ -17,6 +17,7 @@ jobs:
           - base
           - core-bundle
           - host-portal-bundle
+          - deployer-recipes
 
     steps:
       - uses: actions/checkout@v2
