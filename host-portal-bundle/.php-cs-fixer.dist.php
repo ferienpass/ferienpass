@@ -47,7 +47,7 @@ return (new PhpCsFixer\Config())
         'strict_comparison' => true,
         'strict_param' => true,
     ])
-    ->setFinder((new PhpCsFixer\Finder())->in([__DIR__.'/src', __DIR__.'/contao', __DIR__.'/tests']))
+    ->setFinder((new PhpCsFixer\Finder())->in([__DIR__.'/src', __DIR__.'/contao']))
     ->setRiskyAllowed(true)
     ->setUsingCache(false)
 ;

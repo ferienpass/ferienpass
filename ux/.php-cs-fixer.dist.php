@@ -10,7 +10,7 @@ For more information visit the project website <https://ferienpass.online>
 or the documentation under <https://docs.ferienpass.online>.
 EOF;
 
-return PhpCsFixer\Config::create()
+return (new PhpCsFixer\Config())
     ->setRules([
         '@Symfony' => true,
         '@Symfony:risky' => true,
@@ -46,7 +46,7 @@ return PhpCsFixer\Config::create()
         'strict_comparison' => true,
         'strict_param' => true,
     ])
-    ->setFinder(PhpCsFixer\Finder::create()->in([__DIR__.'/packages/*/src']))
+    ->setFinder((new PhpCsFixer\Finder())->in([__DIR__.'/packages/*/src']))
     ->setRiskyAllowed(true)
     ->setUsingCache(false)
 ;

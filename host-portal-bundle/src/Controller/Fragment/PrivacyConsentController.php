@@ -17,7 +17,6 @@ use Contao\Config;
 use Contao\FrontendUser;
 use Contao\User;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\FetchMode;
 use Ferienpass\CoreBundle\Form\SimpleType\ContaoRequestTokenType;
 use Ferienpass\HostPortalBundle\State\PrivacyConsent as PrivacyConsentState;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -53,21 +52,21 @@ class PrivacyConsentController extends AbstractFragmentController
             ->setParameter('member', $user->id)
             ->setMaxResults(1)
             ->orderBy('tstamp', 'DESC')
-            ->execute()
-            ->fetch(FetchMode::STANDARD_OBJECT);
+            ->executeQuery()
+            ->fetchAssociative();
 
         $isSigned = false !== $statement;
 
         if ($isSigned) {
-            if ($this->consentState->hashIsValid($statement->statement_hash)) {
+            if ($this->consentState->hashIsValid($statement['statement_hash'])) {
                 return $this->render('@FerienpassHostPortal/fragment/privacy_consent.html.twig', [
-                    'confirmation' => sprintf('Sie haben diese Erklärung am %s unterzeichnet.', date(Config::get('dateFormat'), (int) $statement->tstamp)),
+                    'confirmation' => sprintf('Sie haben diese Erklärung am %s unterzeichnet.', date(Config::get('dateFormat'), (int) $statement['tstamp'])),
                     'signed' => $isSigned,
                     'statement' => $this->consentState->getFormattedConsentText(),
                 ]);
             }
 
-            $error = sprintf('Sie haben eine veraltete Version der Erklärung am %s unterzeichnet. Bitte unterzeichnen Sie die neue Version', date(Config::get('dateFormat'), (int) $statement->tstamp));
+            $error = sprintf('Sie haben eine veraltete Version der Erklärung am %s unterzeichnet. Bitte unterzeichnen Sie die neue Version', date(Config::get('dateFormat'), (int) $statement['tstamp']));
         }
 
         $form = null;

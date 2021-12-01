@@ -37,7 +37,7 @@ final class FollowInvitationController extends AbstractFragmentController
         $optIn = $this->get('contao.opt-in');
 
         // Find an unconfirmed token
-        if ((!$optInToken = $optIn->find($request->query->get('token')))
+        if ((!$optInToken = $optIn->find((string) $request->query->get('token')))
             || !$optInToken->isValid()
             || \count($relatedRecords = $optInToken->getRelatedRecords()) < 1
             || !\array_key_exists('Host', $relatedRecords)

@@ -129,7 +129,7 @@ class ParticipantList
             ->execute()
         ;
 
-        if (false !== $participantId = $statement->fetchColumn()) {
+        if (false !== $participantId = $statement->fetchOne()) {
             $participant = $this->doctrine->getRepository(Participant::class)->find($participantId);
             $this->attendanceFacade->create($offer, $participant);
 
@@ -151,7 +151,7 @@ class ParticipantList
             ->execute()
         ;
 
-        if (false !== $memberId = $statement->fetchColumn()) {
+        if (false !== $memberId = $statement->fetchOne()) {
             $participant = new Participant($memberId);
         } else {
             $participant = new Participant();

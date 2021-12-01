@@ -40,7 +40,7 @@ final class LostPasswordController extends AbstractFragmentController
 
     public function __invoke(Request $request): Response
     {
-        if ($request->query->has('token') && ($token = $request->query->get('token'))
+        if ($request->query->has('token') && ($token = (string) $request->query->get('token'))
             && 0 === strncmp($token, 'pw-', 3)) {
             return $this->setNewPassword($request);
         }

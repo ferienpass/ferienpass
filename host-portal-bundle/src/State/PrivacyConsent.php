@@ -59,9 +59,9 @@ class PrivacyConsent
             ->setParameter('hash', sha1($this->getFormattedConsentText()))
             ->setMaxResults(1)
             ->orderBy('tstamp', 'DESC')
-            ->execute();
+            ->executeQuery();
 
-        return false !== $statement->fetchColumn();
+        return false !== $statement->fetchOne();
     }
 
     public function hashIsValid(string $actualTextHash): bool
