@@ -56,8 +56,8 @@ task('deploy', [
     'contao:validate',
     'deploy:prepare',
     'deploy:vendors',
-    'contao:maintenance:enable',
+    //'contao:maintenance:enable',
     'contao:migrate',
-    'contao:maintenance:disable',
+    //'contao:maintenance:disable',
     'deploy:publish',
 ]);
