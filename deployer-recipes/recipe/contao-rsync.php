@@ -4,8 +4,8 @@ namespace Deployer;
 
 import('contrib/rsync.php');
 
-set('rsync_src', __DIR__);
 set('rsync_dest','{{release_path}}');
+
 set('exclude', [
     '.git',
     '/.github',

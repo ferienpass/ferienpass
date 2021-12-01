@@ -8,12 +8,16 @@ require __DIR__.'/contao-rsync.php';
 set('keep_releases', 10);
 
 add('exclude', [
+    '.DS_Store',
     '/.githooks',
+    '/backups',
     '/themes/*/assets',
-    'package.json',
-    'package-lock.json',
-    'yarn.lock',
-    'tailwind-preset.js',
+    '/package.json',
+    '/package-lock.json',
+    '/yarn.lock',
+    '/.php-version',
+    '/.php-cs-fixer.dist.php',
+    '/tailwind-preset.js',
     '/node_modules',
 ]);
 
