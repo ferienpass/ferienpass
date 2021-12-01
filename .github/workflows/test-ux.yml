@@ -16,19 +16,19 @@ jobs:
       - uses: actions/checkout@master
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: '8.0'
       - name: php-cs-fixer
         run: |
           wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.16.1/php-cs-fixer.phar -q
           php php-cs-fixer.phar fix --dry-run --diff
 
-  coding-style-js:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./ux
-    steps:
-      - uses: actions/checkout@master
-      - run: yarn
-      - run: yarn check-lint
-      - run: yarn check-format
+#  coding-style-js:
+#    runs-on: ubuntu-latest
+#    defaults:
+#      run:
+#        working-directory: ./ux
+#    steps:
+#      - uses: actions/checkout@master
+#      - run: yarn
+#      - run: yarn check-lint
+#      - run: yarn check-format

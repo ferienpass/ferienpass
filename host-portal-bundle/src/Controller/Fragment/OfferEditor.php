@@ -70,7 +70,7 @@ final class OfferEditor extends AbstractFragmentController
             /** @var UploadedFile $imageFile */
             $imageFile = $form->get('image')->getData();
             if ($imageFile) {
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), \PATHINFO_FILENAME);
 
                 $fileExists = fn (string $filename) => file_exists(sprintf('%s/%s.%s', $this->imagesDir, $filename, $imageFile->guessExtension()));
                 $safeFilename = $this->slug->generate($originalFilename, [], $fileExists);

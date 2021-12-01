@@ -50,7 +50,7 @@ final class OrganizationEditorController extends AbstractFragmentController
             /** @var UploadedFile $logoFile */
             $logoFile = $form->get('logo')->getData();
             if ($logoFile) {
-                $originalFilename = pathinfo($logoFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $originalFilename = pathinfo($logoFile->getClientOriginalName(), \PATHINFO_FILENAME);
 
                 $fileExists = fn (string $filename) => file_exists(sprintf('%s/%s.%s', $this->logosDir, $filename, $logoFile->guessExtension()));
                 $safeFilename = $this->slug->generate($originalFilename, [], $fileExists);
