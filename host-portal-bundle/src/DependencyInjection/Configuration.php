@@ -26,7 +26,7 @@ final class Configuration implements ConfigurationInterface
             ->scalarNode('privacy_consent')
                 ->beforeNormalization()
                 ->ifString()
-            ->then(static fn ($v) => \file_get_contents($v))
+            ->then(static fn ($v) => file_get_contents($v))
             ->end()
         ;
 

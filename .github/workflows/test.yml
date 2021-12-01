@@ -24,7 +24,7 @@ jobs:
       - name: php-cs-fixer
         working-directory: ./${{ matrix.package }}
         run: |
-          wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.16.1/php-cs-fixer.phar -q
+          wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.3.2/php-cs-fixer.phar -q
           php php-cs-fixer.phar fix --dry-run --diff
 
   sca:

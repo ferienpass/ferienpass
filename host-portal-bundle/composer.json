@@ -46,7 +46,7 @@
   },
   "require-dev": {
     "contao/manager-plugin": "^2.7",
-    "friendsofphp/php-cs-fixer": "^2.12"
+    "friendsofphp/php-cs-fixer": "^3.3"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
