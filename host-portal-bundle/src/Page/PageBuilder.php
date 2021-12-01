@@ -105,7 +105,7 @@ class PageBuilder
         }
 
         $template->title = strip_tags(Controller::replaceInsertTags($layoutModel->titleTag));
-        $template->description = str_replace(["\n", "\r", '"'], [' ', '', ''], $this->pageModel->description);
+        $template->description = str_replace(["\n", "\r", '"'], [' ', '', ''], (string) $this->pageModel->description);
 
         return $template;
     }
