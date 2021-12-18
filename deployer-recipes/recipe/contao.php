@@ -23,7 +23,16 @@ set('console_options', function () {
 });
 
 set('bin/console', function () {
-    return '{{release_path}}/vendor/bin/contao-console';
+    return '{{release_or_current_path}}/vendor/bin/contao-console';
+});
+
+set('public_path', function () {
+    $composerConfig = json_decode(file_get_contents('./composer.json'), true, 512, JSON_THROW_ON_ERROR);
+    if (null === ($publicDir = $composerConfig['extra']['public-dir'] ?? null)) {
+        return '{{release_or_current_path}}/public';
+    }
+
+    return "{{release_or_current_path}}/$publicDir";
 });
 
 desc('Validate local Contao setup');
@@ -38,7 +47,12 @@ task('contao:migrate', function () {
 
 desc('Download the Contao Manager');
 task('contao:manager:download', function () {
-    run('cd {{release_path}} && curl -LsO https://download.contao.org/contao-manager/stable/contao-manager.phar && mv contao-manager.phar public/contao-manager.phar.php');
+    run('curl -LsO https://download.contao.org/contao-manager/stable/contao-manager.phar && mv contao-manager.phar {{public_path}}/contao-manager.phar.php');
+});
+
+desc('Lock the Contao Install Tool');
+task('contao:install:lock', function () {
+    run('{{bin/php}} {{bin/console}} contao:install:lock {{console_options}}');
 });
 
 desc('Enable maintenance mode');
