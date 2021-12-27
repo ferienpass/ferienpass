@@ -57,10 +57,6 @@ $GLOBALS['TL_DCA']['Offer'] = [
                     'icon' => 'visible.gif',
                 ]]],
             ],
-            'show' => [
-                'href' => 'act=show',
-                'icon' => 'show.svg',
-            ],
             'label' => [
                 'attributes' => 'onclick="Backend.getScrollOffset();"',
                 'haste_ajax_operation' => ['field' => 'label', 'options' => [[
