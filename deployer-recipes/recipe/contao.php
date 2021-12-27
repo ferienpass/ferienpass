@@ -18,60 +18,72 @@ add('shared_dirs', [
     'var/logs',
 ]);
 
-set('console_options', function () {
-    return '--no-interaction';
-});
-
 set('bin/console', function () {
     return '{{release_or_current_path}}/vendor/bin/contao-console';
 });
 
+set('contao_version', function () {
+    return run('{{bin/console}} contao:version');
+});
+
+// The public path is the path to be set as DocumentRoot and is defined in the `composer.json` of the project
+// but defaults to `public` from Contao 5.0 on.
+// This path is relative from the {{current_path}}, see [`recipe/provision/website.php`](/docs/recipe/provision/website.php#public_path).
 set('public_path', function () {
     $composerConfig = json_decode(file_get_contents('./composer.json'), true, 512, JSON_THROW_ON_ERROR);
-    if (null === ($publicDir = $composerConfig['extra']['public-dir'] ?? null)) {
-        return '{{release_or_current_path}}/public';
-    }
 
-    return "{{release_or_current_path}}/$publicDir";
+    return $composerConfig['extra']['public-dir'] ?? 'public';
 });
 
-desc('Validate local Contao setup');
-task('contao:validate', function () {
-    runLocally('./vendor/bin/contao-console contao:version');
-});
-
-desc('Run Contao migrations ');
+// This task updates the database. A database backup is saved automatically as a default.
+desc('Run Contao migrations');
 task('contao:migrate', function () {
     run('{{bin/php}} {{bin/console}} contao:migrate {{console_options}}');
 });
 
+// Downloads the `contao-manager.phar.php` into the public path.
 desc('Download the Contao Manager');
 task('contao:manager:download', function () {
-    run('curl -LsO https://download.contao.org/contao-manager/stable/contao-manager.phar && mv contao-manager.phar {{public_path}}/contao-manager.phar.php');
+    run('curl -LsO https://download.contao.org/contao-manager/stable/contao-manager.phar && mv contao-manager.phar {{release_or_current_path}}/{{public_path}}/contao-manager.phar.php');
 });
 
+// Locks the Contao install tool which is useful if you don't use it.
 desc('Lock the Contao Install Tool');
 task('contao:install:lock', function () {
     run('{{bin/php}} {{bin/console}} contao:install:lock {{console_options}}');
 });
 
+// Locks the Contao Manager which is useful if you only need the API of the Manager rather than the UI.
+desc('Lock the Contao Manager');
+task('contao:manager:lock', function () {
+    cd('{{release_or_current_path}}');
+    run('echo "99" > contao-manager/login.lock');
+});
+
 desc('Enable maintenance mode');
 task('contao:maintenance:enable', function () {
-    run('{{bin/php}} {{bin/console}} contao:maintenance-mode --enable {{console_options}}');
+    // Enable maintenance mode in both the current and release build, so that the maintenance mode will be enabled
+    // for the current installation before the symlink changes and the new installation after the symlink changed.
+    foreach (array_unique([parse('{{current_path}}'), parse('{{release_or_current_path}}')]) as $path) {
+        cd($path);
+        run('{{bin/php}} {{bin/console}} contao:maintenance-mode enable {{console_options}}');
+    }
 });
 
 desc('Disable maintenance mode');
 task('contao:maintenance:disable', function () {
-    run('{{bin/php}} {{bin/console}} contao:maintenance-mode --disable {{console_options}}');
+    foreach (array_unique([parse('{{current_path}}'), parse('{{release_or_current_path}}')]) as $path) {
+        cd($path);
+        run('{{bin/php}} {{bin/console}} contao:maintenance-mode disable {{console_options}}');
+    }
 });
 
-desc('Deploy project');
+desc('Deploy the project');
 task('deploy', [
-    'contao:validate',
     'deploy:prepare',
     'deploy:vendors',
-    //'contao:maintenance:enable',
+    'contao:maintenance:enable',
     'contao:migrate',
-    //'contao:maintenance:disable',
+    'contao:maintenance:disable',
     'deploy:publish',
 ]);
