@@ -40,6 +40,7 @@
             <tag name="kernel.event_listener" priority="-46"/>
         </service>
         <service id="Ferienpass\HostPortalBundle\Controller\ContentElement\DashboardController">
+            <argument type="service" id="Ferienpass\CoreBundle\Repository\EditionRepository"/>
             <call method="setContainer">
                 <argument type="service" id="service_container"/>
             </call>

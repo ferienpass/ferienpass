@@ -35,6 +35,12 @@
             <trans-unit id="PTY.host_privacy_consent.0">
                 <target>Veranstalter-Portal - Datenschutzerklärung</target>
             </trans-unit>
+            <trans-unit id="CTE.host_dashboard.0">
+                <target>Dashboard mit Zeitgraph</target>
+            </trans-unit>
+            <trans-unit id="CTE.host_dashboard.1">
+                <target>Zeigt den Stand der aktuellen Ferienpässe an.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
