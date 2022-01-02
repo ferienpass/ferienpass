@@ -4,20 +4,20 @@
         {% block left %}
             <nav class="px-2">
                 <div>
-                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                    <h3 class="px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                         id="editions-headline">
                         Ferienpass / Saison</h3>
                     <div class="mt-1 space-y-1" role="group" aria-labelledby="editions-headline">
                         {% set nav = knp_menu_get('host_offer_filters', ['edition']) %}
                         {% for item in nav.children %}
                             {% if item.current %}
-                                <strong class="flex items-center px-3 py-2 text-base leading-5 font-medium text-gray-900 rounded-md bg-gray-100">
+                                <strong class="flex items-center px-3 py-2 text-base leading-5 font-medium text-gray-900 dark:text-gray-300 rounded-md bg-gray-100 dark:bg-gray-900">
                                     <span class="w-2.5 h-2.5 mr-4 bg-green-600 rounded-full" aria-hidden="true"></span>
                                     <span class="truncate">{{ item.label }}</span>
                                 </strong>
                             {% else %}
                                 <a href="{{ item.uri }}"
-                                   class="group flex items-center px-3 py-2 text-base leading-5 font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-100">
+                                   class="group flex items-center px-3 py-2 text-base leading-5 font-medium text-gray-600 dark:text-gray-400 rounded-md hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
                             <span class="w-2.5 h-2.5 mr-4 bg-gray-300 group-hover:bg-gray-400 rounded-full"
                                   aria-hidden="true"></span>
                                     <span class="truncate">{{ item.label }}</span>
@@ -28,19 +28,19 @@
                 </div>
 
                 <div class="mt-8">
-                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider" id="hosts-headline">
+                    <h3 class="px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider" id="hosts-headline">
                         Veranstalter</h3>
                     <div class="mt-1 space-y-1" role="group" aria-labelledby="hosts-headline">
                         {% set nav = knp_menu_get('host_offer_filters', ['host']) %}
                         {% for item in nav.children %}
                             {% if item.current %}
-                                <strong class="flex items-center px-3 py-2 text-base leading-5 font-medium text-gray-600 rounded-md">
+                                <strong class="flex items-center px-3 py-2 text-base leading-5 font-medium text-gray-600 dark:text-gray-500 rounded-md">
                                     <span class="w-2.5 h-2.5 mr-4 bg-green-600 rounded-full" aria-hidden="true"></span>
                                     <span class="truncate">{{ item.label }}</span>
                                 </strong>
                             {% else %}
                                 <a href="{{ item.uri }}"
-                                   class="group flex items-center px-3 py-2 text-base leading-5 font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-100">
+                                   class="group flex items-center px-3 py-2 text-base leading-5 font-medium text-gray-600 dark:text-gray-400 rounded-md hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
                             <span class="w-2.5 h-2.5 mr-4 bg-gray-300 group-hover:bg-gray-400 rounded-full"
                                   aria-hidden="true"></span>
                                     <span class="truncate">{{ item.label }}</span>
@@ -74,7 +74,7 @@
                     <ul class="sm:rounded-b-md">
                         {% for i,offer in offers %}
                             <li>
-                                <div class="px-4 py-4 sm:rounded-b-md sm:px-6{% if i is odd %} bg-gray-50{% endif %}">
+                                <div class="px-4 py-4 sm:rounded-b-md sm:px-6{% if i is odd %} bg-gray-50 dark:bg-gray-900 dark:border dark:border-t-1 dark:border-gray-800{% endif %}">
                                     <div class="grid grid-cols-1 sm:grid-cols-6 gap-2 sm:gap-6 justify-start items-center">
                                         <div class="sm:col-span-2">
                                             {% if offer.status == 'online' %}
@@ -104,11 +104,11 @@
 
                                         <div class="hidden sm:block">
                                             {% if offer.status == 'online' %}
-                                                {% set colorClass = 'bg-green-100 text-green-800' %}
+                                                {% set colorClass = 'bg-green-100 text-green-800 dark:text-green-100 dark:bg-green-900 dark:bg-opacity-50' %}
                                             {% elseif offer.status == 'cancelled' %}
-                                                {% set colorClass = 'bg-red-100 text-red-800' %}
+                                                {% set colorClass = 'bg-red-100 text-red-800 dark:text-red-100 dark:bg-red-900 dark:bg-opacity-50' %}
                                             {% else %}
-                                                {% set colorClass = 'bg-blue-100 text-blue-800' %}
+                                                {% set colorClass = 'bg-blue-100 text-blue-800 dark:text-blue-100 dark:bg-blue-900 dark:bg-opacity-50' %}
                                             {% endif %}
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ colorClass }}">{{ ('offer.' ~ offer.status) | trans }}</span>
                                         </div>
