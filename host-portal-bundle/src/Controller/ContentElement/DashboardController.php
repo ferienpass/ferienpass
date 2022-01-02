@@ -75,8 +75,9 @@ final class DashboardController extends AbstractContentElementController
             ];
         }
 
+        $showOfferPeriods = $edition->getTasksOfType('show_offers');
         if (!$edition->isEditableForHosts()
-            && false !== ($period = $edition->getShowOfferPeriods()->first())
+            && false !== ($period = $showOfferPeriods->first())
             && $period->isUpcoming()) {
             $steps[] = [
                 'current' => true,
@@ -84,7 +85,7 @@ final class DashboardController extends AbstractContentElementController
             ];
         }
 
-        foreach ($edition->getShowOfferPeriods() as $task) {
+        foreach ($showOfferPeriods as $task) {
             if ($task->isCompleted()) {
                 $steps[] = [
                     'completed' => true,
