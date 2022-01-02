@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Ferienpass\HostPortalBundle\Controller\Page;
 
-use Ferienpass\CoreBundle\Controller\Page\AbstractContentPage;
 use Ferienpass\HostPortalBundle\Fragment\FragmentReference;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

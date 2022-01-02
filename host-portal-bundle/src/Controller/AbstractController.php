@@ -15,8 +15,7 @@ namespace Ferienpass\HostPortalBundle\Controller;
 
 use Contao\CoreBundle\Controller\AbstractController as ContaoAbstractController;
 use Contao\CoreBundle\Exception\AccessDeniedException;
-use Contao\CoreBundle\Exception\InsufficientAuthenticationException;
-use Contao\FrontendUser;
+use Contao\CoreBundle\Security\ContaoCorePermissions;
 use Contao\PageModel;
 use Ferienpass\HostPortalBundle\Page\PageBuilder;
 use Ferienpass\HostPortalBundle\Page\PageBuilderFactory;
@@ -34,18 +33,7 @@ class AbstractController extends ContaoAbstractController
 
     protected function checkToken(): void
     {
-        $token = $this->get('security.token_storage')->getToken();
-        if (null === $token || $this->get('security.authentication.trust_resolver')->isAnonymous($token)) {
-            throw new InsufficientAuthenticationException('Not authenticated');
-        }
-
-        if (!$this->get('security.authorization_checker')->isGranted('ROLE_MEMBER')) {
-            throw new AccessDeniedException('Access denied');
-        }
-
-        /** @var FrontendUser $user */
-        $user = $token->getUser();
-        if (!$user->isMemberOf(1)) {
+        if (!$this->get('security.helper')->isGranted(ContaoCorePermissions::MEMBER_IN_GROUPS, 1)) {
             throw new AccessDeniedException('Access denied');
         }
     }
