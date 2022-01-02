@@ -29,7 +29,7 @@ final class ForgotPasswordPage extends AbstractController
         }
 
         $layout = LayoutModel::findBy('alias', 'splash');
-        $pageModel = $request->get('pageModel');
+        $pageModel = $request->attributes->get('pageModel');
         $pageModel->layout = $layout->id;
 
         return $this->createPageBuilder($pageModel)

@@ -24,7 +24,7 @@ final class ChangePasswordPage extends AbstractController
     {
         $this->checkToken();
 
-        return $this->createPageBuilder($request->get('pageModel'))
+        return $this->createPageBuilder($request->attributes->get('pageModel'))
             ->addFragment('main', new FragmentReference('ferienpass.fragment.host.change_password'))
             ->addFragment('main', new FragmentReference('ferienpass.fragment.host.two_factor'))
             ->getResponse()

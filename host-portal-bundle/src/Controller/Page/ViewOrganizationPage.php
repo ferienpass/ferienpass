@@ -25,7 +25,7 @@ final class ViewOrganizationPage extends AbstractController
         $this->checkToken();
 
         return $this
-            ->createPageBuilder($request->get('pageModel'))
+            ->createPageBuilder($request->attributes->get('pageModel'))
             ->addFragment('main', new FragmentReference('ferienpass.fragment.host.organization'))
             ->getResponse()
         ;

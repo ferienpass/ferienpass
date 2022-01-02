@@ -44,7 +44,7 @@ final class ParticipantListPage extends AbstractController
             return $this->file($this->pdfExport->generate($offer), 'teilnahmeliste.pdf');
         }
 
-        return $this->createPageBuilder($request->get('pageModel'))
+        return $this->createPageBuilder($request->attributes->get('pageModel'))
             ->addFragment('main', new FragmentReference('ferienpass.fragment.host.participant_list', ['offer' => $offer]))
             ->getResponse()
         ;

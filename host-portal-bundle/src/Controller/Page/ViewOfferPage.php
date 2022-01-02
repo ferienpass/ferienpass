@@ -40,7 +40,7 @@ final class ViewOfferPage extends AbstractController
             $pageModel->title .= ' - '.implode(', ', $offer->getHosts()->map(fn (Host $h) => $h->getName())->toArray());
         }
 
-        return $this->createPageBuilder($request->get('pageModel'))
+        return $this->createPageBuilder($request->attributes->get('pageModel'))
             ->addFragment('main', new FragmentReference('ferienpass.fragment.host.offer_details', ['offer' => $offer]))
             ->getResponse()
         ;

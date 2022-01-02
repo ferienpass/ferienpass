@@ -27,7 +27,7 @@ final class EditOrganizationPage extends AbstractController
 
         // Access check in fragment
 
-        return $this->createPageBuilder($request->get('pageModel'))
+        return $this->createPageBuilder($request->attributes->get('pageModel'))
             ->addFragment('main', new FragmentReference('ferienpass.fragment.host.organization_editor', ['host' => $host]))
             ->getResponse()
             ;

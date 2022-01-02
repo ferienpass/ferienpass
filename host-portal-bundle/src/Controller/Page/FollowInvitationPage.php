@@ -24,7 +24,7 @@ final class FollowInvitationPage extends AbstractController
     public function __invoke(Request $request): Response
     {
         $layout = LayoutModel::findBy('alias', 'splash');
-        $pageModel = $request->get('pageModel');
+        $pageModel = $request->attributes->get('pageModel');
         $pageModel->layout = $layout->id;
 
         return $this->createPageBuilder($pageModel)

@@ -30,11 +30,11 @@ class AbstractContentPage extends AbstractController
     {
         $this->initializeContaoFramework();
 
-        $pageModel = $request->get('pageModel');
+        $pageModel = $request->attributes->get('pageModel');
 
         $pageBuilder = $this->createPageBuilder($pageModel);
 
-        $articles = ArticleModel::findPublishedByPidAndColumn($pageModel->id, 'main');
+        $articles = ArticleModel::findPublishedByPidAndColumn((int) $pageModel->id, 'main');
         while (null !== $articles && $articles->next()) {
             $pageBuilder->addFragment('main', new FragmentReference('ferienpass.fragment.article', ['id' => $articles->id]));
         }

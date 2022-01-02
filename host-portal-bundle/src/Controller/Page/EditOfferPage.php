@@ -30,7 +30,7 @@ final class EditOfferPage extends AbstractController
 
         // Access check in fragment
 
-        return $this->createPageBuilder($request->get('pageModel'))
+        return $this->createPageBuilder($request->attributes->get('pageModel'))
             ->addFragment('main', new FragmentReference('ferienpass.fragment.host.offer_editor', ['id' => $id]))
             ->getResponse()
             ;

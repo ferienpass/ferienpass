@@ -112,7 +112,7 @@ class PrettyErrorScreenListener
             switch (true) {
                 case 401 === $type:
                     $layout = LayoutModel::findBy('alias', 'splash');
-                    $pageModel = $request->get('pageModel');
+                    $pageModel = $request->attributes->get('pageModel');
                     $pageModel->layout = $layout->id;
 
                     return $this->pageBuilderFactory->create($pageModel)
@@ -121,12 +121,12 @@ class PrettyErrorScreenListener
                     break;
 
                 case 403 === $type:
-                    return $this->pageBuilderFactory->create($request->get('pageModel'))
+                    return $this->pageBuilderFactory->create($request->attributes->get('pageModel'))
                         ->addFragment('main', new FragmentReference('ferienpass.fragment.host.error403'))
                         ->getResponse();
 
                 case 404 === $type:
-                    return $this->pageBuilderFactory->create($request->get('pageModel'))
+                    return $this->pageBuilderFactory->create($request->attributes->get('pageModel'))
                         ->addFragment('main', new FragmentReference('ferienpass.fragment.host.error404'))
                         ->getResponse();
             }

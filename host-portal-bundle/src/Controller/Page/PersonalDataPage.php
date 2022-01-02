@@ -24,7 +24,7 @@ final class PersonalDataPage extends AbstractContentPage
         $this->checkToken();
 
         return $this
-            ->createPageBuilder($request->get('pageModel'))
+            ->createPageBuilder($request->attributes->get('pageModel'))
             ->addFragment('main', new FragmentReference('ferienpass.fragment.host.personal_data'))
             ->getResponse()
         ;
