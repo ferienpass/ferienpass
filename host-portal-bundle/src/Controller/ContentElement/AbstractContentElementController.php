@@ -16,9 +16,19 @@ namespace Ferienpass\HostPortalBundle\Controller\ContentElement;
 use Contao\BackendTemplate;
 use Contao\CoreBundle\Controller\ContentElement\AbstractContentElementController as BaseContentElementController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractContentElementController extends BaseContentElementController
 {
+    public static function getSubscribedServices()
+    {
+        $services = parent::getSubscribedServices();
+
+        $services['translator'] = TranslatorInterface::class;
+
+        return $services;
+    }
+
     protected function getBackendWildcard(): Response
     {
         $name = $this->get('translator')->trans('CTE.'.$this->getType().'.0', [], 'contao_modules');

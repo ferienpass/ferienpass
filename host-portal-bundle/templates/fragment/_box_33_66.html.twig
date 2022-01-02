@@ -3,14 +3,20 @@
         <div class="px-4 sm:px-0">
             {% block left %}
                 <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-50">{{ headline }}</h3>
-                <p class="mt-1 text-sm leading-5 text-gray-500">{{ caption }}</p>
+                {% if caption|default %}
+                    <p class="mt-1 text-sm leading-5 text-gray-500">{{ caption }}</p>
+                {% endif %}
             {% endblock %}
         </div>
     </div>
     <div class="mt-5 md:mt-0 md:col-span-2">
         <div class="shadow sm:rounded-md">
-            <div class="bg-white sm:rounded-md dark:bg-gray-900 p-4 sm:p-6">
-                {% block box %}{% endblock %}
+            <div class="bg-white sm:rounded-md dark:bg-gray-900">
+                {% block container %}
+                    <div class="p-4 sm:p-6">
+                        {% block box %}{% endblock %}
+                    </div>
+                {% endblock %}
             </div>
             {% block bottom %}{% endblock %}
         </div>

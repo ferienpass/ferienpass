@@ -12,3 +12,4 @@ declare(strict_types=1);
  */
 
 $GLOBALS['TL_DCA']['tl_content']['palettes']['host_headline'] = '{type_legend},type,headline;{text_legend},text';
+$GLOBALS['TL_DCA']['tl_content']['palettes']['host_dashboard'] = '{type_legend},type';
