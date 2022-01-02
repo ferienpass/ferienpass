@@ -27,4 +27,8 @@ task('encore:compile', function () {
 
 before('deploy', 'encore:compile');
 
+before('deploy:publish', 'contao:install:lock');
+before('deploy:publish', 'contao:manager:download');
+after('contao:manager:download', 'contao:manager:lock');
+
 after('deploy:failed', 'deploy:unlock');
