@@ -17,19 +17,19 @@ use Contao\FrontendUser;
 use Ferienpass\CoreBundle\Form\UserChangePasswordType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ChangePasswordController extends AbstractFragmentController
 {
-    private EncoderFactoryInterface $encoderFactory;
+    private PasswordHasherInterface $passwordHasher;
     private TranslatorInterface $translator;
     private Security $security;
 
-    public function __construct(EncoderFactoryInterface $encoderFactory, TranslatorInterface $translator, Security $security)
+    public function __construct(PasswordHasherInterface $passwordHasher, TranslatorInterface $translator, Security $security)
     {
-        $this->encoderFactory = $encoderFactory;
+        $this->passwordHasher = $passwordHasher;
         $this->translator = $translator;
         $this->security = $security;
     }
@@ -45,7 +45,7 @@ final class ChangePasswordController extends AbstractFragmentController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $user->tstamp = time();
-            $user->password = $this->encoderFactory->getEncoder(FrontendUser::class)->encodePassword($form->getData()['password'], null);
+            $user->password = $this->passwordHasher->hash($form->getData()['password'] ?? '');
             $user->save();
 
             $this->addFlash('confirmation', $this->trans('MSC.newPasswordSet'));

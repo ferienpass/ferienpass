@@ -39,12 +39,16 @@
             <argument type="service" id="logger"/>
             <argument type="service" id="contao.opt-in"/>
             <argument type="service" id="router"/>
+            <argument type="expression">service('security.hasher_factory').getPasswordHasher('Contao\\FrontendUser')</argument>
         </service>
         <service id="Ferienpass\HostPortalBundle\Controller\Fragment\FollowInvitationController">
             <argument type="service" id="database_connection"/>
+            <argument type="expression">service('security.hasher_factory').getPasswordHasher('Contao\\FrontendUser')</argument>
+            <argument type="service" id="contao.opt-in"/>
+            <argument type="service" id="Ferienpass\CoreBundle\Repository\HostRepository"/>
         </service>
         <service id="Ferienpass\HostPortalBundle\Controller\Fragment\ChangePasswordController">
-            <argument type="service" id="security.encoder_factory"/>
+            <argument type="expression">service('security.hasher_factory').getPasswordHasher('Contao\\FrontendUser')</argument>
             <argument type="service" id="translator"/>
             <argument type="service" id="security.helper"/>
         </service>

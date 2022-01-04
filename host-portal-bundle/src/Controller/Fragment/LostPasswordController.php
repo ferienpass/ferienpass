@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Ferienpass\HostPortalBundle\Controller\Fragment;
 
 use Contao\CoreBundle\OptIn\OptInInterface;
-use Contao\FrontendUser;
 use Contao\Input;
 use Contao\MemberModel;
 use Ferienpass\CoreBundle\Form\UserLostPasswordType;
@@ -23,6 +22,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 final class LostPasswordController extends AbstractFragmentController
@@ -30,12 +30,14 @@ final class LostPasswordController extends AbstractFragmentController
     private LoggerInterface $logger;
     private OptInInterface $optIn;
     private RouterInterface $router;
+    private PasswordHasherInterface $passwordHasher;
 
-    public function __construct(LoggerInterface $logger, OptInInterface $optIn, RouterInterface $router)
+    public function __construct(LoggerInterface $logger, OptInInterface $optIn, RouterInterface $router, PasswordHasherInterface $passwordHasher)
     {
         $this->logger = $logger;
         $this->optIn = $optIn;
         $this->router = $router;
+        $this->passwordHasher = $passwordHasher;
     }
 
     public function __invoke(Request $request): Response
@@ -51,16 +53,16 @@ final class LostPasswordController extends AbstractFragmentController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
-            $memberModel = MemberModel::findActiveByEmailAndUsername($data['email']);
+            $memberModel = MemberModel::findActiveByEmailAndUsername($data['email'] ?? '');
             if (null === $memberModel) {
                 sleep(2); // Wait 2 seconds while brute forcing :)
                 $form->addError(new FormError($GLOBALS['TL_LANG']['MSC']['accountNotFound']));
             } else {
-                $this->sendPasswordLink($memberModel, $request->get('_route'));
+                $this->sendPasswordLink($memberModel, $request->attributes->get('_route'));
 
                 $this->addFlash('confirm', 'Passwort-Link versendet');
 
-                return $this->redirectToRoute($request->get('_route'));
+                return $this->redirectToRoute($request->attributes->get('_route'));
             }
         }
 
@@ -71,12 +73,13 @@ final class LostPasswordController extends AbstractFragmentController
 
     protected function sendPasswordLink(MemberModel $memberModel, string $route): void
     {
+        /** @var Notification|null $notification */
         $notification = Notification::findOneBy('type', 'member_password');
         if (null === $notification) {
             throw new \RuntimeException('No notification for password reset found!');
         }
 
-        $optInToken = $this->optIn->create('pw', $memberModel->email, ['tl_member' => [$memberModel->id]]);
+        $optInToken = $this->optIn->create('pw', $memberModel->email, ['tl_member' => [(int) $memberModel->id]]);
 
         $tokens = [];
 
@@ -126,9 +129,7 @@ final class LostPasswordController extends AbstractFragmentController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $encoder = $this->get('security.encoder_factory')->getEncoder(FrontendUser::class);
-
-            $memberModel->password = $encoder->encodePassword($memberModel->password, null);
+            $memberModel->password = $this->passwordHasher->hash($memberModel->password ?? '');
             $memberModel->tstamp = time();
             $memberModel->locked = 0;
 

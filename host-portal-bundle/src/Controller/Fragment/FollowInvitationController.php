@@ -18,26 +18,30 @@ use Contao\FrontendUser;
 use Contao\MemberModel;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Ferienpass\CoreBundle\Entity\Host;
+use Ferienpass\CoreBundle\Repository\HostRepository;
 use Ferienpass\HostPortalBundle\Form\AcceptInvitationType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 
 final class FollowInvitationController extends AbstractFragmentController
 {
     private Connection $connection;
+    private PasswordHasherInterface $passwordHasher;
+    private OptIn $optIn;
+    private HostRepository $hostRepository;
 
-    public function __construct(Connection $connection)
+    public function __construct(Connection $connection, PasswordHasherInterface $passwordHasher, OptIn $optIn, HostRepository $hostRepository)
     {
         $this->connection = $connection;
+        $this->passwordHasher = $passwordHasher;
+        $this->optIn = $optIn;
+        $this->hostRepository = $hostRepository;
     }
 
     public function __invoke(Request $request)
     {
-        /** @var OptIn $optIn */
-        $optIn = $this->get('contao.opt-in');
-
         // Find an unconfirmed token
-        if ((!$optInToken = $optIn->find((string) $request->query->get('token')))
+        if ((!$optInToken = $this->optIn->find((string) $request->query->get('token')))
             || !$optInToken->isValid()
             || \count($relatedRecords = $optInToken->getRelatedRecords()) < 1
             || !\array_key_exists('Host', $relatedRecords)
@@ -65,14 +69,12 @@ final class FollowInvitationController extends AbstractFragmentController
         $hostId = reset($relatedRecords['Host']);
         $inviter = reset($relatedRecords['tl_member']);
 
-        $host = $this->getDoctrine()->getRepository(Host::class)->find($hostId);
+        $host = $this->hostRepository->find($hostId);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             if (!$user->id) {
-                $encoder = $this->get('security.encoder_factory')->getEncoder(FrontendUser::class);
-
-                $memberModel->password = $encoder->encodePassword($memberModel->password, null);
+                $memberModel->password = $this->passwordHasher->hash($memberModel->password ?? '');
                 $this->createNewUser($memberModel);
                 $this->addHost((int) $memberModel->id, (int) $hostId);
 
