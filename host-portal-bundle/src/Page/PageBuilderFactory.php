@@ -41,7 +41,7 @@ class PageBuilderFactory
     public function create(PageModel $pageModel = null): PageBuilder
     {
         if (null === $pageModel) {
-            $pageModel = PageModel::findPublishedRootPages(['column' => ["dns LIKE 'veranstalter%%'"]])[0];
+            $pageModel = PageModel::findPublishedRootPages(['column' => ["tl_page.type='root'", "dns LIKE 'veranstalter%%'"]])[0];
         }
 
         return new PageBuilder($pageModel, $this->fragmentHandler, $this->translator, $this->framework, $this->requestStack);
