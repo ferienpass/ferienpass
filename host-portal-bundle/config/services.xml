@@ -12,6 +12,7 @@
             <argument type="service" id="contao.routing.scope_matcher"/>
             <tag name="kernel.event_listener"/>
             <argument type="service" id="router"/>
+            <argument type="service" id="security.helper"/>
         </service>
         <service id="Ferienpass\HostPortalBundle\Menu\MenuBuilder">
             <argument type="service" id="knp_menu.factory"/>

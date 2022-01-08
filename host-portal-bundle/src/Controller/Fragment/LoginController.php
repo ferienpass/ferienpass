@@ -34,14 +34,14 @@ final class LoginController extends AbstractFragmentController
             $targetPath = base64_decode((string) $request->request->get('_target_path'), true);
         } elseif ($request->query->has('redirect')) {
             // We cannot use $request->getUri() here as we want to work with the original URI (no query string reordering)
-            if ($this->get('uri_signer')->check($request->getSchemeAndHttpHost().$request->getBaseUrl().$request->getPathInfo().(null !== ($qs = $request->server->get('QUERY_STRING')) ? '?'.$qs : ''))) {
+            if ($this->container->get('uri_signer')->check($request->getSchemeAndHttpHost().$request->getBaseUrl().$request->getPathInfo().(null !== ($qs = $request->server->get('QUERY_STRING')) ? '?'.$qs : ''))) {
                 $targetPath = $request->query->get('redirect');
             }
         }
 
         /** @var AuthenticationException|null $exception */
-        $exception = $this->get('security.authentication_utils')->getLastAuthenticationError();
-        $authorizationChecker = $this->get('security.authorization_checker');
+        $exception = $this->container->get('security.authentication_utils')->getLastAuthenticationError();
+        $authorizationChecker = $this->container->get('security.authorization_checker');
 
         if ($exception instanceof LockedException) {
             $message = sprintf($GLOBALS['TL_LANG']['ERR']['accountLocked'], $exception->getLockedMinutes());
@@ -53,9 +53,9 @@ final class LoginController extends AbstractFragmentController
 
         if ($twoFactorEnabled = $authorizationChecker->isGranted('IS_AUTHENTICATED_2FA_IN_PROGRESS')) {
             // Dispatch 2FA form event to prepare 2FA providers
-            $token = $this->get('security.token_storage')->getToken();
+            $token = $this->container->get('security.token_storage')->getToken();
             $event = new TwoFactorAuthenticationEvent($request, $token);
-            $this->get('event_dispatcher')->dispatch($event, TwoFactorAuthenticationEvents::FORM);
+            $this->container->get('event_dispatcher')->dispatch($event, TwoFactorAuthenticationEvents::FORM);
         }
 
         if (null === ($targetPath ?? null)) {

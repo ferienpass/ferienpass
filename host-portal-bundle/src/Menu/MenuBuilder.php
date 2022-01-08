@@ -60,7 +60,7 @@ class MenuBuilder
 
     public function userNavigation(): ItemInterface
     {
-        $request = $this->requestStack->getMasterRequest();
+        $request = $this->requestStack->getMainRequest();
         $menu = $this->factory->createItem('root');
 
         $menu->addChild('Persönliche Daten', [
@@ -177,7 +177,7 @@ class MenuBuilder
 
     public function offerFilters(array $options = []): ItemInterface
     {
-        $request = $this->requestStack->getMasterRequest();
+        $request = $this->requestStack->getMainRequest();
         $menu = $this->factory->createItem('root');
 
         $user = $this->security->getUser();

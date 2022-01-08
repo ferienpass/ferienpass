@@ -18,13 +18,16 @@
             <argument type="service" id="contao.slug"/>
             <argument>%ferienpass.images_dir%</argument>
             <argument>%kernel.project_dir%</argument>
+            <argument type="service" id="doctrine"/>
             <argument type="service" id="Ferienpass\CoreBundle\Repository\EditionRepository"/>
+            <argument type="service" id="Ferienpass\CoreBundle\Repository\OfferRepository"/>
         </service>
         <service id="Ferienpass\HostPortalBundle\Controller\Fragment\LoginController"/>
         <service id="Ferienpass\HostPortalBundle\Controller\Fragment\OrganizationEditorController">
             <argument type="service" id="contao.slug"/>
             <argument>%ferienpass.logos_dir%</argument>
             <argument>%kernel.project_dir%</argument>
+            <argument type="service" id="doctrine"/>
         </service>
         <service id="Ferienpass\HostPortalBundle\Controller\Fragment\TwoFactorController">
             <argument type="service" id="security.helper"/>
@@ -66,14 +69,18 @@
         <service id="Ferienpass\HostPortalBundle\Controller\Fragment\OrganizationController">
             <argument type="service" id="security.helper"/>
             <argument type="service" id="database_connection"/>
+            <argument type="service" id="contao.opt-in"/>
             <argument type="service" id="Ferienpass\CoreBundle\Repository\HostRepository"/>
         </service>
         <service id="Ferienpass\HostPortalBundle\Controller\Fragment\ParticipantListController">
             <argument type="service" id="Ferienpass\HostPortalBundle\State\PrivacyConsent"/>
             <argument type="service" id="Ferienpass\CoreBundle\Facade\AttendanceFacade"/>
+            <argument type="service" id="doctrine"/>
         </service>
         <service id="Ferienpass\HostPortalBundle\Controller\Fragment\OfferDetailsController">
             <argument type="service" id="Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExports"/>
+            <argument type="service" id="doctrine"/>
+            <argument type="service" id="messenger.default_bus"/>
         </service>
 
     </services>

@@ -19,9 +19,11 @@ use Contao\Dbafs;
 use Contao\FilesModel;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\OfferDate;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
+use Ferienpass\CoreBundle\Repository\OfferRepository;
 use Ferienpass\CoreBundle\Ux\Flash;
 use Ferienpass\HostPortalBundle\Form\EditOfferType;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -34,14 +36,18 @@ final class OfferEditor extends AbstractFragmentController
     private Slug $slug;
     private string $imagesDir;
     private string $projectDir;
+    private ManagerRegistry $doctrine;
     private EditionRepository $editionRepository;
+    private OfferRepository $offerRepository;
 
-    public function __construct(Slug $slug, string $imagesDir, string $projectDir, EditionRepository $editionRepository)
+    public function __construct(Slug $slug, string $imagesDir, string $projectDir, ManagerRegistry $doctrine, EditionRepository $editionRepository, OfferRepository $offerRepository)
     {
         $this->slug = $slug;
         $this->imagesDir = $imagesDir;
         $this->projectDir = $projectDir;
+        $this->doctrine = $doctrine;
         $this->editionRepository = $editionRepository;
+        $this->offerRepository = $offerRepository;
     }
 
     public function __invoke(Request $request): Response
@@ -59,7 +65,7 @@ final class OfferEditor extends AbstractFragmentController
         if ($form->isSubmitted() && $form->isValid()) {
             $offer->setTimestamp(time());
 
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->doctrine->getManager();
 
             foreach ($originalDates as $date) {
                 if (false === $offer->getDates()->contains($date)) {
@@ -99,7 +105,7 @@ final class OfferEditor extends AbstractFragmentController
 
             $this->addFlash(...Flash::confirmation()->text('Die Daten wurden erfolgreich gespeichert.')->create());
 
-            return $this->redirectToRoute($request->get('_route'), ['id' => $offer->getId()]);
+            return $this->redirectToRoute($request->attributes->get('_route'), ['id' => $offer->getId()]);
         }
 
         return $this->render('@FerienpassHostPortal/fragment/offer_editor.html.twig', [
@@ -126,7 +132,7 @@ final class OfferEditor extends AbstractFragmentController
             $this->denyAccessUnlessGranted('create', $offer);
 
             if ($request->query->has('act') && $request->query->has('source')) {
-                $source = $this->getDoctrine()->getRepository(Offer::class)->find($request->query->getInt('source'));
+                $source = $this->offerRepository->find($request->query->getInt('source'));
                 if (null !== $source) {
                     $this->denyAccessUnlessGranted('view', $source);
 
@@ -152,12 +158,12 @@ final class OfferEditor extends AbstractFragmentController
                 }
             }
 
-            $this->getDoctrine()->getManager()->persist($offer);
+            $this->doctrine->getManager()->persist($offer);
 
             return $offer;
         }
 
-        $offer = $this->getDoctrine()->getRepository(Offer::class)->find($offerId);
+        $offer = $this->offerRepository->find($offerId);
         if (null === $offer) {
             throw new PageNotFoundException('Item not found');
         }

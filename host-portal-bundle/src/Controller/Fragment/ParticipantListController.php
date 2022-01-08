@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\HostPortalBundle\Controller\Fragment;
 
 use Contao\FrontendUser;
+use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Facade\AttendanceFacade;
 use Ferienpass\CoreBundle\Ux\Flash;
@@ -27,11 +28,13 @@ final class ParticipantListController extends AbstractFragmentController
 {
     private PrivacyConsent $privacyConsent;
     private AttendanceFacade $attendanceFacade;
+    private ManagerRegistry $doctrine;
 
-    public function __construct(PrivacyConsent $privacyConsent, AttendanceFacade $attendanceFacade)
+    public function __construct(PrivacyConsent $privacyConsent, AttendanceFacade $attendanceFacade, ManagerRegistry $doctrine)
     {
         $this->privacyConsent = $privacyConsent;
         $this->attendanceFacade = $attendanceFacade;
+        $this->doctrine = $doctrine;
     }
 
     public function __invoke(Offer $offer, Request $request): Response
@@ -60,7 +63,7 @@ final class ParticipantListController extends AbstractFragmentController
             $this->denyAccessUnlessGranted('participants.add', $offer);
 
             $newParticipant = $participantDto->toEntity();
-            $this->getDoctrine()->getManager()->persist($newParticipant);
+            $this->doctrine->getManager()->persist($newParticipant);
 
             $this->attendanceFacade->create($offer, $newParticipant);
 

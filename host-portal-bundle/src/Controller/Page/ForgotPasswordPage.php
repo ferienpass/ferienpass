@@ -23,8 +23,8 @@ final class ForgotPasswordPage extends AbstractController
 {
     public function __invoke(Request $request): Response
     {
-        $token = $this->get('security.token_storage')->getToken();
-        if (!$this->get('security.authentication.trust_resolver')->isAnonymous($token)) {
+        $token = $this->container->get('security.token_storage')->getToken();
+        if (!$this->container->get('security.authentication.trust_resolver')->isAnonymous($token)) {
             return $this->redirect('/');
         }
 

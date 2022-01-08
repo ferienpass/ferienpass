@@ -15,6 +15,7 @@ namespace Ferienpass\HostPortalBundle\Controller\Fragment;
 
 use Contao\CoreBundle\Slug\Slug;
 use Contao\Dbafs;
+use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Ux\Flash;
 use Ferienpass\HostPortalBundle\Dto\EditHostDto;
@@ -29,12 +30,14 @@ final class OrganizationEditorController extends AbstractFragmentController
     private Slug $slug;
     private string $logosDir;
     private string $projectDir;
+    private ManagerRegistry $doctrine;
 
-    public function __construct(Slug $slug, string $logosDir, string $projectDir)
+    public function __construct(Slug $slug, string $logosDir, string $projectDir, ManagerRegistry $doctrine)
     {
         $this->slug = $slug;
         $this->logosDir = $logosDir;
         $this->projectDir = $projectDir;
+        $this->doctrine = $doctrine;
     }
 
     public function __invoke(Host $host, Request $request): ?Response
@@ -67,7 +70,7 @@ final class OrganizationEditorController extends AbstractFragmentController
                 }
             }
 
-            $this->getDoctrine()->getManager()->flush();
+            $this->doctrine->getManager()->flush();
 
             $this->addFlash(...Flash::confirmation()->text('Die Daten wurden erfolgreich gespeichert.')->create());
 

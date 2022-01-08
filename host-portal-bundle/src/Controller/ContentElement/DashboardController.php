@@ -39,7 +39,7 @@ final class DashboardController extends AbstractContentElementController
     {
         $editions = [];
 
-        if ($this->get('contao.routing.scope_matcher')->isBackendRequest($request)) {
+        if ($this->container->get('contao.routing.scope_matcher')->isBackendRequest($request)) {
             return $this->getBackendWildcard();
         }
 

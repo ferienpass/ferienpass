@@ -30,12 +30,14 @@ final class OrganizationController extends AbstractFragmentController
 {
     private Security $security;
     private Connection $connection;
+    private OptIn $optIn;
     private HostRepository $hostRepository;
 
-    public function __construct(Security $security, Connection $connection, HostRepository $hostRepository)
+    public function __construct(Security $security, Connection $connection, OptIn $optIn, HostRepository $hostRepository)
     {
         $this->security = $security;
         $this->connection = $connection;
+        $this->optIn = $optIn;
         $this->hostRepository = $hostRepository;
     }
 
@@ -75,9 +77,7 @@ final class OrganizationController extends AbstractFragmentController
 
         $tokens = [];
 
-        /** @var OptIn $optIn */
-        $optIn = $this->get('contao.opt-in');
-        $optInToken = $optIn->create('invite', $email, ['Host' => [$host->getId()], 'tl_member' => [$user->id]]);
+        $optInToken = $this->optIn->create('invite', $email, ['Host' => [$host->getId()], 'tl_member' => [$user->id]]);
 
         $tokens['invitee_email'] = $email;
         $tokens['admin_email'] = $GLOBALS['TL_ADMIN_EMAIL'];
@@ -105,7 +105,7 @@ final class OrganizationController extends AbstractFragmentController
             ->innerJoin('m', 'HostMemberAssociation', 'a', 'a.member_id = m.id')
             ->where('a.host_id = :host_id')
             ->setParameter('host_id', $host->getId())
-            ->execute()
+            ->executeQuery()
         ;
 
         return $statement->fetchAllAssociative();

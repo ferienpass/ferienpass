@@ -85,8 +85,8 @@ final class TwoFactorController extends AbstractFragmentController
             return null;
         }
 
-        $authenticator = $this->get('contao.security.two_factor.authenticator');
-        $exception = $this->get('security.authentication_utils')->getLastAuthenticationError();
+        $authenticator = $this->container->get('contao.security.two_factor.authenticator');
+        $exception = $this->container->get('security.authentication_utils')->getLastAuthenticationError();
 
         if ($exception instanceof InvalidTwoFactorCodeException) {
             $template->message = $this->trans('ERR.invalidTwoFactor');
