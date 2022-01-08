@@ -18,6 +18,7 @@ use Contao\FrontendUser;
 use Doctrine\DBAL\Connection;
 use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Repository\HostRepository;
+use Ferienpass\CoreBundle\Ux\Flash;
 use Ferienpass\HostPortalBundle\Form\UserInviteType;
 use NotificationCenter\Model\Notification;
 use Symfony\Component\HttpFoundation\Request;
@@ -93,7 +94,7 @@ final class OrganizationController extends AbstractFragmentController
 
         $notification->send($tokens);
 
-        $this->addFlash('confirmation', sprintf('Die Einladungs-E-Mail wurde an %s verschickt.', $email));
+        $this->addFlash(...Flash::confirmation()->text(sprintf('Die Einladungs-E-Mail wurde an %s verschickt.', $email))->create());
     }
 
     private function fetchMembers(Host $host): array

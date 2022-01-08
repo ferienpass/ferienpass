@@ -19,6 +19,7 @@ use Contao\MemberModel;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Ferienpass\CoreBundle\Repository\HostRepository;
+use Ferienpass\CoreBundle\Ux\Flash;
 use Ferienpass\HostPortalBundle\Form\AcceptInvitationType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
@@ -78,7 +79,7 @@ final class FollowInvitationController extends AbstractFragmentController
                 $this->createNewUser($memberModel);
                 $this->addHost((int) $memberModel->id, (int) $hostId);
 
-                $this->addFlash('confirmation', 'Account erstellt. Bitte melden Sie sich nun mit Ihrer E-Mail-Adresse an.');
+                $this->addFlash(...Flash::confirmation()->text('Account erstellt. Bitte melden Sie sich nun mit Ihrer E-Mail-Adresse an.')->create());
 
                 $optInToken->confirm();
 
@@ -89,7 +90,7 @@ final class FollowInvitationController extends AbstractFragmentController
 
             $optInToken->confirm();
 
-            $this->addFlash('confirmation', 'Einladung angenommen');
+            $this->addFlash(...Flash::confirmation()->text('Einladung angenommen')->create());
 
             return $this->redirect('/');
         }

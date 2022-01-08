@@ -17,6 +17,7 @@ use Contao\CoreBundle\OptIn\OptInInterface;
 use Contao\Input;
 use Contao\MemberModel;
 use Ferienpass\CoreBundle\Form\UserLostPasswordType;
+use Ferienpass\CoreBundle\Ux\Flash;
 use NotificationCenter\Model\Notification;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormError;
@@ -24,6 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 
 final class LostPasswordController extends AbstractFragmentController
 {
@@ -60,7 +62,7 @@ final class LostPasswordController extends AbstractFragmentController
             } else {
                 $this->sendPasswordLink($memberModel, $request->attributes->get('_route'));
 
-                $this->addFlash('confirm', 'Passwort-Link versendet');
+                $this->addFlash(...Flash::confirmation()->text('Passwort-Link versendet')->create());
 
                 return $this->redirectToRoute($request->attributes->get('_route'));
             }
@@ -136,7 +138,7 @@ final class LostPasswordController extends AbstractFragmentController
             $memberModel->save();
             $optInToken->confirm();
 
-            $this->addFlash('confirm', $GLOBALS['TL_LANG']['MSC']['newPasswordSet']);
+            $this->addFlash(...Flash::confirmation()->text(new TranslatableMessage('MSC.newPasswordSet', [], 'contao_default'))->create());
 
             return $this->render('@FerienpassCore/Fragment/lost-password.html.twig', [
                 'form' => $form->createView(),

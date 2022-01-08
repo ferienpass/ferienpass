@@ -15,22 +15,21 @@ namespace Ferienpass\HostPortalBundle\Controller\Fragment;
 
 use Contao\FrontendUser;
 use Ferienpass\CoreBundle\Form\UserChangePasswordType;
+use Ferienpass\CoreBundle\Ux\Flash;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 
 final class ChangePasswordController extends AbstractFragmentController
 {
     private PasswordHasherInterface $passwordHasher;
-    private TranslatorInterface $translator;
     private Security $security;
 
-    public function __construct(PasswordHasherInterface $passwordHasher, TranslatorInterface $translator, Security $security)
+    public function __construct(PasswordHasherInterface $passwordHasher, Security $security)
     {
         $this->passwordHasher = $passwordHasher;
-        $this->translator = $translator;
         $this->security = $security;
     }
 
@@ -48,14 +47,9 @@ final class ChangePasswordController extends AbstractFragmentController
             $user->password = $this->passwordHasher->hash($form->getData()['password'] ?? '');
             $user->save();
 
-            $this->addFlash('confirmation', $this->trans('MSC.newPasswordSet'));
+            $this->addFlash(...Flash::confirmation()->text(new TranslatableMessage('MSC.newPasswordSet', [], 'contao_default'))->create());
         }
 
         return $this->render('@FerienpassHostPortal/fragment/change_password.html.twig', ['form' => $form->createView()]);
-    }
-
-    private function trans(string $key): string
-    {
-        return $this->translator->trans($key, [], 'contao_default');
     }
 }
