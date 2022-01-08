@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\HostPortalBundle\Controller\Fragment;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExports;
 use Ferienpass\CoreBundle\Message\OfferCancelled;
@@ -20,19 +21,24 @@ use Ferienpass\CoreBundle\Message\OfferRelaunched;
 use Ferienpass\CoreBundle\Ux\Flash;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 final class OfferDetailsController extends AbstractFragmentController
 {
     private PdfExports $pdfExports;
+    private ManagerRegistry $doctrine;
+    private MessageBusInterface $messageBus;
 
-    public function __construct(PdfExports $pdfExports)
+    public function __construct(PdfExports $pdfExports, ManagerRegistry $doctrine, MessageBusInterface $messageBus)
     {
         $this->pdfExports = $pdfExports;
+        $this->doctrine = $doctrine;
+        $this->messageBus = $messageBus;
     }
 
     public function __invoke(Offer $offer, Request $request): Response
     {
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
 
         if ($request->isMethod('delete')) {
             $this->denyAccessUnlessGranted('delete', $offer);
@@ -68,7 +74,7 @@ final class OfferDetailsController extends AbstractFragmentController
             $offer->setCancelled(true);
             $em->flush();
 
-            $this->dispatchMessage(new OfferCancelled($offer->getId()));
+            $this->messageBus->dispatch(new OfferCancelled($offer->getId()));
 
             $this->addFlash(...Flash::confirmation()->text('Das Angebot wurde abgesagt.')->create());
 
@@ -84,7 +90,7 @@ final class OfferDetailsController extends AbstractFragmentController
             // Whether the original participants should be reactivated or whether the participant list should be discarded
             $restoreParticipants = $request->request->getBoolean('participants_restore');
 
-            $this->dispatchMessage(new OfferRelaunched($offer->getId()));
+            $this->messageBus->dispatch(new OfferRelaunched($offer->getId()));
 
             $this->addFlash(...Flash::confirmation()->text('Das Angebot wurde wiederhergestellt.')->create());
 

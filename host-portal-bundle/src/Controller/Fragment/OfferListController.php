@@ -15,7 +15,6 @@ namespace Ferienpass\HostPortalBundle\Controller\Fragment;
 
 use Contao\FrontendUser;
 use Doctrine\ORM\Query\Expr\Join;
-use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Ferienpass\CoreBundle\Repository\HostRepository;
 use Ferienpass\CoreBundle\Repository\OfferRepository;
@@ -37,7 +36,7 @@ final class OfferListController extends AbstractFragmentController
 
     public function __invoke(Request $request): Response
     {
-        $user = $this->get('contao.framework')->createInstance(FrontendUser::class);
+        $user = $this->container->get('contao.framework')->createInstance(FrontendUser::class);
         if (!$user->id) {
             return new Response();
         }
@@ -56,7 +55,7 @@ final class OfferListController extends AbstractFragmentController
         }
 
         if ($request->query->has('edition')) {
-            $edition = $this->getDoctrine()->getRepository(Edition::class)->findOneBy(['alias' => $request->query->get('edition')]);
+            $edition = $this->editionRepository->findOneBy(['alias' => $request->query->get('edition')]);
         }
 
         if (null === ($edition ?? null)) {

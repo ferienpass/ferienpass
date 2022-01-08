@@ -16,8 +16,8 @@ namespace Ferienpass\HostPortalBundle\Controller;
 use Contao\StringUtil;
 use Doctrine\Common\Collections\Collection;
 use Ferienpass\CoreBundle\Entity\Offer;
-use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Export\ParticipantList\PdfExport;
+use Ferienpass\CoreBundle\Repository\ParticipantRepository;
 use Ferienpass\CoreBundle\Ux\Flash;
 use Ferienpass\HostPortalBundle\ApplicationSystem\ParticipantList;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,10 +41,9 @@ final class ParticipantListController extends AbstractController
     /**
      * @Route("/zusagen", name="confirm-participants", methods={"POST"})
      */
-    public function confirm(Offer $offer, Request $request): Response
+    public function confirm(Offer $offer, Request $request, ParticipantRepository $participantRepository): Response
     {
-        $this->get('contao.framework')->initialize(true);
-
+        $this->initializeContaoFramework();
         $this->checkToken();
 
         if (!$this->isGranted('participants.confirm', $offer)) {
@@ -54,7 +53,7 @@ final class ParticipantListController extends AbstractController
         }
 
         $participantIds = StringUtil::trimsplit(',', $request->request->get('participants'));
-        $participants = $this->getDoctrine()->getRepository(Participant::class)->findBy(['id' => $participantIds]);
+        $participants = $participantRepository->findBy(['id' => $participantIds]);
         \assert($participants instanceof Collection);
 
         $this->participantList->confirm($offer, $participants);
@@ -67,10 +66,9 @@ final class ParticipantListController extends AbstractController
     /**
      * @Route("/absagen", name="reject-participants", methods={"POST"})
      */
-    public function reject(Offer $offer, Request $request): Response
+    public function reject(Offer $offer, Request $request, ParticipantRepository $participantRepository): Response
     {
-        $this->get('contao.framework')->initialize(true);
-
+        $this->initializeContaoFramework();
         $this->checkToken();
 
         if (!$this->isGranted('participants.reject', $offer)) {
@@ -80,7 +78,7 @@ final class ParticipantListController extends AbstractController
         }
 
         $participantIds = StringUtil::trimsplit(',', $request->request->get('participants'));
-        $participants = $this->getDoctrine()->getRepository(Participant::class)->findBy(['id' => $participantIds]);
+        $participants = $participantRepository->findBy(['id' => $participantIds]);
         \assert($participants instanceof Collection);
 
         $this->participantList->reject($offer, $participants);

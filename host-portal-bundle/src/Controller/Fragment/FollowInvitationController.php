@@ -58,7 +58,7 @@ final class FollowInvitationController extends AbstractFragmentController
             return $this->render('@FerienpassHostPortal/fragment/follow_invitation.html.twig', ['error' => $error]);
         }
 
-        $user = $this->get('contao.framework')->createInstance(FrontendUser::class);
+        $user = $this->container->get('contao.framework')->createInstance(FrontendUser::class);
 
         $memberModel = new MemberModel();
         if ($user->id) {

@@ -31,7 +31,7 @@ abstract class AbstractContentElementController extends BaseContentElementContro
 
     protected function getBackendWildcard(): Response
     {
-        $name = $this->get('translator')->trans('CTE.'.$this->getType().'.0', [], 'contao_modules');
+        $name = $this->container->get('translator')->trans('CTE.'.$this->getType().'.0', [], 'contao_modules');
 
         $template = new BackendTemplate('be_wildcard');
 

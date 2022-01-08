@@ -15,12 +15,14 @@ namespace Ferienpass\HostPortalBundle\EventListener;
 
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Routing\ScopeMatcher;
+use Contao\CoreBundle\Security\ContaoCorePermissions;
 use Contao\FrontendUser;
 use Ferienpass\CoreBundle\Ux\Flash;
 use Ferienpass\HostPortalBundle\State\PrivacyConsent;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Security;
 
 final class MissingPrivacyStatementAlert
 {
@@ -28,18 +30,20 @@ final class MissingPrivacyStatementAlert
     private ScopeMatcher $scopeMatcher;
     private PrivacyConsent $privacyConsent;
     private UrlGeneratorInterface $router;
+    private Security $security;
 
-    public function __construct(ContaoFramework $contaoFramework, PrivacyConsent $privacyConsent, ScopeMatcher $scopeMatcher, UrlGeneratorInterface $router)
+    public function __construct(ContaoFramework $contaoFramework, PrivacyConsent $privacyConsent, ScopeMatcher $scopeMatcher, UrlGeneratorInterface $router, Security $security)
     {
         $this->contaoFramework = $contaoFramework;
         $this->scopeMatcher = $scopeMatcher;
         $this->privacyConsent = $privacyConsent;
         $this->router = $router;
+        $this->security = $security;
     }
 
     public function __invoke(RequestEvent $event): void
     {
-        if (!$this->scopeMatcher->isFrontendMasterRequest($event) || $event->getRequest()->isXmlHttpRequest()) {
+        if (!$this->scopeMatcher->isFrontendMainRequest($event) || $event->getRequest()->isXmlHttpRequest()) {
             return;
         }
 
@@ -48,7 +52,7 @@ final class MissingPrivacyStatementAlert
         $user = $this->contaoFramework->createInstance(FrontendUser::class);
 
         // Is member a host?
-        if (false === $user->isMemberOf(1)) {
+        if (false === $this->security->isGranted(ContaoCorePermissions::MEMBER_IN_GROUPS, 1)) {
             return;
         }
 

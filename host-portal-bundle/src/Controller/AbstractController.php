@@ -35,13 +35,13 @@ class AbstractController extends ContaoAbstractController
 
     protected function checkToken(): void
     {
-        if (!$this->get('security.helper')->isGranted(ContaoCorePermissions::MEMBER_IN_GROUPS, 1)) {
+        if (!$this->container->get('security.helper')->isGranted(ContaoCorePermissions::MEMBER_IN_GROUPS, 1)) {
             throw new AccessDeniedException('Access denied');
         }
     }
 
     protected function createPageBuilder(PageModel $pageModel): PageBuilder
     {
-        return $this->get(PageBuilderFactory::class)->create($pageModel);
+        return $this->container->get(PageBuilderFactory::class)->create($pageModel);
     }
 }

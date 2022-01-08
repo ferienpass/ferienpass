@@ -133,7 +133,7 @@ class PrivacyConsentController extends AbstractFragmentController
                 json_encode($form->getData()),
                 sha1($this->consentState->getFormattedConsentText()),
             ])
-            ->execute()
+            ->executeStatement()
         ;
     }
 }

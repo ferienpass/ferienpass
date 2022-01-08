@@ -106,7 +106,7 @@ class ParticipantList
     {
         $applicationSystem = $this->applicationSystems->findApplicationSystem($offer);
 
-        $expr = $this->connection->getExpressionBuilder();
+        $expr = $this->connection->createExpressionBuilder();
 
         // Try to find an existing participant
         $statement = $this->connection->createQueryBuilder()
@@ -126,7 +126,7 @@ class ParticipantList
             ->setParameter('email', $data['email'])
             ->setParameter('firstname', $data['firstname'])
             ->setParameter('lastname', $data['lastname'])
-            ->execute()
+            ->executeQuery()
         ;
 
         if (false !== $participantId = $statement->fetchOne()) {
@@ -148,7 +148,7 @@ class ParticipantList
             )
             ->setParameter('phone', $data['phone'])
             ->setParameter('email', $data['email'])
-            ->execute()
+            ->executeQuery()
         ;
 
         if (false !== $memberId = $statement->fetchOne()) {
