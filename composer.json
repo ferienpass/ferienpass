@@ -85,13 +85,16 @@
     "ferienpass/base-bundle": "self.version",
     "ferienpass/core-bundle": "self.version",
     "ferienpass/fixtures-bundle": "self.version",
-    "ferienpass/host-portal-bundle": "self.version"
+    "ferienpass/host-portal-bundle": "self.version",
+    "ferienpass/ux-theme": "self.version",
+    "ferienpass/ux-host-portal": "self.version"
   },
   "extra": {
     "contao-manager-plugin": {
       "ferienpass/fixtures-bundle": "Ferienpass\\FixturesBundle\\ContaoManager\\Plugin",
       "ferienpass/core-bundle": "Ferienpass\\CoreBundle\\ContaoManager\\Plugin",
-      "ferienpass/host-portal-bundle": "Ferienpass\\HostPortalBundle\\ContaoManager\\Plugin"
+      "ferienpass/host-portal-bundle": "Ferienpass\\HostPortalBundle\\ContaoManager\\Plugin",
+      "ferienpass/ux-host-portal": "Ferienpass\\UX\\HostPortal\\ContaoManager\\Plugin"
     },
     "symfony": {
       "require": "^5.2"
@@ -103,7 +106,8 @@
     "psr-4": {
       "Ferienpass\\CoreBundle\\": "core-bundle/src/",
       "Ferienpass\\FixturesBundle\\": "fixtures-bundle/src/",
-      "Ferienpass\\HostPortalBundle\\": "host-portal-bundle/src/"
+      "Ferienpass\\HostPortalBundle\\": "host-portal-bundle/src/",
+      "Ferienpass\\UX\\HostPortal\\": "ux/packages/HostPortal/src/"
     }
   },
   "autoload-dev": {
