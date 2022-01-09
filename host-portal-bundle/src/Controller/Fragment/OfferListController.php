@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\HostPortalBundle\Controller\Fragment;
 
 use Contao\FrontendUser;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Query\Expr\Join;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Ferienpass\CoreBundle\Repository\HostRepository;
@@ -58,7 +59,7 @@ final class OfferListController extends AbstractFragmentController
 
         $offers = $qb
             ->andWhere('o.edition = :edition')
-            ->setParameter('edition', $edition)
+            ->setParameter('edition', $edition->getId(), Types::INTEGER)
             ->leftJoin('o.dates', 'd')
             ->orderBy('d.begin')
             ->getQuery()
