@@ -22,7 +22,7 @@ Offer:
 
 offer.action:
   edit: Angebot bearbeiten
-  copy: Angebot kopieren
+  copy: Angebot kopieren nach „{edition}“
   delete: Angebot löschen
   newVariant: Neuen Termin erstellen
   freeze: Angebot einfrieren
