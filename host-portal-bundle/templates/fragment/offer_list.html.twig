@@ -73,7 +73,7 @@
                             </div>
 
                             {% if disabled %}
-                                <p class=" mt-1 text-right max-w-xs text-xs text-gray-500">Das Erstellen von Angeboten ist für den „{{ edition.name }}“ aktuell nicht möglich.</p>
+                                <p class=" mt-1 text-right max-w-xs text-xs text-gray-500">Das Erstellen von Angeboten in „{{ edition.name }}“ ist aktuell nicht möglich.</p>
                             {% endif %}
                         </div>
                     </div>
@@ -144,8 +144,10 @@
                                                         {% for action in actions.children|filter(a => a.displayed and not a.extra('method')) %}
                                                             {% embed '@FerienpassHostPortal/components/dropdown-a.html.twig' with {'uri': action.uri} %}
                                                                 {% block link %}
-                                                                    <span class="mr-3 h-5 w-5 text-gray-400">{{ source('@FerienpassHostPortal/icons/'~action.extra('icon')~'.svg', ignore_missing = true) }}</span>
-                                                                    <span class="truncate">{{ action.label|trans }}</span>
+                                                                    <span class="mr-3 h-5 w-5 text-gray-400 flex-shrink-0">{{ source('@FerienpassHostPortal/icons/'~action.extra('icon')~'.svg', ignore_missing = true) }}</span>
+                                                                    {%- set label = action.label -%}
+                                                                    {%- set label = label|trans(action.extra('translation_params', {})) -%}
+                                                                    <span class="text-left leading-tight">{{ label }}</span>
                                                                 {% endblock %}
                                                             {% endembed %}
                                                         {% endfor %}
