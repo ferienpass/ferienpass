@@ -121,16 +121,15 @@ final class OfferEditor extends AbstractFragmentController
         if (0 === $offerId = $request->attributes->getInt('id')) {
             $offer = new Offer();
 
+            $edition = null;
             if ($request->query->has('edition')) {
                 $edition = $this->editionRepository->findOneBy(['alias' => $request->query->get('edition')]);
             }
 
-            if (null === ($edition ?? null)) {
-                $edition = $this->editionRepository->findDefaultForHost();
+            if (null !== $edition) {
+                $offer->setEdition($edition);
             }
 
-            $offer->setEdition($edition);
-            // TODO use ->isGranted() and show an error message
             $this->denyAccessUnlessGranted('create', $offer);
 
             if ($request->query->has('act') && $request->query->has('source')) {
