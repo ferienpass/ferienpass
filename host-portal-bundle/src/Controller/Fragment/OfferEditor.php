@@ -73,20 +73,21 @@ final class OfferEditor extends AbstractFragmentController
                 }
             }
 
-            /** @var UploadedFile $imageFile */
+            /** @var UploadedFile|null $imageFile */
             $imageFile = $form->get('image')->getData();
             if ($imageFile) {
                 $originalFilename = pathinfo($imageFile->getClientOriginalName(), \PATHINFO_FILENAME);
 
-                $fileExists = fn (string $filename) => file_exists(sprintf('%s/%s.%s', $this->imagesDir, $filename, $imageFile->guessExtension()));
+                $fileExists = fn (string $filename): bool => file_exists(sprintf('%s/%s.%s', $this->imagesDir, $filename, (string) $imageFile->guessExtension()));
                 $safeFilename = $this->slug->generate($originalFilename, [], $fileExists);
-                $newFilename = $safeFilename.'.'.$imageFile->guessExtension();
+                $newFilename = $safeFilename.'.'.(string) $imageFile->guessExtension();
 
                 try {
                     $imageFile->move($this->imagesDir, $newFilename);
 
                     $relativeFileName = ltrim(str_replace($this->projectDir, '', $this->imagesDir), '/').'/'.$newFilename;
                     $fileModel = Dbafs::addResource($relativeFileName);
+                    /** @psalm-suppress UndefinedMagicPropertyAssignment */
                     $fileModel->imgCopyright = $form->get('imgCopyright')->getData();
                     $fileModel->save();
 
@@ -96,7 +97,8 @@ final class OfferEditor extends AbstractFragmentController
             } elseif ($imgCopyright = $form->get('imgCopyright')->getData()) {
                 $fileModel = FilesModel::findByPk($offer->getImage());
                 if (null !== $fileModel) {
-                    $fileModel->imgCopyright = $form->get('imgCopyright')->getData();
+                    /** @psalm-suppress UndefinedMagicPropertyAssignment */
+                    $fileModel->imgCopyright = $imgCopyright;
                     $fileModel->save();
                 }
             }
