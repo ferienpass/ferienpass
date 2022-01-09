@@ -26,19 +26,8 @@ use Symfony\Component\Security\Core\Security;
 
 final class MissingPrivacyStatementAlert
 {
-    private ContaoFramework $contaoFramework;
-    private ScopeMatcher $scopeMatcher;
-    private PrivacyConsent $privacyConsent;
-    private UrlGeneratorInterface $router;
-    private Security $security;
-
-    public function __construct(ContaoFramework $contaoFramework, PrivacyConsent $privacyConsent, ScopeMatcher $scopeMatcher, UrlGeneratorInterface $router, Security $security)
+    public function __construct(private ContaoFramework $contaoFramework, private PrivacyConsent $privacyConsent, private ScopeMatcher $scopeMatcher, private UrlGeneratorInterface $router, private Security $security)
     {
-        $this->contaoFramework = $contaoFramework;
-        $this->scopeMatcher = $scopeMatcher;
-        $this->privacyConsent = $privacyConsent;
-        $this->router = $router;
-        $this->security = $security;
     }
 
     public function __invoke(RequestEvent $event): void

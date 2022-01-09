@@ -27,17 +27,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class OrganizationEditorController extends AbstractFragmentController
 {
-    private Slug $slug;
-    private string $logosDir;
-    private string $projectDir;
-    private ManagerRegistry $doctrine;
-
-    public function __construct(Slug $slug, string $logosDir, string $projectDir, ManagerRegistry $doctrine)
+    public function __construct(private Slug $slug, private string $logosDir, private string $projectDir, private ManagerRegistry $doctrine)
     {
-        $this->slug = $slug;
-        $this->logosDir = $logosDir;
-        $this->projectDir = $projectDir;
-        $this->doctrine = $doctrine;
     }
 
     public function __invoke(Host $host, Request $request): ?Response
@@ -66,7 +57,7 @@ final class OrganizationEditorController extends AbstractFragmentController
                     $fileModel = Dbafs::addResource($relativeFileName);
 
                     $host->setLogo($fileModel->uuid);
-                } catch (FileException $e) {
+                } catch (FileException) {
                 }
             }
 

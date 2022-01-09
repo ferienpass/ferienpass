@@ -16,7 +16,7 @@
     "email": "info@ferienpass.online"
   },
   "require": {
-    "php": ">=7.4",
+    "php": ">=8.0",
     "ext-json": "*",
     "ext-dom": "*",
     "ext-libxml": "*",
@@ -122,6 +122,7 @@
     "phpunit/phpunit": "^8.5",
     "symfony/test-pack": "^1.0",
     "doctrine/doctrine-fixtures-bundle": "^3.4",
-    "dama/doctrine-test-bundle": "^6.5"
+    "dama/doctrine-test-bundle": "^6.5",
+    "rector/rector": "^0.12.12"
   }
 }

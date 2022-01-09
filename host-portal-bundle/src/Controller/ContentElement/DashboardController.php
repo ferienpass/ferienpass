@@ -28,11 +28,8 @@ use Symfony\Component\Translation\TranslatableMessage;
  */
 final class DashboardController extends AbstractContentElementController
 {
-    private EditionRepository $editionRepository;
-
-    public function __construct(EditionRepository $editionRepository)
+    public function __construct(private EditionRepository $editionRepository)
     {
-        $this->editionRepository = $editionRepository;
     }
 
     protected function getResponse(Template $template, ContentModel $model, Request $request): Response

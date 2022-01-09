@@ -26,15 +26,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ParticipantListController extends AbstractFragmentController
 {
-    private PrivacyConsent $privacyConsent;
-    private AttendanceFacade $attendanceFacade;
-    private ManagerRegistry $doctrine;
-
-    public function __construct(PrivacyConsent $privacyConsent, AttendanceFacade $attendanceFacade, ManagerRegistry $doctrine)
+    public function __construct(private PrivacyConsent $privacyConsent, private AttendanceFacade $attendanceFacade, private ManagerRegistry $doctrine)
     {
-        $this->privacyConsent = $privacyConsent;
-        $this->attendanceFacade = $attendanceFacade;
-        $this->doctrine = $doctrine;
     }
 
     public function __invoke(Offer $offer, Request $request): Response

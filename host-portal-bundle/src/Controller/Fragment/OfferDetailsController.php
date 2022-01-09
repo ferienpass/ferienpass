@@ -25,15 +25,8 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 final class OfferDetailsController extends AbstractFragmentController
 {
-    private PdfExports $pdfExports;
-    private ManagerRegistry $doctrine;
-    private MessageBusInterface $messageBus;
-
-    public function __construct(PdfExports $pdfExports, ManagerRegistry $doctrine, MessageBusInterface $messageBus)
+    public function __construct(private PdfExports $pdfExports, private ManagerRegistry $doctrine, private MessageBusInterface $messageBus)
     {
-        $this->pdfExports = $pdfExports;
-        $this->doctrine = $doctrine;
-        $this->messageBus = $messageBus;
     }
 
     public function __invoke(Offer $offer, Request $request): Response

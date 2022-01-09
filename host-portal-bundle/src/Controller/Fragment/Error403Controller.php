@@ -19,11 +19,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class Error403Controller extends AbstractFragmentController
 {
-    private string $adminEmail;
-
-    public function __construct(string $adminEmail)
+    public function __construct(private string $adminEmail)
     {
-        $this->adminEmail = $adminEmail;
     }
 
     public function __invoke(Request $request): Response

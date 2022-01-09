@@ -33,21 +33,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class OfferEditor extends AbstractFragmentController
 {
-    private Slug $slug;
-    private string $imagesDir;
-    private string $projectDir;
-    private ManagerRegistry $doctrine;
-    private EditionRepository $editionRepository;
-    private OfferRepository $offerRepository;
-
-    public function __construct(Slug $slug, string $imagesDir, string $projectDir, ManagerRegistry $doctrine, EditionRepository $editionRepository, OfferRepository $offerRepository)
+    public function __construct(private Slug $slug, private string $imagesDir, private string $projectDir, private ManagerRegistry $doctrine, private EditionRepository $editionRepository, private OfferRepository $offerRepository)
     {
-        $this->slug = $slug;
-        $this->imagesDir = $imagesDir;
-        $this->projectDir = $projectDir;
-        $this->doctrine = $doctrine;
-        $this->editionRepository = $editionRepository;
-        $this->offerRepository = $offerRepository;
     }
 
     public function __invoke(Request $request): Response
@@ -91,7 +78,7 @@ final class OfferEditor extends AbstractFragmentController
                     $fileModel->save();
 
                     $offer->setImage($fileModel->uuid);
-                } catch (FileException $e) {
+                } catch (FileException) {
                 }
             } elseif ($imgCopyright = $form->get('imgCopyright')->getData()) {
                 $fileModel = FilesModel::findByPk($offer->getImage());
@@ -116,6 +103,7 @@ final class OfferEditor extends AbstractFragmentController
 
     private function getOffer(Request $request): Offer
     {
+        $edition = null;
         if (0 === $offerId = $request->attributes->getInt('id')) {
             $offer = new Offer();
 

@@ -29,13 +29,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 final class ParticipantListController extends AbstractController
 {
-    private ParticipantList $participantList;
-    private PdfExport $pdfExport;
-
-    public function __construct(ParticipantList $participantList, PdfExport $pdfExport)
+    public function __construct(private ParticipantList $participantList, private PdfExport $pdfExport)
     {
-        $this->participantList = $participantList;
-        $this->pdfExport = $pdfExport;
     }
 
     /**

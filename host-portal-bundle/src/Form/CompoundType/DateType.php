@@ -54,11 +54,9 @@ class DateType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => OfferDate::class,
-            'empty_data' => function (FormInterface $form) {
-                // We rely on the fact that the parent form is a DatesType
-                // and its parent form is a OfferType that is linked to an Offer entity.
-                return new OfferDate($form->getParent()->getParent()->getData());
-            },
+            // We rely on the fact that the parent form is a DatesType
+            // and its parent form is a OfferType that is linked to an Offer entity.
+            'empty_data' => fn (FormInterface $form) => new OfferDate($form->getParent()->getParent()->getData()),
         ]);
     }
 }

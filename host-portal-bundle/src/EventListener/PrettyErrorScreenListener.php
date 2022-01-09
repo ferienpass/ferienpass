@@ -29,13 +29,8 @@ use Symfony\Component\Security\Core\Security;
 
 class PrettyErrorScreenListener
 {
-    private Security $security;
-    private PageBuilderFactory $pageBuilderFactory;
-
-    public function __construct(Security $security, PageBuilderFactory $pageBuilderFactory)
+    public function __construct(private Security $security, private PageBuilderFactory $pageBuilderFactory)
     {
-        $this->security = $security;
-        $this->pageBuilderFactory = $pageBuilderFactory;
     }
 
     public function __invoke(ExceptionEvent $event): void
@@ -49,7 +44,7 @@ class PrettyErrorScreenListener
             return;
         }
 
-        if (0 !== strpos($request->getHttpHost(), 'veranstalter.')) {
+        if (!str_starts_with($request->getHttpHost(), 'veranstalter.')) {
             return;
         }
 
@@ -66,7 +61,7 @@ class PrettyErrorScreenListener
 
         try {
             $isBackendUser = $this->security->isGranted('ROLE_USER');
-        } catch (AuthenticationCredentialsNotFoundException $e) {
+        } catch (AuthenticationCredentialsNotFoundException) {
             $isBackendUser = false;
         }
 

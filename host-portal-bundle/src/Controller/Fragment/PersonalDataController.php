@@ -22,11 +22,8 @@ use Symfony\Component\Security\Core\Security;
 
 final class PersonalDataController extends AbstractFragmentController
 {
-    private Security $security;
-
-    public function __construct(Security $security)
+    public function __construct(private Security $security)
     {
-        $this->security = $security;
     }
 
     public function __invoke(Request $request): Response

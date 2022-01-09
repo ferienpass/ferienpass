@@ -28,17 +28,8 @@ use Symfony\Component\Security\Core\Security;
 
 final class OrganizationController extends AbstractFragmentController
 {
-    private Security $security;
-    private Connection $connection;
-    private OptIn $optIn;
-    private HostRepository $hostRepository;
-
-    public function __construct(Security $security, Connection $connection, OptIn $optIn, HostRepository $hostRepository)
+    public function __construct(private Security $security, private Connection $connection, private OptIn $optIn, private HostRepository $hostRepository)
     {
-        $this->security = $security;
-        $this->connection = $connection;
-        $this->optIn = $optIn;
-        $this->hostRepository = $hostRepository;
     }
 
     public function __invoke(Request $request): Response
