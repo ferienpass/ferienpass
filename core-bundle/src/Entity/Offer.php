@@ -119,7 +119,7 @@ class Offer
     /**
      * @ORM\Column(type="boolean", options={"default"=0})
      */
-    private bool $requiresApplication;
+    private bool $requiresApplication = false;
 
     /**
      * @ORM\Column(type="boolean", options={"default"=0})

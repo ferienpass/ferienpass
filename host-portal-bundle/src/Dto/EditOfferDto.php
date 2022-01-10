@@ -46,7 +46,7 @@ class EditOfferDto implements OfferDto
     public ?int $maxParticipants = null;
     public ?int $minAge = null;
     public ?int $maxAge = null;
-    public bool $requiresApplication;
+    public bool $requiresApplication = false;
     public bool $onlineApplication = false;
     public ?string $applyText = null;
     public ?string $contact = null;
