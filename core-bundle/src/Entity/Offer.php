@@ -281,6 +281,15 @@ class Offer
         return $this->dates;
     }
 
+    /**
+     * @param  Collection|OfferDate[]
+     * @psalm-param  Collection<int, OfferDate>
+     */
+    public function setDates(Collection $dates): void
+    {
+        $this->dates = $dates;
+    }
+
     public function isVariantBase(): bool
     {
         return null === $this->variantBase;
@@ -516,6 +525,15 @@ class Offer
     public function getCategories(): Collection
     {
         return $this->categories;
+    }
+
+    /**
+     * @param  Collection|OfferCategory[]
+     * @psalm-param  Collection<int, OfferCategory>
+     */
+    public function setCategories(Collection $categories): void
+    {
+        $this->categories = $categories;
     }
 
     public function addCategory(OfferCategory $category): void

@@ -16,9 +16,9 @@ namespace Ferienpass\HostPortalBundle\Form;
 use AdamQuaile\Bundle\FieldsetBundle\Form\FieldsetType;
 use Contao\Config;
 use Contao\Controller;
-use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\OfferCategory;
 use Ferienpass\CoreBundle\Form\SimpleType\ContaoRequestTokenType;
+use Ferienpass\HostPortalBundle\Dto\EditOfferDto;
 use Ferienpass\HostPortalBundle\Form\CompoundType\DatesType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -40,7 +40,7 @@ class EditOfferType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Offer::class,
+            'data_class' => EditOfferDto::class,
             'is_variant' => true,
             'csrf_protection' => false,
         ]);
