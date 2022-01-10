@@ -13,11 +13,12 @@ declare(strict_types=1);
 
 namespace Ferienpass\HostPortalBundle\Dto;
 
+use Ferienpass\CoreBundle\Dto\HostDto;
 use Ferienpass\CoreBundle\Entity\Host;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class EditHostDto
+class EditHostDto implements HostDto
 {
     /**
      * @Assert\NotBlank

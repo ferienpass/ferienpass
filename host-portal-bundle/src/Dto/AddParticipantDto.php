@@ -13,9 +13,10 @@ declare(strict_types=1);
 
 namespace Ferienpass\HostPortalBundle\Dto;
 
+use Ferienpass\CoreBundle\Dto\ParticipantDto;
 use Ferienpass\CoreBundle\Entity\Participant;
 
-class AddParticipantDto
+class AddParticipantDto implements ParticipantDto
 {
     public ?string $firstname = null;
     public ?string $lastname = null;
@@ -24,12 +25,12 @@ class AddParticipantDto
     public ?string $mobile = null;
     public ?string $phone = null;
 
-    public static function fromEntity(Participant $participant): self
+    public static function fromEntity(Participant $participant = null): self
     {
         throw new \BadFunctionCallException();
     }
 
-    public function toEntity(): Participant
+    public function toEntity(Participant $participant = null): Participant
     {
         $entity = new Participant();
 
