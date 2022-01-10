@@ -25,6 +25,7 @@ use Ferienpass\CoreBundle\Entity\OfferDate;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Ferienpass\CoreBundle\Repository\OfferRepository;
 use Ferienpass\CoreBundle\Ux\Flash;
+use Ferienpass\HostPortalBundle\Dto\EditOfferDto;
 use Ferienpass\HostPortalBundle\Form\EditOfferType;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -60,9 +61,10 @@ final class OfferEditor extends AbstractFragmentController
             $originalDates->add($date);
         }
 
-        $form = $this->createForm(EditOfferType::class, $offer, ['is_variant' => !$offer->isVariantBase()]);
+        $form = $this->createForm(EditOfferType::class, $dto = EditOfferDto::fromEntity($offer), ['is_variant' => !$offer->isVariantBase()]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $offer = $dto->toEntity($offer);
             $offer->setTimestamp(time());
 
             $entityManager = $this->doctrine->getManager();
@@ -122,8 +124,8 @@ final class OfferEditor extends AbstractFragmentController
             $offer = new Offer();
 
             $edition = null;
-            if ($request->query->has('edition')) {
-                $edition = $this->editionRepository->findOneBy(['alias' => $request->query->get('edition')]);
+            if ($alias = $request->query->get('edition')) {
+                $edition = $this->editionRepository->findOneBy(['alias' => $alias]);
             }
 
             if (null !== $edition) {
