@@ -23,26 +23,39 @@ class EditHostDto implements HostDto
     /**
      * @Assert\NotBlank
      */
+    #[Annotation\FormType('title')]
     public ?string $name = null;
+
+    #[Annotation\FormType('title')]
     public ?string $text = null;
 
     /**
      * @PhoneNumber(defaultRegion="DE")
      */
+    #[Annotation\FormType('contact')]
     public ?string $phone = null;
 
     /**
      * @Assert\Email()
      */
+    #[Annotation\FormType('contact')]
     public ?string $email = null;
 
     /**
      * @Assert\Url()
      */
+    #[Annotation\FormType('contact')]
     public ?string $website = null;
+
+    #[Annotation\FormType('address')]
     public ?string $street = null;
+
+    #[Annotation\FormType('address')]
     public ?string $postal = null;
+
+    #[Annotation\FormType('address')]
     public ?string $city = null;
+
     public ?string $logo = null;
 
     public static function fromEntity(Host $host = null): self

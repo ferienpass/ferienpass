@@ -13,23 +13,12 @@ declare(strict_types=1);
 
 namespace Ferienpass\HostPortalBundle\Form;
 
-use AdamQuaile\Bundle\FieldsetBundle\Form\FieldsetType;
-use Contao\Config;
-use Contao\Controller;
-use Ferienpass\CoreBundle\Entity\OfferCategory;
 use Ferienpass\CoreBundle\Form\SimpleType\ContaoRequestTokenType;
+use Ferienpass\HostPortalBundle\Dto\Annotation\FormType as FormTypeAnnotation;
 use Ferienpass\HostPortalBundle\Dto\EditOfferDto;
-use Ferienpass\HostPortalBundle\Form\CompoundType\DatesType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -50,188 +39,29 @@ class EditOfferType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        Controller::loadDataContainer('Offer');
+        $properties = (new \ReflectionClass($options['data_class']))->getProperties(\ReflectionProperty::IS_PUBLIC);
+
+        foreach ($properties as $property) {
+            $annotations = array_merge(...array_map(fn (\ReflectionAttribute $attribute) => $attribute->getArguments(), $property->getAttributes(FormTypeAnnotation::class)));
+            $group = current($annotations);
+
+            $fieldOptions = [
+                'disabled' => $options['is_variant'],
+                'label' => "Offer.{$property->getName()}.0",
+                'required' => 'name' === $property->getName(),
+                'help' => ($annotations['showHelp'] ?? false) ? "Offer.{$property->getName()}.1" : null,
+                'translation_domain' => 'contao_Offer',
+                'fieldset_group' => $group,
+            ];
+
+            if ($placeholder = $annotations['placeholder'] ?? null) {
+                $fieldOptions += ['attr' => ['placeholder' => $placeholder]];
+            }
+
+            $builder->add($property->getName(), null, $fieldOptions);
+        }
 
         $builder
-            ->add('name_fieldset', FieldsetType::class, [
-                'label' => false,
-                'legend' => 'Offer.title_legend',
-                'help' => 'Offer.title_help',
-                'fields' => function (FormBuilderInterface $builder) use ($options) {
-                    $builder
-                        ->add('name', TextType::class, [
-                            'disabled' => $options['is_variant'],
-                            'label' => 'Offer.name.0',
-                            'translation_domain' => 'contao_Offer',
-                        ])
-                        ->add('description', TextareaType::class, [
-                            'disabled' => $options['is_variant'],
-                            'required' => false,
-                            'label' => 'Offer.description.0',
-                            'translation_domain' => 'contao_Offer',
-                        ])
-                        ->add('meetingPoint', TextType::class, [
-                            'disabled' => $options['is_variant'],
-                            'required' => false,
-                            'label' => 'Offer.meetingPoint.0',
-                            'translation_domain' => 'contao_Offer',
-                        ])
-                        ->add('bring', TextType::class, [
-                            'disabled' => $options['is_variant'],
-                            'required' => false,
-                            'label' => 'Offer.bring.0',
-                            'translation_domain' => 'contao_Offer',
-                        ])
-                    ;
-
-                    if (isset($GLOBALS['TL_DCA']['Offer']['fields']['category'])) {
-                        $builder
-                            ->add('categories', EntityType::class, [
-                                'class' => OfferCategory::class,
-                                'multiple' => true,
-                                'choice_label' => 'name',
-                                'required' => false,
-                                'disabled' => $options['is_variant'],
-                                'label' => 'Offer.category.0',
-                                'translation_domain' => 'contao_Offer',
-                            ])
-                        ;
-                    }
-                },
-            ])
-            ->add('date_fieldset', FieldsetType::class, [
-                'label' => false,
-                'legend' => 'Offer.date_legend',
-                'help' => 'Offer.date_help',
-                'fields' => function (FormBuilderInterface $builder) {
-                    $builder
-                        ->add('dates', DatesType::class, [
-                            'label' => false,
-                            'help' => 'Sie können eine zusätzliche Zeit eintragen, wenn die gleiche Gruppe von Kindern an mehreren Terminen erscheinen muss. Wenn Sie das Angebot mehrmals anbieten, verwenden Sie stattdessen die Kopierfunktion auf der Übersichtsseite.',
-                            'translation_domain' => 'contao_Offer',
-                        ])
-                        ->add('applicationDeadline', DateType::class, [
-                            'required' => false,
-                            'label' => 'Offer.applicationDeadline.0',
-                            'help' => 'Offer.applicationDeadline.1',
-                            'translation_domain' => 'contao_Offer',
-                            'input_format' => Config::get('dateFormat'),
-                            'widget' => 'single_text',
-                        ])
-                        ->add('comment', TextType::class, [
-                            'required' => false,
-                            'label' => 'Offer.comment.0',
-                            'help' => 'Offer.comment.1',
-                            'translation_domain' => 'contao_Offer',
-                        ])
-                    ;
-                },
-            ])
-            ->add('applications_fieldset', FieldsetType::class, [
-                'label' => false,
-                'legend' => 'Offer.applications_legend',
-                'help' => 'Offer.applications_help',
-                'fields' => function (FormBuilderInterface $builder) use ($options) {
-                    $builder
-                        ->add('minParticipants', IntegerType::class, [
-                            'required' => false,
-                            'disabled' => $options['is_variant'],
-                            'label' => 'Offer.minParticipants.0',
-                            'attr' => ['placeholder' => '-'],
-                            'translation_domain' => 'contao_Offer',
-                        ])
-                        ->add('maxParticipants', IntegerType::class, [
-                            'required' => false,
-                            'disabled' => $options['is_variant'],
-                            'label' => 'Offer.maxParticipants.0',
-                            'attr' => ['placeholder' => 'ohne Begrenzung'],
-                            'translation_domain' => 'contao_Offer',
-                        ])
-                        ->add('minAge', IntegerType::class, [
-                            'required' => false,
-                            'disabled' => $options['is_variant'],
-                            'label' => 'Offer.minAge.0',
-                            'attr' => ['placeholder' => 'kein Mindestalter'],
-                            'translation_domain' => 'contao_Offer',
-                        ])
-                        ->add('maxAge', IntegerType::class, [
-                            'required' => false,
-                            'disabled' => $options['is_variant'],
-                            'label' => 'Offer.maxAge.0',
-                            'attr' => ['placeholder' => 'kein Höchstalter'],
-                            'translation_domain' => 'contao_Offer',
-                        ])
-                        ->add('requiresApplication', CheckboxType::class, [
-                            'required' => false,
-                            'disabled' => $options['is_variant'],
-                            'label' => 'Offer.requiresApplication.0',
-                            'help' => 'Offer.requiresApplication.1',
-                            'translation_domain' => 'contao_Offer',
-                        ])
-                        ->add('onlineApplication', CheckboxType::class, [
-                            'required' => false,
-                            'disabled' => $options['is_variant'],
-                            'label' => 'Offer.onlineApplication.0',
-                            'help' => 'Offer.onlineApplication.1',
-                            'translation_domain' => 'contao_Offer',
-                        ])
-                        ->add('applyText', TextType::class, [
-                            'required' => false,
-                            'disabled' => $options['is_variant'],
-                            'label' => 'Offer.applyText.0',
-                            'help' => 'Offer.applyText.1',
-                            'translation_domain' => 'contao_Offer',
-                        ])
-                        ->add('contact', TextType::class, [
-                            'required' => false,
-                            'disabled' => $options['is_variant'],
-                            'label' => 'Offer.contact.0',
-                            'help' => 'Offer.contact.1',
-                            'translation_domain' => 'contao_Offer',
-                        ])
-                        ->add('fee', MoneyType::class, [
-                            'required' => false,
-                            'disabled' => $options['is_variant'],
-                            'label' => 'Offer.fee.0',
-                            'translation_domain' => 'contao_Offer',
-                            'divisor' => 100,
-                            'html5' => true,
-                        ])
-                    ;
-                    if (isset($GLOBALS['TL_DCA']['Offer']['fields']['aktivPass'])) {
-                        $builder
-                            ->add('aktivPass', CheckboxType::class, [
-                                'required' => false,
-                                'disabled' => $options['is_variant'],
-                                'label' => 'Offer.aktivPass.0',
-                                'help' => 'Offer.aktivPass.1',
-                                'translation_domain' => 'contao_Offer',
-                            ])
-                        ;
-                    }
-
-                    if (isset($GLOBALS['TL_DCA']['Offer']['fields']['accessibility'])) {
-                        $builder
-                            ->add('accessibility', ChoiceType::class, [
-                                'required' => false,
-                                'disabled' => $options['is_variant'],
-                                'label' => 'Offer.accessibility.0',
-                                'choices' => [
-                                    'barrierefrei',
-                                    'koerperliches-handicap',
-                                    'assistenz',
-                                    'geistiges-handicap',
-                                ],
-                                'choice_label' => function ($choice) {
-                                    return 'accessibility.'.$choice.'.label';
-                                },
-                                'expanded' => true,
-                                'multiple' => true,
-                            ])
-                        ;
-                    }
-                },
-            ])
             ->add('image', FileType::class, [
                 'mapped' => false,
                 'disabled' => $options['is_variant'],
