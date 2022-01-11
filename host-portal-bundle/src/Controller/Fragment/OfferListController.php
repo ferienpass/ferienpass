@@ -24,19 +24,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class OfferListController extends AbstractFragmentController
 {
-    private EditionRepository $editionRepository;
-    private HostRepository $hostRepository;
-    private OfferRepository $offerRepository;
-
-    public function __construct(EditionRepository $editionRepository, HostRepository $hostRepository, OfferRepository $offerRepository)
+    public function __construct(private EditionRepository $editionRepository, private HostRepository $hostRepository, private OfferRepository $offerRepository)
     {
-        $this->editionRepository = $editionRepository;
-        $this->hostRepository = $hostRepository;
-        $this->offerRepository = $offerRepository;
     }
 
     public function __invoke(Request $request): Response
     {
+        $edition = null;
         $user = $this->container->get('contao.framework')->createInstance(FrontendUser::class);
         if (!$user->id) {
             return new Response();

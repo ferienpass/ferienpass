@@ -26,17 +26,8 @@ use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 
 final class FollowInvitationController extends AbstractFragmentController
 {
-    private Connection $connection;
-    private PasswordHasherInterface $passwordHasher;
-    private OptIn $optIn;
-    private HostRepository $hostRepository;
-
-    public function __construct(Connection $connection, PasswordHasherInterface $passwordHasher, OptIn $optIn, HostRepository $hostRepository)
+    public function __construct(private Connection $connection, private PasswordHasherInterface $passwordHasher, private OptIn $optIn, private HostRepository $hostRepository)
     {
-        $this->connection = $connection;
-        $this->passwordHasher = $passwordHasher;
-        $this->optIn = $optIn;
-        $this->hostRepository = $hostRepository;
     }
 
     public function __invoke(Request $request)
@@ -119,7 +110,7 @@ final class FollowInvitationController extends AbstractFragmentController
     {
         try {
             $this->connection->insert('HostMemberAssociation', ['member_id' => $userId, 'host_id' => $hostId]);
-        } catch (UniqueConstraintViolationException $e) {
+        } catch (UniqueConstraintViolationException) {
             return;
         }
 

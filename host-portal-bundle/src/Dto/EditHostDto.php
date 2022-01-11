@@ -81,7 +81,7 @@ class EditHostDto implements HostDto
 
     public function toEntity(Host $host = null): Host
     {
-        $host = $host ?? new Host();
+        $host ??= new Host();
 
         $host->setName($this->name);
         $host->setText($this->text);

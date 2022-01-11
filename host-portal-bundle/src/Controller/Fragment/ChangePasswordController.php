@@ -24,13 +24,8 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 final class ChangePasswordController extends AbstractFragmentController
 {
-    private PasswordHasherInterface $passwordHasher;
-    private Security $security;
-
-    public function __construct(PasswordHasherInterface $passwordHasher, Security $security)
+    public function __construct(private PasswordHasherInterface $passwordHasher, private Security $security)
     {
-        $this->passwordHasher = $passwordHasher;
-        $this->security = $security;
     }
 
     public function __invoke(Request $request): Response

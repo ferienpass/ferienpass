@@ -29,23 +29,14 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 final class LostPasswordController extends AbstractFragmentController
 {
-    private LoggerInterface $logger;
-    private OptInInterface $optIn;
-    private RouterInterface $router;
-    private PasswordHasherInterface $passwordHasher;
-
-    public function __construct(LoggerInterface $logger, OptInInterface $optIn, RouterInterface $router, PasswordHasherInterface $passwordHasher)
+    public function __construct(private LoggerInterface $logger, private OptInInterface $optIn, private RouterInterface $router, private PasswordHasherInterface $passwordHasher)
     {
-        $this->logger = $logger;
-        $this->optIn = $optIn;
-        $this->router = $router;
-        $this->passwordHasher = $passwordHasher;
     }
 
     public function __invoke(Request $request): Response
     {
         if ($request->query->has('token') && ($token = (string) $request->query->get('token'))
-            && 0 === strncmp($token, 'pw-', 3)) {
+            && str_starts_with($token, 'pw-')) {
             return $this->setNewPassword($request);
         }
 
@@ -105,7 +96,7 @@ final class LostPasswordController extends AbstractFragmentController
             || !$optInToken->isValid()
             || 1 !== \count($related = $optInToken->getRelatedRecords())
             || 'tl_member' !== key($related)
-            || 1 !== \count($arrIds = current($related))
+            || 1 !== (is_countable($arrIds = current($related)) ? \count($arrIds = current($related)) : 0)
             || (!$memberModel = MemberModel::findByPk($arrIds[0]))) {
             return $this->render(
                 '@FerienpassCore/Fragment/message.html.twig',

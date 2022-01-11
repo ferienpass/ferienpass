@@ -24,7 +24,6 @@ use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\OfferDate;
 use Ferienpass\CoreBundle\Ux\Flash;
-use Ferienpass\HostPortalBundle\Dto\EditOfferDto;
 use Ferienpass\HostPortalBundle\Form\EditOfferType;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -33,17 +32,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class OfferEditor extends AbstractFragmentController
 {
-    private Slug $slug;
-    private string $imagesDir;
-    private string $projectDir;
-    private ManagerRegistry $doctrine;
-
-    public function __construct(Slug $slug, string $imagesDir, string $projectDir, ManagerRegistry $doctrine)
+    public function __construct(private Slug $slug, private string $imagesDir, private string $projectDir, private ManagerRegistry $doctrine)
     {
-        $this->slug = $slug;
-        $this->imagesDir = $imagesDir;
-        $this->projectDir = $projectDir;
-        $this->doctrine = $doctrine;
     }
 
     public function __invoke(Request $request): Response
@@ -56,10 +46,9 @@ final class OfferEditor extends AbstractFragmentController
             $originalDates->add($date);
         }
 
-        $form = $this->createForm(EditOfferType::class, $dto = EditOfferDto::fromEntity($offer), ['is_variant' => !$offer->isVariantBase()]);
+        $form = $this->createForm(EditOfferType::class, $offer, ['is_variant' => !$offer->isVariantBase()]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $offer = $dto->toEntity($offer);
             $offer->setTimestamp(time());
 
             // Add alias to the change-set, later the {@see AliasListener.php} kicks in
@@ -92,7 +81,7 @@ final class OfferEditor extends AbstractFragmentController
                     $fileModel->save();
 
                     $offer->setImage($fileModel->uuid);
-                } catch (FileException $e) {
+                } catch (FileException) {
                 }
             } elseif ($imgCopyright = $form->get('imgCopyright')->getData()) {
                 $fileModel = FilesModel::findByPk($offer->getImage());

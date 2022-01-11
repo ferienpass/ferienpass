@@ -28,24 +28,8 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 class ParticipantList
 {
-    private MessageBusInterface $messageBus;
-    private Connection $connection;
-    private ApplicationSystems $applicationSystems;
-    private AttendanceFacade $attendanceFacade;
-    private ManagerRegistry $doctrine;
-
-    public function __construct(
-        MessageBusInterface $messageBus,
-        Connection $connection,
-        ApplicationSystems $applicationSystems,
-        AttendanceFacade $attendanceFacade,
-        ManagerRegistry $doctrine
-    ) {
-        $this->messageBus = $messageBus;
-        $this->connection = $connection;
-        $this->applicationSystems = $applicationSystems;
-        $this->attendanceFacade = $attendanceFacade;
-        $this->doctrine = $doctrine;
+    public function __construct(private MessageBusInterface $messageBus, private Connection $connection, private ApplicationSystems $applicationSystems, private AttendanceFacade $attendanceFacade, private ManagerRegistry $doctrine)
+    {
     }
 
     public function add(Offer $offer, array $data): void
