@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\HostPortalBundle\Form;
 
 use Ferienpass\CoreBundle\Form\SimpleType\ContaoRequestTokenType;
-use Ferienpass\HostPortalBundle\Dto\Annotation\FormType;
+use Ferienpass\HostPortalBundle\Dto\Annotation\FormType as FormTypeAnnotation;
 use Ferienpass\HostPortalBundle\Dto\EditHostDto;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
