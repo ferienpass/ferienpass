@@ -16,6 +16,7 @@ namespace Ferienpass\HostPortalBundle\Form\TypeGuesser;
 use Contao\Config;
 use Doctrine\Common\Collections\Collection;
 use Ferienpass\CoreBundle\Dto\OfferDto;
+use Ferienpass\HostPortalBundle\Dto\Annotation\EntityType as EntityTypeAnnotation;
 use Ferienpass\HostPortalBundle\Form\CompoundType\DatesType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -36,9 +37,10 @@ class OfferTypeGuesser implements FormTypeGuesserInterface
             return null;
         }
 
-        $a = new \ReflectionProperty($class, $property);
-        if (is_a($a->getType()->getName(), Collection::class, true)) {
-            if ($type = current(array_merge(...array_map(fn(\ReflectionAttribute $attribute) => $attribute->getArguments(), $a->getAttributes(\Ferienpass\HostPortalBundle\Dto\Annotation\EntityType::class))))) {
+        $reflectionProperty = new \ReflectionProperty($class, $property);
+        $type = $reflectionProperty->getType();
+        if ($type instanceof \ReflectionNamedType && is_a($type->getName(), Collection::class, true)) {
+            if ($type = current(array_merge(...array_map(fn (\ReflectionAttribute $attribute) => $attribute->getArguments(), $reflectionProperty->getAttributes(EntityTypeAnnotation::class))))) {
                 return new TypeGuess(EntityType::class, [
                     'class' => $type,
                     'choice_label' => 'name',
@@ -47,7 +49,7 @@ class OfferTypeGuesser implements FormTypeGuesserInterface
             }
         }
 
-        if ('bool' === $a->getType()->getName()) {
+        if ($type instanceof \ReflectionNamedType && 'bool' === $type->getName()) {
             return new TypeGuess(CheckboxType::class, [], Guess::HIGH_CONFIDENCE);
         }
 
@@ -86,7 +88,6 @@ class OfferTypeGuesser implements FormTypeGuesserInterface
 
             default => null,
         };
-
     }
 
     public function guessRequired(string $class, string $property): ?ValueGuess

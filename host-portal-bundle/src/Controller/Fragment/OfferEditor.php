@@ -67,11 +67,11 @@ final class OfferEditor extends AbstractFragmentController
             $offer = $dto->toEntity($offer);
             $offer->setTimestamp(time());
 
-            $entityManager = $this->doctrine->getManager();
+            $em = $this->doctrine->getManager();
 
             foreach ($originalDates as $date) {
                 if (false === $offer->getDates()->contains($date)) {
-                    $entityManager->remove($date);
+                    $em->remove($date);
                 }
             }
 
@@ -105,7 +105,7 @@ final class OfferEditor extends AbstractFragmentController
                 }
             }
 
-            $entityManager->flush();
+            $em->flush();
 
             $this->addFlash(...Flash::confirmation()->text('Die Daten wurden erfolgreich gespeichert.')->create());
 
