@@ -20,10 +20,9 @@ use Contao\FilesModel;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
+use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\OfferDate;
-use Ferienpass\CoreBundle\Repository\EditionRepository;
-use Ferienpass\CoreBundle\Repository\OfferRepository;
 use Ferienpass\CoreBundle\Ux\Flash;
 use Ferienpass\HostPortalBundle\Dto\EditOfferDto;
 use Ferienpass\HostPortalBundle\Form\EditOfferType;
@@ -38,17 +37,13 @@ final class OfferEditor extends AbstractFragmentController
     private string $imagesDir;
     private string $projectDir;
     private ManagerRegistry $doctrine;
-    private EditionRepository $editionRepository;
-    private OfferRepository $offerRepository;
 
-    public function __construct(Slug $slug, string $imagesDir, string $projectDir, ManagerRegistry $doctrine, EditionRepository $editionRepository, OfferRepository $offerRepository)
+    public function __construct(Slug $slug, string $imagesDir, string $projectDir, ManagerRegistry $doctrine)
     {
         $this->slug = $slug;
         $this->imagesDir = $imagesDir;
         $this->projectDir = $projectDir;
         $this->doctrine = $doctrine;
-        $this->editionRepository = $editionRepository;
-        $this->offerRepository = $offerRepository;
     }
 
     public function __invoke(Request $request): Response
@@ -66,6 +61,9 @@ final class OfferEditor extends AbstractFragmentController
         if ($form->isSubmitted() && $form->isValid()) {
             $offer = $dto->toEntity($offer);
             $offer->setTimestamp(time());
+
+            // Add alias to the change-set, later the {@see AliasListener.php} kicks in
+            $offer->setAlias('');
 
             $entityManager = $this->doctrine->getManager();
 
@@ -125,7 +123,7 @@ final class OfferEditor extends AbstractFragmentController
 
             $edition = null;
             if ($alias = $request->query->get('edition')) {
-                $edition = $this->editionRepository->findOneBy(['alias' => $alias]);
+                $edition = $this->doctrine->getRepository(Edition::class)->findOneBy(['alias' => $alias]);
             }
 
             if (null !== $edition) {
@@ -135,7 +133,7 @@ final class OfferEditor extends AbstractFragmentController
             $this->denyAccessUnlessGranted('create', $offer);
 
             if ($request->query->has('act') && $request->query->has('source')) {
-                $source = $this->offerRepository->find($request->query->getInt('source'));
+                $source = $this->doctrine->getRepository(Offer::class)->find($request->query->getInt('source'));
                 if (null !== $source) {
                     $this->denyAccessUnlessGranted('view', $source);
 
@@ -166,7 +164,7 @@ final class OfferEditor extends AbstractFragmentController
             return $offer;
         }
 
-        $offer = $this->offerRepository->find($offerId);
+        $offer = $this->doctrine->getRepository(Offer::class)->find($offerId);
         if (null === $offer) {
             throw new PageNotFoundException('Item not found');
         }
