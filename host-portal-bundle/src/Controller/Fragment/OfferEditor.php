@@ -24,7 +24,6 @@ use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\OfferDate;
 use Ferienpass\CoreBundle\Ux\Flash;
-use Ferienpass\HostPortalBundle\Dto\EditOfferDto;
 use Ferienpass\HostPortalBundle\Form\EditOfferType;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -47,10 +46,9 @@ final class OfferEditor extends AbstractFragmentController
             $originalDates->add($date);
         }
 
-        $form = $this->createForm(EditOfferType::class, $dto = EditOfferDto::fromEntity($offer), ['is_variant' => !$offer->isVariantBase()]);
+        $form = $this->createForm(EditOfferType::class, $offer, ['is_variant' => !$offer->isVariantBase()]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $offer = $dto->toEntity($offer);
             $offer->setTimestamp(time());
 
             // Add alias to the change-set, later the {@see AliasListener.php} kicks in
@@ -78,7 +76,7 @@ final class OfferEditor extends AbstractFragmentController
 
                     $relativeFileName = ltrim(str_replace($this->projectDir, '', $this->imagesDir), '/').'/'.$newFilename;
                     $fileModel = Dbafs::addResource($relativeFileName);
-                        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+                    /** @psalm-suppress UndefinedMagicPropertyAssignment */
                     $fileModel->imgCopyright = $form->get('imgCopyright')->getData() ?? '';
                     $fileModel->save();
 
@@ -109,7 +107,6 @@ final class OfferEditor extends AbstractFragmentController
 
     private function getOffer(Request $request): Offer
     {
-        $edition = null;
         if (0 === $offerId = $request->attributes->getInt('id')) {
             $offer = new Offer();
 
