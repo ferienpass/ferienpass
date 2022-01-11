@@ -53,8 +53,8 @@ final class PersonalDataController extends AbstractFragmentController
             return $this->redirectToRoute($request->get('_route'));
         }
 
-        return $this->render('@FerienpassHostPortal/fragment/personal_data.html.twig', [
-            'form' => $form->createView(),
+        return $this->renderForm('@FerienpassHostPortal/fragment/personal_data.html.twig', [
+            'form' => $form,
         ]);
     }
 }

@@ -48,9 +48,9 @@ final class EraseDataController extends AbstractBackendController
             return $this->redirectToRoute('contao_backend');
         }
 
-        return $this->render('@FerienpassCore/Backend/erase-data.html.twig', [
+        return $this->renderForm('@FerienpassCore/Backend/erase-data.html.twig', [
             'participants' => $participants,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 }

@@ -77,9 +77,9 @@ final class OrganizationEditorController extends AbstractFragmentController
             return $this->redirectToRoute($request->get('_route'), ['id' => $host->getId()]);
         }
 
-        return $this->render('@FerienpassHostPortal/fragment/organization_editor.html.twig', [
+        return $this->renderForm('@FerienpassHostPortal/fragment/organization_editor.html.twig', [
             'host' => $host,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 }

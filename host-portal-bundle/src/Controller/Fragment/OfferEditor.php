@@ -112,9 +112,9 @@ final class OfferEditor extends AbstractFragmentController
             return $this->redirectToRoute($request->attributes->get('_route'), ['id' => $offer->getId()]);
         }
 
-        return $this->render('@FerienpassHostPortal/fragment/offer_editor.html.twig', [
+        return $this->renderForm('@FerienpassHostPortal/fragment/offer_editor.html.twig', [
             'offer' => $offer,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 

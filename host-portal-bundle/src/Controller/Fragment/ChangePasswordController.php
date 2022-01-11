@@ -50,6 +50,6 @@ final class ChangePasswordController extends AbstractFragmentController
             $this->addFlash(...Flash::confirmation()->text(new TranslatableMessage('MSC.newPasswordSet', [], 'contao_default'))->create());
         }
 
-        return $this->render('@FerienpassHostPortal/fragment/change_password.html.twig', ['form' => $form->createView()]);
+        return $this->renderForm('@FerienpassHostPortal/fragment/change_password.html.twig', ['form' => $form]);
     }
 }

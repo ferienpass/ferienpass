@@ -68,8 +68,8 @@ final class LostPasswordController extends AbstractFragmentController
             }
         }
 
-        return $this->render('@FerienpassHostPortal/fragment/lost_password.html.twig', [
-            'form' => $form->createView(),
+        return $this->renderForm('@FerienpassHostPortal/fragment/lost_password.html.twig', [
+            'form' => $form,
         ]);
     }
 
@@ -140,13 +140,13 @@ final class LostPasswordController extends AbstractFragmentController
 
             $this->addFlash(...Flash::confirmation()->text(new TranslatableMessage('MSC.newPasswordSet', [], 'contao_default'))->create());
 
-            return $this->render('@FerienpassCore/Fragment/lost-password.html.twig', [
-                'form' => $form->createView(),
+            return $this->renderForm('@FerienpassCore/Fragment/lost-password.html.twig', [
+                'form' => $form,
             ]);
         }
 
-        return $this->render('@FerienpassHostPortal/fragment/lost_password.html.twig', [
-            'form' => $form->createView(),
+        return $this->renderForm('@FerienpassHostPortal/fragment/lost_password.html.twig', [
+            'form' => $form,
         ]);
     }
 }

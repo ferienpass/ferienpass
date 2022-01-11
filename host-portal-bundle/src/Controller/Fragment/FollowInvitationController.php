@@ -95,10 +95,10 @@ final class FollowInvitationController extends AbstractFragmentController
             return $this->redirect('/');
         }
 
-        return $this->render('@FerienpassHostPortal/fragment/follow_invitation.html.twig', [
+        return $this->renderForm('@FerienpassHostPortal/fragment/follow_invitation.html.twig', [
             'member' => MemberModel::findByPk($inviter),
             'host' => $host,
-            'form' => $form->createView(),
+            'form' => $form,
             'invitee_email' => $optInToken->getEmail(),
         ]);
     }
