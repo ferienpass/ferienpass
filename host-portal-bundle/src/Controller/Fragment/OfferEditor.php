@@ -87,8 +87,8 @@ final class OfferEditor extends AbstractFragmentController
 
                     $relativeFileName = ltrim(str_replace($this->projectDir, '', $this->imagesDir), '/').'/'.$newFilename;
                     $fileModel = Dbafs::addResource($relativeFileName);
-                    /** @psalm-suppress UndefinedMagicPropertyAssignment */
-                    $fileModel->imgCopyright = $form->get('imgCopyright')->getData();
+                        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+                    $fileModel->imgCopyright = $form->get('imgCopyright')->getData() ?? '';
                     $fileModel->save();
 
                     $offer->setImage($fileModel->uuid);
