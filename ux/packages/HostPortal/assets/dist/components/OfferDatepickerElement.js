@@ -11,10 +11,17 @@ const catalyst_1 = require("@github/catalyst");
 const litepicker_umd_js_1 = require("litepicker/dist/nocss/litepicker.umd.js");
 require('./litepicker.css');
 let OfferDatepickerElement = class OfferDatepickerElement extends HTMLElement {
+    constructor() {
+        super(...arguments);
+        this.minDate = '';
+        this.maxDate = '';
+    }
     connectedCallback() {
         this.picker = new litepicker_umd_js_1.default({
             element: this.begin,
             elementEnd: this.end,
+            minDate: '' !== this.minDate ? this.minDate : null,
+            maxDate: '' !== this.maxDate ? this.maxDate : null,
             inlineMode: true,
             format: 'DD.MM.YYYY',
             autoRefresh: true,
@@ -41,6 +48,12 @@ __decorate([
 __decorate([
     catalyst_1.target
 ], OfferDatepickerElement.prototype, "end", void 0);
+__decorate([
+    catalyst_1.attr
+], OfferDatepickerElement.prototype, "minDate", void 0);
+__decorate([
+    catalyst_1.attr
+], OfferDatepickerElement.prototype, "maxDate", void 0);
 OfferDatepickerElement = __decorate([
     catalyst_1.controller
 ], OfferDatepickerElement);

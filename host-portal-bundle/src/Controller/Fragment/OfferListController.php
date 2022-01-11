@@ -45,21 +45,29 @@ final class OfferListController extends AbstractFragmentController
             $qb->andWhere(':host MEMBER OF o.hosts')->setParameter('host', $host);
         } else {
             $hosts = $this->hostRepository->findByMemberId((int) $user->id);
-            $qb->innerJoin('o.hosts', 'h', Join::WITH, 'h IN (:hosts)')
-                ->setParameter('hosts', $hosts);
+            $qb
+                ->innerJoin('o.hosts', 'h', Join::WITH, 'h IN (:hosts)')
+                ->setParameter('hosts', $hosts)
+            ;
         }
 
+        $edition = null;
         if ($request->query->has('edition')) {
             $edition = $this->editionRepository->findOneBy(['alias' => $request->query->get('edition')]);
         }
 
-        if (null === ($edition ?? null)) {
+        if (null === $edition) {
             $edition = $this->editionRepository->findDefaultForHost();
         }
 
+        if (null !== $edition) {
+            $qb
+                ->andWhere('o.edition = :edition')
+                ->setParameter('edition', $edition->getId(), Types::INTEGER)
+            ;
+        }
+
         $offers = $qb
-            ->andWhere('o.edition = :edition')
-            ->setParameter('edition', $edition->getId(), Types::INTEGER)
             ->leftJoin('o.dates', 'd')
             ->orderBy('d.begin')
             ->getQuery()
@@ -67,6 +75,7 @@ final class OfferListController extends AbstractFragmentController
         ;
 
         return $this->render('@FerienpassHostPortal/fragment/offer_list.html.twig', [
+            'edition' => $edition,
             'offers' => $offers,
         ]);
     }

@@ -103,7 +103,7 @@ SQL
 
         $emails = [];
         $attendances = [];
-        foreach ($statement->fetchAllAssociative() as $attendance) {
+        foreach ($statement->iterateAssociative() as $attendance) {
             $attendances[$attendance['status']][] = $attendance;
             $emails[] = $attendance['email'];
         }

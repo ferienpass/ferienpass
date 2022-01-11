@@ -8,8 +8,8 @@ require('./litepicker.css')
 class OfferDatepickerElement extends HTMLElement { // eslint-disable-line no-unused-vars
     picker: Litepicker;
 
-    @target begin: HTMLInputElement
-    @target end: HTMLInputElement
+    @target declare begin: HTMLInputElement
+    @target declare end: HTMLInputElement
 
     @attr minDate: string = ''
     @attr maxDate: string = ''

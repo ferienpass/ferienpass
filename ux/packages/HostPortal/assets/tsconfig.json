@@ -4,8 +4,7 @@
     "module": "commonjs",
     "strict": true,
     "outDir": "dist",
-    "experimentalDecorators": true,
-    "strictPropertyInitialization": false
+    "experimentalDecorators": true
   },
   "include": [
     "src"

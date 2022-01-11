@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Ferienpass\HostPortalBundle\Menu;
 
 use Contao\FrontendUser;
-use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Ferienpass\CoreBundle\Repository\HostRepository;
@@ -65,9 +64,6 @@ class MenuBuilder
             throw new \InvalidArgumentException('Pass "offer" as opiton');
         }
 
-        /** @var Edition[] $editions */
-        $editions = $this->editionRepository->findWithActiveTask('host_editing_stage');
-
         $menu = $this->factory->createItem('offerActions');
 
         $menu->addChild('edit', [
@@ -86,13 +82,13 @@ class MenuBuilder
             'extras' => ['icon' => 'calendar-solid'],
         ]);
 
-        foreach ($editions as $edition) {
+        foreach ($this->editionRepository->findWithActiveTask('host_editing_stage') as $edition) {
             $menu->addChild('copy', [
                 'label' => 'offer.action.copy',
                 'route' => 'host_edit_offer',
                 'routeParameters' => ['source' => $offer->getId(), 'act' => 'copy', 'edition' => $edition->getAlias()],
                 'display' => $this->isGranted('view', $offer),
-                'extras' => ['icon' => 'duplicate-solid'],
+                'extras' => ['icon' => 'duplicate-solid', 'translation_params' => ['edition' => $edition->getName()]],
             ]);
         }
 

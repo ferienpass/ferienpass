@@ -21,7 +21,7 @@
         <service id="Ferienpass\HostPortalBundle\Controller\Page\EditOrganizationPage">
             <tag name="contao.page"
                  type="host_edit_organization"
-                 path="{id}"
+                 path="{id}/bearbeiten"
                  contentComposition="false"/>
         </service>
         <service id="Ferienpass\HostPortalBundle\Controller\Page\Error401Controller">

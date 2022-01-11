@@ -40,7 +40,7 @@ class HostOptionsListener
             $qb->innerJoin('h', 'HostOfferAssociation', 'a', 'a.host_id=h.id');
         }
 
-        foreach ($qb->executeQuery()->fetchAllAssociative() as $item) {
+        foreach ($qb->executeQuery()->iterateAssociative() as $item) {
             $return[$item['id']] = $item['name'];
         }
 

@@ -20,11 +20,11 @@ use Contao\FilesModel;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
+use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\OfferDate;
-use Ferienpass\CoreBundle\Repository\EditionRepository;
-use Ferienpass\CoreBundle\Repository\OfferRepository;
 use Ferienpass\CoreBundle\Ux\Flash;
+use Ferienpass\HostPortalBundle\Dto\EditOfferDto;
 use Ferienpass\HostPortalBundle\Form\EditOfferType;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -33,7 +33,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class OfferEditor extends AbstractFragmentController
 {
-    public function __construct(private Slug $slug, private string $imagesDir, private string $projectDir, private ManagerRegistry $doctrine, private EditionRepository $editionRepository, private OfferRepository $offerRepository)
+    public function __construct(private Slug $slug, private string $imagesDir, private string $projectDir, private ManagerRegistry $doctrine)
     {
     }
 
@@ -47,10 +47,14 @@ final class OfferEditor extends AbstractFragmentController
             $originalDates->add($date);
         }
 
-        $form = $this->createForm(EditOfferType::class, $offer, ['is_variant' => !$offer->isVariantBase()]);
+        $form = $this->createForm(EditOfferType::class, $dto = EditOfferDto::fromEntity($offer), ['is_variant' => !$offer->isVariantBase()]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $offer = $dto->toEntity($offer);
             $offer->setTimestamp(time());
+
+            // Add alias to the change-set, later the {@see AliasListener.php} kicks in
+            $offer->setAlias('');
 
             $entityManager = $this->doctrine->getManager();
 
@@ -60,21 +64,22 @@ final class OfferEditor extends AbstractFragmentController
                 }
             }
 
-            /** @var UploadedFile $imageFile */
+            /** @var UploadedFile|null $imageFile */
             $imageFile = $form->get('image')->getData();
             if ($imageFile) {
                 $originalFilename = pathinfo($imageFile->getClientOriginalName(), \PATHINFO_FILENAME);
 
-                $fileExists = fn (string $filename) => file_exists(sprintf('%s/%s.%s', $this->imagesDir, $filename, $imageFile->guessExtension()));
+                $fileExists = fn (string $filename): bool => file_exists(sprintf('%s/%s.%s', $this->imagesDir, $filename, (string) $imageFile->guessExtension()));
                 $safeFilename = $this->slug->generate($originalFilename, [], $fileExists);
-                $newFilename = $safeFilename.'.'.$imageFile->guessExtension();
+                $newFilename = $safeFilename.'.'.(string) $imageFile->guessExtension();
 
                 try {
                     $imageFile->move($this->imagesDir, $newFilename);
 
                     $relativeFileName = ltrim(str_replace($this->projectDir, '', $this->imagesDir), '/').'/'.$newFilename;
                     $fileModel = Dbafs::addResource($relativeFileName);
-                    $fileModel->imgCopyright = $form->get('imgCopyright')->getData();
+                        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+                    $fileModel->imgCopyright = $form->get('imgCopyright')->getData() ?? '';
                     $fileModel->save();
 
                     $offer->setImage($fileModel->uuid);
@@ -83,7 +88,8 @@ final class OfferEditor extends AbstractFragmentController
             } elseif ($imgCopyright = $form->get('imgCopyright')->getData()) {
                 $fileModel = FilesModel::findByPk($offer->getImage());
                 if (null !== $fileModel) {
-                    $fileModel->imgCopyright = $form->get('imgCopyright')->getData();
+                    /** @psalm-suppress UndefinedMagicPropertyAssignment */
+                    $fileModel->imgCopyright = $imgCopyright;
                     $fileModel->save();
                 }
             }
@@ -107,20 +113,19 @@ final class OfferEditor extends AbstractFragmentController
         if (0 === $offerId = $request->attributes->getInt('id')) {
             $offer = new Offer();
 
-            if ($request->query->has('edition')) {
-                $edition = $this->editionRepository->findOneBy(['alias' => $request->query->get('edition')]);
+            $edition = null;
+            if ($alias = $request->query->get('edition')) {
+                $edition = $this->doctrine->getRepository(Edition::class)->findOneBy(['alias' => $alias]);
             }
 
-            if (null === ($edition ?? null)) {
-                $edition = $this->editionRepository->findDefaultForHost();
+            if (null !== $edition) {
+                $offer->setEdition($edition);
             }
 
-            $offer->setEdition($edition);
-            // TODO use ->isGranted() and show an error message
             $this->denyAccessUnlessGranted('create', $offer);
 
             if ($request->query->has('act') && $request->query->has('source')) {
-                $source = $this->offerRepository->find($request->query->getInt('source'));
+                $source = $this->doctrine->getRepository(Offer::class)->find($request->query->getInt('source'));
                 if (null !== $source) {
                     $this->denyAccessUnlessGranted('view', $source);
 
@@ -151,7 +156,7 @@ final class OfferEditor extends AbstractFragmentController
             return $offer;
         }
 
-        $offer = $this->offerRepository->find($offerId);
+        $offer = $this->doctrine->getRepository(Offer::class)->find($offerId);
         if (null === $offer) {
             throw new PageNotFoundException('Item not found');
         }
