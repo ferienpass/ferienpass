@@ -35,7 +35,6 @@
 
     "terminal42/contao-mailusername": "^2.0",
 
-    "adamquaile/symfony-fieldset-bundle": "^1.1",
     "eluceo/ical": "^2.1",
     "mpdf/mpdf": "^8.0",
     "knplabs/knp-snappy-bundle": "^1.7",
