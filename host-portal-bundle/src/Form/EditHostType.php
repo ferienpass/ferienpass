@@ -38,15 +38,22 @@ class EditHostType extends AbstractType
         $properties = (new \ReflectionClass($options['data_class']))->getProperties(\ReflectionProperty::IS_PUBLIC);
 
         foreach ($properties as $property) {
-            $group = current(array_merge(...array_map(fn (\ReflectionAttribute $attribute) => $attribute->getArguments(), $property->getAttributes(FormType::class))));
+          $annotations = array_merge(...array_map(fn (\ReflectionAttribute $attribute) => $attribute->getArguments(), $property->getAttributes(FormTypeAnnotation::class)));
+            $group = current($annotations);
 
-            $builder->add($property->getName(), null, [
+            $fieldOptions = [
                 'label' => "Host.{$property->getName()}.0",
                 'required' => 'name' === $property->getName(),
-                // 'help' => "Offer.{$property->getName()}.1",
+                'help' => ($annotations['showHelp'] ?? false) ? "Host.{$property->getName()}.1" : null,
                 'translation_domain' => 'contao_Host',
                 'fieldset_group' => $group,
-            ]);
+            ];
+
+            if ($placeholder = $annotations['placeholder'] ?? null) {
+                $fieldOptions += ['attr' => ['placeholder' => $placeholder]];
+            }
+
+            $builder->add($property->getName(), null, $fieldOptions);
         }
 
         $builder
