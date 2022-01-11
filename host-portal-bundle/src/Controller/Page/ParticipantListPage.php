@@ -26,11 +26,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 final class ParticipantListPage extends AbstractController
 {
-    private PdfExport $pdfExport;
-
-    public function __construct(PdfExport $pdfExport)
+    public function __construct(private PdfExport $pdfExport)
     {
-        $this->pdfExport = $pdfExport;
     }
 
     public function __invoke(Offer $offer, string $_suffix, Request $request): Response

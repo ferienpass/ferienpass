@@ -20,15 +20,8 @@ use Michelf\MarkdownExtra;
 
 class PrivacyConsent
 {
-    private string $consentText;
-    private Connection $connection;
-    private ContaoFramework $framework;
-
-    public function __construct(ContaoFramework $framework, Connection $connection, string $consentText)
+    public function __construct(private ContaoFramework $framework, private Connection $connection, private string $consentText)
     {
-        $this->framework = $framework;
-        $this->connection = $connection;
-        $this->consentText = $consentText;
     }
 
     public function getFormattedConsentText(): string

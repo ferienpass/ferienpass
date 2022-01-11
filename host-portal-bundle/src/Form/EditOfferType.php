@@ -222,9 +222,7 @@ class EditOfferType extends AbstractType
                                     'assistenz',
                                     'geistiges-handicap',
                                 ],
-                                'choice_label' => function ($choice) {
-                                    return 'accessibility.'.$choice.'.label';
-                                },
+                                'choice_label' => fn ($choice) => 'accessibility.'.$choice.'.label',
                                 'expanded' => true,
                                 'multiple' => true,
                             ])

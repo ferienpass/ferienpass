@@ -28,33 +28,8 @@ use Symfony\Component\Security\Http\Logout\LogoutUrlGenerator;
 
 class MenuBuilder
 {
-    private FactoryInterface $factory;
-    private LogoutUrlGenerator $logoutUrlGenerator;
-    private AuthorizationCheckerInterface $authorizationChecker;
-    private RequestStack $requestStack;
-    private EditionRepository $editionRepository;
-    private Security $security;
-    private HostRepository $hostRepository;
-    private EventDispatcherInterface $dispatcher;
-
-    public function __construct(
-        FactoryInterface $factory,
-        LogoutUrlGenerator $logoutUrlGenerator,
-        AuthorizationCheckerInterface $authorizationChecker,
-        RequestStack $requestStack,
-        EditionRepository $editionRepository,
-        Security $security,
-        HostRepository $hostRepository,
-        EventDispatcherInterface $dispatcher
-    ) {
-        $this->factory = $factory;
-        $this->logoutUrlGenerator = $logoutUrlGenerator;
-        $this->authorizationChecker = $authorizationChecker;
-        $this->requestStack = $requestStack;
-        $this->editionRepository = $editionRepository;
-        $this->security = $security;
-        $this->hostRepository = $hostRepository;
-        $this->dispatcher = $dispatcher;
+    public function __construct(private FactoryInterface $factory, private LogoutUrlGenerator $logoutUrlGenerator, private AuthorizationCheckerInterface $authorizationChecker, private RequestStack $requestStack, private EditionRepository $editionRepository, private Security $security, private HostRepository $hostRepository, private EventDispatcherInterface $dispatcher)
+    {
     }
 
     public function userNavigation(): ItemInterface

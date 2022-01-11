@@ -27,18 +27,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class TwoFactorController extends AbstractFragmentController
 {
-    private Security $security;
-    private TrustedDeviceManager $trustedDeviceManager;
-    private TranslatorInterface $translator;
-
-    public function __construct(
-        Security $security,
-        TrustedDeviceManager $trustedDeviceManager,
-        TranslatorInterface $translator
-    ) {
-        $this->security = $security;
-        $this->trustedDeviceManager = $trustedDeviceManager;
-        $this->translator = $translator;
+    public function __construct(private Security $security, private TrustedDeviceManager $trustedDeviceManager, private TranslatorInterface $translator)
+    {
     }
 
     public function __invoke(Request $request): Response

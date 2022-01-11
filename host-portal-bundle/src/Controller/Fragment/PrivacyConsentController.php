@@ -28,17 +28,13 @@ use Symfony\Component\Validator\Constraints\EqualTo;
 
 class PrivacyConsentController extends AbstractFragmentController
 {
-    private Connection $connection;
-    private PrivacyConsentState $consentState;
-
-    public function __construct(Connection $connection, PrivacyConsentState $privacyConsent)
+    public function __construct(private Connection $connection, private PrivacyConsentState $consentState)
     {
-        $this->connection = $connection;
-        $this->consentState = $privacyConsent;
     }
 
     public function __invoke(Request $request): Response
     {
+        $error = null;
         $user = $this->getUser();
         if (!$user instanceof FrontendUser) {
             return new Response('', Response::HTTP_NO_CONTENT);
@@ -130,7 +126,7 @@ class PrivacyConsentController extends AbstractFragmentController
                 time(),
                 $user->id,
                 'sign',
-                json_encode($form->getData()),
+                json_encode($form->getData(), \JSON_THROW_ON_ERROR),
                 sha1($this->consentState->getFormattedConsentText()),
             ])
             ->executeQuery()

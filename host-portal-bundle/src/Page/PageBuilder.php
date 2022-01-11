@@ -31,29 +31,20 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PageBuilder
 {
-    private FragmentHandler     $fragmentHandler;
-    private TranslatorInterface $translator;
-    private ContaoFramework     $framework;
-    private RequestStack        $requestStack;
-
     /** @var array<string,ControllerReference[]> */
-    private $sections = [];
+    private array $sections = [];
 
     private string    $templateName = 'fe_page';
     private PageModel $pageModel;
 
     public function __construct(
         PageModel $pageModel,
-        FragmentHandler $fragmentHandler,
-        TranslatorInterface $translator,
-        ContaoFramework $framework,
-        RequestStack $requestStack
+        private FragmentHandler $fragmentHandler,
+        private TranslatorInterface $translator,
+        private ContaoFramework $framework,
+        private RequestStack $requestStack
     ) {
         $this->pageModel = $pageModel->loadDetails();
-        $this->fragmentHandler = $fragmentHandler;
-        $this->translator = $translator;
-        $this->framework = $framework;
-        $this->requestStack = $requestStack;
     }
 
     public function addFragment(string $section, ControllerReference $fragment): self
