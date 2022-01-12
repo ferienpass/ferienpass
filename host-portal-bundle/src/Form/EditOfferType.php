@@ -49,10 +49,13 @@ class EditOfferType extends AbstractType
                 'disabled' => $options['is_variant'],
                 'label' => "Offer.{$property->getName()}.0",
                 'required' => 'name' === $property->getName(),
-                'help' => ($annotations['showHelp'] ?? false) ? "Offer.{$property->getName()}.1" : null,
                 'translation_domain' => 'contao_Offer',
                 'fieldset_group' => $group,
             ];
+
+            if (!isset($fieldOptions['help']) && $annotations['showHelp'] ?? false) {
+                $fieldOptions['help'] = sprintf('Offer.%s.1', $property->getName());
+            }
 
             if ($placeholder = $annotations['placeholder'] ?? null) {
                 $fieldOptions += ['attr' => ['placeholder' => $placeholder]];

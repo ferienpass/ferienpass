@@ -44,10 +44,13 @@ class EditHostType extends AbstractType
             $fieldOptions = [
                 'label' => "Host.{$property->getName()}.0",
                 'required' => 'name' === $property->getName(),
-                'help' => ($annotations['showHelp'] ?? false) ? "Host.{$property->getName()}.1" : null,
                 'translation_domain' => 'contao_Host',
                 'fieldset_group' => $group,
             ];
+
+            if (!isset($fieldOptions['help']) && $annotations['showHelp'] ?? false) {
+                $fieldOptions['help'] = sprintf('Host.%s.1', $property->getName());
+            }
 
             if ($placeholder = $annotations['placeholder'] ?? null) {
                 $fieldOptions += ['attr' => ['placeholder' => $placeholder]];
