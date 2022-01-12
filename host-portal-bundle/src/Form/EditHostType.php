@@ -42,7 +42,7 @@ class EditHostType extends AbstractType
             $group = current($annotations);
 
             $fieldOptions = [
-                'label' => "Host.{$property->getName()}.0",
+                'label' => sprintf('Host.%s.0', $property->getName()),
                 'required' => 'name' === $property->getName(),
                 'translation_domain' => 'contao_Host',
                 'fieldset_group' => $group,
@@ -53,7 +53,7 @@ class EditHostType extends AbstractType
             }
 
             if ($placeholder = $annotations['placeholder'] ?? null) {
-                $fieldOptions += ['attr' => ['placeholder' => $placeholder]];
+                $fieldOptions['attr']['placeholder'] = $placeholder;
             }
 
             $builder->add($property->getName(), null, $fieldOptions);

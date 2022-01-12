@@ -47,7 +47,7 @@ class EditOfferType extends AbstractType
 
             $fieldOptions = [
                 'disabled' => $options['is_variant'],
-                'label' => "Offer.{$property->getName()}.0",
+                'label' => sprintf('Offer.%s.0', $property->getName()),
                 'required' => 'name' === $property->getName(),
                 'translation_domain' => 'contao_Offer',
                 'fieldset_group' => $group,
@@ -58,7 +58,7 @@ class EditOfferType extends AbstractType
             }
 
             if ($placeholder = $annotations['placeholder'] ?? null) {
-                $fieldOptions += ['attr' => ['placeholder' => $placeholder]];
+                $fieldOptions['attr']['placeholder'] = $placeholder;
             }
 
             $builder->add($property->getName(), null, $fieldOptions);
@@ -91,6 +91,7 @@ class EditOfferType extends AbstractType
             ->add('request_token', ContaoRequestTokenType::class)
             ->add('submit', SubmitType::class, [
                 'label' => 'Daten speichern',
-            ]);
+            ])
+        ;
     }
 }

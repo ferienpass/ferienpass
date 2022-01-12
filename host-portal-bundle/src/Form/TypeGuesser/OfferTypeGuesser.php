@@ -73,8 +73,8 @@ class OfferTypeGuesser implements FormTypeGuesserInterface
                     'assistenz',
                     'geistiges-handicap',
                 ],
-                'choice_label' => function ($choice) {
-                    return "accessibility.{$choice}.label";
+                'choice_label' => function (string $choice) {
+                    return sprintf('accessibility.%s.label', $choice);
                 },
                 'expanded' => true,
                 'multiple' => true,
