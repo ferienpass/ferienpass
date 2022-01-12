@@ -41,14 +41,14 @@ final class OrganizationEditorController extends AbstractFragmentController
             $host = $hostDto->toEntity($host);
             $host->setTimestamp(time());
 
-            /** @var UploadedFile $logoFile */
+            /** @var UploadedFile|null $logoFile */
             $logoFile = $form->get('logo')->getData();
             if ($logoFile) {
                 $originalFilename = pathinfo($logoFile->getClientOriginalName(), \PATHINFO_FILENAME);
 
-                $fileExists = fn (string $filename) => file_exists(sprintf('%s/%s.%s', $this->logosDir, $filename, $logoFile->guessExtension()));
+                $fileExists = fn (string $filename): bool => file_exists(sprintf('%s/%s.%s', $this->logosDir, $filename, (string) $logoFile->guessExtension()));
                 $safeFilename = $this->slug->generate($originalFilename, [], $fileExists);
-                $newFilename = $safeFilename.'.'.$logoFile->guessExtension();
+                $newFilename = $safeFilename.'.'.(string) $logoFile->guessExtension();
 
                 try {
                     $logoFile->move($this->logosDir, $newFilename);
@@ -65,7 +65,7 @@ final class OrganizationEditorController extends AbstractFragmentController
 
             $this->addFlash(...Flash::confirmation()->text('Die Daten wurden erfolgreich gespeichert.')->create());
 
-            return $this->redirectToRoute($request->get('_route'), ['id' => $host->getId()]);
+            return $this->redirectToRoute($request->attributes->get('_route'), ['id' => $host->getId()]);
         }
 
         return $this->renderForm('@FerienpassHostPortal/fragment/organization_editor.html.twig', [
