@@ -12,10 +12,7 @@
         "contao/faq-bundle": "^4.13",
 
         "richardhj/contao-theme-framework": "^2.0",
-
         "oneup/contao-sentry-bundle": "^3.0",
-        "richardhj/contao-backup-manager": "^2.0",
-
         "richardhj/contao-nc-mailjet-sms": "^0.1"
     }
 }
