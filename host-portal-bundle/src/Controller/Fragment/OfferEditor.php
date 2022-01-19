@@ -52,7 +52,7 @@ final class OfferEditor extends AbstractFragmentController
             $offer->setTimestamp(time());
 
             // Add alias to the change-set, later the {@see AliasListener.php} kicks in
-            $offer->setAlias('');
+            $offer->setAlias(uniqid());
 
             $entityManager = $this->doctrine->getManager();
 
