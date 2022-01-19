@@ -236,7 +236,7 @@ class EditOfferType extends AbstractType
                 'required' => false,
                 'constraints' => [
                     new File([
-                        'maxSize' => '6096k',
+                        'maxSize' => '6Mi',
                         'mimeTypes' => [
                             'image/jpeg',
                             'image/png',

@@ -24,6 +24,13 @@
                         {{ offer.hosts|map(h => h.name)|join(', ') }}
                     </div>
                 </div>
+
+                {% if offer.image %}
+                    <div class="mt-4">
+                        {% include "@FerienpassCore/Alert/information.html.twig" with { message: 'Wenn das Bild im Korrekturabzug noch nicht hundertprozentig passt, schneiden wir es noch zu. Achten Sie einfach darauf, dass das Bild groß genug ist und ausreichend "Hintergrund" hat, so dass es für verschiedene Formate passt.'|trans } %}
+                    </div>
+                {% endif %}
+
             </div>
 
             <div class="md:col-span-4">
