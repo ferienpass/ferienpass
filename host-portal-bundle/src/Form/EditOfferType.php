@@ -70,6 +70,13 @@ class EditOfferType extends AbstractType
                             'label' => 'Offer.description.0',
                             'translation_domain' => 'contao_Offer',
                         ])
+                        ->add('teaser', TextareaType::class, [
+                            'disabled' => $options['is_variant'],
+                            'required' => false,
+                            'label' => 'Offer.teaser.0',
+                            'help' => 'Offer.teaser.1',
+                            'translation_domain' => 'contao_Offer',
+                        ])
                         ->add('meetingPoint', TextType::class, [
                             'disabled' => $options['is_variant'],
                             'required' => false,
