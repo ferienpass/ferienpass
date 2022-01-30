@@ -4,16 +4,19 @@
 
     <div class="mt-2 sm:flex items-center sm:space-x-6 space-y-4 sm:space-y-0">
         <div>
-            {{ form_start(form, {method: 'GET'}) }}
+            {{ form_start(shortForm) }}
 
             <div class="">
-                <div x-data="{ checked: {{ form.favorites.vars.checked ? 'true' : 'false' }} }"
+                {# todo move to form type template and do not duplicate below #}
+                {% do shortForm.favorites.setRendered %}
+                <div x-data="{ checked: {{ shortForm.favorites.vars.checked ? 'true' : 'false' }} }"
+                     x-init="$watch('checked', v => $root.closest('form').submit())"
                      class="flex items-center space-x-1">
                     <div>
                         <input type="hidden"
-                               name="{{ form.favorites.vars.full_name }}"
+                               name="{{ shortForm.favorites.vars.full_name }}"
                                :value="checked ? '1' : ''"
-                               id="{{ form.favorites.vars.id }}">
+                               id="{{ shortForm.favorites.vars.id }}">
                         <span role="checkbox"
                               tabindex="0"
                               @click="checked = !checked"
@@ -39,11 +42,11 @@
                     <label class="font-medium text-sm leading-4 cursor-pointer"
                            @click="checked = !checked"
                            :class="{ 'text-red-600': checked, 'text-gray-600': !checked }"
-                           for="{{ form.favorites.vars.id }}">gemerkte<br>Angebote</label>
+                           for="{{ shortForm.favorites.vars.id }}">gemerkte<br>Angebote</label>
                 </div>
             </div>
 
-            {{ form_end(form, {'render_rest': false}) }}
+            {{ form_end(shortForm) }}
         </div>
 
         <div>
@@ -61,42 +64,42 @@
 
                 {% block content %}
 
-                    {{ form_start(form) }}
-                    {{ form_widget(form.request_token) }}
+                    {{ form_start(fullForm) }}
 
                     <div class="grid gap-3 grid-cols-2">
 
                         <div class="col-span-2">
-                            {{ form_label(form.name, null, { label_attr: { class: '!text-xs !font-semibold'} }) }}
-                            {{ form_widget(form.name) }}
+                            {{ form_label(fullForm.name, null, { label_attr: { class: '!text-xs !font-semibold'} }) }}
+                            {{ form_widget(fullForm.name) }}
                         </div>
 
                         <div class="w-24">
-                            {{ form_label(form.age, null, { label_attr: { class: '!text-xs !font-semibold'} }) }}
-                            {{ form_widget(form.age) }}
+                            {{ form_label(fullForm.age, null, { label_attr: { class: '!text-xs !font-semibold'} }) }}
+                            {{ form_widget(fullForm.age) }}
                         </div>
                         <div class="w-24">
-                            {{ form_label(form.fee, null, { label_attr: { class: '!text-xs !font-semibold'} }) }}
-                            {{ form_widget(form.fee) }}
+                            {{ form_label(fullForm.fee, null, { label_attr: { class: '!text-xs !font-semibold'} }) }}
+                            {{ form_widget(fullForm.fee) }}
                         </div>
 
                         <div>
-                            {{ form_label(form.earliest_date, null, { label_attr: { class: '!text-xs !font-semibold'} }) }}
-                            {{ form_widget(form.earliest_date) }}
+                            {{ form_label(fullForm.earliest_date, null, { label_attr: { class: '!text-xs !font-semibold'} }) }}
+                            {{ form_widget(fullForm.earliest_date) }}
                         </div>
                         <div>
-                            {{ form_label(form.latest_date, null, { label_attr: { class: '!text-xs !font-semibold'} }) }}
-                            {{ form_widget(form.latest_date) }}
+                            {{ form_label(fullForm.latest_date, null, { label_attr: { class: '!text-xs !font-semibold'} }) }}
+                            {{ form_widget(fullForm.latest_date) }}
                         </div>
 
                         <div class="mt-6">
-                            <div x-data="{ checked: {{ form.favorites.vars.checked ? 'true' : 'false' }} }"
+                            {% do fullForm.favorites.setRendered %}
+                            <div x-data="{ checked: {{ fullForm.favorites.vars.checked ? 'true' : 'false' }} }"
                                  class="flex items-center space-x-1">
                                 <div>
                                     <input type="hidden"
-                                           name="{{ form.favorites.vars.full_name }}"
+                                           name="{{ fullForm.favorites.vars.full_name }}"
                                            :value="checked ? '1' : ''"
-                                           id="{{ form.favorites.vars.id }}">
+                                           id="{{ fullForm.favorites.vars.id }}">
                                     <span role="checkbox"
                                           tabindex="0"
                                           @click="checked = !checked"
@@ -122,7 +125,7 @@
                                 <label class="font-medium text-sm leading-4 cursor-pointer"
                                        @click="checked = !checked"
                                        :class="{ 'text-red-600': checked, 'text-gray-600': !checked }"
-                                       for="{{ form.favorites.vars.id }}">gemerkte<br>Angebote</label>
+                                       for="{{ fullForm.favorites.vars.id }}">gemerkte<br>Angebote</label>
                             </div>
                         </div>
                     </div>
@@ -134,7 +137,7 @@
                         </button>
                     </div>
 
-                    {{ form_end(form, { render_rest: false }) }}
+                    {{ form_end(fullForm) }}
 
                 {% endblock %}
             {% endembed %}

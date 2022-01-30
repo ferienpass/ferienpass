@@ -42,7 +42,7 @@ class OfferListFilter
                 continue;
             }
 
-            $this->values[$k] = $v;
+            $this->values[$k] = ($v instanceof \DateTimeInterface) ? $v : $this->form->get($k)->getViewData();
 
             switch ($k) {
                 case 'name':
@@ -63,7 +63,7 @@ class OfferListFilter
                     break;
                 case 'fee':
                     $qb
-                        ->andWhere('o.fee <= :q_'.$k)
+                        ->andWhere($qb->expr()->andX('o.fee IS NULL OR o.fee = 0 OR o.fee <= :q_'.$k))
                         ->setParameter('q_'.$k, $v)
                     ;
                     break;

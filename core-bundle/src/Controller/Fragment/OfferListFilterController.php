@@ -18,6 +18,8 @@ use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\PageModel;
 use Ferienpass\CoreBundle\Form\OfferFiltersType;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -37,25 +39,55 @@ final class OfferListFilterController extends AbstractController
             return new Response('', Response::HTTP_NO_CONTENT);
         }
 
-        $form = $this->createForm(OfferFiltersType::class, $request->query->all());
+        // Get the normalized form data from query
+        if ($request->query->count()) {
+            $form = $this->createForm(OfferFiltersType::class);
+            $form->submit($request->query->all());
+            $data = $form->getData();
+        }
+
+        // Build the short form
+        $shortForm = $this->createForm(OfferFiltersType::class, $data ?? null, [
+            'attributes' => ['favorites'],
+        ]);
+
+        // If filters form submitted, redirect to a pretty URL
+        $shortForm->handleRequest($request);
+        if ($shortForm->isSubmitted() && $shortForm->isValid()) {
+            throw new RedirectResponseException($this->getFilterUrl($shortForm, $request));
+        }
+
+        // Build the full form
+        $form = $this->createForm(OfferFiltersType::class, $data ?? null);
         $form->handleRequest($request);
 
         // If filters form submitted, redirect to a pretty URL
         if ($form->isSubmitted() && $form->isValid()) {
-            $params = [];
-            foreach ($form->getViewData() as $key => $value) {
-                if (!$form->has($key) || $form->get($key)->isEmpty()) {
-                    continue;
-                }
-
-                $params[$key] = $value;
-            }
-
-            throw new RedirectResponseException($request->getSchemeAndHttpHost().$request->getBaseUrl().$request->getPathInfo().'?'.http_build_query($params));
+            throw new RedirectResponseException($this->getFilterUrl($form, $request));
         }
 
         return $this->renderForm('@FerienpassCore/Fragment/offer_list_filter.html.twig', [
-            'form' => $form,
+            'shortForm' => $shortForm,
+            'fullForm' => $form,
         ]);
+    }
+
+    private function getFilterUrl(FormInterface $form, Request $request): string
+    {
+        $params = HeaderUtils::parseQuery((string) $request->getQueryString());
+
+        foreach (array_keys((array) $form->getViewData()) as $attr) {
+            if (!$form->has($attr) || $form->get($attr)->isEmpty()) {
+                continue;
+            }
+
+            $value = $form->get($attr)->getViewData();
+            $params[$attr] = $value;
+        }
+
+        // New filter settings are not compatible with pagination
+        $params['page'] = null;
+
+        return $request->getSchemeAndHttpHost().$request->getBaseUrl().$request->getPathInfo().'?'.http_build_query($params);
     }
 }
