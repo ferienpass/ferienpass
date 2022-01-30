@@ -16,8 +16,7 @@ namespace Ferienpass\CoreBundle\Controller\Fragment;
 use Contao\CoreBundle\Controller\AbstractController;
 use Contao\PageModel;
 use Doctrine\DBAL\Types\Types;
-use Ferienpass\CoreBundle\Filter\OfferListFilter;
-use Ferienpass\CoreBundle\Form\OfferFiltersType;
+use Ferienpass\CoreBundle\Filter\OfferListFilterFactory;
 use Ferienpass\CoreBundle\Pagination\Paginator;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Ferienpass\CoreBundle\Repository\OfferRepository;
@@ -27,7 +26,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 final class OfferListController extends AbstractController
 {
-    public function __construct(private EditionRepository $editionRepository, private OfferRepository $offerRepository)
+    public function __construct(private EditionRepository $editionRepository, private OfferRepository $offerRepository, private OfferListFilterFactory $filterFactory)
     {
     }
 
@@ -50,7 +49,7 @@ final class OfferListController extends AbstractController
 
         $qb->leftJoin('o.dates', 'dates');
 
-        $filter = (new OfferListFilter($this->createForm(OfferFiltersType::class), $session))->filter($request->query->all(), $qb);
+        $filter = $this->filterFactory->create($qb)->filter($request->query->all());
 
         $qb->orderBy('dates.begin');
 
