@@ -117,3 +117,7 @@ days: Tage
 hours: Stunden
 minutes: Minuten
 seconds: Sekunden
+
+offerList.filter:
+  name: Titel enthält „<strong>{value}</strong>“
+  age: für <strong>{value}</strong>-jährige

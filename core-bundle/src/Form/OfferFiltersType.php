@@ -15,6 +15,7 @@ namespace Ferienpass\CoreBundle\Form;
 
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\OfferCategory;
+use Ferienpass\CoreBundle\Form\SimpleType\ContaoRequestTokenType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -27,12 +28,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OfferFiltersType extends AbstractType
 {
-    public function getBlockPrefix()
-    {
-        // For simple URLs, don't use a prefix
-        return '';
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -77,6 +72,7 @@ class OfferFiltersType extends AbstractType
                 'required' => false,
                 'widget' => 'single_text',
             ])
+            ->add('request_token', ContaoRequestTokenType::class)
         ;
     }
 
@@ -84,7 +80,6 @@ class OfferFiltersType extends AbstractType
     {
         $resolver->setDefaults([
             'csrf_protection' => false,
-            'method' => 'GET',
         ]);
     }
 }
