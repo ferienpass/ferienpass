@@ -9,9 +9,11 @@
 
     {% else %}
 
-        {% include '@FerienpassCore/Component/divider_title_left.html.twig' with { title: "Alle Angebote" } %}
+        <div class="px-4 sm:px-0">
+            {% include '@FerienpassCore/Component/divider_title_left.html.twig' with { title: "Alle Angebote" } %}
+        </div>
 
-        <div class="">
+        <div class="px-4 sm:px-0">
 
             <div class="mt-2 mb-6">
 
@@ -36,9 +38,9 @@
                 {% endfor %}
 
             </div>
-
-            {% include '@FerienpassCore/Partial/offer_list.html.twig' with { offers: pagination.results } %}
         </div>
+
+        {% include '@FerienpassCore/Partial/offer_list.html.twig' with { offers: pagination.results } %}
 
         <div class="py-10">
             {% include '@FerienpassCore/Partial/pagination.html.twig' %}
