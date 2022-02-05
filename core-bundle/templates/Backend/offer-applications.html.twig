@@ -103,8 +103,8 @@
                             <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400">
                                 {% include '@FerienpassCore/Icons/user-group-solid.svg.twig' %}
                             </svg>
-                            {{ 'min. ' ~ offer.minParticipants }} /
-                            {{ 'max. ' ~ offer.maxParticipants ~ ' TN' }}
+                            <span>{{ 'min. ' ~ offer.minParticipants }} / {{ 'max. ' ~ offer.maxParticipants ~ ' TN' }}
+                                und {{ 'min. ' ~ offer.minAge|default(0) }} / {{ 'max. ' ~ offer.maxAge|default(99) ~ ' Jahre' }}</span>
                         </div>
                     </div>
                 </div>
