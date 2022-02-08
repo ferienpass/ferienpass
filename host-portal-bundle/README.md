@@ -18,7 +18,7 @@ automatic print sheet generation and an online application system.
 This bundle provides the admin area for hosts, which is made available under a certain domain, e.g. 
 `https://veranstalter.my-ferienpass.de`.
 
-This repository is a read-only split from [ferienpass/ferienpass](github.com/ferienpass/ferienpass).
+This repository is a read-only split from [ferienpass/ferienpass](https://github.com/ferienpass/ferienpass).
 
 This project is proprietary software and not free of use. [Visit the project website.][website]
 
