@@ -33,32 +33,32 @@
 
 {% block body %}
 
-<div id="wrapper" class="min-h-screen flex flex-col">
+    <div id="wrapper" class="min-h-screen flex flex-col">
 
-    {% include '@FerienpassCore/Page/_flash_banners.html.twig' %}
+        {% include '@FerienpassCore/Page/_flash_banners.html.twig' %}
 
-    <header>
-        {% include '@FerienpassHostPortal/layout/_header.html.twig' %}
-    </header>
+        <header>
+            {% include '@FerienpassHostPortal/layout/_header.html.twig' %}
+        </header>
 
-    {% include '@FerienpassCore/Page/_flashes.html.twig' %}
+        {% include '@FerienpassCore/Page/_flashes.html.twig' %}
 
-    <div class="flex flex-1 flex-col">
-        <main class="flex-1">
-            {% block main %}{{ main|raw }}{% endblock %}
-        </main>
+        <div class="flex flex-1 flex-col">
+            <main class="flex-1">
+                {% block main %}{{ main|raw }}{% endblock %}
+            </main>
 
-        <footer>
-            {% include '@FerienpassHostPortal/layout/_footer.html.twig' %}
-        </footer>
+            <footer>
+                {% include '@FerienpassHostPortal/layout/_footer.html.twig' %}
+            </footer>
+        </div>
+
     </div>
 
-</div>
-
-{% include '@FerienpassCore/Page/_flash_modals.html.twig' %}
-
-</body>
+    {% include '@FerienpassCore/Page/_flash_modals.html.twig' %}
 
 {% endblock %}
+
+</body>
 
 </html>
