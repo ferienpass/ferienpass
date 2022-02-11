@@ -61,7 +61,7 @@ class MenuBuilder
     {
         $offer = $options['offer'] ?? null;
         if (!$offer instanceof Offer) {
-            throw new \InvalidArgumentException('Pass "offer" as opiton');
+            throw new \InvalidArgumentException('Pass "offer" as an option');
         }
 
         $menu = $this->factory->createItem('offerActions');
@@ -77,7 +77,7 @@ class MenuBuilder
         $menu->addChild('newVariant', [
             'label' => 'offer.action.newVariant',
             'route' => 'host_edit_offer',
-            'routeParameters' => ['source' => null === $offer->getVariantBase() ? $offer->getId() : $offer->getVariantBase()->getId(), 'act' => 'newVariant'],
+            'routeParameters' => ['source' => null === $offer->getVariantBase() ? $offer->getId() : $offer->getVariantBase()?->getId(), 'act' => 'newVariant'],
             'display' => $this->isGranted('create', $offer) && $this->isGranted('edit', $offer),
             'extras' => ['icon' => 'calendar-solid'],
         ]);
@@ -104,7 +104,7 @@ class MenuBuilder
         ]);
 
         if (!$offer->isCancelled()
-            && ((null === $edition = $offer->getEdition()) || (null !== $edition && !$edition->getActiveTasks('show_offers')->isEmpty()))) {
+            && ((null === $edition = $offer->getEdition()) || !$edition->getActiveTasks('show_offers')->isEmpty())) {
             $menu->addChild('cancel', [
                 'label' => 'offer.action.cancel',
                 'route' => 'host_view_offer',
@@ -162,22 +162,22 @@ class MenuBuilder
         $editions = $this->editionRepository->findBy([], ['id' => 'DESC'], 5);
         $defaultEdition = $this->editionRepository->findDefaultForHost();
         foreach ($editions as $edition) {
-            $editionNav->addChild($edition->getAlias(), [
+            $editionNav->addChild((string) $edition->getAlias(), [
                 'label' => $edition->getName(),
                 'route' => 'host_offer_list',
-                'routeParameters' => ['edition' => $edition->getAlias()] + $request->query->all(),
-                'current' => $request->query->has('edition')
-                    ? $edition->getAlias() === $request->query->get('edition')
-                    : $edition->getId() === $defaultEdition->getId(),
+                'routeParameters' => ['edition' => $edition->getAlias()] + $request?->query->all() ?? [],
+                'current' => $request?->query->has('edition')
+                    ? $edition->getAlias() === $request?->query->get('edition')
+                    : $edition->getId() === $defaultEdition?->getId(),
             ]);
         }
 
         foreach ($this->hostRepository->findByMemberId((int) $user->id) as $host) {
-            $hostNav->addChild($host->getAlias(), [
+            $hostNav->addChild((string) $host->getAlias(), [
                 'label' => $host->getName(),
                 'route' => 'host_offer_list',
-                'routeParameters' => ['host' => $host->getAlias()] + $request->query->all(),
-                'current' => $request->query->has('host') ? $host->getAlias() === $request->query->get('host') : true,
+                'routeParameters' => ['host' => $host->getAlias()] + $request?->query->all() ?? [],
+                'current' => !$request?->query->has('host') || $host->getAlias() === $request?->query->get('host'),
             ]);
         }
 
@@ -206,7 +206,7 @@ class MenuBuilder
         ]);
 
         if (!$offer->isCancelled()
-            && ((null === $edition = $offer->getEdition()) || (null !== $edition && !$edition->getActiveTasks('show_offers')->isEmpty()))) {
+            && ((null === $edition = $offer->getEdition()) || !$edition->getActiveTasks('show_offers')->isEmpty())) {
             $menu->addChild('cancel', [
                 'label' => 'offer.action.cancel',
                 'route' => 'host_view_offer',
