@@ -11,6 +11,7 @@ add('exclude', [
     '.DS_Store',
     '/.githooks',
     '/backups',
+    '/var/backups',
     '/themes/*/assets',
     '/package.json',
     '/package-lock.json',

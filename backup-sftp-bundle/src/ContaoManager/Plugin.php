@@ -18,7 +18,6 @@ use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
 use Ferienpass\BackupSftpBundle\FerienpassBackupSftpBundle;
-use Ferienpass\CoreBundle\FerienpassCoreBundle;
 
 class Plugin implements BundlePluginInterface
 {
@@ -26,7 +25,7 @@ class Plugin implements BundlePluginInterface
     {
         return [
             BundleConfig::create(FerienpassBackupSftpBundle::class)
-                ->setLoadAfter([FerienpassCoreBundle::class, ContaoCoreBundle::class]),
+                ->setLoadAfter([ContaoCoreBundle::class]),
         ];
     }
 }
