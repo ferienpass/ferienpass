@@ -1,0 +1,36 @@
+{
+  "name": "ferienpass/backup-sftp-bundle",
+  "license": "proprietary",
+  "description": "",
+  "type": "contao-bundle",
+  "homepage": "https://ferienpass.online/",
+  "authors": [
+    {
+      "name": "Richard Henkenjohann",
+      "email": "info@ferienpass.online",
+      "homepage": "https://ferienpass.online",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "email": "info@ferienpass.online"
+  },
+  "require": {
+    "php": ">=8.0",
+
+    "ferienpass/core-bundle": "^3.0",
+    "league/flysystem-sftp": "^3.0"
+  },
+  "require-dev": {
+    "contao/manager-plugin": "^2.7",
+    "friendsofphp/php-cs-fixer": "^3.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Ferienpass\\BackupSftpBundle\\": "src/"
+    }
+  },
+  "extra": {
+    "contao-manager-plugin": "Ferienpass\\BackupSftpBundle\\ContaoManager\\Plugin"
+  }
+}

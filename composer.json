@@ -37,6 +37,7 @@
 
     "adamquaile/symfony-fieldset-bundle": "^1.1",
     "eluceo/ical": "^2.1",
+    "league/flysystem-sftp": "^3.0",
     "mpdf/mpdf": "^8.0",
     "knplabs/knp-snappy-bundle": "^1.7",
     "phpoffice/phpspreadsheet": "^1.6",
@@ -83,6 +84,7 @@
   },
   "replace": {
     "ferienpass/base-bundle": "self.version",
+    "ferienpass/backup-sftp-bundle": "self.version",
     "ferienpass/core-bundle": "self.version",
     "ferienpass/fixtures-bundle": "self.version",
     "ferienpass/host-portal-bundle": "self.version",
@@ -92,6 +94,7 @@
   "extra": {
     "contao-manager-plugin": {
       "ferienpass/fixtures-bundle": "Ferienpass\\FixturesBundle\\ContaoManager\\Plugin",
+      "ferienpass/backup-sftp-bundle": "Ferienpass\\BackupSftpBundle\\ContaoManager\\Plugin",
       "ferienpass/core-bundle": "Ferienpass\\CoreBundle\\ContaoManager\\Plugin",
       "ferienpass/host-portal-bundle": "Ferienpass\\HostPortalBundle\\ContaoManager\\Plugin",
       "ferienpass/ux-host-portal": "Ferienpass\\UX\\HostPortal\\ContaoManager\\Plugin"
@@ -104,6 +107,7 @@
   "prefer-stable": true,
   "autoload": {
     "psr-4": {
+      "Ferienpass\\BackupSftpBundle\\": "backup-sftp-bundle/src/",
       "Ferienpass\\CoreBundle\\": "core-bundle/src/",
       "Ferienpass\\FixturesBundle\\": "fixtures-bundle/src/",
       "Ferienpass\\HostPortalBundle\\": "host-portal-bundle/src/",
