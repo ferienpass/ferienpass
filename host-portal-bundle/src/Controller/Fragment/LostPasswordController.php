@@ -130,7 +130,7 @@ final class LostPasswordController extends AbstractFragmentController
 
             $this->addFlash(...Flash::confirmationModal()->headline('Passwort-Reset erfolgreich')->text('Sie können sich nun mit Ihrem neuen Passwort anmelden.')->linkText('Zur Startseite')->create());
 
-            return $this->render('@FerienpassCore/fragment/lost_password.html.twig', [
+            return $this->render('@FerienpassHostPortal/fragment/lost_password.html.twig', [
                 'form' => $form->createView(),
             ]);
         }
