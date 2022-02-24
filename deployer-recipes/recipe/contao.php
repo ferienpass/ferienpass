@@ -73,6 +73,11 @@ task('contao:maintenance:enable', function () {
 desc('Disable maintenance mode');
 task('contao:maintenance:disable', function () {
     foreach (array_unique([parse('{{current_path}}'), parse('{{release_or_current_path}}')]) as $path) {
+        // The current path might not be present during first deploy.
+        if (!test("[ -d $path ]")) {
+            continue;
+        }
+
         cd($path);
         run('{{bin/php}} {{bin/console}} contao:maintenance-mode disable {{console_options}}');
     }
