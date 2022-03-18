@@ -2,8 +2,8 @@
 
 namespace Deployer;
 
-require __DIR__.'/contao.php';
-require __DIR__.'/contao-rsync.php';
+import('recipe/contao.php');
+import(__DIR__ . '/contao-rsync.php');
 
 set('keep_releases', 10);
 
