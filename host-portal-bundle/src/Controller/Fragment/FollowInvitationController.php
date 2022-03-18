@@ -103,7 +103,7 @@ final class FollowInvitationController extends AbstractFragmentController
 
         $user->save();
 
-        //$this->dispatchMessage(new AccountCreated((int) $user->id));
+        // $this->dispatchMessage(new AccountCreated((int) $user->id));
     }
 
     private function addHost(int $userId, int $hostId): void
@@ -114,6 +114,6 @@ final class FollowInvitationController extends AbstractFragmentController
             return;
         }
 
-        //$this->dispatchMessage(new AccountCreated((int) $user->id));
+        // $this->dispatchMessage(new AccountCreated((int) $user->id));
     }
 }
