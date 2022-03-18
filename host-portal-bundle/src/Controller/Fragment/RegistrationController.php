@@ -50,8 +50,8 @@ final class RegistrationController extends AbstractFragmentController
                 unset($memberModel->plainPassword);
             }
 
-            $memberModel->save();
             try {
+                $memberModel->save();
             } catch (\Exception) {
                 $this->addFlash(...Flash::error()->headline('Fehler')->text('Ein Fehler ist aufgetreten. Haben Sie bereits in Nutzerkonto?.')->create());
 

@@ -38,21 +38,54 @@ class HostRegistrationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('firstname', null, ['label' => new TranslatableMessage('tl_member.firstname.0', [], 'contao_tl_member')])
-            ->add('lastname', null, ['label' => new TranslatableMessage('tl_member.lastname.0', [], 'contao_tl_member')])
-            ->add('memberPhone', null, ['label' => new TranslatableMessage('tl_member.phone.0', [], 'contao_tl_member'), 'required' => false])
-            ->add('memberEmail', EmailType::class, ['label' => new TranslatableMessage('tl_member.email.0', [], 'contao_tl_member')])
-            ->add('memberPassword', PasswordType::class, ['label' => new TranslatableMessage('MSC.password.0', [], 'contao_default')])
-            ->add('name', null, ['label' => new TranslatableMessage('Host.name.0', [], 'contao_Host')])
-            ->add('street', null, ['label' => new TranslatableMessage('Host.street.0', [], 'contao_Host'), 'required' => false])
-            ->add('postal', null, ['label' => new TranslatableMessage('Host.postal.0', [], 'contao_Host'), 'required' => false])
-            ->add('city', null, ['label' => new TranslatableMessage('Host.city.0', [], 'contao_Host'), 'required' => false])
+            ->add('firstname', null, [
+                'label' => new TranslatableMessage('tl_member.firstname.0', [], 'contao_tl_member'),
+            ])
+            ->add('lastname', null, [
+                'label' => new TranslatableMessage('tl_member.lastname.0', [], 'contao_tl_member'),
+            ])
+            ->add('memberPhone', null, [
+                'label' => new TranslatableMessage('tl_member.phone.0', [], 'contao_tl_member'),
+                'required' => false,
+            ])
+            ->add('memberEmail', EmailType::class, [
+                'label' => new TranslatableMessage('tl_member.email.0', [], 'contao_tl_member'),
+            ])
+            ->add('memberPassword', PasswordType::class, [
+                'label' => new TranslatableMessage('MSC.password.0', [], 'contao_default'),
+            ])
+            ->add('name', null, [
+                'label' => new TranslatableMessage('Host.name.0', [], 'contao_Host'),
+            ])
+            ->add('street', null, [
+                'label' => new TranslatableMessage('Host.street.0', [], 'contao_Host'),
+                'required' => false,
+            ])
+            ->add('postal', null, [
+                'label' => new TranslatableMessage('Host.postal.0', [], 'contao_Host'),
+                'required' => false,
+            ])
+            ->add('city', null, [
+                'label' => new TranslatableMessage('Host.city.0', [], 'contao_Host'),
+                'required' => false,
+            ])
             ->add('email', EmailType::class, ['label' => new TranslatableMessage('Host.email.0', [], 'contao_Host'), 'required' => false])
-            ->add('phone', null, ['label' => new TranslatableMessage('Host.phone.0', [], 'contao_Host'), 'required' => false])
-            ->add('website', UrlType::class, ['label' => new TranslatableMessage('Host.website.0', [], 'contao_Host'), 'required' => false])
-            ->add('text', TextareaType::class, ['label' => new TranslatableMessage('Host.text.0', [], 'contao_Host'), 'required' => false])
+            ->add('phone', null, [
+                'label' => new TranslatableMessage('Host.phone.0', [], 'contao_Host'),
+                'required' => false,
+            ])
+            ->add('website', UrlType::class, [
+                'label' => new TranslatableMessage('Host.website.0', [], 'contao_Host'),
+                'required' => false,
+            ])
+            ->add('text', TextareaType::class, [
+                'label' => new TranslatableMessage('Host.text.0', [], 'contao_Host'),
+                'required' => false,
+            ])
             ->add('request_token', ContaoRequestTokenType::class)
-            ->add('submit', SubmitType::class, ['label' => 'Registrierung absenden'])
+            ->add('submit', SubmitType::class, [
+                'label' => 'Registrierung absenden',
+            ])
         ;
     }
 }
