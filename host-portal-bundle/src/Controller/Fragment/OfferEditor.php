@@ -54,8 +54,8 @@ final class OfferEditor extends AbstractFragmentController
             // Add alias to the change-set, later the {@see AliasListener.php} kicks in
             $offer->setAlias(uniqid());
             // Add fields to the change-set, later the {@see SortingFieldsListener.php} kicks in
-            $offer->setDatesSorting(0);
-            $offer->setHostsSorting('');
+            $offer->setDatesSorting(random_int(0, 99999));
+            $offer->setHostsSorting(uniqid());
 
             $entityManager = $this->doctrine->getManager();
 
