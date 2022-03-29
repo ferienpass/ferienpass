@@ -83,7 +83,7 @@ class MenuBuilder
         ]);
 
         foreach ($this->editionRepository->findWithActiveTask('host_editing_stage') as $edition) {
-            $menu->addChild('copy', [
+            $menu->addChild('copy'.$edition->getId(), [
                 'label' => 'offer.action.copy',
                 'route' => 'host_edit_offer',
                 'routeParameters' => ['source' => $offer->getId(), 'act' => 'copy', 'edition' => $edition->getAlias()],
