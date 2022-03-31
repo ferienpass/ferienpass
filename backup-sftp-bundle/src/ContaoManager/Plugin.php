@@ -17,9 +17,11 @@ use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
+use Contao\ManagerPlugin\Config\ContainerBuilder;
+use Contao\ManagerPlugin\Config\ExtensionPluginInterface;
 use Ferienpass\BackupSftpBundle\FerienpassBackupSftpBundle;
 
-class Plugin implements BundlePluginInterface
+class Plugin implements BundlePluginInterface, ExtensionPluginInterface
 {
     public function getBundles(ParserInterface $parser): array
     {
@@ -27,5 +29,20 @@ class Plugin implements BundlePluginInterface
             BundleConfig::create(FerienpassBackupSftpBundle::class)
                 ->setLoadAfter([ContaoCoreBundle::class]),
         ];
+    }
+
+    public function getExtensionConfig($extensionName, array $extensionConfigs, ContainerBuilder $container): array
+    {
+        if ('contao' === $extensionName) {
+            foreach ($extensionConfigs as &$extensionConfig) {
+                if (isset($extensionConfig['backup'])) {
+                    $extensionConfig['backup']['keep_max'] = 100;
+                    $extensionConfig['backup']['keep_intervals'] = [];
+                    break;
+                }
+            }
+        }
+
+        return $extensionConfigs;
     }
 }
