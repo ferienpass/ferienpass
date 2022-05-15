@@ -22,3 +22,4 @@ $GLOBALS['TL_DCA']['tl_page']['palettes']['host_change_password'] = '{title_lege
 $GLOBALS['TL_DCA']['tl_page']['palettes']['host_forgot_password'] = '{title_legend},title,type;{routing_legend},alias,routePath;{expert_legend:hide},hide;{publish_legend},published';
 $GLOBALS['TL_DCA']['tl_page']['palettes']['host_privacy_consent'] = '{title_legend},title,type;{routing_legend},alias,routePath;{expert_legend:hide},hide;{publish_legend},published';
 $GLOBALS['TL_DCA']['tl_page']['palettes']['host_follow_invitation'] = '{title_legend},title,type;{routing_legend},alias,routePath;{expert_legend:hide},hide;{publish_legend},published';
+$GLOBALS['TL_DCA']['tl_page']['palettes']['host_registration'] = '{title_legend},title,type;{routing_legend},alias,routePath;{expert_legend:hide},hide;{publish_legend},published';

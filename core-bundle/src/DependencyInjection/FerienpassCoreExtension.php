@@ -13,16 +13,18 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\DependencyInjection;
 
+use Composer\InstalledVersions;
 use Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExports;
 use Ferienpass\CoreBundle\Export\Offer\Xml\XmlExports;
 use Ferienpass\CoreBundle\Export\ParticipantList\WordExport;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-final class FerienpassCoreExtension extends Extension
+final class FerienpassCoreExtension extends Extension implements PrependExtensionInterface
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
@@ -55,11 +57,30 @@ final class FerienpassCoreExtension extends Extension
         }
 
         $docxParticipantList = $container->getDefinition(WordExport::class);
-        $docxParticipantList->setArgument(3, $config['participant_list']['docx_template'] ?? null);
+        $docxParticipantList->setArgument(2, $config['participant_list']['docx_template'] ?? null);
     }
 
     public function getAlias()
     {
         return 'ferienpass';
+    }
+
+    public function prepend(ContainerBuilder $container)
+    {
+        // Prepend the ferienpass version to make it available for third-party bundle configuration
+        $container->setParameter('ferienpass.version', $this->getVersion());
+    }
+
+    private function getVersion(): ?string
+    {
+        foreach (['ferienpass/base', 'ferienpass/ferienpass'] as $package) {
+            if (!InstalledVersions::isInstalled($package)) {
+                continue;
+            }
+
+            return InstalledVersions::getPrettyVersion($package);
+        }
+
+        return null;
     }
 }

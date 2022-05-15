@@ -54,7 +54,10 @@ final class OfferEditor extends AbstractFragmentController
             $offer->setTimestamp(time());
 
             // Add alias to the change-set, later the {@see AliasListener.php} kicks in
-            $offer->setAlias('');
+            $offer->setAlias(uniqid());
+            // Add fields to the change-set, later the {@see SortingFieldsListener.php} kicks in
+            $offer->setDatesSorting(random_int(0, 99999));
+            $offer->setHostsSorting(uniqid());
 
             $em = $this->doctrine->getManager();
 

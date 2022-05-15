@@ -17,7 +17,7 @@ services:
     arguments: [ '@database_connection' ]
 
   Ferienpass\CoreBundle\Controller\Backend\ExportController:
-    arguments: [ '@Ferienpass\CoreBundle\Repository\OfferRepository', '@Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExports', '@Ferienpass\CoreBundle\Export\Offer\Excel\ExcelExports', '@Ferienpass\CoreBundle\Export\Offer\Xml\XmlExports' ]
+    arguments: [ '@Ferienpass\CoreBundle\Repository\OfferRepository', '@Ferienpass\CoreBundle\Export\Offer\OfferExporter' ]
 
   Ferienpass\CoreBundle\Controller\Backend\ProofController: ~
 
@@ -32,7 +32,7 @@ services:
     tags: [ 'contao.dashboard_widget' ]
 
   Ferienpass\CoreBundle\Controller\BackendDashboard\EraseDataController:
-    arguments: [ '@Ferienpass\CoreBundle\Facade\EraseDataFacade' ]
+    arguments: [ '@Ferienpass\CoreBundle\Facade\EraseDataFacade', '@Ferienpass\CoreBundle\Repository\EditionRepository' ]
     tags: [ 'contao.dashboard_widget' ]
 
   Ferienpass\CoreBundle\Controller\BackendDashboard\InformSleepController:
@@ -49,10 +49,6 @@ services:
 
   Ferienpass\CoreBundle\Controller\BackendDashboard\CreateAttendanceController:
     arguments: [ '@Ferienpass\CoreBundle\Facade\AttendanceFacade', '@doctrine' ]
-    tags: [ 'contao.dashboard_widget' ]
-
-  Ferienpass\CoreBundle\Controller\BackendDashboard\EditionMenuController:
-    arguments: [ '@database_connection' ]
     tags: [ 'contao.dashboard_widget' ]
 
   Ferienpass\CoreBundle\Controller\BackendDashboard\HeatmapController:
@@ -133,7 +129,7 @@ services:
     arguments: [ '@doctrine.orm.entity_manager' ]
 
   Ferienpass\CoreBundle\Controller\Backend\OfferApplicationsController:
-    arguments: [ '@database_connection', '@Ferienpass\CoreBundle\Export\ParticipantList\PdfExport', '@Ferienpass\CoreBundle\Export\ParticipantList\WordExport' ]
+    arguments: [ '@Ferienpass\CoreBundle\Repository\AttendanceRepository', '@Ferienpass\CoreBundle\Export\ParticipantList\PdfExport', '@Ferienpass\CoreBundle\Export\ParticipantList\WordExport' ]
 
   Ferienpass\CoreBundle\Controller\Frontend\FaviconIcoController:
     tags: [ 'controller.service_arguments' ]
@@ -207,7 +203,7 @@ services:
     tags:
       - { name: 'doctrine.event_listener', event: 'preUpdate' }
 
-  Ferienpass\CoreBundle\EventListener\Doctrine\Offer\DateSortingListener:
+  Ferienpass\CoreBundle\EventListener\Doctrine\Offer\SortingFieldsListener:
     tags: [ { name: 'doctrine.event_listener', event: 'preUpdate' } ]
 
   Ferienpass\CoreBundle\EventListener\Doctrine\Offer\VariantListener:
@@ -233,6 +229,9 @@ services:
   Ferienpass\CoreBundle\EventListener\DataContainer\Offer\LabelListener:
     arguments: [ '@Ferienpass\CoreBundle\Repository\EditionRepository', '@Ferienpass\CoreBundle\Repository\OfferRepository', '@database_connection', '@router' ]
 
+  Ferienpass\CoreBundle\EventListener\DataContainer\Offer\LockEditingListener:
+    arguments: [ '@Ferienpass\CoreBundle\Repository\OfferRepository' ]
+
   Ferienpass\CoreBundle\EventListener\DataContainer\Attendance\LabelListener:
     arguments: [ '@Ferienpass\CoreBundle\Repository\OfferRepository', '@router', '@translator' ]
 
@@ -255,9 +254,11 @@ services:
 
   Ferienpass\CoreBundle\Export\Offer\Excel\ExcelExports:
     arguments: [ !tagged_iterator { tag: 'ferienpass.export.offer.xlsx', index_by: 'key' } ]
+    tags: [ { name: 'ferienpass.offer_export_type', key: 'xlsx' } ]
 
   Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExports:
     arguments: [ '@Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExport' ]
+    tags: [ { name: 'ferienpass.offer_export_type', key: 'pdf' } ]
 
   Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExport:
     arguments: [ '@filesystem', '%kernel.project_dir%', '@twig' ]
@@ -267,13 +268,21 @@ services:
 
   Ferienpass\CoreBundle\Export\Offer\Xml\XmlExports:
     arguments: [ '@Ferienpass\CoreBundle\Export\Offer\Xml\XmlExport' ]
+    tags: [ { name: 'ferienpass.offer_export_type', key: 'xml' } ]
 
   Ferienpass\CoreBundle\Export\Offer\ICal\ICalExport: ~
 
   Ferienpass\CoreBundle\Export\Offer\Web\ImgExport:
     arguments: [ '@kernel', '@filesystem', '@knp_snappy.image', '%kernel.project_dir%' ]
 
-  Ferienpass\CoreBundle\Security\Authentication\AuthenticationFailureHandler: ~
+  Ferienpass\CoreBundle\Export\Offer\OfferExporter:
+    arguments: [ !tagged_iterator { tag: 'ferienpass.offer_export_type', index_by: 'key' } ]
+
+  Ferienpass\CoreBundle\Security\Authentication\AuthenticationFailureHandler:
+    arguments: [ '@translator' ]
+
+  Ferienpass\CoreBundle\Form\Extension\UiThemeExtension:
+    tags: [ 'form.type_extension' ]
 
   Ferienpass\CoreBundle\Form\ApplyFormType:
     arguments: [ '@security.helper', '@doctrine' ]
@@ -323,6 +332,9 @@ services:
     arguments: [ '@fragment.handler', '@translator', '@contao.framework', '@request_stack' ]
     public: true
 
+  Ferienpass\CoreBundle\Filter\OfferListFilterFactory:
+    arguments: [ '@form.factory', '@session' ]
+
   Ferienpass\CoreBundle\MessageHandler\WhenOfferCancelledThenNotify:
     arguments: [ '@doctrine' ]
 
@@ -359,7 +371,11 @@ services:
   Ferienpass\CoreBundle\EventListener\DataContainer\PurgeDcaListener: ~
 
   Ferienpass\CoreBundle\EventListener\Backend\BackendMainListener:
-    arguments: [ '@twig', '@contao.framework' ]
+    arguments: [ '@twig', '@contao.framework', '%ferienpass.version%' ]
+
+  Ferienpass\CoreBundle\EventListener\Backend\BackendMenuListener:
+    arguments: [ '@router', '@request_stack' ]
+    tags: [ { name: 'kernel.event_listener', event: 'contao.backend_menu_build', priority: -255 } ]
 
   Ferienpass\CoreBundle\EventListener\Notification\AddNotificationTokens:
     arguments: [ '@translator' ]

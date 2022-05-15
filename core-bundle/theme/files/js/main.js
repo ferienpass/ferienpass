@@ -1,10 +1,11 @@
-import 'alpinejs'
-import Gantt from 'frappe-gantt';
-import { Chart } from 'frappe-charts/dist/frappe-charts.esm.js'
+import Alpine from 'alpinejs'
+import DashboardGantt from './components/dashboard/gantt'
+import DashboardHeatmap from './components/dashboard/heatmap'
+import DragParticipants from './components/drag-participants';
 
-window.Gantt = Gantt;
-window.Chart = Chart;
+window.Alpine = Alpine
 
-import dragParticipants from './_drag-participants';
-
-dragParticipants();
+Alpine.data('DashboardGantt', DashboardGantt)
+Alpine.data('DashboardHeatmap', DashboardHeatmap)
+Alpine.data('DragParticipants', DragParticipants)
+Alpine.start()

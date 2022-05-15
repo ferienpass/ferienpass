@@ -105,18 +105,12 @@ class EditionTask
         $this->id = $id;
     }
 
-    /**
-     * @return Edition
-     */
-    public function getEdition()
+    public function getEdition(): Edition
     {
         return $this->edition;
     }
 
-    /**
-     * @param mixed $edition
-     */
-    public function setEdition($edition): void
+    public function setEdition(Edition $edition): void
     {
         $this->edition = $edition;
     }
@@ -181,7 +175,7 @@ class EditionTask
         $this->maxApplicationsDay = $maxApplicationsDay;
     }
 
-    public function getPeriodBegin(): ?\DateTimeImmutable
+    public function getPeriodBegin(): \DateTimeImmutable
     {
         return $this->periodBegin;
     }
@@ -201,12 +195,14 @@ class EditionTask
         $this->periodEnd = $periodEnd;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): ?string
     {
         return $this->description;
+    }
+
+    public function isAnApplicationSystem(): bool
+    {
+        return 'application_system' === $this->type;
     }
 
     public function getProgress(): int
@@ -232,7 +228,7 @@ class EditionTask
 
         $now = new \DateTimeImmutable();
 
-        $duration = $this->getPeriodEnd()->diff($this->getPeriodBegin())->days;
+        $duration = $this->getPeriodEnd()->diff($this->getPeriodBegin())->days ?: 1;
         $elapsed = $now->diff($this->getPeriodBegin())->days;
 
         return (int) round(($elapsed / $duration) * 100);
@@ -247,7 +243,7 @@ class EditionTask
         $allTasks = $this->edition->getTasks();
 
         return match (true) {
-            'allocation' === $this->type => $allTasks->filter(fn (EditionTask $t) => 'application_system' === $t->getType() && 'lot' === $t->getApplicationSystem()),
+            'allocation' === $this->type => $allTasks->filter(fn (EditionTask $t) => $t->isAnApplicationSystem() && 'lot' === $t->getApplicationSystem()),
             'application_system' === $this->type && 'firstcome' === $this->applicationSystem => $allTasks->filter(fn (EditionTask $t) => 'allocation' === $t->getType()),
             'publish_lists' === $this->type => $allTasks->filter(fn (EditionTask $t) => 'allocation' === $t->getType()),
             default => new ArrayCollection(),
@@ -307,8 +303,16 @@ class EditionTask
         $this->description = $description;
     }
 
-    public function getApplicationSystem(): ?string
+    public function getApplicationSystem(): string
     {
+        if (!$this->isAnApplicationSystem()) {
+            throw new \BadMethodCallException('This task is not a application system');
+        }
+
+        if (!$this->applicationSystem) {
+            throw new \RuntimeException('Uh oh! Misconfigured task of type "application system"');
+        }
+
         return $this->applicationSystem;
     }
 

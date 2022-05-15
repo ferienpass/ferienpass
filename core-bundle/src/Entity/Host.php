@@ -13,8 +13,11 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Entity;
 
+use Contao\MemberModel;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="Ferienpass\CoreBundle\Repository\HostRepository")
@@ -34,56 +37,67 @@ class Host
     private int $timestamp;
 
     /**
+     * @Groups("notification")
      * @ORM\Column(type="string", length=255, nullable=false, options={"default"=""})
      */
     private string $name;
 
     /**
+     * @Groups("notification")
      * @ORM\Column(type="string", length=255, nullable=true, unique=true)
      */
     private ?string $alias = null;
 
     /**
+     * @Groups("notification")
      * @ORM\Column(type="string", length=64, nullable=true)
      */
     private ?string $phone = null;
 
     /**
+     * @Groups("notification")
      * @ORM\Column(type="string", length=64, nullable=true)
      */
     private ?string $fax = null;
 
     /**
+     * @Groups("notification")
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $mobile = null;
 
     /**
+     * @Groups("notification")
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $email = null;
 
     /**
+     * @Groups("notification")
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $website = null;
 
     /**
+     * @Groups("notification")
      * @ORM\Column(type="string", length=32, nullable=true)
      */
     private ?string $postal = null;
 
     /**
+     * @Groups("notification")
      * @ORM\Column(type="string", length=64, nullable=true)
      */
     private ?string $city = null;
 
     /**
+     * @Groups("notification")
      * @ORM\Column(type="string", length=64, nullable=true)
      */
     private ?string $street = null;
 
     /**
+     * @Groups("notification")
      * @ORM\Column(type="text", nullable=true)
      */
     private ?string $text = null;
@@ -99,7 +113,7 @@ class Host
     private ?string $active = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="Ferienpass\CoreBundle\Entity\HostMemberAssociation", mappedBy="host")
+     * @ORM\OneToMany(targetEntity="Ferienpass\CoreBundle\Entity\HostMemberAssociation", mappedBy="host", cascade={"persist"})
      */
     private Collection $memberAssociations;
 
@@ -107,6 +121,17 @@ class Host
      * @ORM\ManyToMany(targetEntity="Ferienpass\CoreBundle\Entity\Offer", mappedBy="hosts")
      */
     private Collection $offers;
+
+    public function __construct()
+    {
+        $this->memberAssociations = new ArrayCollection();
+        $this->offers = new ArrayCollection();
+    }
+
+    public function addMember(MemberModel $memberModel): self
+    {
+        return $this->addMemberAssociation(new HostMemberAssociation((int) $memberModel->id, $this));
+    }
 
     public function addMemberAssociation(HostMemberAssociation $memberAssociation): self
     {

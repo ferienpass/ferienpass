@@ -15,33 +15,15 @@ namespace Ferienpass\CoreBundle\ApplicationSystem;
 
 use Doctrine\Common\Collections\Collection;
 use Ferienpass\CoreBundle\Entity\Attendance;
-use Ferienpass\CoreBundle\Entity\EditionTask;
 
 /**
  * An application system that runs in the front end when the "first come-first served" application procedure is active.
  */
-class FirstComeApplicationSystem extends AbstractApplicationSystem implements TimedApplicationSystemInterface
+class FirstComeApplicationSystem extends AbstractApplicationSystem
 {
-    private EditionTask $task;
-
-    /**
-     * @required
-     */
-    public function withTask(EditionTask $task): self
+    public function getType(): string
     {
-        if ('application_system' !== $task->getType() || 'firstcome' !== $task->getApplicationSystem()) {
-            throw new \InvalidArgumentException('Edition task must be type "first come-first served" application procedure');
-        }
-
-        $clone = clone $this;
-        $clone->task = $task;
-
-        return $clone;
-    }
-
-    public function getTask(): EditionTask
-    {
-        return $this->task;
+        return 'firstcome';
     }
 
     public function setStatus(Attendance $attendance): void

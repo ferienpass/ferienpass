@@ -49,6 +49,11 @@
                  type="host_forgot_password"
                  contentComposition="false"/>
         </service>
+        <service id="Ferienpass\HostPortalBundle\Controller\Page\HostRegistrationPage">
+            <tag name="contao.page"
+                 type="host_registration"
+                 contentComposition="true"/>
+        </service>
         <service id="Ferienpass\HostPortalBundle\Controller\Page\OfferListPage">
             <tag name="contao.page"
                  type="host_offer_list"

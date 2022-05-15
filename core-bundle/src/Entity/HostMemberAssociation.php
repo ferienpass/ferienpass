@@ -43,6 +43,19 @@ class HostMemberAssociation
      */
     private \DateTimeInterface $createdAt;
 
+    public function __construct(int $member = null, Host $host = null)
+    {
+        $this->createdAt = new \DateTimeImmutable();
+
+        if (null !== $member) {
+            $this->member = $member;
+        }
+
+        if (null !== $host) {
+            $this->host = $host;
+        }
+    }
+
     public function getMember(): int
     {
         return $this->member;

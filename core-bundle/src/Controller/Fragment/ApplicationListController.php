@@ -22,6 +22,7 @@ use Ferienpass\CoreBundle\Form\SimpleType\ContaoRequestTokenType;
 use Ferienpass\CoreBundle\Repository\AttendanceRepository;
 use Ferienpass\CoreBundle\Ux\Flash;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +41,7 @@ class ApplicationListController extends AbstractController
             return new Response('', Response::HTTP_NO_CONTENT);
         }
 
-        /** @var Collection|Attendance[] $attendances */
+        /** @var Collection<int, Attendance> $attendances */
         $attendances = $this->attendanceRepository->createQueryBuilder('a')
             ->innerJoin('a.participant', 'p')
             ->where('p.member = :member')
@@ -56,21 +57,22 @@ class ApplicationListController extends AbstractController
             }
         }
 
-        $applicationSystems = [];
-        foreach ($attendances as $attendance) {
-            $applicationSystems[$attendance->getId()] = $this->applicationSystems->findApplicationSystem($attendance->getOffer());
+        $prioritizeForms = iterator_to_array($this->prioritizeForms($attendances), true);
+        foreach ($prioritizeForms as $form) {
+            if ($response = $this->handlePrioritize($form, $request)) {
+                return $response;
+            }
         }
 
-        // ICS link
-//        $member = FrontendUser::getInstance();
-//        $token = hash('ripemd128', implode('', [$member->id, 'ics', $this->secret]));
-//        $token = substr($token, 0, 8);
-//
-//        return $base.'/share/anmeldungen-ferienpass-'.$member->id.'-'.$token.'.ics';
+        $applicationSystems = [];
+        foreach ($attendances as $attendance) {
+            $applicationSystems[$attendance->getId() ?? 0] = $this->applicationSystems->findApplicationSystem($attendance->getOffer());
+        }
 
         return $this->render('@FerienpassCore/Fragment/application_list.html.twig', [
             'attendances' => $attendances,
             'withdraw' => array_map(fn (FormInterface $form) => $form->createView(), $forms),
+            'prioritize' => array_map(fn (FormInterface $form) => $form->createView(), $prioritizeForms),
             'applicationSystems' => $applicationSystems,
         ]);
     }
@@ -97,8 +99,31 @@ class ApplicationListController extends AbstractController
                 continue;
             }
 
-            yield $attendance->getId() => $this->container->get('form.factory')->createNamed((string) $attendance->getId())
+            yield $attendance->getId() => $this->container->get('form.factory')->createNamed('withdraw'.($attendance->getId() ?? ''))
                 ->add('submit', SubmitType::class, ['label' => 'Abmelden'])
+                ->add('id', HiddenType::class, ['data' => $attendance->getId()])
+                ->add('requestToken', ContaoRequestTokenType::class)
+            ;
+        }
+    }
+
+    /**
+     * @param iterable<int, Attendance> $attendances
+     */
+    private function prioritizeForms(iterable $attendances): \Generator
+    {
+        foreach ($attendances as $attendance) {
+            if (!$attendance->isWaiting()) {
+                continue;
+            }
+
+            if (1 === $attendance->getUserPriority()) {
+                continue;
+            }
+
+            yield $attendance->getId() => $this->container->get('form.factory')->createNamed('prioritize'.($attendance->getId() ?? ''))
+                ->add('submit', SubmitType::class, ['label' => 'Priorität erhöhen'])
+                ->add('id', HiddenType::class, ['data' => $attendance->getId()])
                 ->add('requestToken', ContaoRequestTokenType::class)
             ;
         }
@@ -111,16 +136,16 @@ class ApplicationListController extends AbstractController
             return null;
         }
 
-        $attendance = $this->attendanceRepository->find($form->getConfig()->getName());
+        $attendance = $this->attendanceRepository->find($form->get('id')->getData());
         if (!$attendance instanceof Attendance) {
-            return $this->redirectToRoute($request->get('_route'));
+            return $this->redirectToRoute($request->attributes->get('_route'));
         }
 
         $applicationSystem = $this->applicationSystems->findApplicationSystem($attendance->getOffer());
         if (null === $applicationSystem) {
             $this->addFlash(...Flash::error()->text('Zurzeit sind keine Anmeldungen möglich')->create());
 
-            return $this->redirectToRoute($request->get('_route'));
+            return $this->redirectToRoute($request->attributes->get('_route'));
         }
 
         $this->denyAccessUnlessGranted('withdraw', $attendance);
@@ -129,6 +154,23 @@ class ApplicationListController extends AbstractController
 
         $this->addFlash(...Flash::confirmation()->text('Die Anmeldung wurde erfolgreich zurückgezogen')->create());
 
-        return $this->redirectToRoute($request->get('_route'));
+        return $this->redirectToRoute($request->attributes->get('_route'));
+    }
+
+    private function handlePrioritize(FormInterface $form, Request $request): ?Response
+    {
+        $form->handleRequest($request);
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            return null;
+        }
+
+        $attendance = $this->attendanceRepository->find($form->get('id')->getData());
+        if (!$attendance instanceof Attendance || !$attendance->isWaiting()) {
+            return $this->redirectToRoute($request->attributes->get('_route'));
+        }
+
+        $this->attendanceFacade->increasePriority($attendance);
+
+        return $this->redirectToRoute($request->attributes->get('_route'));
     }
 }

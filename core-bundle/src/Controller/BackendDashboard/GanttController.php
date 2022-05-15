@@ -27,11 +27,13 @@ class GanttController extends AbstractDashboardWidgetController
 
     public function __invoke(): Response
     {
-        $tasks = [];
         $now = new \DateTimeImmutable();
+        $editions = [];
 
         foreach ($this->editionRepository->findAll() as $edition) {
+            $tasks = [];
             foreach ($edition->getTasks() as $task) {
+                // Do not show tasks that are past 30 days
                 if ($task->getPeriodEnd() < $now && $task->getPeriodEnd()->diff($now)->days > 30) {
                     continue;
                 }
@@ -51,14 +53,21 @@ class GanttController extends AbstractDashboardWidgetController
                     ],
                 ];
             }
+
+            if (!empty($tasks)) {
+                $editions[] = [
+                    'edition' => $edition,
+                    'tasks' => $tasks,
+                ];
+            }
         }
 
-        if (empty($tasks)) {
+        if (empty($editions)) {
             return new Response('', Response::HTTP_NO_CONTENT);
         }
 
         return $this->render('@FerienpassCore/Backend/Dashboard/gantt.html.twig', [
-            'tasks' => $tasks,
+            'editions' => $editions,
         ]);
     }
 
@@ -68,7 +77,7 @@ class GanttController extends AbstractDashboardWidgetController
         if ('custom' === $task->getType()) {
             $title = (string) $task->getTitle();
         }
-        if ('application_system' === $task->getType()) {
+        if ($task->isAnApplicationSystem()) {
             $title = $this->translator->trans('MSC.application_system.'.$task->getApplicationSystem(), [], 'contao_default');
         }
 
@@ -81,7 +90,7 @@ class GanttController extends AbstractDashboardWidgetController
             return (string) $task->getDescription();
         }
 
-        if ('application_system' === $task->getType()) {
+        if ($task->isAnApplicationSystem()) {
             return $this->translator->trans('MSC.welcome_gantt.task_description.application_system.'.$task->getApplicationSystem(), [], 'contao_default');
         }
 

@@ -88,7 +88,7 @@ $GLOBALS['TL_DCA']['Offer'] = [
     ],
     'palettes' => [
         '__selector__' => ['varbase'],
-        'default' => '{admin_legend},varbase,edition,hosts,members,category;{name_legend},name,alias;{text_legend},description,meetingPoint,bring;{date_legend},dates,datesExport,applicationDeadline;{info_legend},minAge,maxAge,minParticipants,maxParticipants,fee,accessibility;{media_legend},image,downloads;{applications_legend},requiresApplication,onlineApplication,applyText,contact,comment;{status_legend},published,cancelled',
+        'default' => '{admin_legend},varbase,edition,hosts,members,category;{name_legend},name,alias;{text_legend},description,teaser,meetingPoint,bring;{date_legend},dates,datesExport,applicationDeadline;{info_legend},minAge,maxAge,minParticipants,maxParticipants,fee,accessibility;{media_legend},image,downloads;{applications_legend},requiresApplication,onlineApplication,applyText,contact,comment;{status_legend},published,cancelled',
     ],
     'fields' => [
         'edition' => [
@@ -180,12 +180,17 @@ $GLOBALS['TL_DCA']['Offer'] = [
         'alias' => [
             'exclude' => true,
             'inputType' => 'text',
-            'eval' => ['readonly' => true, 'tl_class' => 'w50', 'doNotCopy' => true],
+            'eval' => ['readonly' => true, 'unique' => true, 'tl_class' => 'w50', 'doNotCopy' => true],
         ],
         'label' => [
             'filter' => true,
         ],
         'description' => [
+            'exclude' => true,
+            'inputType' => 'textarea',
+            'eval' => ['tl_class' => 'clr', 'decodeEntities' => true],
+        ],
+        'teaser' => [
             'exclude' => true,
             'inputType' => 'textarea',
             'eval' => ['tl_class' => 'clr', 'decodeEntities' => true],
@@ -224,7 +229,7 @@ $GLOBALS['TL_DCA']['Offer'] = [
         'applicationDeadline' => [
             'exclude' => true,
             'inputType' => 'text',
-            'eval' => ['tl_class' => 'w50', 'rgxp' => 'date', 'datepicker' => true, 'doNotCopy' => true],
+            'eval' => ['tl_class' => 'w50', 'rgxp' => 'date', 'datepicker' => true],
             'load_callback' => [fn ($v) => $v ? strtotime($v) : null],
             'save_callback' => [fn ($v) => $v ? date('Y-m-d', $v) : null],
         ],

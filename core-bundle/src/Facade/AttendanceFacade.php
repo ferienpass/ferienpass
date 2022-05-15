@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Facade;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\CoreBundle\ApplicationSystem\ApplicationSystems;
 use Ferienpass\CoreBundle\ApplicationSystem\LotApplicationSystem;
@@ -94,6 +95,37 @@ class AttendanceFacade
         $this->withdrawAttendance($attendance);
     }
 
+    public function increasePriority(Attendance $attendance): void
+    {
+        // The priority only applies for non-assigned spots
+        if (!$attendance->isWaiting()) {
+            return;
+        }
+
+        $attendances = $attendance->getParticipant()
+            ?->getAttendancesWaiting()
+            ?->matching(Criteria::create()->orderBy(['user_priority' => Criteria::ASC]))
+        ;
+
+        if (null === $attendances || $attendances->isEmpty()) {
+            $attendance->setUserPriority(1);
+            $this->doctrine->getManager()->flush();
+
+            return;
+        }
+
+        foreach ($attendances as $currentAttendance) {
+            if ($attendance === $currentAttendance) {
+                $attendance->setUserPriority(min(1, $attendance->getUserPriority() - 1));
+                break;
+            }
+
+            $currentAttendance->setUserPriority($currentAttendance->getUserPriority() + 1);
+        }
+
+        $this->doctrine->getManager()->flush();
+    }
+
     private function findOrCreateAttendance(Offer $offer, Participant $participant): ?Attendance
     {
         $attendance = $this->doctrine->getRepository(Attendance::class)->findOneBy(['offer' => $offer, 'participant' => $participant]);
@@ -101,6 +133,7 @@ class AttendanceFacade
         if (null === $attendance) {
             $attendance = new Attendance($offer, $participant);
 
+            $offer->addAttendance($attendance);
             $this->doctrine->getManager()->persist($attendance);
 
             return $attendance;

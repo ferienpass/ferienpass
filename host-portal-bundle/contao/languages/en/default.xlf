@@ -23,6 +23,9 @@
             <trans-unit id="PTY.host_view_organization.0">
                 <target>Veranstalter-Portal - Stammdaten</target>
             </trans-unit>
+            <trans-unit id="PTY.host_registration.0">
+                <target>Veranstalter-Portal - Registrierung</target>
+            </trans-unit>
             <trans-unit id="PTY.host_change_password.0">
                 <target>Veranstalter-Portal - Passwort ändern</target>
             </trans-unit>

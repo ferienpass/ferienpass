@@ -27,6 +27,12 @@
             <argument>%kernel.project_dir%</argument>
             <argument type="service" id="doctrine"/>
         </service>
+        <service id="Ferienpass\HostPortalBundle\Controller\Fragment\RegistrationController">
+            <argument type="service" id="doctrine"/>
+            <argument type="expression">service('security.password_hasher_factory').getPasswordHasher('Contao\\FrontendUser')</argument>
+            <argument>%env(ADMIN_EMAIL)%</argument>
+            <argument type="service" id="serializer"/>
+        </service>
         <service id="Ferienpass\HostPortalBundle\Controller\Fragment\TwoFactorController">
             <argument type="service" id="security.helper"/>
             <argument type="service" id="contao.security.two_factor.trusted_device_manager"/>

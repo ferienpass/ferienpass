@@ -13,13 +13,11 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Controller\Backend;
 
-use Contao\CoreBundle\Exception\ResponseException;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Host;
-use Ferienpass\CoreBundle\Export\Offer\Excel\ExcelExports;
-use Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExports;
-use Ferienpass\CoreBundle\Export\Offer\Xml\XmlExports;
+use Ferienpass\CoreBundle\Export\Offer\OfferExporter;
 use Ferienpass\CoreBundle\Form\SimpleType\ContaoRequestTokenType;
 use Ferienpass\CoreBundle\Repository\OfferRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -38,18 +36,22 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 final class ExportController extends AbstractController
 {
-    public function __construct(private OfferRepository $offerRepository, private PdfExports $pdfExports, private ExcelExports $excelExports, private XmlExports $xmlExports)
+    public function __construct(private OfferRepository $offerRepository, private OfferExporter $exporter)
     {
     }
 
     public function __invoke(Request $request): Response
     {
-        $types = array_values(array_merge($this->pdfExports->getNames(), $this->excelExports->getNames(), $this->xmlExports->getNames()));
+        $types = $this->exporter->getAllNames();
+
         $form = $this->createFormBuilder()
             ->add('type', ChoiceType::class, [
-                'label' => 'Export',
+                'label' => 'Welches Format soll exportiert werden?',
                 'choices' => array_combine($types, $types),
-                'choice_label' => fn ($choice, $key, $value) => strtoupper($key),
+                'layout' => 'cards',
+                'data' => $types[0],
+                'choice_label' => fn ($choice, $key, $value): string => sprintf('export.%s.0', $key),
+                'choice_attr' => fn ($choice, $key, $value): array => ['help' => sprintf('export.%s.1', $key)],
             ])
             ->add('editions', EntityType::class, [
                 'class' => Edition::class,
@@ -88,35 +90,9 @@ final class ExportController extends AbstractController
         ]);
     }
 
-    protected function checkToken(): void
+    private function exportOffers(string $key, iterable $offers): BinaryFileResponse
     {
-        $token = $this->container->get('security.token_storage')->getToken();
-        if (null === $token || $this->get('security.authentication.trust_resolver')->isAnonymous($token)) {
-            throw new \Symfony\Component\Security\Core\Exception\AccessDeniedException();
-        }
-
-        if (!$this->container->get('security.authorization_checker')->isGranted('ROLE_USER')) {
-            throw new ResponseException(new Response('Access Denied', Response::HTTP_UNAUTHORIZED));
-        }
-    }
-
-    private function exportOffers(string $type, iterable $offers): BinaryFileResponse
-    {
-        if ($this->pdfExports->has($type)) {
-            ini_set('pcre.backtrack_limit', '100000000');
-
-            return $this->file($this->pdfExports->get($type)->generate($offers));
-        }
-
-        if ($this->excelExports->has($type)) {
-            return $this->file($this->excelExports->get($type)->generate($offers));
-        }
-
-        if ($this->xmlExports->has($type)) {
-            return $this->file($this->xmlExports->get($type)->generate($offers));
-        }
-
-        throw new \InvalidArgumentException(sprintf('Type "%s" is not supported', $type));
+        return $this->file($this->exporter->getExporter($key)->generate($offers));
     }
 
     private function queryOffers(FormInterface $form): iterable
@@ -134,15 +110,20 @@ final class ExportController extends AbstractController
         if (($editions = $form->get('editions')->getData())
             && $editions instanceof Collection
             && $editions->count()) {
-            /** @psalm-suppress QueryBuilderSetParameter */
-            $qb->andWhere('offer.edition IN (:editions)')->setParameter('editions', $editions);
+            $qb
+                ->andWhere('offer.edition IN (:editions)')
+                ->setParameter('editions', array_map(fn (Edition $e) => $e->getId(), $editions->toArray()), Types::SIMPLE_ARRAY)
+            ;
         }
 
         if (($hosts = $form->get('hosts')->getData())
             && $hosts instanceof Collection
             && $hosts->count()) {
-            /** @psalm-suppress QueryBuilderSetParameter */
-            $qb->innerJoin('offer.hosts', 'hosts')->andWhere('hosts.id IN (:hosts)')->setParameter('hosts', $hosts);
+            $qb
+                ->innerJoin('offer.hosts', 'hosts')
+                ->andWhere('hosts.id IN (:hosts)')
+                ->setParameter('hosts', array_map(fn (Host $h) => $h->getId(), $hosts->toArray()), Types::SIMPLE_ARRAY)
+            ;
         }
 
         return $qb->getQuery()->getResult();
