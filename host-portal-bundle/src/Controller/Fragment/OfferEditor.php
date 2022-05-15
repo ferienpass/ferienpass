@@ -24,6 +24,7 @@ use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\OfferDate;
 use Ferienpass\CoreBundle\Ux\Flash;
+use Ferienpass\HostPortalBundle\Dto\EditOfferDto;
 use Ferienpass\HostPortalBundle\Form\EditOfferType;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -46,9 +47,10 @@ final class OfferEditor extends AbstractFragmentController
             $originalDates->add($date);
         }
 
-        $form = $this->createForm(EditOfferType::class, $offer, ['is_variant' => !$offer->isVariantBase()]);
+        $form = $this->createForm(EditOfferType::class, $offerDto = EditOfferDto::fromEntity($offer), ['is_variant' => !$offer->isVariantBase()]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $offer = $offerDto->toEntity($offer);
             $offer->setTimestamp(time());
 
             // Add alias to the change-set, later the {@see AliasListener.php} kicks in
@@ -57,11 +59,11 @@ final class OfferEditor extends AbstractFragmentController
             $offer->setDatesSorting(random_int(0, 99999));
             $offer->setHostsSorting(uniqid());
 
-            $entityManager = $this->doctrine->getManager();
+            $em = $this->doctrine->getManager();
 
             foreach ($originalDates as $date) {
                 if (false === $offer->getDates()->contains($date)) {
-                    $entityManager->remove($date);
+                    $em->remove($date);
                 }
             }
 
@@ -95,16 +97,16 @@ final class OfferEditor extends AbstractFragmentController
                 }
             }
 
-            $entityManager->flush();
+            $em->flush();
 
             $this->addFlash(...Flash::confirmation()->text('Die Daten wurden erfolgreich gespeichert.')->create());
 
             return $this->redirectToRoute($request->attributes->get('_route'), ['id' => $offer->getId()]);
         }
 
-        return $this->render('@FerienpassHostPortal/fragment/offer_editor.html.twig', [
+        return $this->renderForm('@FerienpassHostPortal/fragment/offer_editor.html.twig', [
             'offer' => $offer,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 

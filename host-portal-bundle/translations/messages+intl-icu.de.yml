@@ -1,6 +1,6 @@
 Host:
-  name_legend: Name und Beschreibung
-  name_help: Geben Sie den Namen Ihres Vereins oder Ihrer Einrichtung ein. Beschreiben Sie in ein paar Worten Ihre Institution (dies wird den Eltern angezeigt).
+  title_legend: Name und Beschreibung
+  title_help: Geben Sie den Namen Ihres Vereins oder Ihrer Einrichtung ein. Beschreiben Sie in ein paar Worten Ihre Institution (dies wird den Eltern angezeigt).
   address_legend: Adresse
   address_help: Nennen Sie, wie sie postalisch zu erreichen sind.
   contact_legend: Kontakt

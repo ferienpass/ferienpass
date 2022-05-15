@@ -46,16 +46,22 @@
             </div>
         {% endfor %}
 
-        {# render all fieldsets (= widgets that have a legend) #}
+        {% set fieldsets = form.children|map(
+            f => f.vars['fieldset_group'] is defined ? "#{f.vars['fieldset_group']}" : null)|reduce(
+                (unique, item) => not item or item in unique ? unique : unique|merge([item]), []
+            )
+        %}
+
+        {# render all fieldsets #}
         <div class="space-y-10">
-            {% for fieldset in form.children|filter(v => v.vars.legend|default) %}
+            {% for fieldset in fieldsets %}
                 <div class="mt-10 sm:mt-0">
                     <div class="md:grid md:grid-cols-3 md:gap-6">
                         <div class="md:col-span-1">
                             <div class="px-4 sm:px-0">
-                                <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-50">{{ fieldset.vars.legend|trans }}</h3>
+                                <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-50">{{ "Offer.#{fieldset}_legend"|trans }}</h3>
                                 <div class="mt-1 text-sm leading-5 text-gray-500 dark:text-gray-300">
-                                    <p>{{ fieldset.vars.help|trans }}</p>
+                                    <p>{{ "Offer.#{fieldset}_help"|trans }}</p>
                                 </div>
                             </div>
                         </div>
@@ -63,7 +69,7 @@
                             <div class="shadow overflow-hidden sm:rounded-md">
                                 <div class="px-4 py-5 bg-white dark:bg-gray-900 sm:p-6">
                                     <div class="space-y-6">
-                                        {% for field in fieldset.children %}
+                                        {% for field in form.children|filter(f => f.vars['fieldset_group'] is defined and fieldset == f.vars['fieldset_group']) %}
                                             {{ form_row(field) }}
                                         {% endfor %}
                                     </div>

@@ -58,8 +58,8 @@ final class LostPasswordController extends AbstractFragmentController
             }
         }
 
-        return $this->render('@FerienpassHostPortal/fragment/lost_password.html.twig', [
-            'form' => $form->createView(),
+        return $this->renderForm('@FerienpassHostPortal/fragment/lost_password.html.twig', [
+            'form' => $form,
         ]);
     }
 
@@ -135,8 +135,8 @@ final class LostPasswordController extends AbstractFragmentController
             ]);
         }
 
-        return $this->render('@FerienpassHostPortal/fragment/lost_password.html.twig', [
-            'form' => $form->createView(),
+        return $this->renderForm('@FerienpassHostPortal/fragment/lost_password.html.twig', [
+            'form' => $form,
         ]);
     }
 }
