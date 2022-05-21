@@ -31,7 +31,7 @@ class OfferFiltersType extends AbstractType
             $annotations = array_merge(...array_map(fn (\ReflectionAttribute $attribute) => $attribute->getArguments(), $property->getAttributes(OfferFilterTypeAnnotation::class)));
 
             if (!$options['short'] || $annotations['shortForm']) {
-                $builder->add($property->getName(), null, ['required' => false]);
+                $builder->add($property->getName());
             }
         }
 
