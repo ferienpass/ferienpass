@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 final class OfferListFilterController extends AbstractController
 {
-    public function __construct(private EditionRepository $editionRepository)
+    public function __construct(private EditionRepository $editionRepository, private OfferFiltersDto $filtersDto)
     {
     }
 
@@ -47,10 +47,10 @@ final class OfferListFilterController extends AbstractController
             $data = $form->getData();
         }
 
-        $dto = OfferFiltersDto::fromData($data ?? null);
+        $dto = $this->filtersDto->fromData($data ?? null);
 
         // Build the short form
-        $shortForm = $this->createForm(OfferFiltersType::class, $dto, ['short' => true]);
+        $shortForm = $this->createForm(OfferFiltersType::class, $dto, ['short' => true, 'data_class' => $this->filtersDto::class]);
 
         // If filters form submitted, redirect to a pretty URL
         $shortForm->handleRequest($request);
@@ -59,7 +59,7 @@ final class OfferListFilterController extends AbstractController
         }
 
         // Build the full form
-        $form = $this->createForm(OfferFiltersType::class, $dto);
+        $form = $this->createForm(OfferFiltersType::class, $dto, ['data_class' => $this->filtersDto::class]);
         $form->handleRequest($request);
 
         // If filters form submitted, redirect to a pretty URL

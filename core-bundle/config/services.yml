@@ -354,7 +354,7 @@ services:
 
 
   Ferienpass\CoreBundle\Filter\OfferListFilterFactory:
-    arguments: [ '@form.factory', !tagged_iterator { tag: 'ferienpass.filter.offer_list_type', default_index_method: 'getName' } ]
+    arguments: [ '@form.factory', !tagged_iterator { tag: 'ferienpass.filter.offer_list_type', default_index_method: 'getName' }, '@ferienpass.dto.offer_filters' ]
 
   Ferienpass\CoreBundle\MessageHandler\WhenOfferCancelledThenNotify:
     arguments: [ '@doctrine' ]
@@ -412,3 +412,6 @@ services:
 
   Monolog\Processor\PsrLogMessageProcessor:
     tags: { name: monolog.processor, handler: sentry }
+
+  ferienpass.dto.offer_filters:
+    class: Ferienpass\CoreBundle\Dto\OfferFiltersDto

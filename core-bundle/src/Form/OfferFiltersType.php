@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Ferienpass\CoreBundle\Form;
 
 use Ferienpass\CoreBundle\Dto\Annotation\OfferFilterType as OfferFilterTypeAnnotation;
-use Ferienpass\CoreBundle\Dto\OfferFiltersDto;
 use Ferienpass\CoreBundle\Form\SimpleType\ContaoRequestTokenType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -25,7 +24,7 @@ class OfferFiltersType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $properties = (new \ReflectionClass(OfferFiltersDto::class))->getProperties(\ReflectionProperty::IS_PUBLIC);
+        $properties = (new \ReflectionClass($options['data_class']))->getProperties(\ReflectionProperty::IS_PUBLIC);
 
         foreach ($properties as $property) {
             $annotations = array_merge(...array_map(fn (\ReflectionAttribute $attribute) => $attribute->getArguments(), $property->getAttributes(OfferFilterTypeAnnotation::class)));
@@ -44,10 +43,8 @@ class OfferFiltersType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([
-            'attributes' => [],
-            'csrf_protection' => false,
-        ]);
+        $resolver->setDefault('csrf_protection', false);
+        $resolver->setRequired('data_class');
 
         $resolver->setDefined('short');
         $resolver->setAllowedTypes('short', 'bool');
