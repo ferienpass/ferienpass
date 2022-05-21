@@ -26,6 +26,10 @@ final class FerienpassBackupSftpExtension extends Extension implements Configure
 
     public function configureFilesystem(FilesystemConfiguration $config): void
     {
+        if (false === getenv('DB_STORAGE_HOST')) {
+            return;
+        }
+
         $config
             ->mountAdapter('sftp', [
                 'host' => '%env(DB_STORAGE_HOST)%',
