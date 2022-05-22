@@ -28,8 +28,7 @@
                     {% set actions = knp_menu_get('host_participant_list_actions', [], {'offer': offer}) %}
 
                     <div class="md:ml-3" x-data="{ modal: null }">
-                        <button
-                                x-ref="addParticipantLink"
+                        <button x-ref="addParticipantLink"
                                 @click.prevent="modal = 'addParticipant'"
                                 data-method="post"
                                 class="relative shadow-sm inline-flex px-4 py-2 items-center border border-transparent text-sm leading-5 font-medium rounded-md focus:outline-none focus:shadow-outline-blue border-transparent text-white bg-primary-600 hover:bg-primary-500 focus:border-primary-700 active:bg-primary-700">
@@ -47,47 +46,47 @@
                             {{ actions|first.label|trans }}
                         </a>
                         <span class="-ml-px relative block">
-                    {% embed '@FerienpassHostPortal/components/dropdown.html.twig' %}
-                        {% block toggle %}
-                            <button type="button"
-                                    class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150">
-                                <span class="h-5 w-5">{{ source('@FerienpassHostPortal/icons/chevron-down-solid.svg') }}</span>
-                            </button>
-                        {% endblock %}
+                            {% embed '@FerienpassHostPortal/components/dropdown.html.twig' %}
+                                {% block toggle %}
+                                    <button type="button"
+                                            class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150">
+                                        <span class="h-5 w-5">{{ source('@FerienpassHostPortal/icons/chevron-down-solid.svg') }}</span>
+                                    </button>
+                                {% endblock %}
 
-                        {% block dropdown %}
+                                {% block dropdown %}
 
-                        <div x-data="{ modal: null }">
-                        {% for action in actions|slice(1) %}
-                            {% if action.displayed %}
-                                <a href="{{ action.uri }}"
-                                        {% set method = action.extra('method') %}
-                                        {% if method %}
-                                            x-ref="{{ action.name ~ 'Link' }}"
-                                            @click.prevent="modal = '{{ action.name }}'"
-                                            data-method="{{ method }}"
-                                        {% endif %}
+                                    <div x-data="{ modal: null }">
+                                        {% for action in actions|slice(1) %}
+                                            {% if action.displayed %}
+                                                <a href="{{ action.uri }}"
+                                                        {% set method = action.extra('method') %}
+                                                        {% if method %}
+                                                            x-ref="{{ action.name ~ 'Link' }}"
+                                                            @click.prevent="modal = '{{ action.name }}'"
+                                                            data-method="{{ method }}"
+                                                        {% endif %}
 
-                                       class="mt-1 group flex items-center px-5 py-2 text-sm leading-5 font-medium text-gray-600  hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:bg-gray-100 transition ease-in-out duration-150">
-                                        <span class="flex-shrink-0 -ml-1 mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150">{{ source('@FerienpassHostPortal/icons/'~action.extra('icon')~'.svg') }}</span>
-                                        <span class="truncate">{{ action.label|trans }}</span>
-                                    </a>
-                                {% else %}
-                                <span class="mt-1 group flex items-center px-5 py-2 text-sm leading-5 font-medium text-gray-400 cursor-not-allowed">
-                                    <span class="flex-shrink-0 -ml-1 mr-3 h-5 w-5 text-gray-400">{{ source('@FerienpassHostPortal/icons/'~action.extra('icon')~'.svg') }}</span>
-                                    <span class="truncate">{{ action.label|trans }}</span>
-                                </span>
-                            {% endif %}
-                        {% endfor %}
+                                                   class="mt-1 group flex items-center px-5 py-2 text-sm leading-5 font-medium text-gray-600  hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:bg-gray-100 transition ease-in-out duration-150">
+                                                    <span class="flex-shrink-0 -ml-1 mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150">{{ source('@FerienpassHostPortal/icons/'~action.extra('icon')~'.svg') }}</span>
+                                                    <span class="truncate">{{ action.label|trans }}</span>
+                                                </a>
+                                            {% else %}
+                                                <span class="mt-1 group flex items-center px-5 py-2 text-sm leading-5 font-medium text-gray-400 cursor-not-allowed">
+                                                    <span class="flex-shrink-0 -ml-1 mr-3 h-5 w-5 text-gray-400">{{ source('@FerienpassHostPortal/icons/'~action.extra('icon')~'.svg') }}</span>
+                                                    <span class="truncate">{{ action.label|trans }}</span>
+                                                </span>
+                                            {% endif %}
+                                        {% endfor %}
 
-                            {% for modal in actions.children|filter(c => c.displayed and c.extra('method') is not empty) %}
-                                {% set id = modal.name %}
-                                {% include '@FerienpassHostPortal/components/modal/'~id~'.html.twig' with { id: id, offer: offer } %}
-                            {% endfor %}
-                            </div>
+                                        {% for modal in actions.children|filter(c => c.displayed and c.extra('method') is not empty) %}
+                                            {% set id = modal.name %}
+                                            {% include '@FerienpassHostPortal/components/modal/'~id~'.html.twig' with { id: id, offer: offer } %}
+                                        {% endfor %}
+                                    </div>
 
-                    {% endblock %}
-                    {% endembed %}
+                                {% endblock %}
+                            {% endembed %}
                         </span>
                     </span>
 
@@ -99,7 +98,8 @@
             <div class="flex flex-col">
                 <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 pb-24">
                     <div class="align-middle inline-block min-w-full shadow sm:rounded-lg border-b border-gray-200">
-                        <div x-data="{ participants }">
+                        <div x-data="{ selectedAttendances: [] }">
+                            {{ form_start(changeStatus) }}
                             <table class="min-w-full">
                                 <thead>
                                 <tr>
@@ -123,7 +123,9 @@
                                             <div>
                                                 <label for="cbx_all_participants" class="sr-only">Alle
                                                     auswählen:</label>
-                                                <input id="cbx_all_participants" type="checkbox" @change="toggleAll"
+                                                <input id="cbx_all_participants"
+                                                       type="checkbox"
+                                                       @change="$el.checked ? selectedAttendances = [{{ attendances|map(a => "#{a.id}")|join(',') }}] : selectedAttendances = []"
                                                        class="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out">
                                             </div>
                                         {% endif %}
@@ -134,42 +136,30 @@
                                 <tr>
                                     <td colspan="6"
                                         class="sm:rounded-b-lg px-6 py-3 border-t border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 text-right">
-                                        <span><span x-text="'a'"></span> ausgewählte:</span><span
+                                        <span><span x-text="selectedAttendances.length"></span> ausgewählten:</span><span
                                                 class="ml-2 relative inline-flex shadow-sm"
-                                                :class="{ 'pointer-events-none': !hasSelectedParticipants }">
-                                        <button class="relative whitespace-no-wrap inline-flex items-center px-3 py-1 rounded-l-md border border-gray-300 bg-white text-sm leading-5 font-medium hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
-                                                :class="{ 'text-gray-600': hasSelectedParticipants, 'text-gray-300': !hasSelectedParticipants }"
-                                                @click.prevent="clickParticipantAction" data-action="reject"
-                                                :href="actions.reject.href">
-                                            {{ 'actions.reject.label' }}
-                                        </button>
-                                            <span class="-ml-px relative block text-left">
-
-                                                <dropdown-nav ref="dropdown" width="w-56">
-                                                  <template #toggle>
-                                                    <button type="button"
-                                                            class="relative inline-flex items-center px-1 py-1 rounded-r-md border border-gray-300 bg-white text-xs leading-5 font-medium hover:text-gray-400 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150"
-                                                            :class="{ 'text-gray-500': hasSelectedParticipants, 'text-gray-200': !hasSelectedParticipants }">
-                                                      <i is="icon-chevron-down-filled" class="h-5 w-5"></i>
-                                                </button>
-                                                  </template>
-
-                                                  <template>
-                                                    <dropdown-nav-item v-if="!offer.immutable"
-                                                                       @click.native.prevent="clickParticipantAction"
-                                                                       data-action="confirm"
-                                                                       :href="actions.confirm.href">{{ 'actions.confirm.label' }}</dropdown-nav-item>
-                                                    <dropdown-nav-item @click.native.prevent="clickParticipantAction"
-                                                                       data-action="eMailAddresses">E-Mail-Adressen kopieren</dropdown-nav-item>
-                                                  </template>
-                                                </dropdown-nav>
-                                            </span>
-                                    </span>
-
+                                                :class="{ 'pointer-events-none': !selectedAttendances.length }">
+                                            {% do changeStatus.reject.setRendered %}
+                                            <button class="relative whitespace-no-wrap inline-flex items-center px-3 py-1 rounded-md border border-gray-300 bg-white text-sm leading-5 font-medium hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
+                                                    :class="{ 'text-gray-600': selectedAttendances.length, 'text-gray-300': !selectedAttendances.length }"
+                                                    id="{{ changeStatus.reject.vars.id }}"
+                                                    name="{{ changeStatus.reject.vars['full_name'] }}">Kindern absagen
+                                            </button>
+                                        </span><span
+                                                class="ml-2 relative inline-flex shadow-sm"
+                                                :class="{ 'pointer-events-none': !selectedAttendances.length }">
+                                            {% do changeStatus.confirm.setRendered %}
+                                            <button class="relative whitespace-no-wrap inline-flex items-center px-3 py-1 rounded-md border border-gray-300 bg-white text-sm leading-5 font-medium hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
+                                                    :class="{ 'text-gray-600': selectedAttendances.length, 'text-gray-300': !selectedAttendances.length }"
+                                                    id="{{ changeStatus.confirm.vars.id }}"
+                                                    name="{{ changeStatus.confirm.vars['full_name'] }}">Kindern zusagen
+                                            </button>
+                                        </span>
                                     </td>
                                 </tr>
                                 </tfoot>
                                 <tbody class="bg-white">
+                                {% do changeStatus.attendances.setRendered %}
                                 {% if attendances is empty %}
                                     <tr>
                                         <td colspan="6" class="px-6 py-6">
@@ -196,7 +186,7 @@
                                         <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                                             <div class="text-sm leading-5 font-medium text-gray-900">{{ participant.firstname ~ ' ' ~ participant.lastname }}
                                             </div>
-                                            <div class="text-sm leading-5 text-gray-500">{{ participant.age ~ ' Jahre'}}
+                                            <div class="text-sm leading-5 text-gray-500">{{ participant.age ~ ' Jahre' }}
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-900">
@@ -209,30 +199,25 @@
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ colorClass }}">{{ attendance.status|trans }}</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-no-wrap text-center border-b border-gray-200 text-sm leading-5 font-medium">
-                                            <label for="{{ 'cbx_participant_' ~ participant.id }}" class="sr-only">Teilnehmer
+                                            <label for="{{ 'form_attendances_' ~ attendance.id }}" class="sr-only">Teilnehmer
                                                 auswählen:</label>
-                                            <input id="{{ 'cbx_participant_' ~ participant.id }}" type="checkbox"
-                                                   v-model="selectedParticipants"
-                                                   :value="participant.participantId"
+                                            <input id="{{ 'form_attendances_' ~ attendance.id }}"
+                                                   name="{{ changeStatus.attendances.vars['full_name'] ~ '[]' }}"
+                                                   type="checkbox"
+                                                   x-model="selectedAttendances"
+                                                   value="{{ attendance.id }}"
                                                    class="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out">
                                         </td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
                             </table>
+                            {{ form_end(changeStatus) }}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <modal-offer-cancel ref="modalCancelOffer"/>
-        <modal-offer-reactivate ref="modalReactivateOffer"/>
-        <modal-offer-participants-confirm ref="modalConfirmParticipants"/>
-        <modal-offer-participants-reject ref="modalRejectParticipants"/>
-
-        <modal-offer-participants-email-addresses ref="modalEmailAddresses"/>
-        <modal-offer-participant-add ref="modalAddParticipant"/>
 
     </div>
 

@@ -80,6 +80,7 @@
             <argument type="service" id="Ferienpass\HostPortalBundle\State\PrivacyConsent"/>
             <argument type="service" id="Ferienpass\CoreBundle\Facade\AttendanceFacade"/>
             <argument type="service" id="doctrine"/>
+            <argument type="service" id="Ferienpass\HostPortalBundle\ApplicationSystem\ParticipantList"/>
         </service>
         <service id="Ferienpass\HostPortalBundle\Controller\Fragment\OfferDetailsController">
             <argument type="service" id="Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExports"/>

@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Ferienpass\HostPortalBundle\ApplicationSystem;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\CoreBundle\ApplicationSystem\ApplicationSystems;
@@ -43,11 +42,11 @@ class ParticipantList
         $this->dispatchMessage(new ParticipantListChanged($offer->getId()));
     }
 
-    public function confirm(Offer $offer, Collection $participants): void
+    /**
+     * @param iterable<Attendance> $attendances
+     */
+    public function confirm(iterable $attendances): void
     {
-        /** @var Collection|Attendance[] $attendances */
-        $attendances = $offer->getAttendances()->filter(fn (Attendance $a) => $participants->contains($a->getParticipant()));
-
         foreach ($attendances as $attendance) {
             $oldStatus = $attendance->getStatus();
             if (Attendance::STATUS_CONFIRMED === $oldStatus) {
@@ -61,14 +60,16 @@ class ParticipantList
 
         $this->doctrine->getManager()->flush();
 
-        $this->dispatchMessage(new ParticipantListChanged($offer->getId()));
+        foreach (array_unique(array_map(fn (Attendance $a) => $a->getOffer()->getId(), iterator_to_array($attendances))) as $offerId) {
+            $this->dispatchMessage(new ParticipantListChanged($offerId));
+        }
     }
 
-    public function reject(Offer $offer, Collection $participants): void
+    /**
+     * @param iterable<Attendance> $attendances
+     */
+    public function reject(iterable $attendances): void
     {
-        /** @var Collection|Attendance[] $attendances */
-        $attendances = $offer->getAttendances()->filter(fn (Attendance $a) => $participants->contains($a->getParticipant()));
-
         foreach ($attendances as $attendance) {
             $oldStatus = $attendance->getStatus();
 
@@ -83,7 +84,9 @@ class ParticipantList
 
         $this->doctrine->getManager()->flush();
 
-        $this->dispatchMessage(new ParticipantListChanged($offer->getId()));
+        foreach (array_unique(array_map(fn (Attendance $a) => $a->getOffer()->getId(), iterator_to_array($attendances))) as $offerId) {
+            $this->dispatchMessage(new ParticipantListChanged($offerId));
+        }
     }
 
     private function addParticipant(array $data, Offer $offer): void

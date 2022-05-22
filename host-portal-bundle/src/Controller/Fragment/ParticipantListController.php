@@ -15,18 +15,23 @@ namespace Ferienpass\HostPortalBundle\Controller\Fragment;
 
 use Contao\FrontendUser;
 use Doctrine\Persistence\ManagerRegistry;
+use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Facade\AttendanceFacade;
+use Ferienpass\CoreBundle\Form\SimpleType\ContaoRequestTokenType;
 use Ferienpass\CoreBundle\Ux\Flash;
+use Ferienpass\HostPortalBundle\ApplicationSystem\ParticipantList;
 use Ferienpass\HostPortalBundle\Dto\AddParticipantDto;
 use Ferienpass\HostPortalBundle\Form\AddParticipantType;
 use Ferienpass\HostPortalBundle\State\PrivacyConsent;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 final class ParticipantListController extends AbstractFragmentController
 {
-    public function __construct(private PrivacyConsent $privacyConsent, private AttendanceFacade $attendanceFacade, private ManagerRegistry $doctrine)
+    public function __construct(private PrivacyConsent $privacyConsent, private AttendanceFacade $attendanceFacade, private ManagerRegistry $doctrine, private ParticipantList $participantList)
     {
     }
 
@@ -65,9 +70,47 @@ final class ParticipantListController extends AbstractFragmentController
             return $this->redirect($request->getUri());
         }
 
+        $statusForm = $this->createFormBuilder()
+            ->add('confirm', SubmitType::class)
+            ->add('reject', SubmitType::class)
+            ->add('attendances', EntityType::class, [
+                'class' => Attendance::class,
+                'choices' => $offer->getAttendancesNotWithdrawn(),
+                'choice_label' => 'id',
+                'multiple' => true,
+                'expanded' => true,
+            ])
+            ->add('request_token', ContaoRequestTokenType::class)
+            ->getForm()
+        ;
+
+        $statusForm->handleRequest($request);
+        if ($statusForm->isSubmitted() && $statusForm->isValid()) {
+            $action = method_exists($statusForm, 'getClickedButton') ? $statusForm->getClickedButton()?->getName() : '';
+            $this->denyAccessUnlessGranted('participants.'.$action, $offer);
+
+            $attendances = $statusForm->get('attendances')->getData();
+
+            switch ($action) {
+                case 'confirm':
+                    $this->participantList->confirm($attendances);
+
+                    $this->addFlash(...Flash::confirmation()->text('Den Teilnehmer:innen wurde zugesagt.')->create());
+                    break;
+                case 'reject':
+                    $this->participantList->reject($attendances);
+
+                    $this->addFlash(...Flash::confirmation()->text('Den Teilnehmer:innen wurde abgesagt.')->create());
+                    break;
+            }
+
+            return $this->redirect($request->getUri());
+        }
+
         return $this->render('@FerienpassHostPortal/fragment/participant_list.html.twig', [
             'offer' => $offer,
             'addParticipant' => $addForm->createView(),
+            'changeStatus' => $statusForm->createView(),
             'attendances' => $offer->getAttendancesNotWithdrawn(),
         ]);
     }
