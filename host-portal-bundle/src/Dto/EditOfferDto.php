@@ -76,11 +76,11 @@ class EditOfferDto implements OfferDto
     #[Annotation\FormType('applications')]
     public ?int $fee = null;
 
-    //#[Annotation\FormType('applications')]
-    //public ?bool $aktivPass = null;
+    // #[Annotation\FormType('applications')]
+    // public ?bool $aktivPass = null;
 
-    //#[Annotation\FormType('applications')]
-    //public ?array $accessibility = null;
+    // #[Annotation\FormType('applications')]
+    // public ?array $accessibility = null;
 
     public ?string $image = null;
 
@@ -109,8 +109,8 @@ class EditOfferDto implements OfferDto
         $self->applyText = $offer->getApplyText();
         $self->contact = $offer->getContact();
         $self->fee = $offer->getFee();
-        //$self->aktivPass = $offer->isAktivPass();
-        //$self->accessibility = $offer->getAccessibility();
+        // $self->aktivPass = $offer->isAktivPass();
+        // $self->accessibility = $offer->getAccessibility();
         $self->image = $offer->getImage();
 
         return $self;
@@ -137,8 +137,8 @@ class EditOfferDto implements OfferDto
         $offer->setApplyText($this->applyText);
         $offer->setContact($this->contact);
         $offer->setFee($this->fee);
-        //$offer->setAktivPass($this->aktivPass);
-        //$offer->setAccessibility($this->accessibility);
+        // $offer->setAktivPass($this->aktivPass);
+        // $offer->setAccessibility($this->accessibility);
         $offer->setImage($this->image);
 
         return $offer;

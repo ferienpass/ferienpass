@@ -53,7 +53,7 @@ class EditOfferType extends AbstractType
                 'fieldset_group' => $group,
             ];
 
-            if (!isset($fieldOptions['help']) && $annotations['showHelp'] ?? false) {
+            if (!isset($fieldOptions['help']) && ($annotations['showHelp'] ?? false)) {
                 $fieldOptions['help'] = sprintf('Offer.%s.1', $property->getName());
             }
 
