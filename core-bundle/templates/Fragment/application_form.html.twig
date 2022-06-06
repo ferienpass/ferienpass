@@ -59,6 +59,8 @@
                                 </div>
                             {% endif %}
 
+                            {% set choices = form.participants.vars.choices %}
+
                             {# Not logged in #}
                             {% if not app.user and not (applicationSystem.task and applicationSystem.task.allowAnonymous) %}
                                 <p class="text-sm text-gray-500">Bitte erstellen Sie sich zunächst ein <strong
@@ -72,7 +74,7 @@
                                 </div>
 
                                 {# Not logged in (allow anonymous) #}
-                            {% elseif not app.user and form.participants.vars.choices is empty %}
+                            {% elseif not app.user and choices is empty %}
                                 <div class="grid sm:grid-cols-2 gap-6">
                                     <div>
                                         <a href="{{ path('offer_details', { 'alias': offer.alias, 'login': '1' }) }}"
@@ -100,8 +102,6 @@
                                 </div>
 
                             {% endif %}
-
-                            {% set choices = form.participants.vars.choices %}
 
                             {# Info user account is required (anonymous users) #}
                             {% if choices is not empty and not app.user and offer.fee > 0 and (applicationSystem.task and applicationSystem.task.allowAnonymous and not applicationSystem.task.allowAnonymousFee) %}
