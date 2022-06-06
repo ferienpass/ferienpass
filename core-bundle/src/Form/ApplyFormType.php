@@ -172,7 +172,8 @@ class ApplyFormType extends AbstractType
             ->setParameter('participant', $participant->getId(), Types::INTEGER)
             ->setParameter('offer', $offer->getId(), Types::INTEGER)
             ->getQuery()
-            ->getResult();
+            ->getResult()
+        ;
 
         // Walk every date the participant is already attending to…
         foreach ($offer->getDates() as $currentDate) {
@@ -194,7 +195,8 @@ class ApplyFormType extends AbstractType
 
         $attendances = $participant
             ->getAttendancesNotWithdrawn()
-            ->filter(fn (Attendance $a) => $a->getTask()?->getId() === $task->getId());
+            ->filter(fn (Attendance $a) => $a->getTask()?->getId() === $task->getId())
+        ;
 
         if (\count($attendances) >= $task->getMaxApplications()) {
             throw new IneligibleParticipantException($offer, $participant, new TranslatableMessage('ineligible.limitReached', ['name' => $participant->getFirstname(), 'max' => $task->getMaxApplications()]));
@@ -218,7 +220,8 @@ class ApplyFormType extends AbstractType
 
         $attendances = $participant
             ->getAttendances()
-            ->filter(fn (Attendance $a) => $a->getTask()?->getId() === $task->getId() && $a->getCreatedAt() >= $dayBegin && $a->getCreatedAt() <= $dayEnd);
+            ->filter(fn (Attendance $a) => $a->getTask()?->getId() === $task->getId() && $a->getCreatedAt() >= $dayBegin && $a->getCreatedAt() <= $dayEnd)
+        ;
 
         if (\count($attendances) >= $limit) {
             throw new IneligibleParticipantException($offer, $participant, new TranslatableMessage('ineligible.dayLimitReached', ['name' => $participant->getFirstname(), 'max' => $task->getMaxApplicationsDay()]));
