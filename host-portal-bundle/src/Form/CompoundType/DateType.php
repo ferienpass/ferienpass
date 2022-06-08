@@ -56,7 +56,7 @@ class DateType extends AbstractType
             'data_class' => OfferDate::class,
             // We rely on the fact that the parent form is a DatesType
             // and its parent form is a OfferType that is linked to an Offer entity.
-            'empty_data' => fn (FormInterface $form) => new OfferDate($form->getParent()->getParent()->getData()),
+            'empty_data' => fn (FormInterface $form) => new OfferDate($form->getParent()->getParent()->getData()->offerEntity()),
         ]);
     }
 }

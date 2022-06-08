@@ -84,9 +84,13 @@ class EditOfferDto implements OfferDto
 
     public ?string $image = null;
 
+    public function __construct(private ?Offer $offerEntity)
+    {
+    }
+
     public static function fromEntity(Offer $offer = null): self
     {
-        $self = new self();
+        $self = new self($offer);
 
         if (null === $offer) {
             return $self;
@@ -142,5 +146,10 @@ class EditOfferDto implements OfferDto
         $offer->setImage($this->image);
 
         return $offer;
+    }
+
+    public function offerEntity(): ?Offer
+    {
+        return $this->offerEntity;
     }
 }
