@@ -197,6 +197,7 @@ services:
     arguments: [ "@knp_menu.factory", '@security.logout_url_generator', '@request_stack' ]
     tags:
       - { name: knp_menu.menu_builder, method: userNavigation, alias: user_navigation }
+      - { name: knp_menu.menu_builder, method: userAccountNavigation, alias: user_account_navigation }
 
   Ferienpass\CoreBundle\EventListener\DataContainer\Edition\GenerateAliasListener:
     arguments: [ '@database_connection', '@contao.slug' ]

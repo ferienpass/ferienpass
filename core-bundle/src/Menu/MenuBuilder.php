@@ -29,15 +29,17 @@ class MenuBuilder
     {
         $menu = $this->factory->createItem('root');
 
-//        $menu->addChild('Benachrichtigungen', [
-//            'route' => 'notifications',
-//            'current' => $this->isCurrent('notifications'),
-//            'extras' => ['icon' => 'bell-solid'],
-//        ]);
+        $menu->addChild('Teilnehmer:innen', [
+            'route' => 'user_account',
+            'routeParameters' => ['fragment' => 'participants'],
+            'current' => $this->isCurrent('user_account', 'participants'),
+            'extras' => ['icon' => 'user-group-solid'],
+        ]);
 
         $menu->addChild('Nutzer-Account', [
             'route' => 'user_account',
-            'current' => $this->isCurrent('user_account'),
+            'routeParameters' => ['fragment' => 'personal_data'],
+            'current' => $this->isCurrent('user_account', 'personal_data'),
             'extras' => ['icon' => 'lock-closed-solid'],
         ]);
 
@@ -49,7 +51,42 @@ class MenuBuilder
         return $menu;
     }
 
-    private function isCurrent(string $type): bool
+    public function userAccountNavigation(): ItemInterface
+    {
+        $menu = $this->factory->createItem('root');
+
+        $menu->addChild('Teilnehmer:innen', [
+            'route' => 'user_account',
+            'routeParameters' => ['fragment' => 'participants'],
+            'current' => $this->isCurrent('user_account', 'participants'),
+            'extras' => ['icon' => 'user-group'],
+        ]);
+
+        $menu->addChild('Persönliche Daten', [
+            'route' => 'user_account',
+            'routeParameters' => ['fragment' => 'personal_data'],
+            'current' => $this->isCurrent('user_account', 'personal_data'),
+            'extras' => ['icon' => 'user-circle'],
+        ]);
+
+        $menu->addChild('Passwort ändern', [
+            'route' => 'user_account',
+            'routeParameters' => ['fragment' => 'change_password'],
+            'current' => $this->isCurrent('user_account', 'change_password'),
+            'extras' => ['icon' => 'lock-closed'],
+        ]);
+
+        $menu->addChild('Account löschen', [
+            'route' => 'user_account',
+            'routeParameters' => ['fragment' => 'close_account'],
+            'current' => $this->isCurrent('user_account', 'close_account'),
+            'extras' => ['icon' => 'trash'],
+        ]);
+
+        return $menu;
+    }
+
+    private function isCurrent(string $type, string $fragment = null): bool
     {
         $request = $this->requestStack->getMainRequest();
         if (null === $request) {
@@ -61,6 +98,10 @@ class MenuBuilder
             return false;
         }
 
-        return $type === $pageModel->type;
+        if (null === $fragment) {
+            return $type === $pageModel->type;
+        }
+
+        return $type === $pageModel->type && $fragment === $request->attributes->get('fragment');
     }
 }

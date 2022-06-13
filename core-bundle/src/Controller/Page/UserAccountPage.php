@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Controller\Page;
 
+use Contao\CoreBundle\Exception\PageNotFoundException;
 use Ferienpass\CoreBundle\Controller\Frontend\AbstractController;
 use Ferienpass\CoreBundle\Fragment\FragmentReference;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,16 +21,26 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UserAccountPage extends AbstractController
 {
-    public function __invoke(Request $request): Response
+    private array $fragments;
+
+    public function __construct(iterable $fragments)
+    {
+        $this->fragments = $fragments instanceof \Traversable ? iterator_to_array($fragments) : $fragments;
+    }
+
+    public function __invoke(string $fragment, Request $request): Response
     {
         $this->initializeContaoFramework();
+
+        if (!\array_key_exists($fragment, $this->fragments)) {
+            throw new PageNotFoundException();
+        }
 
         $this->checkToken();
 
         return $this->createPageBuilder($request->attributes->get('pageModel'))
-            ->addFragment('main', new FragmentReference('ferienpass.fragment.change_password'))
-            ->addFragment('main', new FragmentReference('ferienpass.fragment.close_account'))
+            ->addFragment('main', new FragmentReference('ferienpass.fragment.'.$fragment))
             ->getResponse()
-            ;
+        ;
     }
 }
