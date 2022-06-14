@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\CoreBundle\Menu;
 
 use Contao\PageModel;
+use Ferienpass\CoreBundle\UserAccount\UserAccountFragments;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -21,7 +22,7 @@ use Symfony\Component\Security\Http\Logout\LogoutUrlGenerator;
 
 class MenuBuilder
 {
-    public function __construct(private FactoryInterface $factory, private LogoutUrlGenerator $logoutUrlGenerator, private RequestStack $requestStack)
+    public function __construct(private FactoryInterface $factory, private LogoutUrlGenerator $logoutUrlGenerator, private RequestStack $requestStack, private UserAccountFragments $userAccountFragments)
     {
     }
 
@@ -55,33 +56,14 @@ class MenuBuilder
     {
         $menu = $this->factory->createItem('root');
 
-        $menu->addChild('Teilnehmer:innen', [
-            'route' => 'user_account',
-            'routeParameters' => ['fragment' => 'participants'],
-            'current' => $this->isCurrent('user_account', 'participants'),
-            'extras' => ['icon' => 'user-group'],
-        ]);
-
-        $menu->addChild('Persönliche Daten', [
-            'route' => 'user_account',
-            'routeParameters' => ['fragment' => 'personal_data'],
-            'current' => $this->isCurrent('user_account', 'personal_data'),
-            'extras' => ['icon' => 'user-circle'],
-        ]);
-
-        $menu->addChild('Passwort ändern', [
-            'route' => 'user_account',
-            'routeParameters' => ['fragment' => 'change_password'],
-            'current' => $this->isCurrent('user_account', 'change_password'),
-            'extras' => ['icon' => 'lock-closed'],
-        ]);
-
-        $menu->addChild('Account löschen', [
-            'route' => 'user_account',
-            'routeParameters' => ['fragment' => 'close_account'],
-            'current' => $this->isCurrent('user_account', 'close_account'),
-            'extras' => ['icon' => 'trash'],
-        ]);
+        foreach ($this->userAccountFragments->all() as $valueHolder) {
+            $menu->addChild($valueHolder->getKey(), [
+                'route' => 'user_account',
+                'routeParameters' => ['alias' => $valueHolder->getAlias()],
+                'current' => $this->isCurrent('user_account', $valueHolder->getAlias()),
+                'extras' => ['icon' => $valueHolder->getIcon()],
+            ]);
+        }
 
         return $menu;
     }
@@ -102,6 +84,6 @@ class MenuBuilder
             return $type === $pageModel->type;
         }
 
-        return $type === $pageModel->type && $fragment === $request->attributes->get('fragment');
+        return $type === $pageModel->type && $fragment === $request->attributes->get('alias');
     }
 }

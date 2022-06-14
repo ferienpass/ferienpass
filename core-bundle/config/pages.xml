@@ -19,8 +19,8 @@
             <tag name="contao.page" type="registration_activate" contentComposition="false"/>
         </service>
         <service id="Ferienpass\CoreBundle\Controller\Page\UserAccountPage">
-            <tag name="contao.page" type="user_account" contentComposition="false" path="{fragment?teilnehmer}"/>
-            <argument type="tagged_iterator" tag="ferienpass.user_account" index-by="key"/>
+            <argument type="service" id="Ferienpass\CoreBundle\UserAccount\UserAccountFragments"/>
+            <tag name="contao.page" type="user_account" contentComposition="false" path="{alias?}"/>
         </service>
         <service id="Ferienpass\CoreBundle\Controller\Page\ApplicationsPage">
             <tag name="contao.page" type="applications" contentComposition="true"/>

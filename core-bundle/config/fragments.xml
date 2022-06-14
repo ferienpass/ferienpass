@@ -20,7 +20,7 @@
         <service id="Ferienpass\CoreBundle\Controller\Fragment\ParticipantsController">
             <argument type="service" id="Ferienpass\CoreBundle\Repository\ParticipantRepository"/>
             <argument type="service" id="doctrine"/>
-            <tag name="ferienpass.user_account" key="participants" />
+            <tag name="ferienpass.user_account" key="participants" alias="teilnehmer" icon="user-group"/>
         </service>
         <service id="Ferienpass\CoreBundle\Controller\Fragment\HostDetailsController">
             <argument type="service" id="Ferienpass\CoreBundle\Repository\OfferRepository"/>
@@ -28,11 +28,6 @@
         </service>
         <service id="Ferienpass\CoreBundle\Controller\Fragment\Error404"/>
         <service id="Ferienpass\CoreBundle\Controller\Fragment\AccountDeletedController"/>
-        <service id="Ferienpass\CoreBundle\Controller\Fragment\ChangePasswordController">
-            <argument type="expression">service('security.password_hasher_factory').getPasswordHasher('Contao\\FrontendUser')</argument>
-            <argument type="service" id="security.helper"/>
-            <tag name="ferienpass.user_account" key="change_password" />
-        </service>
         <service id="Ferienpass\CoreBundle\Controller\Fragment\ArticleController"/>
         <service id="Ferienpass\CoreBundle\Controller\Fragment\RegistrationConfirm"/>
         <service id="Ferienpass\CoreBundle\Controller\Fragment\LostPasswordConfirmController"/>
@@ -42,7 +37,12 @@
         <service id="Ferienpass\CoreBundle\Controller\Fragment\Error403"/>
         <service id="Ferienpass\CoreBundle\Controller\Fragment\NotificationsController"/>
         <service id="Ferienpass\CoreBundle\Controller\Fragment\PersonalDataController">
-            <tag name="ferienpass.user_account" key="personal_data" />
+            <tag name="ferienpass.user_account" key="personal_data" alias="persönliche-daten" icon="user-circle" />
+        </service>
+        <service id="Ferienpass\CoreBundle\Controller\Fragment\ChangePasswordController">
+            <argument type="expression">service('security.password_hasher_factory').getPasswordHasher('Contao\\FrontendUser')</argument>
+            <argument type="service" id="security.helper"/>
+            <tag name="ferienpass.user_account" key="change_password" alias="passwort-ändern" icon="lock-closed" />
         </service>
         <service id="Ferienpass\CoreBundle\Controller\Fragment\SignInController">
             <argument type="expression">service('security.password_hasher_factory').getPasswordHasher('Contao\\FrontendUser')</argument>
@@ -57,7 +57,7 @@
             <argument type="service" id="logger"/>
             <argument type="service" id="messenger.default_bus"/>
             <tag name="monolog.logger" channel="ferienpass"/>
-            <tag name="ferienpass.user_account" key="close_account" />
+            <tag name="ferienpass.user_account" key="close_account" alias="account-löschen" icon="trash" />
         </service>
         <service id="Ferienpass\CoreBundle\Controller\Fragment\RegistrationActivateController">
             <argument type="service" id="contao.security.frontend_user_provider"/>
