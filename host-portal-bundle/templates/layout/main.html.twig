@@ -24,7 +24,9 @@
     <meta name="theme-color" content="#209bc9">
 
     {{ theme_link_tags('app') }}
-    {{ theme_script_tags('app') }}
+    {{ theme_script_tags('app', attributes={
+        defer: true
+    }) }}
 
     {{ head|default }}
 </head>

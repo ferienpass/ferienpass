@@ -17,12 +17,9 @@ use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\CoreBundle\Slug\Slug;
 use Contao\Dbafs;
 use Contao\FilesModel;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Offer;
-use Ferienpass\CoreBundle\Entity\OfferDate;
 use Ferienpass\CoreBundle\Ux\Flash;
 use Ferienpass\HostPortalBundle\Dto\EditOfferDto;
 use Ferienpass\HostPortalBundle\Form\EditOfferType;
@@ -41,12 +38,6 @@ final class OfferEditor extends AbstractFragmentController
     {
         $offer = $this->getOffer($request);
 
-        /** @var Collection<int, OfferDate> $originalDates */
-        $originalDates = new ArrayCollection();
-        foreach ($offer->getDates() as $date) {
-            $originalDates->add($date);
-        }
-
         $form = $this->createForm(EditOfferType::class, $offerDto = EditOfferDto::fromEntity($offer), ['is_variant' => !$offer->isVariantBase()]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -60,12 +51,6 @@ final class OfferEditor extends AbstractFragmentController
             $offer->setHostsSorting(uniqid());
 
             $em = $this->doctrine->getManager();
-
-            foreach ($originalDates as $date) {
-                if (false === $offer->getDates()->contains($date)) {
-                    $em->remove($date);
-                }
-            }
 
             /** @var UploadedFile|null $imageFile */
             $imageFile = $form->get('image')->getData();

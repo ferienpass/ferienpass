@@ -1,6 +1,6 @@
 {% block offer_dates_widget %}
 
-    <div x-data="{ index: 0 }" x-init="index = $refs.list.children.length -1">
+    <div x-data="OfferDatesWidget()">
 
         <div {{ block('widget_container_attributes') }} x-ref="list" class="divide-y">
             {% for child in form|filter(child => not child.rendered) %}
@@ -35,13 +35,29 @@
         <div class="mt-4">
             <button class="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-500 hover:bg-green-400 focus:outline-none focus:border-green-600 focus:shadow-outline-blue active:bg-green-600 transition ease-in-out duration-150"
                     type="button"
-                    @click="$refs.list.insertAdjacentHTML('beforeend', $refs.prototype.innerHTML.replace(/__name__/g, ++index))">
+                    @click="addEntry()">
                 <span class="-ml-1 mr-2 h-5 w-5">{{ source('@FerienpassHostPortal/icons/plus.svg') }}</span>
                 Zusätzliche Zeit für diesen Termin
             </button>
         </div>
 
     </div>
+
+    <script>
+        const OfferDatesWidget = () => ({
+            index: -1,
+            addEntry() {
+                this.$refs.list.insertAdjacentHTML('beforeend', this.$refs.prototype.innerHTML.replace(/__name__/g, ++this.index))
+            },
+            init() {
+                this.index = this.$refs.list.children.length - 1
+
+                if (this.index < 0) {
+                    this.addEntry()
+                }
+            }
+        })
+    </script>
 
 {% endblock offer_dates_widget %}
 

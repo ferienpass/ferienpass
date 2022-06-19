@@ -17,63 +17,62 @@ use Doctrine\Common\Collections\Collection;
 use Ferienpass\CoreBundle\Dto\OfferDto;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\OfferCategory;
+use Ferienpass\CoreBundle\Entity\OfferDate;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class EditOfferDto implements OfferDto
 {
-    /**
-     * @Assert\NotBlank()
-     */
-    #[Annotation\FormType('title')]
+    #[Assert\NotBlank]
+    #[Annotation\FormType(group: 'title')]
     public string $name = '';
 
-    #[Annotation\FormType('title')]
+    #[Annotation\FormType(group: 'title')]
     public ?string $description = null;
 
-    #[Annotation\FormType('title')]
+    #[Annotation\FormType(group: 'title')]
     public ?string $meetingPoint = null;
 
-    #[Annotation\FormType('title')]
+    #[Annotation\FormType(group: 'title')]
     public ?string $bring = null;
 
-    #[Annotation\FormType('title')]
+    #[Annotation\FormType(group: 'title')]
     #[Annotation\EntityType(OfferCategory::class)]
     public Collection $categories;
 
-    #[Annotation\FormType('date')]
+    #[Annotation\FormType(group: 'date')]
     public Collection $dates;
 
-    #[Annotation\FormType('date')]
+    #[Annotation\FormType(group: 'date')]
     public ?\DateTimeInterface $applicationDeadline = null;
 
-    #[Annotation\FormType('date', showHelp: true)]
+    #[Annotation\FormType(group: 'date', showHelp: true)]
     public ?string $comment = null;
 
-    #[Annotation\FormType('applications', placeholder: '-')]
+    #[Annotation\FormType(group: 'applications', placeholder: '-')]
     public ?int $minParticipants = null;
 
-    #[Annotation\FormType('applications', placeholder: 'ohne Begrenzung')]
+    #[Annotation\FormType(group: 'applications', placeholder: 'ohne Begrenzung')]
     public ?int $maxParticipants = null;
 
-    #[Annotation\FormType('applications', placeholder: 'kein Mindestalter')]
+    #[Annotation\FormType(group: 'applications', placeholder: 'kein Mindestalter')]
     public ?int $minAge = null;
 
-    #[Annotation\FormType('applications', placeholder: 'kein Höchstalter')]
+    #[Annotation\FormType(group: 'applications', placeholder: 'kein Höchstalter')]
     public ?int $maxAge = null;
 
-    #[Annotation\FormType('applications', showHelp: true)]
+    #[Annotation\FormType(group: 'applications', showHelp: true)]
     public bool $requiresApplication = false;
 
-    #[Annotation\FormType('applications', showHelp: true)]
+    #[Annotation\FormType(group: 'applications', showHelp: true)]
     public bool $onlineApplication = false;
 
-    #[Annotation\FormType('applications', showHelp: true)]
+    #[Annotation\FormType(group: 'applications', showHelp: true)]
     public ?string $applyText = null;
 
-    #[Annotation\FormType('applications', showHelp: true)]
+    #[Annotation\FormType(group: 'applications', showHelp: true)]
     public ?string $contact = null;
 
-    #[Annotation\FormType('applications')]
+    #[Annotation\FormType(group: 'applications')]
     public ?int $fee = null;
 
     // #[Annotation\FormType('applications')]
@@ -151,5 +150,15 @@ class EditOfferDto implements OfferDto
     public function offerEntity(): ?Offer
     {
         return $this->offerEntity;
+    }
+
+    public function addDate(OfferDate $offerDate): void
+    {
+        $this->dates->add($offerDate->withOffer($this->offerEntity));
+    }
+
+    public function removeDate(OfferDate $offerDate): void
+    {
+        $this->dates->removeElement($offerDate);
     }
 }
