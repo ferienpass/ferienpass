@@ -9,10 +9,25 @@
 
             {{ form_start(form) }}
 
-            <div class="space-y-6">
-                {% for row in form %}
-                    {{ form_row(row) }}
-                {% endfor %}
+            <div class="grid gap-6 sm:grid-cols-8">
+                <div class="sm:col-span-4">
+                    {{ form_row(form.firstname) }}
+                </div>
+                <div class="sm:col-span-4">
+                    {{ form_row(form.lastname) }}
+                </div>
+                <div class="sm:col-span-5">
+                    {{ form_row(form.email) }}
+                </div>
+                <div class="sm:col-span-3 sm:col-start-1">
+                    {{ form_row(form.phone) }}
+                </div>
+                <div class="sm:col-span-3">
+                    {{ form_row(form.mobile) }}
+                </div>
+                <div class="sm:col-span-8">
+                    {{ form_rest(form) }}
+                </div>
             </div>
 
             {{ form_end(form) }}

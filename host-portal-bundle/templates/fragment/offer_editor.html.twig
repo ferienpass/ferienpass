@@ -31,14 +31,16 @@
                 {% embed '@FerienpassHostPortal/components/alert/info.html.twig' %}
                     {% block message %}
                         <span>
-                        Sie bearbeiten eine Variante von <a class="underline hover:no-underline"
-                                                            href="{{ path(app.request.get('_route'), {'id':offer.variantBase.id}) }}">
-                            Angebot ID {{ offer.variantBase.id }}</a> und können deswegen nicht alle Felder bearbeiten.
-                    </span>
+                            Sie bearbeiten eine Variante von <a class="underline hover:no-underline"
+                                                                href="{{ path(app.request.get('_route'), {'id':offer.variantBase.id}) }}">
+                                Angebot ID {{ offer.variantBase.id }}</a> und können deswegen nicht alle Felder
+                            bearbeiten.
+                        </span>
                     {% endblock %}
                 {% endembed %}
             </div>
         {% endif %}
+
 
         {% for error in form.errors(true)|default %}
             <div class="space-y-4">
@@ -46,72 +48,129 @@
             </div>
         {% endfor %}
 
-        {% set fieldsets = form.children|map(
-            f => f.vars['fieldset_group'] is defined ? "#{f.vars['fieldset_group']}" : null)|reduce(
-                (unique, item) => not item or item in unique ? unique : unique|merge([item]), []
-            )
-        %}
 
-        {# render all fieldsets #}
         <div class="space-y-10">
-            {% for fieldset in fieldsets %}
-                <div class="mt-10 sm:mt-0">
-                    <div class="md:grid md:grid-cols-3 md:gap-6">
-                        <div class="md:col-span-1">
-                            <div class="px-4 sm:px-0">
-                                <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-50">{{ "Offer.#{fieldset}_legend"|trans }}</h3>
-                                <div class="mt-1 text-sm leading-5 text-gray-500 dark:text-gray-300">
-                                    <p>{{ "Offer.#{fieldset}_help"|trans }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-5 md:mt-0 md:col-span-2">
-                            <div class="shadow overflow-hidden sm:rounded-md">
-                                <div class="px-4 py-5 bg-white dark:bg-gray-900 sm:p-6">
-                                    <div class="space-y-6">
-                                        {% for field in form.children|filter(f => f.vars['fieldset_group'] is defined and fieldset == f.vars['fieldset_group']) %}
-                                            {{ form_row(field) }}
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
+
+        {% embed '@FerienpassHostPortal/fragment/_fieldset.html.twig' with {
+            'headline': 'Offer.title_legend'|trans,
+            'caption': 'Offer.title_help'|trans
+        } %}
+            {% block fields %}
+
+                <div class="col-span-4">
+                    {{ form_row(form.name) }}
                 </div>
-            {% endfor %}
-
-
-            {# Image #}
-            <div class="mt-10 sm:mt-0">
-                <div class="md:grid md:grid-cols-3 md:gap-6">
-                    <div class="md:col-span-1">
-                        <div class="px-4 sm:px-0">
-                            <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-50">{{ 'Offer.image_legend'|trans }}</h3>
-                            <div class="mt-1 text-sm leading-5 text-gray-500 dark:text-gray-300">
-                                <p>{{ 'Offer.image_help'|trans }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-5 md:mt-0 md:col-span-2">
-                        <div class="shadow overflow-hidden sm:rounded-md">
-                            <div class="px-4 py-5 bg-white dark:bg-gray-900 sm:p-6">
-                                {% if offer.image is not empty %}
-                                    <h4 class="text-gray-500 uppercase tracking-wide text-sm">Aktuelles Bild</h4>
-                                    <div class="mt-1 mb-4 bg-gray-100 border-2 border-dashed px-6 py-4">
-                                        {{ contao_figure(offer.image, '_host_details_logo') }}
-                                    </div>
-                                {% endif %}
-
-                                <div class="space-y-6">
-                                    {{ form_widget(form.image) }}
-                                    {{ form_row(form.imgCopyright) }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-span-6">
+                    {{ form_row(form.description) }}
                 </div>
-            </div>
-        </div>
+                <div class="col-span-6">
+                    {{ form_row(form.categories) }}
+                </div>
+
+            {% endblock %}
+        {% endembed %}
+
+
+        {% embed '@FerienpassHostPortal/fragment/_fieldset.html.twig' with {
+            'headline': 'Offer.date_legend'|trans,
+            'caption': 'Offer.date_help'|trans
+        } %}
+            {% block fields %}
+
+                <div class="col-span-5">
+                    {{ form_row(form.dates) }}
+                </div>
+                <div class="col-span-2">
+                    {{ form_row(form.applicationDeadline) }}
+                </div>
+
+            {% endblock %}
+        {% endembed %}
+
+
+        {% embed '@FerienpassHostPortal/fragment/_fieldset.html.twig' with {
+            'headline': 'Offer.details_legend'|trans,
+            'caption': 'Offer.details_help'|trans
+        } %}
+            {% block fields %}
+
+                <div class="col-span-2">
+                    {{ form_row(form.minAge) }}
+                </div>
+                <div class="col-span-2">
+                    {{ form_row(form.maxAge) }}
+                </div>
+                <div class="col-span-3">
+                    {{ form_row(form.meetingPoint) }}
+                </div>
+                <div class="col-span-3">
+                    {{ form_row(form.bring) }}
+                </div>
+                <div class="col-start-1 col-span-2">
+                    {{ form_row(form.fee) }}
+                </div>
+
+            {% endblock %}
+        {% endembed %}
+
+
+        {% embed '@FerienpassHostPortal/fragment/_fieldset.html.twig' with {
+            'headline': 'Offer.applications_legend'|trans,
+            'caption': 'Offer.applications_help'|trans
+        } %}
+            {% block fields %}
+
+                <div class="col-span-5">
+                    {{ form_row(form.requiresApplication) }}
+                </div>
+                <div class="col-span-5">
+                    {{ form_row(form.onlineApplication) }}
+                </div>
+
+                <div class="col-span-2">
+                    {{ form_row(form.minParticipants) }}
+                </div>
+                <div class="col-span-2">
+                    {{ form_row(form.maxParticipants) }}
+                </div>
+
+                <div class="col-span-3">
+                    {{ form_row(form.applyText) }}
+                </div>
+                <div class="col-span-3">
+                    {{ form_row(form.contact) }}
+                </div>
+
+            {% endblock %}
+        {% endembed %}
+
+        {% embed '@FerienpassHostPortal/fragment/_fieldset.html.twig' with {
+            'headline': 'Offer.applications_legend'|trans,
+            'caption': 'Offer.applications_help'|trans
+        } %}
+            {% block fields %}
+
+                {% if offer.image is not empty %}
+                    <div class="col-span-6">
+                        <h4 class="text-gray-500 uppercase tracking-wide text-sm">Aktuelles Bild</h4>
+                        <div class="mt-1 mb-4 bg-gray-100 border-2 border-dashed px-6 py-4">
+                            {{ contao_figure(offer.image, '_host_details_logo') }}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="col-span-3">
+                    {{ form_widget(form.image) }}
+                </div>
+                <div class="col-span-4">
+                    {{ form_row(form.imgCopyright) }}
+                </div>
+                </div>
+
+            {% endblock %}
+        {% endembed %}
+
 
         {# render widgets that do not belong to a fieldset (if any) #}
         {{ form_rest(form) }}

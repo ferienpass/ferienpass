@@ -23,63 +23,54 @@ use Symfony\Component\Validator\Constraints as Assert;
 class EditOfferDto implements OfferDto
 {
     #[Assert\NotBlank]
-    #[Annotation\FormType(group: 'title')]
+    #[Annotation\FormType(required: true)]
     public string $name = '';
 
-    #[Annotation\FormType(group: 'title')]
+    #[Annotation\FormType]
     public ?string $description = null;
 
-    #[Annotation\FormType(group: 'title')]
+    #[Annotation\FormType]
     public ?string $meetingPoint = null;
 
-    #[Annotation\FormType(group: 'title')]
+    #[Annotation\FormType]
     public ?string $bring = null;
 
-    #[Annotation\FormType(group: 'title')]
+    #[Annotation\FormType]
     #[Annotation\EntityType(OfferCategory::class)]
     public Collection $categories;
 
-    #[Annotation\FormType(group: 'date')]
+    #[Annotation\FormType]
     public Collection $dates;
 
-    #[Annotation\FormType(group: 'date')]
+    #[Annotation\FormType]
     public ?\DateTimeInterface $applicationDeadline = null;
 
-    #[Annotation\FormType(group: 'date', showHelp: true)]
-    public ?string $comment = null;
-
-    #[Annotation\FormType(group: 'applications', placeholder: '-')]
+    #[Annotation\FormType(placeholder: '-')]
     public ?int $minParticipants = null;
 
-    #[Annotation\FormType(group: 'applications', placeholder: 'ohne Begrenzung')]
+    #[Annotation\FormType(placeholder: 'ohne Begrenzung')]
     public ?int $maxParticipants = null;
 
-    #[Annotation\FormType(group: 'applications', placeholder: 'kein Mindestalter')]
+    #[Annotation\FormType(placeholder: 'kein Mindestalter')]
     public ?int $minAge = null;
 
-    #[Annotation\FormType(group: 'applications', placeholder: 'kein Höchstalter')]
+    #[Annotation\FormType(placeholder: 'kein Höchstalter')]
     public ?int $maxAge = null;
 
-    #[Annotation\FormType(group: 'applications', showHelp: true)]
+    #[Annotation\FormType(showHelp: true)]
     public bool $requiresApplication = false;
 
-    #[Annotation\FormType(group: 'applications', showHelp: true)]
+    #[Annotation\FormType(showHelp: true)]
     public bool $onlineApplication = false;
 
-    #[Annotation\FormType(group: 'applications', showHelp: true)]
+    #[Annotation\FormType(showHelp: true)]
     public ?string $applyText = null;
 
-    #[Annotation\FormType(group: 'applications', showHelp: true)]
+    #[Annotation\FormType(showHelp: true)]
     public ?string $contact = null;
 
-    #[Annotation\FormType(group: 'applications')]
+    #[Annotation\FormType]
     public ?int $fee = null;
-
-    // #[Annotation\FormType('applications')]
-    // public ?bool $aktivPass = null;
-
-    // #[Annotation\FormType('applications')]
-    // public ?array $accessibility = null;
 
     public ?string $image = null;
 
@@ -102,7 +93,6 @@ class EditOfferDto implements OfferDto
         $self->categories = $offer->getCategories();
         $self->dates = $offer->getDates();
         $self->applicationDeadline = $offer->getApplicationDeadline();
-        $self->comment = $offer->getComment();
         $self->minParticipants = $offer->getMinParticipants();
         $self->maxParticipants = $offer->getMaxParticipants();
         $self->minAge = $offer->getMinAge();
@@ -112,8 +102,6 @@ class EditOfferDto implements OfferDto
         $self->applyText = $offer->getApplyText();
         $self->contact = $offer->getContact();
         $self->fee = $offer->getFee();
-        // $self->aktivPass = $offer->isAktivPass();
-        // $self->accessibility = $offer->getAccessibility();
         $self->image = $offer->getImage();
 
         return $self;
@@ -130,7 +118,6 @@ class EditOfferDto implements OfferDto
         $offer->setCategories($this->categories);
         $offer->setDates($this->dates);
         $offer->setApplicationDeadline($this->applicationDeadline);
-        $offer->setComment($this->comment);
         $offer->setMinParticipants($this->minParticipants);
         $offer->setMaxParticipants($this->maxParticipants);
         $offer->setMinAge($this->minAge);
@@ -140,8 +127,6 @@ class EditOfferDto implements OfferDto
         $offer->setApplyText($this->applyText);
         $offer->setContact($this->contact);
         $offer->setFee($this->fee);
-        // $offer->setAktivPass($this->aktivPass);
-        // $offer->setAccessibility($this->accessibility);
         $offer->setImage($this->image);
 
         return $offer;

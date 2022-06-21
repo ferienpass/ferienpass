@@ -13,6 +13,8 @@ Offer:
   title_help: Geben Sie dem Angebot einen griffigen Titel und eine attraktive Beschreibung.
   date_legend: Termin
   date_help: Geben Sie den Termin (Datum und Uhrzeit) des Angebotes an.
+  details_legend: Details
+  details_help: Genaueres zum Angebot.
   applications_legend: Anmeldungen
   applications_help: Geben Sie an, welche Anmeldungen Sie zulassen.
   additional_legend: Weitere Infos

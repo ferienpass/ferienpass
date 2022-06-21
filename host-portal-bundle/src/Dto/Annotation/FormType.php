@@ -16,7 +16,7 @@ namespace Ferienpass\HostPortalBundle\Dto\Annotation;
 #[\Attribute(\Attribute::TARGET_PROPERTY | \Attribute::IS_REPEATABLE)]
 class FormType
 {
-    public function __construct(string $group, bool $showHelp = false, string $placeholder = null)
+    public function __construct(bool $required = false, bool $showHelp = false, string $placeholder = null)
     {
     }
 }

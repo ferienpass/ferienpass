@@ -43,14 +43,12 @@ class EditOfferType extends AbstractType
 
         foreach ($properties as $property) {
             $annotations = array_merge(...array_map(fn (\ReflectionAttribute $attribute) => $attribute->getArguments(), $property->getAttributes(FormTypeAnnotation::class)));
-            $group = current($annotations);
 
             $fieldOptions = [
                 'disabled' => $options['is_variant'],
                 'label' => sprintf('Offer.%s.0', $property->getName()),
                 'required' => 'name' === $property->getName(),
                 'translation_domain' => 'contao_Offer',
-                'fieldset_group' => $group,
             ];
 
             if (!isset($fieldOptions['help']) && ($annotations['showHelp'] ?? false)) {
