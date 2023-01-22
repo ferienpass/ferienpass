@@ -60,6 +60,9 @@ class OfferTypeGuesser implements FormTypeGuesserInterface
             'minParticipants' => new TypeGuess(IntegerType::class, [], Guess::HIGH_CONFIDENCE),
             'maxParticipants' => new TypeGuess(IntegerType::class, [], Guess::HIGH_CONFIDENCE),
 
+            'minAge' => new TypeGuess(IntegerType::class, [], Guess::HIGH_CONFIDENCE),
+            'maxAge' => new TypeGuess(IntegerType::class, [], Guess::HIGH_CONFIDENCE),
+
             'fee' => new TypeGuess(MoneyType::class, [
                 'divisor' => 100,
                 'html5' => true,
