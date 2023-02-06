@@ -57,11 +57,7 @@ class OfferTypeGuesser implements FormTypeGuesserInterface
         return match ($property) {
             'description' => new TypeGuess(TextareaType::class, [], Guess::HIGH_CONFIDENCE),
 
-            'minParticipants' => new TypeGuess(IntegerType::class, [], Guess::HIGH_CONFIDENCE),
-            'maxParticipants' => new TypeGuess(IntegerType::class, [], Guess::HIGH_CONFIDENCE),
-
-            'minAge' => new TypeGuess(IntegerType::class, [], Guess::HIGH_CONFIDENCE),
-            'maxAge' => new TypeGuess(IntegerType::class, [], Guess::HIGH_CONFIDENCE),
+            'minParticipants', 'maxAge', 'minAge', 'maxParticipants' => new TypeGuess(IntegerType::class, [], Guess::HIGH_CONFIDENCE),
 
             'fee' => new TypeGuess(MoneyType::class, [
                 'divisor' => 100,
