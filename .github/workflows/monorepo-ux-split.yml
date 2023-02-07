@@ -42,7 +42,7 @@ jobs:
 
       - name: 'Monorepo Split of ${{ format(matrix.package, '''') }}'
         if: github.ref == 'refs/heads/3.x'
-        uses: danharrin/monorepo-split-github-action@2.3
+        uses: danharrin/monorepo-split-github-action@v2.3.0
         env:
           GITHUB_TOKEN: '${{ secrets.MACHINE_ACCESS_TOKEN }}'
         with:
