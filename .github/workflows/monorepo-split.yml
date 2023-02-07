@@ -25,6 +25,8 @@ jobs:
         with:
           fetch-depth: 0
 
+      - run: git config --system --add safe.directory *
+
       - id: previous_tag
         if: github.ref != 'refs/heads/3.x'
         uses: WyriHaximus/github-action-get-previous-tag@master
