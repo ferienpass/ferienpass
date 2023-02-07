@@ -25,7 +25,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - run: git config --system --add safe.directory /tmp/monorepo_split/build_directory
+      - run: git config --global --add safe.directory /tmp/monorepo_split/build_directory
 
       - id: previous_tag
         if: github.ref != 'refs/heads/3.x'
