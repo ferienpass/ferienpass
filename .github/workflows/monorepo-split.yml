@@ -25,8 +25,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - run: git config --global --add safe.directory /tmp/monorepo_split/build_directory
-
       - id: previous_tag
         if: github.ref != 'refs/heads/3.x'
         uses: WyriHaximus/github-action-get-previous-tag@master
@@ -47,7 +45,7 @@ jobs:
 
       - name: 'Monorepo Split of ${{ matrix.package }}'
         if: github.ref == 'refs/heads/3.x'
-        uses: symplify/monorepo-split-github-action@2.0
+        uses: danharrin/monorepo-split-github-action@2.3
         env:
           GITHUB_TOKEN: '${{ secrets.MACHINE_ACCESS_TOKEN }}'
         with:
