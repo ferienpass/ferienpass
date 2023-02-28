@@ -35,13 +35,13 @@ jobs:
         env:
           GITHUB_TOKEN: '${{ secrets.MACHINE_ACCESS_TOKEN }}'
         with:
-          package-directory: '${{ matrix.package }}'
-          split-repository-organization: ferienpass
-          split-repository-name: '${{ matrix.package }}'
+          package_directory: '${{ matrix.package }}'
+          repository_organization: ferienpass
+          repository_name: '${{ matrix.package }}'
           branch: 'main'
           tag: '${{ steps.previous_tag.outputs.tag }}'
-          user-name: github-actions
-          user-email: 41898282+github-actions[bot]@users.noreply.github.com
+          user_name: github-actions
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
 
       - name: 'Monorepo Split of ${{ matrix.package }}'
         if: github.ref == 'refs/heads/3.x'
@@ -49,9 +49,9 @@ jobs:
         env:
           GITHUB_TOKEN: '${{ secrets.MACHINE_ACCESS_TOKEN }}'
         with:
-          package-directory: '${{ matrix.package }}'
-          split-repository-organization: ferienpass
-          split-repository-name: '${{ matrix.package }}'
+          package_directory: '${{ matrix.package }}'
+          repository_organization: ferienpass
+          repository_name: '${{ matrix.package }}'
           branch: 'main'
-          user-name: github-actions
-          user-email: 41898282+github-actions[bot]@users.noreply.github.com
+          user_name: github-actions
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
