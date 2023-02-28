@@ -72,6 +72,9 @@ class EditOfferDto implements OfferDto
     #[Annotation\FormType]
     public ?int $fee = null;
 
+    #[Annotation\FormType]
+    public ?bool $wheelchairAccessible = null;
+
     public ?string $image = null;
 
     public function __construct(private ?Offer $offerEntity)
@@ -103,6 +106,7 @@ class EditOfferDto implements OfferDto
         $self->contact = $offer->getContact();
         $self->fee = $offer->getFee();
         $self->image = $offer->getImage();
+        $self->wheelchairAccessible = $offer->isWheelchairAccessible();
 
         return $self;
     }
@@ -128,6 +132,7 @@ class EditOfferDto implements OfferDto
         $offer->setContact($this->contact);
         $offer->setFee($this->fee);
         $offer->setImage($this->image);
+        $offer->setWheelchairAccessible($this->wheelchairAccessible);
 
         return $offer;
     }

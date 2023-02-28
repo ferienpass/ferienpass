@@ -50,11 +50,9 @@ class OfferTypeGuesser implements FormTypeGuesserInterface
             }
         }
 
-        if ($type instanceof \ReflectionNamedType && 'bool' === $type->getName()) {
-            return new TypeGuess(CheckboxType::class, [], Guess::HIGH_CONFIDENCE);
-        }
-
         return match ($property) {
+            'requiresApplication', 'onlineApplication' => new TypeGuess(CheckboxType::class, [], Guess::HIGH_CONFIDENCE),
+
             'description' => new TypeGuess(TextareaType::class, [], Guess::HIGH_CONFIDENCE),
 
             'minParticipants', 'maxAge', 'minAge', 'maxParticipants' => new TypeGuess(IntegerType::class, [], Guess::HIGH_CONFIDENCE),
@@ -68,19 +66,15 @@ class OfferTypeGuesser implements FormTypeGuesserInterface
                 'help' => 'Sie können eine zusätzliche Zeit eintragen, wenn die gleiche Gruppe von Kindern an mehreren Terminen erscheinen muss. Wenn Sie das Angebot mehrmals anbieten, verwenden Sie stattdessen die Kopierfunktion auf der Übersichtsseite.',
             ], Guess::HIGH_CONFIDENCE),
 
-            'accessibility' => new TypeGuess(ChoiceType::class, [
-                'label' => 'Offer.accessibility.0',
+            'wheelchairAccessible' => new TypeGuess(ChoiceType::class, [
+                'label' => 'Offer.wheelchairAccessible.0',
                 'choices' => [
-                    'barrierefrei',
-                    'koerperliches-handicap',
-                    'assistenz',
-                    'geistiges-handicap',
+                    'Ja' => true,
+                    'Nein' => false,
                 ],
-                'choice_label' => function (string $choice) {
-                    return sprintf('accessibility.%s.label', $choice);
-                },
-                'expanded' => true,
-                'multiple' => true,
+                'placeholder' => 'Nach Absprache',
+                'expanded' => false,
+                'multiple' => false,
             ], Guess::HIGH_CONFIDENCE),
 
             'applicationDeadline' => new TypeGuess(DateType::class, [
