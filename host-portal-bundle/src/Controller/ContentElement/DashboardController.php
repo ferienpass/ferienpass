@@ -65,21 +65,30 @@ final class DashboardController extends AbstractContentElementController
             ];
         }
 
-        if (!$edition->isEditableForHosts()) {
-            $steps[] = [
-                'completed' => true,
-                'text' => new TranslatableMessage('Angebote eintragen'),
-            ];
-        }
-
         $showOfferPeriods = $edition->getTasksOfType('show_offers');
-        if (!$edition->isEditableForHosts()
-            && false !== ($period = $showOfferPeriods->first())
-            && $period->isUpcoming()) {
-            $steps[] = [
-                'current' => true,
-                'text' => 'Angebote werden von uns Korrektur gelesen',
-            ];
+
+        if (!$edition->isEditableForHosts()) {
+            if (($first = $edition->getHostEditingStages()->first()) && $first->getPeriodBegin() > new \DateTimeImmutable()) {
+                $steps[] = [
+                    'completed' => false,
+                    'text' => new TranslatableMessage('Tragen Sie Ihre Angebote im Portal ab dem %begin% ein', [
+                        '%begin%' => $first->getPeriodBegin()->format('d.m.Y'),
+                    ]),
+                ];
+            } else {
+                $steps[] = [
+                    'completed' => true,
+                    'text' => new TranslatableMessage('Angebote eintragen'),
+                ];
+
+                if (false !== ($period = $showOfferPeriods->first())
+                    && $period->isUpcoming()) {
+                    $steps[] = [
+                        'current' => true,
+                        'text' => 'Angebote werden von uns Korrektur gelesen',
+                    ];
+                }
+            }
         }
 
         foreach ($showOfferPeriods as $task) {
