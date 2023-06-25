@@ -1,0 +1,37 @@
+{% extends "@FerienpassAdmin/layout/base.html.twig" %}
+{% import "@FerienpassAdmin/components/content_elements.html.twig" as partials %}
+
+{% trans_default_domain 'admin' %}
+{% set translationPrefix = app.request.get('_route')|split('_')[1] %}
+{% set action = app.request.get('_route')|split('_')[2] %}
+
+
+{% if pagination is defined %}
+    {% set items = pagination.results %}
+{% endif %}
+
+{% block main %}
+
+    {% set headline = "#{translationPrefix}.#{action}.title"|trans %}
+    {{ partials.h1((headline == "#{translationPrefix}.#{action}.title") ? "#{translationPrefix}.title"|trans : headline) }}
+
+    <div class="divide-y divide-gray-300">
+
+{#        {{ render(controller('Ferienpass\\AdminBundle\\Controller\\Fragment\\ListFilterController', {  })) }}#}
+
+        {% if config.columns is defined %}
+            {% include '@FerienpassAdmin/components/list.table.html.twig' with config %}
+        {% else %}
+            {% include '@FerienpassAdmin/components/list.html.twig' with config %}
+        {% endif %}
+
+    </div>
+
+    {% if pagination is defined %}
+        <div class="py-10">
+            {% include '@FerienpassCore/Partial/pagination.html.twig' %}
+        </div>
+    {% endif %}
+
+
+{% endblock %}

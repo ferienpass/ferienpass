@@ -4,7 +4,7 @@
     "type": "metapackage",
     "require": {
         "ferienpass/core-bundle": "self.version",
-        "ferienpass/host-portal-bundle": "self.version",
+        "ferienpass/admin-bundle": "self.version",
         "ferienpass/ux-theme": "self.version",
 
         "contao/conflicts": "@dev",

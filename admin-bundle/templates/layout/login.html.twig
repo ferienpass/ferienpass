@@ -1,0 +1,23 @@
+{% extends '@FerienpassAdmin/layout/base.html.twig' %}
+
+{% block body %}
+    <div class="min-h-screen flex">
+
+        {% include '@FerienpassCore/Page/_flash_banners.html.twig' %}
+
+        <div class="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+
+            {% include '@FerienpassCore/Page/_flashes.html.twig' %}
+
+            {% block content %}{% endblock %}
+        </div>
+        {% if splashSrc is defined %}
+            <div class="hidden lg:block relative w-0 flex-1 dark:opacity-70">
+                <img class="absolute inset-0 h-full w-full object-cover" src="{{ splashSrc }}" alt="">
+            </div>
+        {% endif %}
+    </div>
+
+    {% include '@FerienpassCore/Page/_flash_modals.html.twig' %}
+
+{% endblock %}

@@ -7,7 +7,7 @@
 >
     <projectFiles>
         <directory name="core-bundle/src"/>
-        <directory name="host-portal-bundle/src"/>
+        <directory name="admin-bundle/src"/>
         <ignoreFiles>
             <directory name="vendor"/>
         </ignoreFiles>

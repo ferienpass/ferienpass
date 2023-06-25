@@ -1,0 +1,126 @@
+{% extends "@FerienpassAdmin/layout/base.html.twig" %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-4 sm:py-6 md:py-12 lg:px-16">
+
+    {% for organization in organizations %}
+
+        <h2 class="mb-2 text-gray-900 dark:text-gray-50">{{ organization.host.name }}</h2>
+
+        {% embed '@FerienpassAdmin/fragment/_box_33_66.html.twig' with {
+            'headline': 'organizationReader.headline'|trans,
+            'caption': 'organizationReader.caption'|trans
+        } %}
+            {% block box %}
+                <div class="">
+                    <div class="">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                {% if organization.host.logo %}
+                                    <div class="mb-2">
+                                        {{ contao_figure(organization.host.logo, '_host_details_logo') }}
+                                    </div>
+                                {% endif %}
+                                <h3 class="text-gray-900 dark:text-gray-50">{{ organization.host.name }}</h3>
+                            </div>
+                            {% embed '@FerienpassAdmin/components/button-primary.html.twig' with {'uri': path('admin_profile_edit', { 'id': organization.host.id })} %}
+                                {% block link %}
+                                    <span class="block h-5 w-5 mr-1">{{ source('@FerienpassAdmin/icons/pencil-solid.svg') }}</span>
+                                    <span>Bearbeiten</span>
+                                {% endblock %}
+                            {% endembed %}
+                        </div>
+
+                        <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-5">
+                            <div>
+                                <p>{{ organization.host.street }}</p>
+                                <p>
+                                    <span>{{ organization.host.postal }}</span>
+                                    <span>{{ organization.host.city }}</span>
+                                </p>
+                            </div>
+                            <div>
+                                <p>{{ organization.host.phone }}</p>
+                                <p>{{ organization.host.email }}</p>
+                                <p>{{ organization.host.website }}</p>
+                            </div>
+                            {% if organization.host.text %}
+                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ organization.host.text|nl2br }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+
+            {% block bottom %}
+                {% set missing = ['logo', 'text']|filter(v => attribute(organization.host, v) is empty) %}
+                {% if missing is not empty %}
+                    <div class="bg-yellow-50 border-t border-yellow-400 px-4 py-4 sm:px-6">
+                        <h3 class="text-sm font-medium text-yellow-800">Fehlende Daten:</h3>
+                        <div class="mt-1 text-sm text-yellow-700">
+                            <p>Bitte ergänzen Sie folgende Daten: {{ missing|join(', ') }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endblock %}
+        {% endembed %}
+
+        <div class="mt-10 md:grid md:grid-cols-3 md:gap-6">
+            <div class="md:col-span-1">
+                <div class="px-4 sm:px-0">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-50">Team</h3>
+                    <p class="mt-1 text-sm leading-5 text-gray-500">Alle Mitglieder haben vollen Zugriff auf die
+                        Angebote.</p>
+                </div>
+            </div>
+            <div class="mt-5 md:mt-0 md:col-span-2">
+
+                <div class="grid grid-cols-4 my-8 gap-6">
+                    {% for member in organization.members %}
+                        <div class="text-center">
+
+                <span class="inline-block relative">
+
+                    <span class="inline-flex items-center justify-center h-14 w-14 rounded-full bg-gray-400 dark:bg-gray-600">
+                        <span class="text-xl font-medium leading-none text-white dark:text-gray-200">{{ member.firstname|first|upper ~ member.lastname|first|upper }}</span>
+                    </span>
+                </span>
+
+                            <h3 class="font-medium text-gray-900 dark:text-gray-50 truncate">{{ member.firstname ~ ' ' ~ member.lastname }}</h3>
+                            <p class="leading-4 text-xs text-gray-400 dark:text-gray-500 truncate">
+                                <a href="{{ 'mailto:' ~ member.email }}" class="hover:underline">{{ member.email }}</a>
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="bg-white shadow sm:rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">{{ 'inviteTeam.headline'|trans }}</h3>
+                        <div class="mt-2 max-w-xl text-sm leading-5 text-gray-500">
+                            <p>{{ 'inviteTeam.caption'|trans }}</p>
+                        </div>
+
+                        {{ form_start(organization.inviteForm) }}
+
+                        <div class="mt-5 sm:flex sm:items-center">
+                            <div class="max-w-xs w-full">
+                                <div class="sr-only">{{ form_label(organization.inviteForm.email) }}</div>
+                                {{ form_widget(organization.inviteForm.email) }}
+                            </div>
+
+                            <span class="mt-3 sm:mt-0 sm:ml-3 sm:w-auto">
+                    {{ form_widget(organization.inviteForm.submit) }}
+                </span>
+                        </div>
+
+                        {{ form_end(organization.inviteForm) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "@FerienpassAdmin/layout/edit.html.twig" %}
+{% trans_default_domain 'admin' %}
+
+ {#   {% if not offer.isVariantBase %}
+        <div class="mb-12">
+            {% embed '@FerienpassAdmin/components/alert/info.html.twig' %}
+                {% block message %}
+                    <span>
+                        Sie bearbeiten eine Variante von <a class="underline hover:no-underline"
+                                                            href="{{ path(app.request.get('_route'), {'id':offer.variantBase.id, edition: offer.variantBase.edition.alias}) }}">
+                            Angebot ID {{ offer.variantBase.id }}</a> und können deswegen nicht alle Felder
+                        bearbeiten.
+                    </span>
+                {% endblock %}
+            {% endembed %}
+        </div>
+    {% endif %}
+#}
+{#
+
+    {% for error in form.errors(true)|default %}
+        <div class="space-y-4">
+            {% include '@FerienpassAdmin/components/alert/error.html.twig' with {'message': error.message} %}
+        </div>
+    {% endfor %}
+
+#}
+
+           {# {% if offer.image is not empty %}
+                <div class="col-span-6">
+                    <h4 class="text-gray-500 uppercase tracking-wide text-sm">Aktuelles Bild</h4>
+                    <div class="mt-1 mb-4 bg-gray-100 border-2 border-dashed px-6 py-4">
+                        {{ contao_figure(offer.image, '_host_details_logo') }}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="col-span-3">
+                {{ form_widget(form.image) }}
+            </div>
+            <div class="col-span-4">
+                {{ form_row(form.imgCopyright) }}
+            </div>
+            </div>
+#}
+

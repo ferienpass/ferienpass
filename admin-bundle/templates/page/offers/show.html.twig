@@ -1,0 +1,140 @@
+{% extends "@FerienpassAdmin/layout/base.html.twig" %}
+{% trans_default_domain 'admin' %}
+
+{% block main %}
+
+    <div class="grid md:grid-cols-12 gap-6">
+
+        <div class="md:col-span-8">
+            {% import "@FerienpassCore/Macro/offer.html.twig" as offer_macro %}
+
+            <h1 class="text-2xl font-bold leading-7 text-gray-900 dark:text-gray-50 sm:text-3xl sm:leading-9 sm:truncate">
+                {{ offer.name|raw }}</h1>
+
+            <p class="font-semibold text-lg text-gray-900 leading-6 truncate">{{ offer_macro.date_combined(offer.dates) }}</p>
+
+            <div class="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap">
+                {% if offer.edition is not empty %}
+                    <div class="mt-2 flex items-center text-sm leading-5 text-gray-500 sm:mr-6">
+                        <span class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400">{{ source('@FerienpassAdmin/icons/calendar.svg') }}</span>
+                        {{ offer.edition.name }}
+                    </div>
+                {% endif %}
+                <div class="mt-2 flex items-center text-sm leading-5 text-gray-500">
+                    <span class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400">{{ source('@FerienpassAdmin/icons/user-circle.svg') }}</span>
+                    {{ offer.hosts|map(h => h.name)|join(', ') }}
+                </div>
+            </div>
+
+            {% if offer.image %}
+                <div class="mt-4">
+                    {% include "@FerienpassCore/Alert/information.html.twig" with { message: 'Wenn das Bild im Korrekturabzug noch nicht hundertprozentig passt, schneiden wir es noch zu. Achten Sie einfach darauf, dass das Bild groß genug ist und ausreichend "Hintergrund" hat, so dass es für verschiedene Formate passt.'|trans } %}
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div class="md:col-span-4">
+
+            <div class="bg-white overflow-hidden shadow rounded-lg" x-data="{ modal: null }">
+                <div class="py-2">
+                    {% set actions = knp_menu_get('host_offer_actions', [], {'offer': offer}) %}
+                    <nav>
+                        {% for action in actions.children %}
+                            {% if action.displayed %}
+                                <a href="{{ action.uri }}"
+
+                                        {% set method = action.extra('method') %}
+                                        {% if method %}
+                                            x-ref="{{ action.name ~ 'Link' }}"
+                                            @click.prevent="modal = '{{ action.name }}'"
+                                            data-method="{{ method }}"
+                                        {% endif %}
+
+                                   class="mt-1 group flex items-center px-5 py-2 text-sm leading-5 font-medium text-gray-600  hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:bg-gray-100 transition ease-in-out duration-150">
+                                    <span class="flex-shrink-0 -ml-1 mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150">{{ source('@FerienpassAdmin/icons/'~action.extra('icon')~'.svg') }}</span>
+                                    {%- set label = action.label -%}
+                                    {%- set label = label|trans(action.extra('translation_params', {})) -%}
+                                    <span class="leading-tight">{{ label }}</span>
+                                </a>
+                            {% else %}
+                                <span class="mt-1 group flex items-center px-5 py-2 text-sm leading-5 font-medium text-gray-400 cursor-not-allowed">
+                                    <span class="flex-shrink-0 -ml-1 mr-3 h-5 w-5 text-gray-400">{{ source('@FerienpassAdmin/icons/'~action.extra('icon')~'.svg') }}</span>
+                                    {%- set label = action.label -%}
+                                    {%- set label = label|trans(action.extra('translation_params', {})) -%}
+                                    <span class="leading-tight">{{ label }}</span>
+                                </span>
+                            {% endif %}
+                        {% endfor %}
+                    </nav>
+                </div>
+
+                {% for modal in actions.children|filter(c => c.displayed and c.extra('method') is not empty) %}
+                    {% set id = modal.name %}
+                    {% include '@FerienpassAdmin/components/modal/'~id~'.html.twig' with { id: id, offer: offer } %}
+                {% endfor %}
+
+            </div>
+
+            {% set variants = offer.variants %}
+            {% if variants is not empty %}
+                <div class="mt-6 bg-white overflow-hidden shadow rounded-lg">
+                    <h2 class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                        Weitere Termine
+                    </h2>
+                    <div class="pt-1 pb-2">
+                        {% for variant in variants %}
+                            <a href="{{ path('admin_offer_show', {'id': variant.id}) }}"
+                               class="mt-1 group flex items-center px-5 py-2 text-sm leading-5 font-medium text-gray-600  hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:bg-gray-100 transition ease-in-out duration-150">
+                                <span class="flex-shrink-0 -ml-1 mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150">{{ source('@FerienpassAdmin/icons/calendar.svg') }}</span>
+                                <span class="truncate">{{ variant.dates|map(d => d.begin|date('Ymd') == d.end|date('Ymd') ? "#{d.begin|date('D, d.m. H:i')} – #{d.end|date('H:i')}" : "#{d.begin|date('D, d.m. H:i')} – #{d.end|date('D, d.m. H:i')}")|join(' und ') }}</span>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <div class="mt-6">
+        {% embed '@FerienpassAdmin/components/content_tabs.html.twig' with { tabs: ['web', 'pdf'] } %}
+
+            {% block tab_web %}
+
+                <div style="height: 500px" class="overflow-y-scroll">
+                    <div x-data="{}"
+                         class="bg-gray-300 pointer-events-none"
+                         x-init="$refs.shadow.attachShadow({mode: 'open'}); $refs.shadow.shadowRoot.appendChild( $refs.template.content.cloneNode(true) )">
+                        <div class="transform scale-90">
+                            <article x-ref="shadow"></article>
+                        </div>
+
+                        <template x-ref="template">
+                            {{ theme_link_tags('app', null, 'main') }}
+                            {{ render(controller('Ferienpass\\CoreBundle\\Controller\\Fragment\\OfferDetailsController', { offer: offer })) }}
+                        </template>
+
+                    </div>
+                </div>
+
+            {% endblock %}
+
+            {% block tab_pdf %}
+
+                <embed class="w-full" src="{{ path('pdf-proof', { id: offer.id, _format: 'pdf' }) }}"
+                       width="500" height="500" type="application/pdf">
+
+                <div class="px-4 py-5 sm:p-6">
+                    {% include '@FerienpassAdmin/components/button-default.html.twig' with {
+                        uri: path('pdf-proof', { id: offer.id, '_format': 'pdf', dl: '1' }),
+                        link: 'Korrekturabzug (PDF) herunterladen'
+                    } %}
+                </div>
+
+            {% endblock %}
+
+        {% endembed %}
+    </div>
+
+{% endblock %}

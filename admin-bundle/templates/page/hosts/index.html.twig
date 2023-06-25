@@ -1,0 +1,10 @@
+{% extends "@FerienpassAdmin/layout/list.html.twig" %}
+
+{% set config = {
+    title: "{{ item.name }}",
+    info: [
+        "{{ item.website }}",
+        "{{ item.email }}",
+        "{{ item.phone }}",
+    ]
+} %}

@@ -1,0 +1,52 @@
+{% set menu = knp_menu_get('ferienpass_admin_primary') %}
+
+<nav x-show="mobileMenuOpen"
+     class="lg:hidden"
+     aria-label="Global"
+     id="mobile-menu">
+    <div class="pt-2 pb-3 px-2 space-y-1">
+        {% for item in menu.children|filter(v => v.isDisplayed) %}
+            {% if item.current %}
+                <strong aria-current="page"
+                        class="block py-2 px-3 text-base font-bold text-gray-900">
+                    {{ item.label }}
+                </strong>
+            {% else %}
+                <a href="{{ item.uri }}"
+                   class="block rounded-md py-2 px-3 text-base font-medium text-gray-900 hover:bg-gray-50 hover:text-gray-900">
+                    {{ item.label }}
+                </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    {% if app.user %}
+        <div class="border-t border-gray-200 pt-4 pb-3">
+            <div class="px-4 flex items-center">
+                <div class="flex-shrink-0">
+                 <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-gray-400">
+                        <span class="text-md font-medium leading-none text-white">{{ app.user.firstname|first|upper ~ app.user.lastname|first|upper }}</span>
+                    </span>
+                </div>
+                <div class="ml-3">
+                    <div class="text-base font-medium text-gray-800">{{ app.user.firstname ~ ' ' ~ app.user.lastname }}</div>
+                    <div class="text-sm font-medium text-gray-500">{{ app.user.email }}</div>
+                </div>
+            </div>
+
+
+            {% set menu = knp_menu_get('host_user_navigation') %}
+            <div class="mt-3 px-2 space-y-1">
+                {% for item in menu.children|filter(v => v.isDisplayed) %}
+                    {% if item.current %}
+                        <strong aria-current="page"
+                                class="block py-2 px-3 text-base font-bold text-gray-500">{{ item.label }}</strong>
+                    {% else %}
+                        <a href="{{ item.uri }}"
+                           class="block rounded-md py-2 px-3 text-base font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900">{{ item.label }}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</nav>

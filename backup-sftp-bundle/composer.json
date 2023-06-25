@@ -19,7 +19,7 @@
     "php": ">=8.0",
 
     "contao/core-bundle": "^4.13",
-    "league/flysystem-sftp": "^3.0"
+    "league/flysystem-sftp-v3": "^3.0"
   },
   "require-dev": {
     "contao/manager-plugin": "^2.7",

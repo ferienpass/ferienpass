@@ -1,0 +1,9 @@
+{% extends "@FerienpassAdmin/layout/list.html.twig" %}
+
+{% set config = {
+    columns: {
+        offer: '{{ item.offer.name }}',
+        fee: '{{ (item.offer.fee/100)|format_currency("EUR", locale="de") }}',
+        status: '{{ item.status }}'
+    }
+} %}

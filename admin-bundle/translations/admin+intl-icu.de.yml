@@ -1,0 +1,184 @@
+offers:
+  title: Angebote
+  action:
+    view: Angebot öffnen
+    edit: Angebot bearbeiten
+    copy: Angebot kopieren nach „{edition}“
+    delete: Angebot löschen
+    newVariant: Neuen Termin erstellen
+    freeze: Angebot einfrieren
+    cancel: Angebot absagen
+    reactivate: Angebot wiederherstellen
+    participantList: Teilnahmeliste
+  new: Neues Angebot
+  baseLegend:
+    - Titel und Beschreibung
+    - Geben Sie dem Angebot einen griffigen Titel und eine attraktive Beschreibung.
+  datesLegend:
+    - Termin
+    - Geben Sie den Termin (Datum und Uhrzeit) des Angebotes an.
+  detailsLegend:
+    - Details
+    - Genaueres zum Angebot.
+  applicationsLegend:
+    - Anmeldungen
+    - Geben Sie an, welche Anmeldungen Sie zulassen.
+  mediaLegend:
+    - Foto
+    - Laden Sie ein Foto zur Veröffentlichung hoch. Nutzen Sie nur gemeinfreie Fotos und geben Sie in jedem Fall den/die Fotografin an.
+  label:
+    name: Name
+    description: Beschreibung
+    categories: Kategorien
+    applicationDeadline: Nachmeldungen bis
+    minAge: Mindestalter
+    maxAge: Maximalalter
+    meetingPoint: Treffpunkt
+    bring: Mitzubringen
+    fee: Teilnahmegebühr
+    wheelchairAccessible: Rollstuhl-zugängig
+    requiresApplication: Anmeldung erforderlich
+    onlineApplication: Anmeldesystem nutzen
+    minParticipants: min. Teilnehmer
+    maxParticipants: max. Teilnehmer
+    applyText: Anmeldungen unter (wenn nicht online)
+    contact: Auskunft unter
+  help:
+    applyText: Wie kann sich zu dem Angebot angemeldet werden (wenn Online-System nicht genutzt)?
+    contact: Wer gibt Auskunft (z.B. Name + TelNr)? Leer lassen, falls die Info schon in "Anmeldung unter" steht.
+    requiresApplication: Eine vorherige Anmeldung ist erforderlich, um am Angebot teilnehmen zu können.
+    onlineApplication: Die Anmeldungen über das Online-System laufen lassen.
+
+hosts:
+  title: Veranstalter
+  new: Neuer Veranstalter
+  action:
+    show: Anzeigen
+    edit: Bearbeiten
+  baseLegend:
+    - 'Basisdaten'
+    - 'test'
+  contactLegend:
+    - 'Kontaktdaten'
+    - 'test'
+  addressLegend:
+    - 'Postanschrift'
+    - 'test'
+  label:
+    name: Name
+    alias: Alias
+    text: Informationen über die Einrichtung
+    phone: Telefon
+    fax: Faxnummer
+    mobile: Mobilnummer
+    email: E-Mail-Adresse
+    website: Webseite
+    street: Straße
+    postal: PLZ
+    city: Ort
+  help:
+    alias: Der Alias wird automatisch generiert.
+
+participants:
+  title: Teilnehmende
+  attendances.title: Anmeldungen
+  attendances.empty: Es sind keine Anmeldungen vorhanden.
+  action.edit: Bearbeiten
+  action.attendances: Anmeldungen
+  new: Neuer Teilnehmer
+  baseLegend:
+    - Name und Sorgeberechtigter
+    - Ein:e Sorgeberechtigte:r ist ein von Eltern erstellter Account, der vollen Zugriff auf die Daten und Anmeldungen ermöglicht (inkl. Löschung und Auskunftsrechte).
+  ageLegend:
+    - Geburtsdatum und Alter
+    - Das Geburtsdatum wird für die Berechnung des Alters benötigt.
+  contactLegend:
+    - Kontaktdaten
+    - Die Kontaktdaten werden von der bzw. dem Sorgeberechtigten übernommen. Diese Daten werden für System-Benachrichtigungen verwendet und mit den Veranstaltern geteilt.
+  label:
+    firstname: Vorname
+    lastname: Nachname
+    dateOfBirth: Geburtsdatum
+    email: E-Mail-Adresse
+    phone: Telefonnummer
+    mobile: Handynummer
+  help:
+    email: Wird für Benachrichtigungen verwendet.
+    mobile: Wird für SMS verwendet.
+  th.name: Name
+  th.dateOfBirth: Geburtsdatum
+  th.email: E-Mail-Adresse
+  th.mobile: Handynummer
+  th.offer: Angebot
+  th.fee: Gebühr
+  th.status: Status
+
+payments:
+  title: Zahlungen
+  receipt: Beleg
+  receiptPreview: Belegvorschau
+  address: Rechnungsadresse
+  email: E-Mail-Adresse
+  submit: Beleg erstellen
+  payable: Zu bezahlen
+  downloadReceipt: Beleg herunterladen (PDF)
+  action.receipt: Beleg öffnen
+  th.receiptNumber: '#'
+  th.billingName: Rechnungsempfänger
+  th.date: Datum
+  th.amount: Betrag
+  th.status: Status
+
+profile:
+  title: Stammdaten
+
+user:
+  title: Persönliche Daten
+  password.title: Passwort ändern
+
+editConfirm: Die Daten wurden erfolgreich gespeichert.
+
+Host:
+  title_legend: Name und Beschreibung
+  title_help: Geben Sie den Namen Ihres Vereins oder Ihrer Einrichtung ein. Beschreiben Sie in ein paar Worten Ihre Institution (dies wird den Eltern angezeigt).
+  address_legend: Adresse
+  address_help: Nennen Sie, wie sie postalisch zu erreichen sind.
+  contact_legend: Kontakt
+  contact_help: Nennen Sie, wie sie postalisch zu erreichen sind.
+  logo_legend: Logo
+  logo_help: Bitte laden Sie Ihr Logo hoch.
+
+attendance.action:
+  offer: Angebot öffnen
+
+participantList.action:
+  pdf: PDF-Export
+  reject: Teilnehmer:innen absagen
+  confirm: Teilnehmer:innen zusagen
+addParticipant: Teilnehmer:in hinzufügen
+
+participantList.headerFields:
+  name: Name
+  phone: Telefonnr.
+  email: E-Mail
+
+offer.created: eingereicht
+offer.accepted: akzeptiert
+offer.online: online
+offer.cancelled: abgesagt
+
+noParticipants: Es sind keine Kinder zum Angebot angemeldet.
+noOffers: Es sind keine Angebote vorhanden.
+missingPrivacyStatement: Sie müssen die Datenschutzerklärung unterzeichnen, bevor Sie Zugriff auf die Daten haben.
+participantListNotReleased: Die Teilnahmelisten sind noch nicht freigegeben. Bitte probieren Sie es später erneut.
+
+personalData.headline: Persönliche Daten
+personalData.caption: Wir nutzen die Daten, um Sie erreichen zu können. Ihre E-Mail-Adresse dient als Login.
+changePassword.headline: Passwort ändern
+changePassword.caption: Ändern Sie Ihr Passwort – helfen Sie mit, Ihren Account zu schützen und teilen Sie nie Ihr Passwort.
+twoFactor.headline: Zwei-Faktor-Authentifizierung
+twoFactor.caption: Sie können Ihren Account zusätzlich mit Zwei-Faktor-Authentifizierung absichern.
+organizationReader.headline: Stammdaten
+organizationReader.caption: Bitte überprüfen Sie, ob die im System hinterlegten Stammdaten aktuell sind.
+inviteTeam.headline: Mitarbeiter:in einladen
+inviteTeam.caption: Sie können eine Mitarbeiter:in zu Ihrem Team hinzufügen. Dazu benötigen wir die E-Mail-Adresse.

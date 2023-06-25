@@ -1,0 +1,46 @@
+{% macro h1(headline, class='') %}
+    <h1 class="text-gray-900 tracking-tight text-3xl font-extrabold{{ '' != class ? (' '~class) : class }}">{{ headline }}</h1>
+{% endmacro %}
+
+{% macro h2(headline, class='') %}
+    <h2 class="text-lg leading-6 font-medium{{ '' != class ? (' '~class) : class }}">{{ headline }}</h2>
+{% endmacro %}
+
+{% macro badge(label, class='') %}
+    <p class="rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset {{ class }}">
+        {{ label }}
+    </p>
+{% endmacro %}
+
+{% macro badge_green(label) %}
+    {{ _self.badge(label, 'text-green-700 bg-green-50 ring-green-600/20') }}
+{% endmacro %}
+
+{% macro badge_yellow(label) %}
+    {{ _self.badge(label, 'text-yellow-700 bg-yellow-50 ring-yellow-600/20') }}
+{% endmacro %}
+
+{% macro badge_red(label) %}
+    {{ _self.badge(label, 'text-red-700 bg-red-50 ring-red-600/20') }}
+{% endmacro %}
+
+{% macro badge_gray(label) %}
+    {{ _self.badge(label, 'text-gray-700 bg-gray-50 ring-gray-600/20') }}
+{% endmacro %}
+
+{% macro status_badge(status) %}
+    {% set label = 'status.'~status %}
+    {% set label = label|trans %}
+
+    {% if status == 'paid' %}
+        {{ _self.badge_green(label) }}
+    {% elseif status == 'confirmed' %}
+        {{ _self.badge_green(label) }}
+    {% elseif status == 'waitlisted' %}
+        {{ _self.badge_yellow(label) }}
+    {% elseif status == 'error' %}
+        {{ _self.badge_red(label) }}
+    {% else %}
+        {{ _self.badge_gray(label) }}
+    {% endif %}
+{% endmacro %}

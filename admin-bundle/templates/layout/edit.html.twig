@@ -1,0 +1,84 @@
+{% extends "@FerienpassAdmin/layout/base.html.twig" %}
+{% import "@FerienpassAdmin/components/content_elements.html.twig" as partials %}
+
+{% trans_default_domain 'admin' %}
+{% set translationPrefix = app.request.get('_route')|split('_')[1] %}
+
+{% macro fields(fields) %}
+
+    <div class="grid grid-cols-6 gap-6">
+
+        {% for field in fields %}
+
+            <div
+                    {% if field.vars['width'] is defined and '1/3' in field.vars['width']|split('|') %}
+                        class="col-span-2"
+                    {% elseif field.vars['width'] is defined and '1/2' in field.vars['width']|split('|') %}
+                        class="col-span-3"
+                    {% elseif field.vars['width'] is defined and '2/3' in field.vars['width']|split('|') %}
+                        class="col-span-4"
+                    {% else %}
+                        class="col-span-6"
+                    {% endif %}
+            >
+                {{ form_row(field) }}
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% endmacro %}
+
+{% block main %}
+
+    <div class="max-w-3xl mx-auto">
+
+        {{ partials.h1(headline|default(item.name|default("#{translationPrefix}.new"))|trans) }}
+
+        {{ form_start(form) }}
+
+        {% set fieldsets = form.children|map(
+            f => f.vars['fieldset_group'] is defined ? "#{f.vars['fieldset_group']}" : null)|reduce(
+            (unique, item) => not item or item in unique ? unique : unique|merge([item]), []
+            ) %}
+
+        <div class="space-y-6 divide-y divide-gray-200">
+
+            {% for fieldset in fieldsets %}
+
+                <div>
+
+                    <div class="mt-6 mb-6">
+                        <h2 class="text-xl font-medium text-gray-900">{{ "#{translationPrefix}.#{fieldset}Legend.0"|trans }}</h2>
+
+                        {% if "#{translationPrefix}.#{fieldset}Legend.1"|trans != "#{translationPrefix}.#{fieldset}Legend.1" %}
+                            <p class="mt-1 text-sm text-gray-500">{{ "#{translationPrefix}.#{fieldset}Legend.1"|trans }}</p>
+                        {% endif %}
+                    </div>
+
+                    {{ _self.fields(form.children|filter(f => f.vars['fieldset_group'] is defined and fieldset == f.vars['fieldset_group'])) }}
+
+                </div>
+
+            {% else %}
+
+                {{ _self.fields(form.children|filter(f => f.vars.name != 'submit')) }}
+
+            {% endfor %}
+
+            {% if form.submit is defined %}
+
+                <div class="pt-6 flex">
+                    {{ form_row(form.submit) }}
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}

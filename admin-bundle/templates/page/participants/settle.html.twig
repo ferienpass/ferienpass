@@ -1,0 +1,41 @@
+{% extends "@FerienpassAdmin/layout/base.html.twig" %}
+{% import "@FerienpassAdmin/components/content_elements.html.twig" as partials %}
+{% trans_default_domain 'admin' %}
+
+{% block main %}
+
+    {{ partials.h1('Anmeldungen abrechnen') }}
+
+    <div class="mt-6 grid grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+
+        <div class="lg:col-start-3 lg:row-end-1">
+            <div class="rounded-lg bg-white p-6 shadow-sm ring-1 ring-gray-900/5">
+                <dl>
+                    <dt class="text-sm font-semibold leading-6 text-gray-900">{{ 'payments.payable'|trans }}</dt>
+                    <dd class="mt-1 text-base font-semibold leading-6 text-gray-900">{{ (payment.totalAmount/100)|format_currency('EUR', locale='de') }}</dd>
+                </dl>
+
+                {{ form_start(form, {'attr': {'class': 'mt-6 space-y-4'}}) }}
+
+                {{ form_row((form.address)) }}
+                {{ form_row((form.email)) }}
+                <div class="flex justify-end">
+                    {{ form_row((form.submit)) }}
+                </div>
+
+                {% do form.items.setRendered %}
+                {% for i in form.items.children %}
+                    <input type="hidden" name="{{ i.vars['full_name'] }}" value="{{ i.vars.value }}"/>
+                {% endfor %}
+
+                {{ form_end(form) }}
+
+            </div>
+        </div>
+
+        <div class="-mx-4 px-4 py-8 bg-white shadow-sm ring-1 ring-gray-900/5 sm:mx-0 sm:rounded-lg sm:px-8 sm:pb-14 lg:col-span-2 lg:row-span-2 lg:row-end-2 xl:px-16 xl:pb-20 xl:pt-16">
+            {% include '@FerienpassAdmin/components/invoice.html.twig' with { headline: 'payments.receiptPreview' } %}
+        </div>
+    </div>
+
+{% endblock %}

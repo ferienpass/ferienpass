@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\FixturesBundle;
 
 use Ferienpass\FixturesBundle\DependencyInjection\FerienpassFixturesExtension;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class FerienpassFixturesBundle extends Bundle
@@ -23,7 +24,7 @@ class FerienpassFixturesBundle extends Bundle
         return \dirname(__DIR__);
     }
 
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         return new FerienpassFixturesExtension();
     }

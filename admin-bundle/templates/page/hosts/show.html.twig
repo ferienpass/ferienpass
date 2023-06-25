@@ -1,0 +1,36 @@
+{% extends "@FerienpassAdmin/layout/base.html.twig" %}
+
+{% block main %}
+
+    <div>
+        <div class="flex items-center justify-between">
+            <div>
+                {% if host.logo %}
+                    <div class="mb-2">
+                        {{ contao_figure(host.logo, '_host_details_logo') }}
+                    </div>
+                {% endif %}
+                <h3 class="text-gray-900 dark:text-gray-50">{{ host.name }}</h3>
+            </div>
+        </div>
+
+        <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-5">
+            <div>
+                <p>{{ host.street }}</p>
+                <p>
+                    <span>{{ host.postal }}</span>
+                    <span>{{ host.city }}</span>
+                </p>
+            </div>
+            <div>
+                <p>{{ host.phone }}</p>
+                <p>{{ host.email }}</p>
+                <p>{{ host.website }}</p>
+            </div>
+            {% if host.text %}
+                <p class="text-sm text-gray-500 dark:text-gray-400">{{ host.text|nl2br }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

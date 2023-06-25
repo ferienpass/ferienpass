@@ -1,0 +1,47 @@
+<div class="space-y-6">
+
+    {% for edition in editions %}
+        {% embed '@FerienpassAdmin/fragment/_box_33_66.html.twig' with {
+            'headline': edition.edition.name,
+        } %}
+
+            {% block box %}
+
+                <ol role="list" class="space-y-6">
+
+                    {% for step in edition.steps %}
+                        <li>
+                            <div class="flex items-start">
+
+                                {% if step.completed|default %}
+                                    <div class="flex-shrink-0 relative h-5 w-5 flex items-center justify-center">
+                                        <span class="h-full w-full text-primary-600">{{ source('@FerienpassAdmin/icons/check-circle-solid.svg') }}</span>
+                                    </div>
+                                {% elseif step.current|default %}
+                                    <div class="flex-shrink-0 h-5 w-5 relative flex items-center justify-center"
+                                         aria-hidden="true">
+                                        <span class="absolute h-4 w-4 rounded-full bg-primary-200"></span>
+                                        <span class="relative block w-2 h-2 bg-primary-600 rounded-full"></span>
+                                    </div>
+                                {% else %}
+                                    <div class="flex-shrink-0 h-5 w-5 relative flex items-center justify-center"
+                                         aria-hidden="true">
+                                        <div class="h-2 w-2 bg-gray-300 rounded-full"></div>
+                                    </div>
+                                {% endif %}
+
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-gray-500">{{ step.text|trans }}</p>
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+
+                </ol>
+
+            {% endblock %}
+
+        {% endembed %}
+    {% endfor %}
+
+</div>

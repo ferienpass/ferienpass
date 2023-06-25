@@ -1,0 +1,82 @@
+{% block offer_dates_widget %}
+
+    <div x-data="OfferDatesWidget()">
+
+        <div {{ block('widget_container_attributes') }} x-ref="list" class="divide-y">
+            {% for child in form|filter(child => not child.rendered) %}
+                <div>
+                    {{- form_row(child) -}}
+
+                    <div class="flex justify-end mt-2">
+                        <button type="button" class="text-red-700 hover:text-red-800 text-sm flex items-center"
+                                @click="$event.currentTarget.parentNode.parentNode.remove()">
+                            <span class="block w-6 h-6 mr-1">{{ source('@FerienpassAdmin/icons/trash.svg') }}</span>Zeiteintrag
+                            löschen
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <template x-ref="prototype">
+            <div>
+                {% set prototype = form_widget(form.vars.prototype) %}
+                {{ prototype|raw }}
+                <div class="flex justify-end mt-2">
+                    <button type="button" class="text-red-700 hover:text-red-800 text-sm flex items-center"
+                            @click="$event.currentTarget.parentNode.parentNode.remove()">
+                        <span class="block w-6 h-6 mr-1">{{ source('@FerienpassAdmin/icons/trash.svg') }}</span>Zeiteintrag
+                        löschen
+                    </button>
+                </div>
+            </div>
+        </template>
+
+        <div class="mt-4">
+            <button class="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-500 hover:bg-green-400 focus:outline-none focus:border-green-600 focus:shadow-outline-blue active:bg-green-600 transition ease-in-out duration-150"
+                    type="button"
+                    @click="addEntry()">
+                <span class="-ml-1 mr-2 h-5 w-5">{{ source('@FerienpassAdmin/icons/plus.svg') }}</span>
+                Zusätzliche Zeit für diesen Termin
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const OfferDatesWidget = () => ({
+            index: -1,
+            addEntry() {
+                this.$refs.list.insertAdjacentHTML('beforeend', this.$refs.prototype.innerHTML.replace(/__name__/g, ++this.index))
+            },
+            init() {
+                this.index = this.$refs.list.children.length - 1
+
+                if (this.index < 0) {
+                    this.addEntry()
+                }
+            }
+        })
+    </script>
+
+{% endblock offer_dates_widget %}
+
+{% block estimated_expense_widget %}
+    <div class="grid grid-cols-3 gap-4">
+        {% for widget in form.children %}
+            {{ form_row(widget) }}
+        {% endfor %}
+    </div>
+{% endblock estimated_expense_widget %}
+
+{% block postal_address_row %}
+
+    {{ form_row(form.street) }}
+
+{% endblock %}
+
+{% block _ms_submit_widget %}
+
+{{ form_widget(form) }}
+
+{% endblock %}

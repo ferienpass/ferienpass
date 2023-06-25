@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <defaults autoconfigure="true"/>
+
+        <instanceof id="Symfony\Bundle\FrameworkBundle\Controller\AbstractController">
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </instanceof>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\ChangePasswordController">
+            <argument type="expression">
+                service('security.password_hasher_factory').getPasswordHasher('Contao\\FrontendUser')
+            </argument>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\EditionController">
+            <argument type="service" id="Ferienpass\CoreBundle\Repository\EditionRepository"/>
+            <argument type="tagged_iterator" tag="ferienpass.stats_widget"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\ExportController">
+            <argument type="service" id="Ferienpass\CoreBundle\Repository\OfferRepository"/>
+            <argument type="service" id="Ferienpass\CoreBundle\Export\Offer\OfferExporter"/>
+            <argument type="service" id="form.factory"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\FollowInvitationController">
+            <argument type="service" id="database_connection"/>
+            <argument type="expression">
+                service('security.password_hasher_factory').getPasswordHasher('Contao\\FrontendUser')
+            </argument>
+            <argument type="service" id="contao.opt_in"/>
+            <argument type="service" id="Ferienpass\CoreBundle\Repository\HostRepository"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\HomeController">
+            <argument type="tagged_iterator" tag="ferienpass.dashboard_widget"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\HostsController"/>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\LoginController">
+            <argument type="service" id="form.factory"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\LostPasswordController">
+            <argument type="service" id="logger"/>
+            <argument type="service" id="contao.opt_in"/>
+            <argument type="service" id="router"/>
+            <argument type="expression">
+                service('security.password_hasher_factory').getPasswordHasher('Contao\\FrontendUser')
+            </argument>
+            <argument type="service" id="form.factory"/>
+        </service>
+
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\NotificationsController">
+            <argument type="service" id="Ferienpass\CoreBundle\Notifier"/>
+            <argument type="service" id="form.factory"/>
+            <argument type="service" id="doctrine"/>
+            <argument type="service" id="knp_menu.factory"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\OfferApplicationsController">
+            <argument type="service" id="Ferienpass\CoreBundle\Repository\AttendanceRepository"/>
+            <argument type="service" id="Ferienpass\CoreBundle\Export\ParticipantList\PdfExport"/>
+            <argument type="service" id="Ferienpass\CoreBundle\Export\ParticipantList\WordExport"/>
+            <argument type="service" id="form.factory"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\OfferController"/>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\OffersEditController">
+            <argument type="service" id="contao.slug"/>
+            <argument>%ferienpass.images_dir%</argument>
+            <argument>%kernel.project_dir%</argument>
+            <argument type="service" id="doctrine"/>
+            <argument type="service" id="form.factory"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\OrganizationController">
+            <argument type="service" id="form.factory"/>
+            <argument type="service" id="database_connection"/>
+            <argument type="service" id="contao.opt_in"/>
+            <argument type="service" id="Ferienpass\CoreBundle\Repository\HostRepository"/>
+            <argument type="service" id="contao.slug"/>
+            <argument>%ferienpass.logos_dir%</argument>
+            <argument>%kernel.project_dir%</argument>
+            <argument type="service" id="doctrine"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\ParticipantListController">
+            <argument type="service" id="Ferienpass\AdminBundle\State\PrivacyConsent"/>
+            <argument type="service" id="Ferienpass\CoreBundle\Facade\AttendanceFacade"/>
+            <argument type="service" id="doctrine"/>
+            <argument type="service" id="Ferienpass\AdminBundle\ApplicationSystem\ParticipantList"/>
+            <argument type="service" id="form.factory"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\ParticipantsController">
+            <argument type="service" id="doctrine"/>
+            <argument type="service" id="Ferienpass\AdminBundle\Payments\ReceiptNumberGenerator"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\PaymentsController">
+            <argument type="service" id="Ferienpass\CoreBundle\Export\Payments\ReceiptPdfExport"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\PersonalDataController"/>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\PrivacyConsentController">
+            <argument type="service" id="database_connection"/>
+            <argument type="service" id="Ferienpass\AdminBundle\State\PrivacyConsent"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\RegistrationController">
+            <argument type="service" id="doctrine"/>
+            <argument type="expression">
+                service('security.password_hasher_factory').getPasswordHasher('Contao\\FrontendUser')
+            </argument>
+            <argument>%env(ADMIN_EMAIL)%</argument>
+            <argument type="service" id="serializer"/>
+            <argument type="service" id="form.factory"/>
+        </service>
+
+    </services>
+</container>

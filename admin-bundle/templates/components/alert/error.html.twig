@@ -1,0 +1,8 @@
+<div class="rounded-md bg-red-50 dark:bg-red-900 dark:bg-opacity-50 p-4">
+    <div class="flex">
+        <div class="flex-shrink-0">
+            <span class="block h-5 w-5 text-red-400 dark:text-red-300">{{ source('@FerienpassAdmin/icons/x-circle-solid.svg') }}</span>
+        </div>
+        <p class="ml-2 text-sm leading-5 text-red-700 dark:text-red-200">{% block message %}{{ message }}{% endblock %}</p>
+    </div>
+</div>

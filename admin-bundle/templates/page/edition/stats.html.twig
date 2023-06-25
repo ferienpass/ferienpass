@@ -1,0 +1,14 @@
+{% extends "@FerienpassAdmin/layout/base.html.twig" %}
+
+{% block content %}
+
+    <div class="px-8 py-4 space-y-10">
+
+        {% for widget in widgets %}
+
+            {{ render(controller(widget, { edition: edition })) }}
+
+        {% endfor %}
+
+    </div>
+{% endblock %}

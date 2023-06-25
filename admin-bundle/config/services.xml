@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <defaults autoconfigure="true"/>
+
+        <service id="Twig\Extension\StringLoaderExtension">
+            <tag name="twig.extension"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Breadcrumb\Breadcrumb">
+            <argument type="service" id="knp_menu.factory"/>
+            <argument type="service" id="request_stack"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\EventListener\MissingPrivacyStatementAlert">
+            <argument type="service" id="contao.framework"/>
+            <argument type="service" id="Ferienpass\AdminBundle\State\PrivacyConsent"/>
+            <argument type="service" id="contao.routing.scope_matcher"/>
+            <tag name="kernel.event_listener"/>
+            <argument type="service" id="router"/>
+            <argument type="service" id="security.helper"/>
+        </service>
+        <service id="Ferienpass\AdminBundle\Form\Extension\FieldsetGroupExtension">
+            <tag name="form.type_extension"/>
+        </service>
+        <service id="Ferienpass\AdminBundle\Form\Extension\WidthExtension">
+            <tag name="form.type_extension"/>
+        </service>
+        <service id="Ferienpass\AdminBundle\Form\TypeGuesser\HostTypeGuesser">
+            <tag name="form.type_guesser"/>
+        </service>
+        <service id="Ferienpass\AdminBundle\Form\TypeGuesser\OfferTypeGuesser">
+            <tag name="form.type_guesser"/>
+        </service>
+        <service id="Ferienpass\AdminBundle\Menu\MenuBuilder">
+            <argument type="service" id="knp_menu.factory"/>
+            <argument type="service" id="security.logout_url_generator"/>
+            <argument type="service" id="security.authorization_checker"/>
+            <argument type="service" id="request_stack"/>
+            <argument type="service" id="Ferienpass\CoreBundle\Repository\EditionRepository"/>
+            <argument type="service" id="security.helper"/>
+            <argument type="service" id="Ferienpass\CoreBundle\Repository\HostRepository"/>
+            <argument type="service" id="event_dispatcher"/>
+            <tag name="knp_menu.menu_builder" method="primaryNavigation" alias="ferienpass_admin_primary"/>
+            <tag name="knp_menu.menu_builder" method="userNavigation" alias="host_user_navigation"/>
+            <tag name="knp_menu.menu_builder" method="offerActions" alias="host_offer_actions"/>
+            <tag name="knp_menu.menu_builder" method="offerFilters" alias="host_offer_filters"/>
+            <tag name="knp_menu.menu_builder" method="participantListActions" alias="host_participant_list_actions"/>
+        </service>
+        <service id="Ferienpass\AdminBundle\Menu\ActionsBuilder">
+            <argument type="service" id="knp_menu.factory"/>
+            <argument type="service" id="security.authorization_checker"/>
+            <argument type="service" id="Ferienpass\CoreBundle\Repository\EditionRepository"/>
+            <argument type="service" id="event_dispatcher"/>
+            <tag name="knp_menu.menu_builder" method="actions" alias="admin_list_actions"/>
+        </service>
+        <service id="Ferienpass\AdminBundle\Form\LoginUsernameType">
+            <argument type="service" id="security.authentication_utils"/>
+        </service>
+        <service id="Ferienpass\AdminBundle\EventListener\PrettyErrorScreenListener">
+            <argument type="service" id="security.helper"/>
+            <!-- The priority must be higher than the one of the one of contao.listener.pretty_error_screens -->
+            <tag name="kernel.event_listener" priority="-46"/>
+        </service>
+        <service id="Ferienpass\AdminBundle\ApplicationSystem\ParticipantList">
+            <argument type="service" id="messenger.default_bus"/>
+            <argument type="service" id="database_connection"/>
+            <argument type="service" id="Ferienpass\CoreBundle\ApplicationSystem\ApplicationSystems"/>
+            <argument type="service" id="Ferienpass\CoreBundle\Facade\AttendanceFacade"/>
+            <argument type="service" id="doctrine"/>
+        </service>
+        <service id="Ferienpass\AdminBundle\State\PrivacyConsent">
+            <argument type="service" id="contao.framework"/>
+            <argument type="service" id="database_connection"/>
+            <argument type="service" id="?"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Twig\MenuExtension">
+            <argument type="service" id="knp_menu.helper" />
+            <tag name="twig.extension" />
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Payments\ReceiptNumberGenerator">
+            <argument></argument>
+            <argument></argument>
+            <argument type="service" id="Ferienpass\CoreBundle\Repository\PaymentRepository"/>
+        </service>
+
+
+    </services>
+</container>

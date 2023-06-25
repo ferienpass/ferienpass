@@ -1,0 +1,10 @@
+{% extends "@FerienpassAdmin/layout/list.html.twig" %}
+
+{% set config = {
+    columns: {
+        name: '{{ item.name }}',
+        dateOfBirth: '{{ item.dateOfBirth|date("d.m.Y") }}',
+        email: '{{ item.email }}',
+        mobile: '{{ item.mobile }}'
+    }
+} %}

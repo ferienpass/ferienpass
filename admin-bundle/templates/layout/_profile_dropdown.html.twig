@@ -1,0 +1,43 @@
+{% trans_default_domain 'admin' %}
+
+{% if app.user %}
+    <div class="flex-shrink-0 relative">
+        {% embed '@FerienpassAdmin/components/dropdown.html.twig' %}
+            {% block toggle %}
+                <button class="group max-w-xs flex items-center px-2 py-1 space-x-3 text-sm rounded-md focus:outline-none focus:shadow-outline bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700">
+                    <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-gray-400 dark:bg-gray-600">
+                        <span class="text-md font-medium leading-none text-white dark:text-gray-200">{{ app.user.firstname|first|upper ~ app.user.lastname|first|upper }}</span>
+                    </span>
+                    <span class="text-left">
+                        <span class="block text-xs text-gray-500 dark:text-gray-300 font-medium">angemeldet als:</span>
+                        <span class="block text-gray-900 dark:text-gray-100 font-medium">{{ app.user.firstname ~ ' ' ~ app.user.lastname }}</span>
+                    </span>
+                    <span class="text-gray-400 group-hover:text-gray-500 w-4 h-4">
+                        {{ source('@FerienpassAdmin/icons/chevron-down-solid.svg') }}
+                    </span>
+                </button>
+            {% endblock %}
+
+            {% block dropdown %}
+                {% set menu = knp_menu_get('host_user_navigation') %}
+                {% for item in menu.children %}
+                    {% if item.current %}
+                        {% embed '@FerienpassAdmin/components/dropdown-strong.html.twig' %}
+                            {% block link %}
+                                <span class="mr-3 h-5 w-5 text-gray-400">{{ source('@FerienpassAdmin/icons/'~item.extra('icon')~'.svg', ignore_missing = true) }}</span>
+                                <span>{{ item.name|trans }}</span>
+                            {% endblock %}
+                        {% endembed %}
+                    {% else %}
+                        {% embed '@FerienpassAdmin/components/dropdown-a.html.twig' with {'uri': item.uri} %}
+                            {% block link %}
+                                <span class="mr-3 h-5 w-5 text-gray-400">{{ source('@FerienpassAdmin/icons/'~item.extra('icon')~'.svg', ignore_missing = true) }}</span>
+                                <span>{{ item.name|trans }}</span>
+                            {% endblock %}
+                        {% endembed %}
+                    {% endif %}
+                {% endfor %}
+            {% endblock %}
+        {% endembed %}
+    </div>
+{% endif %}

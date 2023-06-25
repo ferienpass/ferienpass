@@ -1,0 +1,47 @@
+{% extends "@FerienpassAdmin/layout/base.html.twig" %}
+
+{% block content %}
+
+    <div class="md:grid md:grid-cols-3 md:gap-6">
+        <div class="md:col-span-1">
+            <div class="px-4 sm:px-0">
+                {% block left %}
+
+                    {% if aside_nav is defined %}
+                        <nav class="px-2">
+                            {% if aside_nav.hasChildren %}
+                                <div class="space-y-1" role="group">
+                                    {% for item in aside_nav.children %}
+                                        {% if item.current %}
+                                            <strong class="flex items-center px-3 py-2 text-base leading-5 font-medium text-gray-900 dark:text-gray-300 rounded-md bg-gray-100 dark:bg-gray-900">
+                                                <span class="w-2.5 h-2.5 mr-4 bg-green-600 rounded-full"
+                                                      aria-hidden="true"></span>
+                                                <span class="truncate">{{ item.label }}</span>
+                                            </strong>
+                                        {% else %}
+                                            <a href="{{ item.uri }}"
+                                               class="group flex items-center px-3 py-2 text-base leading-5 font-medium text-gray-600 dark:text-gray-400 rounded-md hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                                <span class="w-2.5 h-2.5 mr-4 bg-gray-300 group-hover:bg-gray-400 rounded-full"
+                                                      aria-hidden="true"></span>
+                                                <span class="truncate">{{ item.label }}</span>
+                                            </a>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </nav>
+                    {% endif %}
+
+                {% endblock %}
+            </div>
+        </div>
+        <div class="mt-5 md:mt-0 md:col-span-2">
+
+            <main>
+                {% block main %}{% endblock %}
+            </main>
+
+        </div>
+    </div>
+
+{% endblock %}

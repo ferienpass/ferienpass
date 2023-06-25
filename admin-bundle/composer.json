@@ -1,0 +1,75 @@
+{
+  "name": "ferienpass/admin-bundle",
+  "license": "proprietary",
+  "description": "",
+  "type": "contao-bundle",
+  "homepage": "https://ferienpass.online/",
+  "authors": [
+    {
+      "name": "Richard Henkenjohann",
+      "email": "info@ferienpass.online",
+      "homepage": "https://ferienpass.online",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "email": "info@ferienpass.online"
+  },
+  "require": {
+    "php": ">=8.0",
+    "ext-json": "*",
+
+    "contao/core-bundle": "^4.13",
+    "ferienpass/core-bundle": "^3.0",
+    "ferienpass/ux-host-portal": "*",
+
+    "knplabs/knp-menu-bundle": "^3.0",
+    "michelf/php-markdown": "^1.9",
+    "psr/log": "^1.1",
+    "symfony/asset": "^4.4 || ^5.2",
+    "symfony/config": "^4.4 || ^5.2",
+    "symfony/dependency-injection": "^4.4 || ^5.2",
+    "symfony/framework-bundle": "^4.4 || ^5.2",
+    "symfony/form": "^4.4 || ^5.2",
+    "symfony/http-foundation": "^5.3",
+    "symfony/http-kernel": "^4.4 || ^5.2",
+    "symfony/messenger": "^4.4 || ^5.2",
+    "symfony/password-hasher": "^5.3",
+    "symfony/security-bundle": "^5.3",
+    "symfony/routing": "^4.4 || ^5.2",
+    "symfony/security-core": "^5.3",
+    "symfony/security-csrf": "^4.4 || ^5.2",
+    "symfony/security-http": "^4.4 || ^5.2",
+    "symfony/translation": "^4.4 || ^5.2",
+    "symfony/validator": "^4.4 || ^5.2",
+    "twig/twig": "^2.12 || ^3.0",
+    "twig/intl-extra": "^2.14 || ^3.0"
+  },
+  "require-dev": {
+    "contao/manager-plugin": "^2.7"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://packages.ferienpass.online/"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Ferienpass\\AdminBundle\\": "src/"
+    }
+  },
+  "extra": {
+    "contao-manager-plugin": "Ferienpass\\AdminBundle\\ContaoManager\\Plugin"
+  },
+  "config": {
+    "allow-plugins": {
+      "contao-components/installer": true,
+      "php-http/discovery": true,
+      "contao/manager-plugin": true,
+      "contao-community-alliance/composer-plugin": true
+    }
+  }
+}

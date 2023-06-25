@@ -17,7 +17,7 @@ jobs:
           - base
           - backup-sftp-bundle
           - core-bundle
-          - host-portal-bundle
+          - admin-bundle
           - deployer-recipes
 
     steps:
@@ -30,7 +30,7 @@ jobs:
         uses: WyriHaximus/github-action-get-previous-tag@master
 
       - name: 'Monorepo Split of ${{ matrix.package }}'
-        if: github.ref != 'refs/heads/3.x'
+        if: github.ref != 'refs/heads/4.x'
         uses: danharrin/monorepo-split-github-action@v2.3.0
         env:
           GITHUB_TOKEN: '${{ secrets.MACHINE_ACCESS_TOKEN }}'
@@ -44,7 +44,7 @@ jobs:
           user_email: 41898282+github-actions[bot]@users.noreply.github.com
 
       - name: 'Monorepo Split of ${{ matrix.package }}'
-        if: github.ref == 'refs/heads/3.x'
+        if: github.ref == 'refs/heads/4.x'
         uses: danharrin/monorepo-split-github-action@v2.3.0
         env:
           GITHUB_TOKEN: '${{ secrets.MACHINE_ACCESS_TOKEN }}'
