@@ -23,7 +23,9 @@
     <meta name="theme-color" content="#209bc9">
 
     {{ encore_entry_link_tags('app', null, 'ferienpass_admin') }}
-    {{ encore_entry_script_tags('app', null, 'ferienpass_admin') }}
+    {{ encore_entry_script_tags('app', null, 'ferienpass_admin', {
+        defer: true
+    }) }}
 
     {{ head|default }}
 </head>

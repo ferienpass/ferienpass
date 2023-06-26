@@ -27,6 +27,8 @@ class GanttController extends AbstractController
 
     public function __invoke(): Response
     {
+        return new Response('', Response::HTTP_NO_CONTENT);
+
         if (!$this->isGranted('ROLE_ADMIN')) {
             return new Response('', Response::HTTP_NO_CONTENT);
         }
