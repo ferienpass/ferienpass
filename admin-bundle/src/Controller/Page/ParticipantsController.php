@@ -13,30 +13,22 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Dto\BillingAddressDto;
-use Ferienpass\AdminBundle\Form\CompoundType\PaymentItemType;
 use Ferienpass\AdminBundle\Form\EditParticipantType;
+use Ferienpass\AdminBundle\Form\MultiSelectType;
+use Ferienpass\AdminBundle\Form\SettleAttendancesType;
 use Ferienpass\AdminBundle\Payments\ReceiptNumberGenerator;
 use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Entity\Payment;
-use Ferienpass\CoreBundle\Entity\PaymentItem;
 use Ferienpass\CoreBundle\Pagination\Paginator;
 use Ferienpass\CoreBundle\Repository\AttendanceRepository;
 use Ferienpass\CoreBundle\Repository\ParticipantRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -85,14 +77,28 @@ final class ParticipantsController extends AbstractController
     }
 
     #[Route('/{id}', name: 'admin_participants_attendances', requirements: ['id' => '\d+'])]
-    public function attendances(Participant $participant, FormFactoryInterface $formFactory, Breadcrumb $breadcrumb): Response
+    public function attendances(Participant $participant, Request $request, FormFactoryInterface $formFactory, Breadcrumb $breadcrumb): Response
     {
         $items = $participant->getAttendancesNotWithdrawn();
 
+        /** @var Form $ms */
+        $ms = $formFactory->create(MultiSelectType::class, options: [
+            'buttons' => ['settle'],
+            'items' => $items->filter(fn (Attendance $a) => !$a->isPaid())->toArray(),
+        ]);
+
+        $ms->handleRequest($request);
+        if ($ms->isSubmitted() && $ms->isValid()) {
+            switch ($ms->getClickedButton()->getName()) {
+                case 'settle':
+                    return $this->redirectToRoute('admin_attendances_settle', status: 307);
+            }
+        }
+
         return $this->render('@FerienpassAdmin/page/participants/attendances.html.twig', [
-            'participant' => $participant,
+            'ms' => $ms,
             'items' => $items,
-            'ms' => $this->multiSelectForm($formFactory, $items),
+            'participant' => $participant,
             'breadcrumb' => $breadcrumb->generate(['participants.title', ['route' => 'admin_participants_index']], $participant->getName().' (Anmeldungen)'),
         ]);
     }
@@ -100,47 +106,24 @@ final class ParticipantsController extends AbstractController
     #[Route('/abrechnen', name: 'admin_attendances_settle', methods: ['POST'])]
     public function settle(Request $request, FormFactoryInterface $formFactory, Breadcrumb $breadcrumb, AttendanceRepository $attendanceRepository): Response
     {
-        $em = $this->doctrine->getManager();
-
         $attendances = $this->getAttendancesFromRequest($attendanceRepository, $request);
         $draftPayment = Payment::fromAttendances($attendances);
 
-        $dto = BillingAddressDto::fromPayment($draftPayment);
-
-        $form = $formFactory->createNamedBuilder('settle', data: $dto, options: ['translation_domain' => 'admin', 'label_format' => 'payments.%name%',  'allow_extra_fields' => true])
-            ->add('items', CollectionType::class, [
-                'entry_options' => ['label' => false],
-                'entry_type' => PaymentItemType::class,
-                'allow_extra_fields' => true,
-            ])
-            ->add('address', TextareaType::class, [
-                'attr' => ['rows' => 4],
-            ])
-            ->add('email', EmailType::class, options: ['required' => false])
-            ->add('submit', SubmitType::class)
-        ;
-
-        foreach ($request->get('ms')['items'] as $i => $item) {
-            $form->add('ms_'.$i, HiddenType::class, ['data' => $item, 'mapped' => false]);
-        }
-
-        $form = $form->getForm();
+        $form = $formFactory->create(SettleAttendancesType::class, $dto = BillingAddressDto::fromPayment($draftPayment), ['attendances' => $attendances]);
 
         $form->handleRequest($request);
-        if ($form->isSubmitted()) {
-            if (!$form->isValid()) {
-                dd($form->getErrors());
-            }
-
+        if ($form->isSubmitted() && $form->isValid()) {
             $payment = new Payment($this->numberGenerator->generate());
             $dto->toPayment($payment);
 
-            $payment->getItems()->map(fn (PaymentItem $item) => $item->getAttendance()->setPaid());
+            // TODO: add me
+            // $payment->getItems()->map(fn(PaymentItem $item) => $item->getAttendance()->setPaid());
 
+            $em = $this->doctrine->getManager();
             $em->persist($payment);
             $em->flush();
 
-            $this->redirectToRoute('admin_payments_receipt', ['id' => $payment->getId()]);
+            return $this->redirectToRoute('admin_payments_receipt', ['id' => $payment->getId()]);
         }
 
         return $this->render('@FerienpassAdmin/page/participants/settle.html.twig', [
@@ -150,54 +133,23 @@ final class ParticipantsController extends AbstractController
         ]);
     }
 
-    private function multiSelectForm(FormFactoryInterface $formFactory, Collection $items = null): FormInterface
-    {
-        $options = [
-            'class' => Attendance::class,
-            'choice_label' => 'offer.name',
-            'multiple' => true,
-            'expanded' => true,
-        ];
-
-        if ($items) {
-            $options['query_builder'] = fn (EntityRepository $er) => $er->createQueryBuilder('a')
-                ->where('a.id in (:items)')
-                ->setParameter('items', $items->filter(fn (Attendance $a) => !$a->isPaid()))
-            ;
-        }
-
-        return $formFactory->createNamedBuilder('ms')
-            ->add('items', EntityType::class, $options)
-            ->add('submit', SubmitType::class, ['label' => 'Ausgewählte abrechnen'])
-            ->setAction($this->generateUrl('admin_attendances_settle'))
-            ->getForm()
-        ;
-    }
-
     /**
      * @return array<Attendance>
      */
-    private function getAttendancesFromRequest(AttendanceRepository $attendanceRepository, Request $request): ?array
+    private function getAttendancesFromRequest(AttendanceRepository $attendanceRepository, Request $request): array
     {
-        $ids = [];
-        if ($request->request->has('settle')) {
-            $a = $request->get('settle');
-            foreach ($a as $b => $c) {
-                if (str_starts_with($b, 'ms_')) {
-                    $ids[] = (int) $c;
-                }
-            }
+        if ($request->request->has(MultiSelectType::FORM_NAME)) {
+            $ids = $request->get(MultiSelectType::FORM_NAME)['items'] ?? [];
         }
 
-        if (empty($ids) && !$request->request->has('ms')) {
-            return null;
+        if ($request->request->has(SettleAttendancesType::FORM_NAME)) {
+            $ids = $request->get(SettleAttendancesType::FORM_NAME)['ms'] ?? [];
         }
 
-        if (empty($ids)) {
-            $ids = $request->get('ms')['items'];
+        if (null === ($ids ?? null)) {
+            return [];
         }
-        $attendances = $attendanceRepository->findBy(['id' => $ids]);
 
-        return (array) $attendances;
+        return $attendanceRepository->findBy(['id' => $ids]);
     }
 }

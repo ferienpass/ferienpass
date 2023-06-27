@@ -80,7 +80,7 @@
                         <td class="py-5 px-8 text-right align-top tabular-nums text-gray-700">{{ (item.amount/100)|format_currency('EUR', locale='de') }}</td>
                         <td class="py-5 pl-8 pr-0 text-right align-top">
 
-                            {{ form_widget(form.items) }}
+                            {{ form_widget(form.items.children[loop.index0]) }}
 
                         </td>
                     </tr>

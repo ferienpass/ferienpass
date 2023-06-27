@@ -16,7 +16,7 @@
                     <thead>
                     <tr>
 
-                        {% if ms is defined %}
+                        {% if ms is defined and ms.items is defined %}
 
                             <th scope="col"
                                 class="py-2 pl-2 pr-3 text-left text-sm sm:pl-0 w-0">
@@ -52,7 +52,7 @@
 
                         <tr>
 
-                            {% if ms is defined %}
+                            {% if ms is defined and ms.items[item.id] is defined %}
 
                                 <td class="whitespace-nowrap py-2 pl-2 pr-3 text-sm sm:pl-0">
 
@@ -140,6 +140,14 @@
 
 
     {% if ms is defined %}
+
+        <div class="flex items-center space-x-2">
+
+            <p class="text-sm font-medium text-gray-900"><span x-text="selected.length"></span> ausgewählte:</p>
+
+            {{ form_rest(ms) }}
+        </div>
+
         {{ form_end(ms) }}
     {% endif %}
 
