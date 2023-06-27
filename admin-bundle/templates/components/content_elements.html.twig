@@ -6,41 +6,47 @@
     <h2 class="text-lg leading-6 font-medium{{ '' != class ? (' '~class) : class }}">{{ headline }}</h2>
 {% endmacro %}
 
-{% macro badge(label, class='') %}
-    <p class="rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset {{ class }}">
+{% macro badge(label, size='xs', class='') %}
+    {% if size == 'xs' %}
+        {% set class = class~' px-1.5 py-0.5 text-xs' %}
+    {% elseif size == 'base' %}
+        {% set class = class~' px-2.5 py-1 text-base' %}
+    {% endif %}
+
+    <p class="rounded-md whitespace-nowrap mt-0.5 font-medium ring-1 ring-inset {{ class|trim }}">
         {{ label }}
     </p>
 {% endmacro %}
 
-{% macro badge_green(label) %}
+{% macro badge_green(label, size='xs') %}
     {{ _self.badge(label, 'text-green-700 bg-green-50 ring-green-600/20') }}
 {% endmacro %}
 
-{% macro badge_yellow(label) %}
+{% macro badge_yellow(label, size='xs') %}
     {{ _self.badge(label, 'text-yellow-700 bg-yellow-50 ring-yellow-600/20') }}
 {% endmacro %}
 
-{% macro badge_red(label) %}
+{% macro badge_red(label, size='xs') %}
     {{ _self.badge(label, 'text-red-700 bg-red-50 ring-red-600/20') }}
 {% endmacro %}
 
-{% macro badge_gray(label) %}
+{% macro badge_gray(label, size='xs') %}
     {{ _self.badge(label, 'text-gray-700 bg-gray-50 ring-gray-600/20') }}
 {% endmacro %}
 
-{% macro status_badge(status) %}
+{% macro status_badge(status, size='xs') %}
     {% set label = 'status.'~status %}
     {% set label = label|trans %}
 
     {% if status == 'paid' %}
-        {{ _self.badge_green(label) }}
+        {{ _self.badge_green(label, size) }}
     {% elseif status == 'confirmed' %}
-        {{ _self.badge_green(label) }}
+        {{ _self.badge_green(label, size) }}
     {% elseif status == 'waitlisted' %}
-        {{ _self.badge_yellow(label) }}
+        {{ _self.badge_yellow(label, size) }}
     {% elseif status == 'error' %}
-        {{ _self.badge_red(label) }}
+        {{ _self.badge_red(label, size) }}
     {% else %}
-        {{ _self.badge_gray(label) }}
+        {{ _self.badge_gray(label, size) }}
     {% endif %}
 {% endmacro %}

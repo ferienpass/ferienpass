@@ -14,8 +14,9 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Dto;
 
 use Contao\MemberModel;
-use Ferienpass\CoreBundle\Entity\Participant;
+use Doctrine\Common\Collections\Collection;
 use Ferienpass\CoreBundle\Entity\Payment;
+use Ferienpass\CoreBundle\Entity\PaymentItem;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class BillingAddressDto
@@ -26,7 +27,8 @@ class BillingAddressDto
     #[Assert\Email]
     public ?string $email = null;
 
-    public array $items;
+    /** @var Collection<PaymentItem> */
+    public Collection $items;
 
     public static function fromMemberModel(MemberModel $memberModel)
     {
@@ -45,15 +47,22 @@ EOF;
         return $self;
     }
 
-    public static function fromParticipant(array $items, ?Participant $participant)
+    public static function fromPayment(Payment $payment)
     {
+        $participant = null;
+
+        /** @var PaymentItem $item */
+        if (false !== $item = $payment->getItems()->first()) {
+            $participant = $item->getAttendance()->getParticipant();
+        }
+
         if (null === $participant?->getMember()) {
             $self = new self();
         } else {
             $self = self::fromMemberModel($participant->getMember());
         }
 
-        $self->items = $items;
+        $self->items = $payment->getItems();
 
         if ($participant?->getEmail()) {
             $self->email = $participant->getEmail();
@@ -66,6 +75,10 @@ EOF;
     {
         $payment->setBillingAddress($this->address);
         $payment->setBillingEmail($this->email);
+
+        foreach ($this->items as $item) {
+            $payment->addItem(new PaymentItem($item->getAttendance(), $item->getAmount()));
+        }
 
         return $payment;
     }

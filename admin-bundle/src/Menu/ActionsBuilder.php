@@ -207,7 +207,6 @@ class ActionsBuilder
             'route' => 'admin_offer_applications',
             'routeParameters' => ['id' => $item->getOffer()->getId(), 'edition' => $item->getOffer()->getEdition()->getAlias()],
             'display' => $this->isGranted('view', $item->getOffer()),
-            'extras' => ['icon' => 'pencil-solid'],
         ]);
     }
 

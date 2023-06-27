@@ -14,11 +14,11 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Controller\Page;
 
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ReadableCollection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Dto\BillingAddressDto;
+use Ferienpass\AdminBundle\Form\CompoundType\PaymentItemType;
 use Ferienpass\AdminBundle\Form\EditParticipantType;
 use Ferienpass\AdminBundle\Payments\ReceiptNumberGenerator;
 use Ferienpass\CoreBundle\Entity\Attendance;
@@ -26,10 +26,13 @@ use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Entity\Payment;
 use Ferienpass\CoreBundle\Entity\PaymentItem;
 use Ferienpass\CoreBundle\Pagination\Paginator;
+use Ferienpass\CoreBundle\Repository\AttendanceRepository;
 use Ferienpass\CoreBundle\Repository\ParticipantRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -53,7 +56,7 @@ final class ParticipantsController extends AbstractController
         $qb = $repository->createQueryBuilder('e');
         $qb->orderBy('e.lastname');
 
-        $paginator = (new Paginator($qb))->paginate($request->query->getInt('page', 1));
+        $paginator = (new Paginator($qb, 100))->paginate($request->query->getInt('page', 1));
 
         return $this->render('@FerienpassAdmin/page/participants/index.html.twig', [
             'pagination' => $paginator,
@@ -95,41 +98,41 @@ final class ParticipantsController extends AbstractController
     }
 
     #[Route('/abrechnen', name: 'admin_attendances_settle', methods: ['POST'])]
-    public function settle(Request $request, FormFactoryInterface $formFactory, Breadcrumb $breadcrumb): Response
+    public function settle(Request $request, FormFactoryInterface $formFactory, Breadcrumb $breadcrumb, AttendanceRepository $attendanceRepository): Response
     {
         $em = $this->doctrine->getManager();
 
-        $attendances = $this->getAttendancesFromRequest($formFactory, $request);
+        $attendances = $this->getAttendancesFromRequest($attendanceRepository, $request);
         $draftPayment = Payment::fromAttendances($attendances);
 
-        $options = [
-            'class' => Attendance::class,
-            'choice_label' => 'offer.name',
-            'multiple' => true,
-            'expanded' => true,
-        ];
+        $dto = BillingAddressDto::fromPayment($draftPayment);
 
-        if (!empty($attendances)) {
-            $options['query_builder'] = fn (EntityRepository $er) => $er->createQueryBuilder('a')
-                ->where('a.id in (:items)')
-                ->setParameter('items', $attendances)
-            ;
-        }
-
-        $dto = BillingAddressDto::fromParticipant($attendances ?? [], $attendances[0]?->getParticipant());
-        $form = $formFactory->createNamedBuilder('settle', data: $dto, options: ['translation_domain' => 'admin', 'label_format' => 'payments.%name%'])
-            ->add('items', EntityType::class, $options)
+        $form = $formFactory->createNamedBuilder('settle', data: $dto, options: ['translation_domain' => 'admin', 'label_format' => 'payments.%name%',  'allow_extra_fields' => true])
+            ->add('items', CollectionType::class, [
+                'entry_options' => ['label' => false],
+                'entry_type' => PaymentItemType::class,
+                'allow_extra_fields' => true,
+            ])
             ->add('address', TextareaType::class, [
                 'attr' => ['rows' => 4],
             ])
             ->add('email', EmailType::class, options: ['required' => false])
             ->add('submit', SubmitType::class)
-            ->getForm()
         ;
 
+        foreach ($request->get('ms')['items'] as $i => $item) {
+            $form->add('ms_'.$i, HiddenType::class, ['data' => $item, 'mapped' => false]);
+        }
+
+        $form = $form->getForm();
+
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $payment = Payment::fromAttendances($form->get('items')->getData(), $this->numberGenerator->generate());
+        if ($form->isSubmitted()) {
+            if (!$form->isValid()) {
+                dd($form->getErrors());
+            }
+
+            $payment = new Payment($this->numberGenerator->generate());
             $dto->toPayment($payment);
 
             $payment->getItems()->map(fn (PaymentItem $item) => $item->getAttendance()->setPaid());
@@ -174,20 +177,27 @@ final class ParticipantsController extends AbstractController
     /**
      * @return array<Attendance>
      */
-    private function getAttendancesFromRequest(FormFactoryInterface $formFactory, Request $request): ?array
+    private function getAttendancesFromRequest(AttendanceRepository $attendanceRepository, Request $request): ?array
     {
-        $form = $this->multiSelectForm($formFactory);
+        $ids = [];
+        if ($request->request->has('settle')) {
+            $a = $request->get('settle');
+            foreach ($a as $b => $c) {
+                if (str_starts_with($b, 'ms_')) {
+                    $ids[] = (int) $c;
+                }
+            }
+        }
 
-        $form->handleRequest($request);
-        if (!$form->isSubmitted() || !$form->isValid()) {
+        if (empty($ids) && !$request->request->has('ms')) {
             return null;
         }
 
-        $data = $form->get('items')->getData();
-        if ($data instanceof ReadableCollection) {
-            return $data->toArray();
+        if (empty($ids)) {
+            $ids = $request->get('ms')['items'];
         }
+        $attendances = $attendanceRepository->findBy(['id' => $ids]);
 
-        return (array) $data;
+        return (array) $attendances;
     }
 }
