@@ -54,6 +54,7 @@ class MultiSelectType extends AbstractType
             $builder
                 ->add('items', EntityType::class, [
                     'class' => $options['items'][0]::class,
+                    'choice_label' => 'id',
                     'choices' => $options['items'],
                     'multiple' => true,
                     'expanded' => true,
