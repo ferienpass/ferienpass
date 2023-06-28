@@ -29,7 +29,7 @@ class ReceiptNumberGenerator
 
     public function generate(): string
     {
-        $offset1 = mb_strlen($this->prefix);
+        $offset1 = mb_strlen($this->prefix) + 1;
         $offset2 = mb_strlen($this->suffix) * (-1);
 
         $qb = $this->paymentRepository->createQueryBuilder('p');

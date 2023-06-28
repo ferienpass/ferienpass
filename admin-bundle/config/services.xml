@@ -84,8 +84,8 @@
         </service>
 
         <service id="Ferienpass\AdminBundle\Payments\ReceiptNumberGenerator">
-            <argument></argument>
-            <argument></argument>
+            <argument>%ferienpass.receipt_number_prefix%</argument>
+            <argument>%ferienpass.receipt_number_suffix%</argument>
             <argument type="service" id="Ferienpass\CoreBundle\Repository\PaymentRepository"/>
         </service>
 

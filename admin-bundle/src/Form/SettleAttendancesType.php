@@ -64,7 +64,7 @@ class SettleAttendancesType extends AbstractType
             ->add('ms', CollectionType::class, [
                 'data' => $options['attendances'],
                 'entry_options' => [
-                    'property_path' => '[id]',
+                    // 'property_path' => '[id]',
                 ],
                 'label' => false,
                 'entry_type' => HiddenType::class,
