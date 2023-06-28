@@ -8,7 +8,7 @@
 
     {{ partials.h1('Anmeldungen abrechnen') }}
 
-    {{ form_start(form) }}
+    {{ form_start(form, { attr: { 'x-data': '{ }' }}) }}
 
     <div class="mt-6 grid grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
 
@@ -16,6 +16,7 @@
             <div class="rounded-lg bg-white p-6 shadow-sm ring-1 ring-gray-900/5">
                 <dl>
                     <dt class="text-sm font-semibold leading-6 text-gray-900">{{ 'payments.payable'|trans }}</dt>
+                    {#                    <dd class="mt-1 text-base font-semibold leading-6 text-gray-900" x-text="amounts.reduce((a, b) => a + b)"></dd>#}
                     <dd class="mt-1 text-base font-semibold leading-6 text-gray-900">{{ (payment.totalAmount/100)|format_currency('EUR', locale='de') }}</dd>
                 </dl>
 
@@ -62,7 +63,7 @@
                 <thead class="border-b border-gray-200 text-gray-900">
                 <tr>
                     <th scope="col" class="px-0 py-3 font-semibold">Angebot</th>
-                    <th scope="col" class="py-3 py-8 text-right font-semibold">Teilnahmegebühr</th>
+                    <th scope="col" class="py-3 px-8 text-right font-semibold">Teilnahmegebühr</th>
                     <th scope="col" class="py-3 pl-8 pr-0 text-right font-semibold">abrechnen</th>
                 </tr>
                 </thead>
@@ -80,7 +81,10 @@
                         <td class="py-5 px-8 text-right align-top tabular-nums text-gray-700">{{ (item.amount/100)|format_currency('EUR', locale='de') }}</td>
                         <td class="py-5 pl-8 pr-0 text-right align-top">
 
-                            {{ form_widget(form.items.children[loop.index0]) }}
+                            {% do form.items.setRendered %}
+                            <span class="inline-block max-w-[100px]">
+                                {{ form_widget(form.items.children[loop.index0].amount, { attr: {  } }) }}
+                            </span>
 
                         </td>
                     </tr>
@@ -92,7 +96,7 @@
                     <th scope="row"
                         class="hidden pt-4 text-right font-semibold text-gray-900 sm:table-cell">Summe
                     </th>
-                    <td class="pb-0 pl-8 pr-0 pt-4 text-right font-semibold tabular-nums text-gray-900">{{ (payment.totalAmount/100)|format_currency('EUR', locale='de') }}</td>
+                    <td class="pb-0 px-8 pt-4 text-right font-semibold tabular-nums text-gray-900">{{ (payment.totalAmount/100)|format_currency('EUR', locale='de') }}</td>
                     <td>&nbsp;</td>
                 </tr>
                 </tfoot>

@@ -13,10 +13,11 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Form;
 
-use Ferienpass\AdminBundle\Dto\Annotation\EntityType;
+use Contao\MemberModel;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -30,15 +31,25 @@ class EditParticipantType extends AbstractType
             'data_class' => Participant::class,
             'label_format' => 'participants.label.%name%',
             'translation_domain' => 'admin',
+            'required' => false,
         ]);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('firstname', null, ['fieldset_group' => 'base', 'width' => '1/2'])
+            ->add('firstname', null, ['required' => true, 'fieldset_group' => 'base', 'width' => '1/2'])
             ->add('lastname', null, ['fieldset_group' => 'base', 'width' => '1/2'])
-//            ->add('parent', EntityType::class, [ 'class' => User::class ])
+            ->add('member', ChoiceType::class, [
+                'choices' => MemberModel::findAll(['order' => 'lastname'])->getModels(),
+                'choice_value' => 'id',
+                'choice_label' => function (?MemberModel $memberModel): string {
+                    return $memberModel ? sprintf('%s, %s', $memberModel->lastname, $memberModel->firstname) : '';
+                },
+                'fieldset_group' => 'base',
+                'placeholder' => '-',
+                'width' => '2/3',
+            ])
             ->add('dateOfBirth', BirthdayType::class, ['widget' => 'single_text', 'fieldset_group' => 'age', 'width' => '1/3'])
             ->add('email', EmailType::class, ['fieldset_group' => 'contact', 'width' => '1/2', 'help' => 'participants.help.email'])
             ->add('mobile', null, ['fieldset_group' => 'contact', 'width' => '1/2', 'help' => 'participants.help.mobile'])

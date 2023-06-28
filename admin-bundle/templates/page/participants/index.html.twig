@@ -4,7 +4,20 @@
     columns: {
         name: '{{ item.name }}',
         dateOfBirth: '{{ item.dateOfBirth|date("d.m.Y") }}',
-        email: '{{ item.email }}',
-        mobile: '{{ item.mobile }}'
+        email: '{{ item.email ?: item.member.email|default("-") }}',
+        mobile: '{{ item.mobile ?: item.member.mobile|default("-") }}',
+        attendances: '
+        <div class="flex items-center space-x-2">
+<div class="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden flex">
+{% if item.attendancesNotWithdrawn|length %}
+  <div class="bg-green-600 h-1.5" style="width: {{ (item.getAttendancesByStatus(\'confirmed\')|length)/item.attendancesNotWithdrawn|length*100 }}%"></div>
+  <div class="bg-yellow-500 h-1.5" style="width: {{ (item.getAttendancesByStatus(\'waitlisted\')|length)/item.attendancesNotWithdrawn|length*100 }}%"></div>
+  <div class="bg-red-600 h-1.5" style="width: {{ (item.getAttendancesByStatus(\'error\')|length)/item.attendancesNotWithdrawn|length*100 }}%"></div>
+  <div class="bg-gray-600 h-1.5" style="width: {{ (item.getAttendancesByStatus(\'waiting\')|length)/item.attendancesNotWithdrawn|length*100 }}%"></div>
+{% endif %}
+</div>
+<span class="text-gray-700 font-medium text-xs">{{ item.attendancesNotWithdrawn|length }}</span>
+</div>
+'
     }
 } %}

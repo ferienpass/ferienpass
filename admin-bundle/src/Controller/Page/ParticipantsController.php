@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
+use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Dto\BillingAddressDto;
@@ -21,12 +22,18 @@ use Ferienpass\AdminBundle\Form\MultiSelectType;
 use Ferienpass\AdminBundle\Form\SettleAttendancesType;
 use Ferienpass\AdminBundle\Payments\ReceiptNumberGenerator;
 use Ferienpass\CoreBundle\Entity\Attendance;
+use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Entity\Payment;
+use Ferienpass\CoreBundle\Facade\AttendanceFacade;
 use Ferienpass\CoreBundle\Pagination\Paginator;
 use Ferienpass\CoreBundle\Repository\AttendanceRepository;
 use Ferienpass\CoreBundle\Repository\ParticipantRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,35 +58,74 @@ final class ParticipantsController extends AbstractController
         $paginator = (new Paginator($qb, 100))->paginate($request->query->getInt('page', 1));
 
         return $this->render('@FerienpassAdmin/page/participants/index.html.twig', [
+            'createUrl' => $this->generateUrl('admin_participants_create'),
             'pagination' => $paginator,
             'breadcrumb' => $breadcrumb->generate('Teilnehmende'),
         ]);
     }
 
+    #[Route('/neu', name: 'admin_participants_create')]
     #[Route('/{id}/bearbeiten', name: 'admin_participants_edit', requirements: ['id' => '\d+'])]
-    public function edit(Participant $participant, Request $request, FormFactoryInterface $formFactory, Breadcrumb $breadcrumb): Response
+    public function edit(?Participant $participant, Request $request, FormFactoryInterface $formFactory, Breadcrumb $breadcrumb): Response
     {
         $em = $this->doctrine->getManager();
-        $form = $formFactory->create(EditParticipantType::class, $participant);
+        $form = $formFactory->create(EditParticipantType::class, $participant ?? new Participant());
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            if (!$em->contains($participant = $form->getData())) {
+                $em->persist($participant);
+            }
+
             $em->flush();
 
-            $this->redirectToRoute('admin_participants_edit', ['id' => $participant->getId()]);
+            return $this->redirectToRoute('admin_participants_edit', ['id' => $participant->getId()]);
         }
+
+        $breadcrumbTitle = $participant ? $participant->getName().' (bearbeiten)' : 'participants.new';
 
         return $this->render('@FerienpassAdmin/page/participants/edit.html.twig', [
             'item' => $participant,
             'form' => $form,
-            'breadcrumb' => $breadcrumb->generate(['participants.title', ['route' => 'admin_participants_index']], $participant->getName().' (bearbeiten)'),
+            'breadcrumb' => $breadcrumb->generate(['participants.title', ['route' => 'admin_participants_index']], $breadcrumbTitle),
         ]);
     }
 
     #[Route('/{id}', name: 'admin_participants_attendances', requirements: ['id' => '\d+'])]
-    public function attendances(Participant $participant, Request $request, FormFactoryInterface $formFactory, Breadcrumb $breadcrumb): Response
+    public function attendances(Participant $participant, Request $request, AttendanceFacade $attendanceFacade, FormFactoryInterface $formFactory, Breadcrumb $breadcrumb): Response
     {
         $items = $participant->getAttendancesNotWithdrawn();
+
+        $add = $formFactory->createBuilder()
+            ->add('offer', EntityType::class, [
+                'class' => Offer::class,
+                'query_builder' => fn (EntityRepository $er) => $er->createQueryBuilder('o')
+                    ->leftJoin('o.dates', 'dates')
+                    ->where('dates.begin >= CURRENT_TIMESTAMP()')
+                ->andWhere('o.onlineApplication = 1'),
+                'choice_label' => 'name',
+            ])
+
+            ->add('status', ChoiceType::class, [
+                'choices' => [Attendance::STATUS_CONFIRMED, Attendance::STATUS_WAITLISTED, Attendance::STATUS_WAITING],
+            ])
+            ->add('notify', CheckboxType::class, [
+                'required' => false,
+                'label' => 'Teilnehmer:in benachrichtigen',
+                'help' => 'Erfordert eine E-Mail-Adresse und/oder Mobilnummer',
+            ])
+
+            ->add('submit', SubmitType::class)
+            ->getForm()
+        ;
+
+        $add->handleRequest($request);
+
+        if ($add->isSubmitted() && $add->isValid()) {
+            $attendanceFacade->create($add->get('offer')->getData(), $participant, status: 'waiting', notify: false);
+
+            return $this->redirectToRoute('admin_participants_attendances', ['id' => $participant->getId()]);
+        }
 
         /** @var Form $ms */
         $ms = $formFactory->create(MultiSelectType::class, options: [
@@ -96,6 +142,7 @@ final class ParticipantsController extends AbstractController
         }
 
         return $this->render('@FerienpassAdmin/page/participants/attendances.html.twig', [
+            'add' => $add,
             'ms' => $ms,
             'items' => $items,
             'participant' => $participant,

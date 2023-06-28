@@ -6,6 +6,11 @@
         billingName: '{{ item.billingAddress|split("\n")|first }}',
         date: '{{ item.createdAt|date("d.m.Y") }}',
         amount: '{{ (item.totalAmount/100)|format_currency("EUR", locale="de") }}',
-        status: '{{ item.status }}'
+        status: '
+{% import "@FerienpassAdmin/components/content_elements.html.twig" as partials %}
+{% trans_default_domain "admin" %}
+
+{{ partials.badge_green(("payments.status."~item.status)|trans, "sm", "-ml-2") }}
+'
     }
 } %}

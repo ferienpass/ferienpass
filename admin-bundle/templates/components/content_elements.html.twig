@@ -9,44 +9,52 @@
 {% macro badge(label, size='xs', class='') %}
     {% if size == 'xs' %}
         {% set class = class~' px-1.5 py-0.5 text-xs' %}
+    {% elseif size == 'sm' %}
+        {% set class = class~' px-2 py-0.5 text-sm' %}
     {% elseif size == 'base' %}
         {% set class = class~' px-2.5 py-1 text-base' %}
     {% endif %}
 
-    <p class="rounded-md whitespace-nowrap mt-0.5 font-medium ring-1 ring-inset {{ class|trim }}">
+    <span class="rounded-md whitespace-nowrap mt-0.5 font-medium ring-1 ring-inset {{ class|trim }}">
         {{ label }}
-    </p>
+    </span>
 {% endmacro %}
 
-{% macro badge_green(label, size='xs') %}
-    {{ _self.badge(label, 'text-green-700 bg-green-50 ring-green-600/20') }}
+{% macro badge_green(label, size='xs', class='') %}
+    {% set class = class ~ ' text-green-700 bg-green-50 ring-green-600/20' %}
+    {{ _self.badge(label, size, class|trim) }}
 {% endmacro %}
 
-{% macro badge_yellow(label, size='xs') %}
-    {{ _self.badge(label, 'text-yellow-700 bg-yellow-50 ring-yellow-600/20') }}
+{% macro badge_yellow(label, size='xs', class='') %}
+    {% set class = class ~ ' text-yellow-700 bg-yellow-50 ring-yellow-600/20' %}
+    {{ _self.badge(label, size, class|trim) }}
 {% endmacro %}
 
-{% macro badge_red(label, size='xs') %}
-    {{ _self.badge(label, 'text-red-700 bg-red-50 ring-red-600/20') }}
+{% macro badge_red(label, size='xs', class='') %}
+    {% set class = class ~ ' text-red-700 bg-red-50 ring-red-600/20' %}
+    {{ _self.badge(label, size, class|trim) }}
 {% endmacro %}
 
-{% macro badge_gray(label, size='xs') %}
-    {{ _self.badge(label, 'text-gray-700 bg-gray-50 ring-gray-600/20') }}
+{% macro badge_gray(label, size='xs', class='') %}
+    {% set class = class ~ ' text-gray-700 bg-gray-50 ring-gray-600/20' %}
+    {{ _self.badge(label, size, class|trim) }}
 {% endmacro %}
 
-{% macro status_badge(status, size='xs') %}
+{% macro status_badge(status, size='xs', class='') %}
     {% set label = 'status.'~status %}
     {% set label = label|trans %}
 
     {% if status == 'paid' %}
-        {{ _self.badge_green(label, size) }}
+        {{ _self.badge_green(label, size, class) }}
     {% elseif status == 'confirmed' %}
-        {{ _self.badge_green(label, size) }}
+        {{ _self.badge_green(label, size, class) }}
     {% elseif status == 'waitlisted' %}
-        {{ _self.badge_yellow(label, size) }}
+        {{ _self.badge_yellow(label, size, class) }}
     {% elseif status == 'error' %}
-        {{ _self.badge_red(label, size) }}
+        {{ _self.badge_red(label, size, class) }}
+    {% elseif status == 'withdrawn' %}
+        {{ _self.badge_red(label, size, class) }}
     {% else %}
-        {{ _self.badge_gray(label, size) }}
+        {{ _self.badge_gray(label, size, class) }}
     {% endif %}
 {% endmacro %}

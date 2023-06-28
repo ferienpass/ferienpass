@@ -40,8 +40,37 @@ final class HostsController extends AbstractController
         $paginator = (new Paginator($qb))->paginate($request->query->getInt('page', 1));
 
         return $this->render('@FerienpassAdmin/page/hosts/index.html.twig', [
+            'createUrl' => $this->generateUrl('admin_hosts_create'),
             'pagination' => $paginator,
             'breadcrumb' => $breadcrumb->generate('hosts.title'),
+        ]);
+    }
+
+    #[Route('/neu', name: 'admin_hosts_create')]
+    #[Route('/{alias}/bearbeiten', name: 'admin_hosts_edit')]
+    public function edit(?Host $host, Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $em, Breadcrumb $breadcrumb, \Ferienpass\CoreBundle\Session\Flash $flash): Response
+    {
+        $form = $formFactory->create(EditHostType::class, $host ?? new Host());
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (!$em->contains($host = $form->getData())) {
+                $em->persist($host);
+            }
+
+            $em->flush();
+
+            $flash->addConfirmation(text: new TranslatableMessage('editConfirm', domain: 'admin'));
+
+            return $this->redirectToRoute('admin_hosts_edit', ['alias' => $host->getAlias()]);
+        }
+
+        $breadcrumbTitle = $host ? $host->getName().' (bearbeiten)' : 'hosts.new';
+
+        return $this->render('@FerienpassAdmin/page/hosts/edit.html.twig', [
+            'item' => $host,
+            'form' => $form,
+            'breadcrumb' => $breadcrumb->generate(['hosts.title', ['route' => 'admin_hosts_index']], $breadcrumbTitle),
         ]);
     }
 
@@ -51,27 +80,6 @@ final class HostsController extends AbstractController
         return $this->render('@FerienpassAdmin/page/hosts/show.html.twig', [
             'host' => $host,
             'breadcrumb' => $breadcrumb->generate(['hosts.title', ['route' => 'admin_hosts_index']], $host->getName()),
-        ]);
-    }
-
-    #[Route('/{alias}/bearbeiten', name: 'admin_hosts_edit')]
-    public function edit(Host $host, Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $em, Breadcrumb $breadcrumb, \Ferienpass\CoreBundle\Session\Flash $flash): Response
-    {
-        $form = $formFactory->create(EditHostType::class, $host);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush();
-
-            $flash->addConfirmation(text: new TranslatableMessage('editConfirm', domain: 'admin'));
-
-            return $this->redirectToRoute('admin_hosts_edit', ['alias' => $host->getAlias()]);
-        }
-
-        return $this->render('@FerienpassAdmin/page/hosts/edit.html.twig', [
-            'item' => $host,
-            'form' => $form,
-            'breadcrumb' => $breadcrumb->generate(['hosts.title', ['route' => 'admin_hosts_index']], $host->getName().' (bearbeiten)'),
         ]);
     }
 }

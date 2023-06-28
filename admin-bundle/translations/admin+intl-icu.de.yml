@@ -98,6 +98,7 @@ participants:
   label:
     firstname: Vorname
     lastname: Nachname
+    member: Sorgeberechtigte:r
     dateOfBirth: Geburtsdatum
     email: E-Mail-Adresse
     phone: Telefonnummer
@@ -112,6 +113,7 @@ participants:
   th.offer: Angebot
   th.fee: Gebühr
   th.status: Status
+  th.attendances: Anmeldungen
 
 payments:
   title: Zahlungen
@@ -119,7 +121,7 @@ payments:
   receiptPreview: Belegvorschau
   address: Rechnungsadresse
   email: E-Mail-Adresse
-  submit: Beleg erstellen
+  submit: Abrechnen
   payable: Zu bezahlen
   downloadReceipt: Beleg herunterladen (PDF)
   action.receipt: Beleg öffnen
@@ -128,6 +130,7 @@ payments:
   th.date: Datum
   th.amount: Betrag
   th.status: Status
+  status.paid: bezahlt
 
 profile:
   title: Stammdaten
