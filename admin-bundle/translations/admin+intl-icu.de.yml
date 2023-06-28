@@ -138,6 +138,8 @@ user:
 
 editConfirm: Die Daten wurden erfolgreich gespeichert.
 
+ms.settle: abrechnen
+
 statusDescription:
   confirmed: Kinder sind zugesagt und nehmen am Angebot teil.
   waitlisted: Kinder rücken automatisch nach, WENN Windhundverfahren aktiv.

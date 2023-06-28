@@ -63,6 +63,9 @@ class SettleAttendancesType extends AbstractType
             // If we don't add this, and do not have knowledge about the original items submitted via the multi-select, the collection types do not work since it won't recognize the entities.
             ->add('ms', CollectionType::class, [
                 'data' => $options['attendances'],
+                'entry_options' => [
+                    'property_path' => '[id]',
+                ],
                 'label' => false,
                 'entry_type' => HiddenType::class,
                 'mapped' => false,
