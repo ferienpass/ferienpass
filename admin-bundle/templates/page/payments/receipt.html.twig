@@ -31,8 +31,9 @@
                     <dt class="text-sm font-semibold leading-6 text-gray-900">{{ 'payments.payable'|trans }}</dt>
                     <dd class="mt-1 text-base font-semibold leading-6 text-gray-900">{{ (payment.totalAmount/100)|format_currency('EUR', locale='de') }}</dd>
                 </dl>
-                <div class="mt-6 border-t border-gray-900/5 px-6 py-6">
+                <div class="mt-6 border-t border-gray-900/5 py-6 flex space-y-4 flex-col">
                     <a href="{{ path('admin_payments_receipt_pdf', { id: app.request.attributes.get('id') } ) }}" class="text-sm font-semibold leading-6 text-gray-900">{{ 'payments.downloadReceipt'|trans }} <span aria-hidden="true">&rarr;</span></a>
+                    <a href="{{ path('admin_payments_reverse', { id: app.request.attributes.get('id') } ) }}" class="text-sm font-semibold leading-6 text-gray-900">{{ 'payments.reverse'|trans }} <span aria-hidden="true">&rarr;</span></a>
                 </div>
             </div>
         </div>

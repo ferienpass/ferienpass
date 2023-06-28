@@ -118,6 +118,7 @@ participants:
 payments:
   title: Zahlungen
   receipt: Beleg
+  reverse: Stornieren
   receiptPreview: Belegvorschau
   address: Rechnungsadresse
   email: E-Mail-Adresse
@@ -125,12 +126,14 @@ payments:
   payable: Zu bezahlen
   downloadReceipt: Beleg herunterladen (PDF)
   action.receipt: Beleg öffnen
+  status.paid: bezahlt
   th.receiptNumber: '#'
   th.billingName: Rechnungsempfänger
   th.date: Datum
   th.amount: Betrag
   th.status: Status
-  status.paid: bezahlt
+  th.participant: Teilnehmer:in
+  th.offer: Angebot
 
 profile:
   title: Stammdaten
@@ -142,6 +145,7 @@ user:
 editConfirm: Die Daten wurden erfolgreich gespeichert.
 
 ms.settle: abrechnen
+ms.reverse: stornieren
 
 statusDescription:
   confirmed: Kinder sind zugesagt und nehmen am Angebot teil.

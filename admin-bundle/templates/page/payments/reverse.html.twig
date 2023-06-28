@@ -1,0 +1,18 @@
+{% extends "@FerienpassAdmin/layout/list.html.twig" %}
+
+{% set config = {
+    columns: {
+        participant: '{{ item.attendance.participant.name }}',
+        offer: '{{ item.attendance.offer.name }}',
+        date: '
+{% import "@FerienpassCore/Macro/offer.html.twig" as offer_macro %}
+
+{% if item.attendance.offer.dates is not empty %}
+    {{ offer_macro.date_single(item.attendance.offer.dates|first) }}
+{% else %}
+Dauerangebot
+{% endif %}
+',
+        amount: '{{ (item.amount/100)|format_currency("EUR", locale="de") }}'
+    }
+} %}
