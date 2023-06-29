@@ -1,3 +1,5 @@
+{% trans_default_domain "admin" %}
+
 {% macro h1(headline, class='') %}
     <h1 class="text-gray-900 tracking-tight text-3xl font-extrabold{{ '' != class ? (' '~class) : class }}">{{ headline }}</h1>
 {% endmacro %}
@@ -16,7 +18,7 @@
     {% endif %}
 
     <span class="rounded-md whitespace-nowrap mt-0.5 font-medium ring-1 ring-inset {{ class|trim }}">
-        {{ label }}
+        {{ label|trans }}
     </span>
 {% endmacro %}
 
@@ -42,7 +44,7 @@
 
 {% macro status_badge(status, size='xs', class='') %}
     {% set label = 'status.'~status %}
-    {% set label = label|trans %}
+    {% set label = label|trans({}, 'messages') %}
 
     {% if status == 'paid' %}
         {{ _self.badge_green(label, size, class) }}

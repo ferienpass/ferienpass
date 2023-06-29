@@ -74,11 +74,13 @@
 
                         <tr>
 
-                            {% if ms is defined and ms.items[item.id] is defined %}
+                            {% if ms is defined %}
 
                                 <td class="whitespace-nowrap py-2 pl-2 pr-3 text-sm sm:pl-0">
 
-                                    {{ form_widget(ms.items[item.id], {'attr': {'x-model': 'selected'}}) }}
+                                    {% if ms.items[item.id] is defined %}
+                                        {{ form_widget(ms.items[item.id], {'attr': {'x-model': 'selected'}}) }}
+                                    {% endif %}
 
                                 </td>
 

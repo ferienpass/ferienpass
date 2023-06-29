@@ -105,7 +105,7 @@ final class ParticipantsController extends AbstractController
         /** @var Form $ms */
         $ms = $formFactory->create(MultiSelectType::class, options: [
             'buttons' => ['settle'],
-            'items' => $items->filter(fn (Attendance $a) => !$a->isPaid())->toArray(),
+            'items' => $items->toArray(),
         ]);
 
         $ms->handleRequest($request);
@@ -130,6 +130,8 @@ final class ParticipantsController extends AbstractController
     public function settle(Request $request, FormFactoryInterface $formFactory, Breadcrumb $breadcrumb, AttendanceRepository $attendanceRepository): Response
     {
         $attendances = $this->getAttendancesFromRequest($attendanceRepository, $request);
+        $attendances = array_filter($attendances, fn (Attendance $a) => !$a->isPaid());
+
         $draftPayment = Payment::fromAttendances($attendances);
 
         $form = $formFactory->create(SettleAttendancesType::class, $dto = BillingAddressDto::fromPayment($draftPayment), ['attendances' => $attendances]);

@@ -132,6 +132,7 @@ payments:
   downloadReceipt: Beleg herunterladen (PDF)
   action.receipt: Beleg öffnen
   status.paid: bezahlt
+  status.unpaid: unbezahlt
   th.receiptNumber: '#'
   th.billingName: Rechnungsempfänger
   th.date: Datum

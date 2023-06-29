@@ -15,6 +15,15 @@
 {% import "@FerienpassAdmin/components/content_elements.html.twig" as partials %}
 
 {{ partials.status_badge(item.status, "sm", "-ml-2") }}
+',
+        paid: '
+{% import "@FerienpassAdmin/components/content_elements.html.twig" as partials %}
+
+{% if item.paid %}
+    {{ partials.badge_green("payments.status.paid", "sm", "-ml-2") }}
+{% else %}
+    {{ partials.badge_gray("payments.status.unpaid", "sm", "-ml-2") }}
+{% endif %}
 '
     }
 } %}
