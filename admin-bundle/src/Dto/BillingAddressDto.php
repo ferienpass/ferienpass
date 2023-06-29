@@ -64,6 +64,14 @@ EOF;
 
         $self->items = $payment->getItems();
 
+        if ($participant?->isDiscounted()) {
+            foreach ($self->items as $item) {
+                $item->setAmount($item->getAmount() >= 200 ? $item->getAmount() / 2 : $item->getAmount());
+            }
+
+            $payment->calculateTotalAmount();
+        }
+
         if ($participant?->getEmail()) {
             $self->email = $participant->getEmail();
         }

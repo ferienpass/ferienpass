@@ -95,6 +95,9 @@ participants:
   contactLegend:
     - Kontaktdaten
     - Die Kontaktdaten werden von der bzw. dem Sorgeberechtigten übernommen. Diese Daten werden für System-Benachrichtigungen verwendet und mit den Veranstaltern geteilt.
+  allowanceLegend:
+    - Ermäßigung
+    - Bei einer genehmigten Ermäßigung wird die reduzierte Teilnahmegebühr abgerechnet.
   label:
     firstname: Vorname
     lastname: Nachname
@@ -106,6 +109,7 @@ participants:
   help.email: Wird für Benachrichtigungen verwendet.
   help.mobile: Wird für SMS verwendet.
   help.member: Wählen Sie einen Account vom Typ „Eltern“.
+  help.discounted: Reduzierte Teilnahmegebühren nutzen.
   th.name: Name
   th.dateOfBirth: Geburtsdatum
   th.email: E-Mail-Adresse
@@ -114,6 +118,7 @@ participants:
   th.fee: Gebühr
   th.status: Status
   th.attendances: Anmeldungen
+  th.paid: Zahlungen
 
 payments:
   title: Zahlungen

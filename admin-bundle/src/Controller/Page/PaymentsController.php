@@ -109,8 +109,7 @@ final class PaymentsController extends AbstractController
             $reversalPayment->addItem(new PaymentItem($item->getAttendance(), (-1) * $item->getAmount()));
         }
 
-        // TODO: add me
-        // $payment->getItems()->map(fn(PaymentItem $item) => $item->getAttendance()->setWithdrawn());
+        $payment->getItems()->map(fn (PaymentItem $item) => $item->getAttendance()->setPaid(false));
 
         $em->persist($reversalPayment);
         $em->flush();

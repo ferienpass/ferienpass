@@ -22,13 +22,31 @@
                                 class="py-2 pl-2 pr-3 text-left text-sm sm:pl-0 w-0">
 
                                 {% do ms.items.setRendered %}
-                                {% block ms_select_all_checkbox %}
-                                    <input type="checkbox"
-                                           id="cbx_ms_sa"
-                                           @change="$el.checked ? selected = [{{ items|map(i => "#{i.id}")|join(',') }}] : selected = []"
-                                           class="focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300">
-                                    <label for="cbx_ms_sa" class="sr-only">Alle auswählen</label>
-                                {% endblock %}
+                                <script>
+                                    function multiSelectAll(e) {
+                                        {% if msPreferred is defined %}
+                                        if (this.$el.checked && (this.selected.length > 0 || {{ msPreferred|length ? 'false' : 'true' }})) {
+                                            this.selected = [{{ items|map(i => "#{i.id}")|join(', ') }}];
+                                        } else if (this.$el.checked) {
+                                            this.selected = [{{ msPreferred|map(i => "#{i.id}")|join(', ') }}];
+                                            this.$el.checked = false;
+                                        } else {
+                                            this.selected = [];
+                                        }
+                                        {% else %}
+                                        if (this.$el.checked) {
+                                            this.selected = [{{ items|map(i => "#{i.id}")|join(', ') }}];
+                                        } else {
+                                            this.selected = [];
+                                        }
+                                        {% endif %}
+                                    }
+                                </script>
+                                <input type="checkbox"
+                                       id="cbx_ms_sa"
+                                       @change="multiSelectAll"
+                                       class="focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300">
+                                <label for="cbx_ms_sa" class="sr-only">Alle auswählen</label>
 
                             </th>
 

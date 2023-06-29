@@ -17,6 +17,7 @@ use Contao\MemberModel;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -55,6 +56,7 @@ class EditParticipantType extends AbstractType
             ->add('email', EmailType::class, ['fieldset_group' => 'contact', 'width' => '1/2', 'help' => 'participants.help.email'])
             ->add('mobile', null, ['fieldset_group' => 'contact', 'width' => '1/2', 'help' => 'participants.help.mobile'])
             ->add('phone', null, ['fieldset_group' => 'contact', 'width' => '1/2'])
+            ->add('discounted', CheckboxType::class, ['fieldset_group' => 'allowance', 'help' => 'participants.help.discounted'])
             ->add('submit', SubmitType::class, [
                 'label' => 'Daten speichern',
             ])

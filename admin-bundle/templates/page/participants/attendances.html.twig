@@ -3,7 +3,14 @@
 {% set config = {
     columns: {
         offer: '{{ item.offer.name }}',
-        fee: '{{ (item.offer.fee/100)|format_currency("EUR", locale="de") }}',
+        fee: '
+{% if not item.participant.discounted %}
+        {{ (item.offer.fee/100)|format_currency("EUR", locale="de") }}
+{% else %}
+        <del class="inline line-through">{{ (item.offer.fee/100)|format_currency("EUR", locale="de") }}</del>
+        <span>{{ ((item.offer.fee >= 200 ? (item.offer.fee/2) : item.offer.fee)/100)|format_currency("EUR", locale="de") }}</span>
+{% endif %}
+',
         status: '
 {% import "@FerienpassAdmin/components/content_elements.html.twig" as partials %}
 
@@ -47,25 +54,4 @@
 
     </div>
 
-{% endblock %}
-
-{% block ms_select_all_checkbox %}
-    <script>
-        function selectAllCustom(e) {
-            if (this.$el.checked && (this.selected.length > 0 || {{ items|filter(i => i.status == 'confirmed')|length ? 'false' : 'true' }})) {
-                this.selected = [{{ items|map(i => "#{i.id}")|join(', ') }}];
-            } else if (this.$el.checked) {
-                this.selected = [{{ items|filter(i => i.status == 'confirmed')|map(i => "#{i.id}")|join(', ') }}];
-                this.$el.checked = false;
-            } else {
-                console.log('a');
-                this.selected = [];
-            }
-        }
-    </script>
-    <input type="checkbox"
-           id="cbx_ms_sa"
-           @change="selectAllCustom"
-           class="focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300">
-    <label for="cbx_ms_sa" class="sr-only">Alle auswählen</label>
 {% endblock %}

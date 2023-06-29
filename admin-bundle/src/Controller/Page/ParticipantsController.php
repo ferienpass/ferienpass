@@ -25,6 +25,7 @@ use Ferienpass\AdminBundle\Payments\ReceiptNumberGenerator;
 use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Entity\Payment;
+use Ferienpass\CoreBundle\Entity\PaymentItem;
 use Ferienpass\CoreBundle\Facade\AttendanceFacade;
 use Ferienpass\CoreBundle\Pagination\Paginator;
 use Ferienpass\CoreBundle\Repository\AttendanceRepository;
@@ -118,6 +119,7 @@ final class ParticipantsController extends AbstractController
         return $this->render('@FerienpassAdmin/page/participants/attendances.html.twig', [
             'add' => $add,
             'ms' => $ms,
+            'msPreferred' => $items->filter(fn (Attendance $a) => $a->isConfirmed())->toArray(),
             'items' => $items,
             'participant' => $participant,
             'breadcrumb' => $breadcrumb->generate(['participants.title', ['route' => 'admin_participants_index']], $participant->getName().' (Anmeldungen)'),
@@ -137,8 +139,7 @@ final class ParticipantsController extends AbstractController
             $payment = new Payment($this->numberGenerator->generate());
             $dto->toPayment($payment);
 
-            // TODO: add me
-            // $payment->getItems()->map(fn(PaymentItem $item) => $item->getAttendance()->setPaid());
+            $payment->getItems()->map(fn (PaymentItem $item) => $item->getAttendance()->setPaid());
 
             $em = $this->doctrine->getManager();
             $em->persist($payment);

@@ -8,20 +8,35 @@
         mobile: '{{ item.mobile ?: item.member.mobile|default("-") }}',
         attendances: '
         <div class="flex items-center space-x-2">
-{% if item.getAttendancesByStatus(\'confirmed\')|length %}
-<span class="text-green-600 font-medium text-xs">{{ item.getAttendancesByStatus(\'confirmed\')|length }}</span>
+{% if item.attendancesConfirmed|length %}
+<span class="text-green-600 font-medium text-xs">{{ item.attendancesConfirmed|length }}</span>
 {% else %}
 <span class="text-gray-500 font-medium text-xs">0</span>
 {% endif %}
 <div class="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden flex">
 {% if item.attendancesNotWithdrawn|length %}
-  <div class="bg-green-600 h-1.5" title="zugelassen: {{ item.getAttendancesByStatus(\'confirmed\')|length }}" style="width: {{ (item.getAttendancesByStatus(\'confirmed\')|length)/item.attendancesNotWithdrawn|length*100 }}%"></div>
-  <div class="bg-yellow-500 h-1.5" title="Warteliste: {{ item.getAttendancesByStatus(\'waitlisted\')|length }}" style="width: {{ (item.getAttendancesByStatus(\'waitlisted\')|length)/item.attendancesNotWithdrawn|length*100 }}%"></div>
-  <div class="bg-red-600 h-1.5" title="fehlerhaft: {{ item.getAttendancesByStatus(\'error\')|length }}" style="width: {{ (item.getAttendancesByStatus(\'error\')|length)/item.attendancesNotWithdrawn|length*100 }}%"></div>
-  <div class="bg-gray-600 h-1.5" title="wartend: {{ item.getAttendancesByStatus(\'waiting\')|length }}" style="width: {{ (item.getAttendancesByStatus(\'waiting\')|length)/item.attendancesNotWithdrawn|length*100 }}%"></div>
+  <div class="bg-green-600 h-1.5" title="zugelassen: {{ item.attendancesConfirmed|length }}" style="width: {{ (item.attendancesConfirmed|length)/item.attendancesNotWithdrawn|length*100 }}%"></div>
+  <div class="bg-yellow-500 h-1.5" title="Warteliste: {{ item.attendancesWaitlisted|length }}" style="width: {{ (item.attendancesWaitlisted|length)/item.attendancesNotWithdrawn|length*100 }}%"></div>
+  <div class="bg-red-600 h-1.5" title="fehlerhaft: {{ item.attendancesErrored|length }}" style="width: {{ (item.attendancesErrored|length)/item.attendancesNotWithdrawn|length*100 }}%"></div>
+  <div class="bg-gray-600 h-1.5" title="wartend: {{ item.attendancesWaiting|length }}" style="width: {{ (item.attendancesWaiting|length)/item.attendancesNotWithdrawn|length*100 }}%"></div>
 {% endif %}
 </div>
 <span class="text-gray-500 font-medium text-xs">{{ item.attendancesNotWithdrawn|length }}</span>
+</div>
+',
+        paid: '
+        <div class="flex items-center space-x-2">
+{% if item.attendancesPaid|length %}
+<span class="text-green-600 font-medium text-xs">{{ item.attendancesPaid|length }}</span>
+{% else %}
+<span class="text-gray-500 font-medium text-xs">0</span>
+{% endif %}
+<div class="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden flex">
+{% if item.attendancesConfirmed|length %}
+  <div class="bg-green-600 h-1.5" title="bezahlt: {{ item.attendancesPaid|length }}" style="width: {{ (item.attendancesPaid|length/item.attendancesConfirmed|length)*100 }}%"></div>
+{% endif %}
+</div>
+<span class="{{ item.attendancesConfirmed|length > 0 and item.attendancesConfirmed|length == item.attendancesPaid|length ? "text-green-600" : "text-gray-500" }} font-medium text-xs">{{ item.attendancesConfirmed|length }}</span>
 </div>
 '
     }
