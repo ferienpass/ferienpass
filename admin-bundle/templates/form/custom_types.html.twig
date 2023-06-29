@@ -109,3 +109,31 @@
     </button>
 
 {% endblock %}
+
+{% block __participant_add_attendance_status_widget %}
+
+    <input type="hidden"
+           id="{{ form.vars.id }}"
+           name="{{ form.vars.full_name }}"/>
+
+    <div class="flex space-x-3">
+            <button type="button"
+                    @click="status='confirmed'"
+                    :class="{'bg-green-100 ring-green-600 ring-2': 'confirmed' === status}"
+                    class="focus:outline-none inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-green-50 hover:bg-green-100 text-green-800">
+                angemeldet
+            </button>
+            <button type="button"
+                    :class="{'bg-yellow-100 ring-yellow-600 ring-2': 'waitlisted' === status}"
+                    @click="status='waitlisted'"
+                    class="focus:outline-none inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-yellow-50 hover:bg-yellow-100 text-yellow-800">
+                Warteliste
+            </button>
+            <button type="button"
+                    @click="status='waiting'"
+                    :class="{'bg-gray-100 ring-gray-500 ring-2': 'waiting' === status}"
+                    class="focus:outline-none inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-gray-50 hover:bg-gray-100 text-gray-800">
+                wartend
+            </button>
+        </div>
+{% endblock %}

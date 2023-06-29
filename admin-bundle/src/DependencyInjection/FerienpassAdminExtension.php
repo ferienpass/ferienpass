@@ -27,6 +27,7 @@ final class FerienpassAdminExtension extends Extension implements PrependExtensi
         $config = $this->processConfiguration(new Configuration(), $configs);
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../../config'));
+        $loader->load('components.xml');
         $loader->load('dashboard.xml');
         $loader->load('fragments.xml');
         $loader->load('pages.xml');

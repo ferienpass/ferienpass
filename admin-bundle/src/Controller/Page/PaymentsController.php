@@ -119,7 +119,7 @@ final class PaymentsController extends AbstractController
         $em->persist($reversalPayment);
         $em->flush();
 
-            $flash->addConfirmation('Der Stornobeleg wurde erstellt.');
+        $flash->addConfirmation('Der Stornobeleg wurde erstellt.');
 
         return $this->redirectToRoute('admin_payments_receipt', ['id' => $reversalPayment->getId()]);
     }

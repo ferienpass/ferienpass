@@ -15,11 +15,9 @@ namespace Ferienpass\AdminBundle\Controller\Page;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
-use Ferienpass\AdminBundle\Dto\AddAttendanceDto;
 use Ferienpass\AdminBundle\Dto\BillingAddressDto;
 use Ferienpass\AdminBundle\Form\EditParticipantType;
 use Ferienpass\AdminBundle\Form\MultiSelectType;
-use Ferienpass\AdminBundle\Form\ParticipantAddAttendanceType;
 use Ferienpass\AdminBundle\Form\SettleAttendancesType;
 use Ferienpass\AdminBundle\Payments\ReceiptNumberGenerator;
 use Ferienpass\CoreBundle\Entity\Attendance;
@@ -93,15 +91,6 @@ final class ParticipantsController extends AbstractController
     {
         $items = $participant->getAttendances();
 
-        $add = $formFactory->create(ParticipantAddAttendanceType::class, $dto = new AddAttendanceDto(participant: $participant));
-
-        $add->handleRequest($request);
-        if ($add->isSubmitted() && $add->isValid()) {
-            $attendanceFacade->create($dto->getOffer(), $dto->getParticipant(), $dto->getStatus(), $dto->shallNotify());
-
-            return $this->redirectToRoute('admin_participants_attendances', ['id' => $participant->getId()]);
-        }
-
         /** @var Form $ms */
         $ms = $formFactory->create(MultiSelectType::class, options: [
             'buttons' => ['settle'],
@@ -117,7 +106,6 @@ final class ParticipantsController extends AbstractController
         }
 
         return $this->render('@FerienpassAdmin/page/participants/attendances.html.twig', [
-            'add' => $add,
             'ms' => $ms,
             'msPreferred' => $items->filter(fn (Attendance $a) => $a->isConfirmed())->toArray(),
             'items' => $items,

@@ -21,13 +21,15 @@ class AddAttendanceDto
 {
     public ?Offer $offer;
     public ?Participant $participant;
-    public string $status = Attendance::STATUS_WAITING;
-    public bool $notify = false;
+    public string $status;
+    public bool $notify;
 
-    public function __construct(Participant $participant = null, Offer $offer = null)
+    public function __construct(Participant $participant = null, Offer $offer = null, string $status = Attendance::STATUS_WAITING, bool $notify = false)
     {
         $this->participant = $participant;
         $this->offer = $offer;
+        $this->status = $status;
+        $this->notify = $notify;
     }
 
     public function getOffer(): ?Offer
