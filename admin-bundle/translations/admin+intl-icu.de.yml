@@ -85,7 +85,7 @@ participants:
   attendances.empty: Es sind keine Anmeldungen vorhanden.
   action.edit: Bearbeiten
   action.attendances: Anmeldungen
-  action.show_payment: Beleg {number}
+  action.show_payment: 'Beleg #{number}'
   new: Neuer Teilnehmer
   baseLegend:
     - Name und Sorgeberechtigter
