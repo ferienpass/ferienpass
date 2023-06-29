@@ -19,6 +19,7 @@ use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Entity\Payment;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
+use Ferienpass\CoreBundle\Repository\PaymentRepository;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -26,7 +27,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ActionsBuilder
 {
-    public function __construct(private FactoryInterface $factory, private AuthorizationCheckerInterface $authorizationChecker, private EditionRepository $editionRepository, private EventDispatcherInterface $dispatcher)
+    public function __construct(private FactoryInterface $factory, private AuthorizationCheckerInterface $authorizationChecker, private EditionRepository $editionRepository, private PaymentRepository $paymentRepository, private EventDispatcherInterface $dispatcher)
     {
     }
 
@@ -180,6 +181,27 @@ class ActionsBuilder
             'display' => $this->isGranted('edit', $item),
             'extras' => ['icon' => 'pencil-solid'],
         ]);
+
+        $payments = $this->paymentRepository->createQueryBuilder('pay')
+            ->innerJoin('pay.items', 'i')
+            ->innerJoin('i.attendance', 'a')
+            ->innerJoin('a.participant', 'p')
+            ->where('p.id = :id')
+            ->setParameter('id', $item->getId())
+            ->getQuery()
+            ->getResult()
+        ;
+
+        /** @var Payment $payment */
+        foreach ($payments as $payment) {
+            $root->addChild('show_payment.'.$payment->getId(), [
+                'label' => 'participants.action.show_payment',
+                'route' => 'admin_payments_receipt',
+                'routeParameters' => ['id' => $payment->getId()],
+                // 'display' => $this->isGranted('view', $payment),
+                'extras' => ['icon' => 'pencil-solid', 'translation_params' => ['%number%' => $payment->getReceiptNumber()]],
+            ]);
+        }
     }
 
     private function hosts(ItemInterface $root, Host $item)

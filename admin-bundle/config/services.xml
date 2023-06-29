@@ -54,6 +54,7 @@
             <argument type="service" id="knp_menu.factory"/>
             <argument type="service" id="security.authorization_checker"/>
             <argument type="service" id="Ferienpass\CoreBundle\Repository\EditionRepository"/>
+            <argument type="service" id="Ferienpass\CoreBundle\Repository\PaymentRepository"/>
             <argument type="service" id="event_dispatcher"/>
             <tag name="knp_menu.menu_builder" method="actions" alias="admin_list_actions"/>
         </service>
