@@ -49,6 +49,7 @@ class EditParticipantType extends AbstractType
                 'fieldset_group' => 'base',
                 'placeholder' => '-',
                 'width' => '2/3',
+                'help' => 'participants.help.member',
             ])
             ->add('dateOfBirth', BirthdayType::class, ['widget' => 'single_text', 'fieldset_group' => 'age', 'width' => '1/3'])
             ->add('email', EmailType::class, ['fieldset_group' => 'contact', 'width' => '1/2', 'help' => 'participants.help.email'])

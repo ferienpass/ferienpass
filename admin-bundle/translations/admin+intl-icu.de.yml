@@ -103,9 +103,9 @@ participants:
     email: E-Mail-Adresse
     phone: Telefonnummer
     mobile: Handynummer
-  help:
-    email: Wird für Benachrichtigungen verwendet.
-    mobile: Wird für SMS verwendet.
+  help.email: Wird für Benachrichtigungen verwendet.
+  help.mobile: Wird für SMS verwendet.
+  help.member: Wählen Sie einen Account vom Typ „Eltern“.
   th.name: Name
   th.dateOfBirth: Geburtsdatum
   th.email: E-Mail-Adresse
@@ -134,6 +134,14 @@ payments:
   th.status: Status
   th.participant: Teilnehmer:in
   th.offer: Angebot
+
+attendances:
+  label.offer: Angebot
+  label.participant: Teilnehmer:in
+  label.status: Teilnahmestatus
+  label.notify: Teilnehmer:in benachrichtigen
+  label.submit: Teilnahme erfassen
+  help.notify: Erfordert eine E-Mail-Adresse und/oder Mobilnummer.
 
 profile:
   title: Stammdaten

@@ -22,9 +22,13 @@
                                 class="py-2 pl-2 pr-3 text-left text-sm sm:pl-0 w-0">
 
                                 {% do ms.items.setRendered %}
-                                <input type="checkbox"
-                                       @change="$el.checked ? selected = [{{ items|map(i => "#{i.id}")|join(',') }}] : selected = []"
-                                       class="focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300">
+                                {% block ms_select_all_checkbox %}
+                                    <input type="checkbox"
+                                           id="cbx_ms_sa"
+                                           @change="$el.checked ? selected = [{{ items|map(i => "#{i.id}")|join(',') }}] : selected = []"
+                                           class="focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300">
+                                    <label for="cbx_ms_sa" class="sr-only">Alle auswählen</label>
+                                {% endblock %}
 
                             </th>
 

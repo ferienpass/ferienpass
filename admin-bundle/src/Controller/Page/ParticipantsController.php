@@ -13,27 +13,23 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
-use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
+use Ferienpass\AdminBundle\Dto\AddAttendanceDto;
 use Ferienpass\AdminBundle\Dto\BillingAddressDto;
 use Ferienpass\AdminBundle\Form\EditParticipantType;
 use Ferienpass\AdminBundle\Form\MultiSelectType;
+use Ferienpass\AdminBundle\Form\ParticipantAddAttendanceType;
 use Ferienpass\AdminBundle\Form\SettleAttendancesType;
 use Ferienpass\AdminBundle\Payments\ReceiptNumberGenerator;
 use Ferienpass\CoreBundle\Entity\Attendance;
-use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Entity\Payment;
 use Ferienpass\CoreBundle\Facade\AttendanceFacade;
 use Ferienpass\CoreBundle\Pagination\Paginator;
 use Ferienpass\CoreBundle\Repository\AttendanceRepository;
 use Ferienpass\CoreBundle\Repository\ParticipantRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,7 +51,7 @@ final class ParticipantsController extends AbstractController
         $qb = $repository->createQueryBuilder('e');
         $qb->orderBy('e.lastname');
 
-        $paginator = (new Paginator($qb, 100))->paginate($request->query->getInt('page', 1));
+        $paginator = (new Paginator($qb, 500))->paginate($request->query->getInt('page', 1));
 
         return $this->render('@FerienpassAdmin/page/participants/index.html.twig', [
             'createUrl' => $this->generateUrl('admin_participants_create'),
@@ -96,33 +92,11 @@ final class ParticipantsController extends AbstractController
     {
         $items = $participant->getAttendancesNotWithdrawn();
 
-        $add = $formFactory->createBuilder()
-            ->add('offer', EntityType::class, [
-                'class' => Offer::class,
-                'query_builder' => fn (EntityRepository $er) => $er->createQueryBuilder('o')
-                    ->leftJoin('o.dates', 'dates')
-                    ->where('dates.begin >= CURRENT_TIMESTAMP()')
-                ->andWhere('o.onlineApplication = 1'),
-                'choice_label' => 'name',
-            ])
-
-            ->add('status', ChoiceType::class, [
-                'choices' => [Attendance::STATUS_CONFIRMED, Attendance::STATUS_WAITLISTED, Attendance::STATUS_WAITING],
-            ])
-            ->add('notify', CheckboxType::class, [
-                'required' => false,
-                'label' => 'Teilnehmer:in benachrichtigen',
-                'help' => 'Erfordert eine E-Mail-Adresse und/oder Mobilnummer',
-            ])
-
-            ->add('submit', SubmitType::class)
-            ->getForm()
-        ;
+        $add = $formFactory->create(ParticipantAddAttendanceType::class, $dto = new AddAttendanceDto(participant: $participant));
 
         $add->handleRequest($request);
-
         if ($add->isSubmitted() && $add->isValid()) {
-            $attendanceFacade->create($add->get('offer')->getData(), $participant, status: 'waiting', notify: false);
+            $attendanceFacade->create($dto->getOffer(), $dto->getParticipant(), $dto->getStatus(), $dto->shallNotify());
 
             return $this->redirectToRoute('admin_participants_attendances', ['id' => $participant->getId()]);
         }
