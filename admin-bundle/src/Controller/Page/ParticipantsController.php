@@ -91,7 +91,7 @@ final class ParticipantsController extends AbstractController
     #[Route('/{id}', name: 'admin_participants_attendances', requirements: ['id' => '\d+'])]
     public function attendances(Participant $participant, Request $request, AttendanceFacade $attendanceFacade, FormFactoryInterface $formFactory, Breadcrumb $breadcrumb): Response
     {
-        $items = $participant->getAttendancesNotWithdrawn();
+        $items = $participant->getAttendances();
 
         $add = $formFactory->create(ParticipantAddAttendanceType::class, $dto = new AddAttendanceDto(participant: $participant));
 
