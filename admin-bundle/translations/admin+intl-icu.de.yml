@@ -133,6 +133,7 @@ payments:
   action.receipt: Beleg öffnen
   status.paid: bezahlt
   status.unpaid: unbezahlt
+  status.reversed: storniert
   th.receiptNumber: '#'
   th.billingName: Rechnungsempfänger
   th.date: Datum
@@ -140,6 +141,7 @@ payments:
   th.status: Status
   th.participant: Teilnehmer:in
   th.offer: Angebot
+  th.paid: Zahlung
 
 attendances:
   label.offer: Angebot

@@ -13,6 +13,15 @@
 Dauerangebot
 {% endif %}
 ',
-        amount: '{{ (item.amount/100)|format_currency("EUR", locale="de") }}'
+        amount: '{{ (item.amount/100)|format_currency("EUR", locale="de") }}',
+        paid: '
+{% import "@FerienpassAdmin/components/content_elements.html.twig" as partials %}
+
+{% if item.attendance.paid %}
+    {{ partials.badge_green("payments.status.paid", "sm", "-ml-2") }}
+{% else %}
+    {{ partials.badge_red("payments.status.reversed", "sm", "-ml-2") }}
+{% endif %}
+'
     }
 } %}

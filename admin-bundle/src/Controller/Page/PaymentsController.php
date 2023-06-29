@@ -23,6 +23,7 @@ use Ferienpass\CoreBundle\Entity\PaymentItem;
 use Ferienpass\CoreBundle\Export\Payments\ReceiptExportInterface;
 use Ferienpass\CoreBundle\Pagination\Paginator;
 use Ferienpass\CoreBundle\Repository\PaymentRepository;
+use Ferienpass\CoreBundle\Session\Flash;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -64,7 +65,7 @@ final class PaymentsController extends AbstractController
     }
 
     #[Route('/{id}/storno', name: 'admin_payments_reverse')]
-    public function reverse(Payment $payment, Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $em, Breadcrumb $breadcrumb, ReceiptNumberGenerator $numberGenerator): Response
+    public function reverse(Payment $payment, Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $em, Breadcrumb $breadcrumb, Flash $flash, ReceiptNumberGenerator $numberGenerator): Response
     {
         $items = $payment->getItems();
 
@@ -76,7 +77,7 @@ final class PaymentsController extends AbstractController
 
         $ms->handleRequest($request);
         if ($ms->isSubmitted() && $ms->isValid() && 'reverse' === $ms->getClickedButton()->getName()) {
-            return $this->reverseFormSubmit($ms, $payment, $numberGenerator, $em);
+            return $this->reverseFormSubmit($ms, $payment, $numberGenerator, $em, $flash);
         }
 
         return $this->render('@FerienpassAdmin/page/payments/reverse.html.twig', [
@@ -94,11 +95,15 @@ final class PaymentsController extends AbstractController
         return $this->file($path, sprintf('beleg-%s.pdf', $payment->getId()));
     }
 
-    private function reverseFormSubmit(Form $ms, Payment $payment, ReceiptNumberGenerator $numberGenerator, EntityManagerInterface $em): RedirectResponse
+    private function reverseFormSubmit(Form $ms, Payment $payment, ReceiptNumberGenerator $numberGenerator, EntityManagerInterface $em, Flash $flash): RedirectResponse
     {
         /** @var Collection $items */
         $items = $ms->get('items')->getData();
+        $items = $items->filter(fn (PaymentItem $pi) => $pi->getAttendance()->isPaid());
+
         if ($items->isEmpty()) {
+            $flash->addError('Es wurde nichts storniert. Entweder wurde keine Auswahl getroffen, oder die Buchungen waren schon storniert.');
+
             return $this->redirectToRoute('admin_payments_receipt', ['id' => $payment->getId()]);
         }
 
