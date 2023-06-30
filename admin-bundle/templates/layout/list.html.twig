@@ -14,7 +14,6 @@
 
     {% set headline = "#{translationPrefix}.#{action}.title"|trans %}
 
-
     <div class="flex justify-between">
 
         {{ partials.h1((headline == "#{translationPrefix}.#{action}.title") ? "#{translationPrefix}.title"|trans : headline) }}
@@ -35,83 +34,8 @@
 
     </div>
 
-    <div class="divide-y divide-gray-300">
-
-{#        {{ render(controller('Ferienpass\\AdminBundle\\Controller\\Fragment\\ListFilterController', {  })) }}#}
-
-
-
-        <div class="flex space-x-3 justify-end py-4">
-            <div>
-                <div>
-                    <label for="location" class="sr-only">Location</label>
-                    <select id="location" name="location" class="py-1.5 text-sm font-medium hover:bg-gray-50">
-                        <option selected>Sortieren nach Datum</option>
-                        <option>Sortieren nach Titel</option>
-                    </select>
-                </div>
-            </div>
-
-            <div>
-
-                <span class="group inline-flex items-center gap-x-1 rounded-md bg-white px-2.5 py-1.5 text-sm font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                    <span>
-                        AMC e.V.
-                    </span>
-
-                    <button type="button" class="relative -mr-1 h-3.5 w-3.5 rounded-sm group-hover:bg-gray-500/20">
-                        <span class="sr-only">Filter löschen</span>
-                        <svg viewBox="0 0 14 14" class="h-3.5 w-3.5 stroke-gray-500 group-hover:stroke-gray-700">
-                            <path d="M4 4l6 6m0-6l-6 6"/>
-                        </svg>
-                        <span class="absolute -inset-1"></span>
-                    </button>
-
-                </span>
-            </div>
-
-
-            {% embed '@FerienpassAdmin/components/dropdown.html.twig' with { dropdownClass: 'w-96'} %}
-                {% block toggle %}
-                    <button type="button"
-                            class="inline-flex items-center gap-x-0.5 rounded-md bg-white px-2.5 py-1.5 text-sm font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"                            id="options-menu-0-button" aria-expanded="false"
-                            aria-haspopup="true">
-                        <span class="flex items-center space-x-1">
-                            <span>Filtern…</span>
-                            <span class="h-5 w-5 text-gray-500">{{ source('@FerienpassAdmin/icons/chevron-down-solid.svg') }}</span>
-                        </span>
-                    </button>
-                {% endblock %}
-
-                {% block dropdown %}
-
-                    <div class="px-4 py-2">
-                        test
-                    </div>
-
-                {% endblock %}
-
-            {% endembed %}
-
-        </div>
-
-
-
-
-
-        {% if config.columns is defined %}
-            {% include '@FerienpassAdmin/components/list.table.html.twig' with config %}
-        {% else %}
-            {% include '@FerienpassAdmin/components/list.html.twig' with config %}
-        {% endif %}
-
-    </div>
-
-    {% if pagination is defined %}
-        <div class="py-10">
-            {% include '@FerienpassCore/Partial/pagination.html.twig' %}
-        </div>
-    {% endif %}
-
+    {% block list %}
+        {% include '@FerienpassAdmin/components/list.html.twig' %}
+    {% endblock %}
 
 {% endblock %}

@@ -1,12 +1,13 @@
 {% extends "@FerienpassAdmin/layout/list.html.twig" %}
 
-{% set config = {
-    columns: {
-        name: '{{ item.name }}',
-        dateOfBirth: '{{ item.dateOfBirth|date("d.m.Y") }}',
-        email: '{{ item.email ?: item.member.email|default("-") }}',
-        mobile: '{{ item.mobile ?: item.member.mobile|default("-") }}',
-        attendances: '
+{% block list %}
+    {{ component('SearchableQueryableList', { qb: qb, config: {
+        columns: {
+            name: '{{ item.name }}',
+            dateOfBirth: '{{ item.dateOfBirth|date("d.m.Y") }}',
+            email: '{{ item.email ?: item.member.email|default("-") }}',
+            mobile: '{{ item.mobile ?: item.member.mobile|default("-") }}',
+            attendances: '
         <div class="flex items-center space-x-2">
 {% if item.attendancesConfirmed|length %}
 <span class="text-green-600 font-medium text-xs">{{ item.attendancesConfirmed|length }}</span>
@@ -24,7 +25,7 @@
 <span class="text-gray-500 font-medium text-xs">{{ item.attendancesNotWithdrawn|length }}</span>
 </div>
 ',
-        paid: '
+            paid: '
         <div class="flex items-center space-x-2">
 {% if item.attendancesPaid|length %}
 <span class="text-green-600 font-medium text-xs">{{ item.attendancesPaid|length }}</span>
@@ -39,5 +40,6 @@
 <span class="{{ item.attendancesConfirmed|length > 0 and item.attendancesConfirmed|length == item.attendancesPaid|length ? "text-green-600" : "text-gray-500" }} font-medium text-xs">{{ item.attendancesConfirmed|length }}</span>
 </div>
 '
-    }
-} %}
+        }
+    }}) }}
+{% endblock %}

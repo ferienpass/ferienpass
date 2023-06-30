@@ -1,111 +1,78 @@
 {% trans_default_domain 'admin' %}
-{% set translationPrefix = app.request.get('_route')|split('_')[1] %}
-{% set action = app.request.get('_route')|split('_')[2] %}
 
-{% if items is not empty %}
+<div class="divide-y divide-gray-300">
 
-    <ul role="list" class="divide-y divide-gray-200">
+    {#        {{ render(controller('Ferienpass\\AdminBundle\\Controller\\Fragment\\ListFilterController', {  })) }} #}
 
-        {% for item in items %}
+    <div class="flex justify-between py-4">
+        <div>
+            {% block head_before %}{% endblock %}
+        </div>
+        <div class="flex space-x-3">
+            <div>
+                <div>
+                    <label for="location" class="sr-only">Location</label>
+                    <select id="location" name="location" class="py-1.5 text-sm font-medium hover:bg-gray-50">
+                        <option selected>Sortieren nach Datum</option>
+                        <option>Sortieren nach Titel</option>
+                    </select>
+                </div>
+            </div>
 
-            <li class="flex items-center justify-between gap-x-6 py-5">
-                <div class="min-w-0">
-                    <div class="flex items-start gap-x-3">
-                        <p class="text-sm font-semibold leading-6 text-gray-900">{{ include(template_from_string(title)) }}</p>
+            <div>
+
+                <span class="group inline-flex items-center gap-x-1 rounded-md bg-white px-2.5 py-1.5 text-sm font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                    <span>
+                        AMC e.V.
+                    </span>
+
+                    <button type="button" class="relative -mr-1 h-3.5 w-3.5 rounded-sm group-hover:bg-gray-500/20">
+                        <span class="sr-only">Filter löschen</span>
+                        <svg viewBox="0 0 14 14" class="h-3.5 w-3.5 stroke-gray-500 group-hover:stroke-gray-700">
+                            <path d="M4 4l6 6m0-6l-6 6"/>
+                        </svg>
+                        <span class="absolute -inset-1"></span>
+                    </button>
+
+                </span>
+            </div>
+
+
+            {% embed '@FerienpassAdmin/components/dropdown.html.twig' with { dropdownClass: 'w-96'} %}
+                {% block toggle %}
+                    <button type="button"
+                            class="inline-flex items-center gap-x-0.5 rounded-md bg-white px-2.5 py-1.5 text-sm font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                            id="options-menu-0-button" aria-expanded="false"
+                            aria-haspopup="true">
+                        <span class="flex items-center space-x-1">
+                            <span>Filtern…</span>
+                            <span class="h-5 w-5 text-gray-500">{{ source('@FerienpassAdmin/icons/chevron-down-solid.svg') }}</span>
+                        </span>
+                    </button>
+                {% endblock %}
+
+                {% block dropdown %}
+
+                    <div class="px-4 py-2">
+                        test
                     </div>
 
-                    {% if info is defined %}
+                {% endblock %}
 
-                        <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
-
-                            {% for i in info %}
-
-                                {% set return = include(template_from_string(i)) %}
-                                {% if return %}
-
-                                    <p class="truncate">{{ return|raw }}</p>
-
-                                    {% if not loop.last %}
-                                        <svg viewBox="0 0 2 2" class="h-0.5 w-0.5 fill-current">
-                                            <circle cx="1" cy="1" r="1"/>
-                                        </svg>
-                                    {% endif %}
-
-                                {% endif %}
-
-                            {% endfor %}
-
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-                <div class="flex flex-none items-center gap-x-4">
-
-                    {% set actions = list_actions(item) %}
-
-                    {% if actions.hasChildren %}
-
-                        {% set action = actions.firstChild %}
-                        {%- set label = action.label -%}
-                        {%- set label = label|trans(action.extra('translation_params', {})) -%}
-                        <a href="{{ action.uri }}"
-                           class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                            {{ label }}</a>
-
-                        {% set actions = actions.children|slice(1)|filter(a => a.displayed and not a.extra('method')) %}
-
-                        {% if actions|length %}
-                            <div class="flex-none">
-                                {% embed '@FerienpassAdmin/components/dropdown.html.twig' %}
-                                    {% block toggle %}
-                                        <button type="button"
-                                                class="-m-2.5 block p-2.5 text-gray-500 hover:text-gray-900"
-                                                id="options-menu-0-button" aria-expanded="false"
-                                                aria-haspopup="true">
-                                            <span class="sr-only">Open options</span>
-                                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"
-                                                 aria-hidden="true">
-                                                <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM11.5 15.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z"/>
-                                            </svg>
-                                        </button>
-                                    {% endblock %}
-
-                                    {% block dropdown %}
-
-                                        {% for action in actions %}
-                                            {% embed '@FerienpassAdmin/components/dropdown-a.html.twig' with {'uri': action.uri} %}
-                                                {% block link %}
-                                                    <span class="mr-3 h-5 w-5 text-gray-400 flex-shrink-0">{{ source('@FerienpassAdmin/icons/'~action.extra('icon')~'.svg', ignore_missing = true) }}</span>
-                                                    {%- set label = action.label -%}
-                                                    {%- set label = label|trans(action.extra('translation_params', {})) -%}
-                                                    <span class="text-left leading-tight">{{ label }}</span>
-                                                {% endblock %}
-                                            {% endembed %}
-                                        {% endfor %}
-
-                                    {% endblock %}
-
-                                {% endembed %}
-
-                            </div>
-
-                        {% endif %}
-
-                    {% endif %}
-
-                </div>
-            </li>
-
-        {% endfor %}
-
-    </ul>
-
-{% else %}
-
-    <div class="py-6">
-    {% include '@FerienpassAdmin/components/alert/info.html.twig' with {'message': "#{translationPrefix}.#{action}.empty"|trans } %}
+            {% endembed %}
+        </div>
     </div>
 
+    {% if config.columns is defined %}
+        {% include '@FerienpassAdmin/components/_list.table.html.twig' with config %}
+    {% else %}
+        {% include '@FerienpassAdmin/components/_list.html.twig' with config %}
+    {% endif %}
+
+</div>
+
+{% if pagination is defined %}
+    <div class="py-10">
+        {% include '@FerienpassCore/Partial/pagination.html.twig' %}
+    </div>
 {% endif %}

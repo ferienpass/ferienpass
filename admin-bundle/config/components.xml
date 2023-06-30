@@ -16,5 +16,8 @@
             <argument type="service" id="form.factory"/>
         </service>
 
+        <service id="Ferienpass\AdminBundle\Components\SearchableQueryableList">
+        </service>
+
     </services>
 </container>

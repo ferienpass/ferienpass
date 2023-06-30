@@ -25,7 +25,6 @@ use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Entity\Payment;
 use Ferienpass\CoreBundle\Entity\PaymentItem;
 use Ferienpass\CoreBundle\Facade\AttendanceFacade;
-use Ferienpass\CoreBundle\Pagination\Paginator;
 use Ferienpass\CoreBundle\Repository\AttendanceRepository;
 use Ferienpass\CoreBundle\Repository\ParticipantRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -45,16 +44,14 @@ final class ParticipantsController extends AbstractController
     }
 
     #[Route('', name: 'admin_participants_index')]
-    public function index(ParticipantRepository $repository, Request $request, Breadcrumb $breadcrumb): Response
+    public function index(ParticipantRepository $repository, Breadcrumb $breadcrumb): Response
     {
-        $qb = $repository->createQueryBuilder('e');
-        $qb->orderBy('e.lastname');
-
-        $paginator = (new Paginator($qb, 500))->paginate($request->query->getInt('page', 1));
+        $qb = $repository->createQueryBuilder('i');
+        $qb->orderBy('i.lastname');
 
         return $this->render('@FerienpassAdmin/page/participants/index.html.twig', [
+            'qb' => $qb,
             'createUrl' => $this->generateUrl('admin_participants_create'),
-            'pagination' => $paginator,
             'breadcrumb' => $breadcrumb->generate('Teilnehmende'),
         ]);
     }
