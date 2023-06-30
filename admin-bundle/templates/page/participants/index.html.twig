@@ -1,14 +1,14 @@
 {% extends "@FerienpassAdmin/layout/list.html.twig" %}
 
 {% block list %}
-    {{ component('SearchableQueryableList', { qb: qb, config: {
+    {{ component('SearchableQueryableList', { qb: qb, paginationRoute: app.request.get('_route'), paginationQuery: app.request.query.all, config: {
         columns: {
             name: '{{ item.name }}',
             dateOfBirth: '{{ item.dateOfBirth|date("d.m.Y") }}',
             email: '{{ item.email ?: item.member.email|default("-") }}',
             mobile: '{{ item.mobile ?: item.member.mobile|default("-") }}',
             attendances: '
-        <div class="flex items-center space-x-2">
+<div class="flex items-center space-x-2">
 {% if item.attendancesConfirmed|length %}
 <span class="text-green-600 font-medium text-xs">{{ item.attendancesConfirmed|length }}</span>
 {% else %}

@@ -15,14 +15,12 @@ namespace Ferienpass\AdminBundle\Components;
 
 use Doctrine\ORM\QueryBuilder;
 use Ferienpass\CoreBundle\Pagination\Paginator;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 #[AsLiveComponent(template: '@FerienpassAdmin/components/SearchableQueryableList.html.twig')]
-class SearchableQueryableList extends AbstractController
+class SearchableQueryableList
 {
     use DefaultActionTrait;
 
@@ -35,10 +33,19 @@ class SearchableQueryableList extends AbstractController
     #[LiveProp(writable: true)]
     public string $query = '';
 
-    public function getPagination(Request $request): Paginator
+    #[LiveProp]
+    public ?string $paginationRoute = null;
+    #[LiveProp]
+    public ?array $paginationQuery = null;
+
+    public function getPagination(): Paginator
     {
         $qb = $this->qb->andWhere('i.lastname LIKE :query')->setParameter('query', '%'.$this->query.'%');
 
-        return (new Paginator($qb, 100))->paginate($request->query->getInt('page', 1));
+        if ('' !== $this->query) {
+            unset($this->paginationQuery['page']);
+        }
+
+        return (new Paginator($qb, 50))->paginate((int) $this->paginationQuery['page'] ?? 1);
     }
 }
