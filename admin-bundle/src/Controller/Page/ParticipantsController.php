@@ -51,6 +51,7 @@ final class ParticipantsController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/participants/index.html.twig', [
             'qb' => $qb,
+            'searchable' => ['firstname', 'lastname', 'email', 'mobile', 'phone'],
             'createUrl' => $this->generateUrl('admin_participants_create'),
             'breadcrumb' => $breadcrumb->generate('Teilnehmende'),
         ]);

@@ -21,7 +21,6 @@ use Ferienpass\AdminBundle\Payments\ReceiptNumberGenerator;
 use Ferienpass\CoreBundle\Entity\Payment;
 use Ferienpass\CoreBundle\Entity\PaymentItem;
 use Ferienpass\CoreBundle\Export\Payments\ReceiptExportInterface;
-use Ferienpass\CoreBundle\Pagination\Paginator;
 use Ferienpass\CoreBundle\Repository\PaymentRepository;
 use Ferienpass\CoreBundle\Session\Flash;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -42,15 +41,14 @@ final class PaymentsController extends AbstractController
     }
 
     #[Route('', name: 'admin_payments_index')]
-    public function index(PaymentRepository $repository, Request $request, Breadcrumb $breadcrumb): Response
+    public function index(PaymentRepository $repository, Breadcrumb $breadcrumb): Response
     {
-        $qb = $repository->createQueryBuilder('e');
-        $qb->orderBy('e.createdAt', 'DESC');
-
-        $paginator = (new Paginator($qb))->paginate($request->query->getInt('page', 1));
+        $qb = $repository->createQueryBuilder('i');
+        $qb->orderBy('i.createdAt', 'DESC');
 
         return $this->render('@FerienpassAdmin/page/payments/index.html.twig', [
-            'pagination' => $paginator,
+            'qb' => $qb,
+            'searchable' => ['billingAddress', 'billingEmail', 'receiptNumber'],
             'breadcrumb' => $breadcrumb->generate('payments.title'),
         ]);
     }

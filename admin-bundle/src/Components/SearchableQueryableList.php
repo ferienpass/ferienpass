@@ -28,24 +28,39 @@ class SearchableQueryableList
     public array $config;
 
     #[LiveProp]
-    public QueryBuilder $qb;
+    public array $searchable;
 
     #[LiveProp(writable: true)]
     public string $query = '';
 
     #[LiveProp]
-    public ?string $paginationRoute = null;
+    public QueryBuilder $qb;
+
     #[LiveProp]
-    public ?array $paginationQuery = null;
+    public ?string $originalRoute = null;
+    #[LiveProp]
+    public ?array $originalQuery = null;
 
     public function getPagination(): Paginator
     {
-        $qb = $this->qb->andWhere('i.lastname LIKE :query')->setParameter('query', '%'.$this->query.'%');
+        $this->addQueryBuilderSearch();
 
         if ('' !== $this->query) {
-            unset($this->paginationQuery['page']);
+            unset($this->originalQuery['page']);
         }
 
-        return (new Paginator($qb, 50))->paginate((int) $this->paginationQuery['page'] ?? 1);
+        return (new Paginator($this->qb, 50))->paginate((int) $this->originalQuery['page'] ?? 1);
+    }
+
+    private function addQueryBuilderSearch(): void
+    {
+        $where = $this->qb->expr()->orX();
+
+        foreach ($this->searchable as $i => $field) {
+            $where->add("i.$field LIKE :query_$i");
+            $this->qb->setParameter("query_$i", "%{$this->query}%");
+        }
+
+        $this->qb->andWhere($where);
     }
 }
