@@ -96,9 +96,8 @@ final class ParticipantsController extends AbstractController
 
         $ms->handleRequest($request);
         if ($ms->isSubmitted() && $ms->isValid()) {
-            switch ($ms->getClickedButton()->getName()) {
-                case 'settle':
-                    return $this->redirectToRoute('admin_attendances_settle', status: 307);
+            if ('settle' === $ms->getClickedButton()->getName()) {
+                return $this->redirectToRoute('admin_attendances_settle', status: 307);
             }
         }
 

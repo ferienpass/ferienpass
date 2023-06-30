@@ -39,8 +39,6 @@ class SearchableQueryableList extends AbstractController
     {
         $qb = $this->qb->andWhere('i.lastname LIKE :query')->setParameter('query', '%'.$this->query.'%');
 
-        $items = $qb->getQuery()->getResult();
-
         return (new Paginator($qb, 100))->paginate($request->query->getInt('page', 1));
     }
 }
