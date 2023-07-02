@@ -143,6 +143,7 @@ payments:
   th.participant: Teilnehmer:in
   th.offer: Angebot
   th.paid: Zahlung
+  index.empty: Es sind keine Zahlungen erfasst.
 
 attendances:
   label.offer: Angebot

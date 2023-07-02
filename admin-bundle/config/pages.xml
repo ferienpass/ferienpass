@@ -104,7 +104,7 @@
 
         <service id="Ferienpass\AdminBundle\Controller\Page\ParticipantsController">
             <argument type="service" id="doctrine"/>
-            <argument type="service" id="Ferienpass\AdminBundle\Payments\ReceiptNumberGenerator"/>
+            <argument type="service" id="Ferienpass\CoreBundle\Payments\ReceiptNumberGenerator"/>
         </service>
 
         <service id="Ferienpass\AdminBundle\Controller\Page\PaymentsController">

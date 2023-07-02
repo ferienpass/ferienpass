@@ -84,12 +84,6 @@
             <tag name="twig.extension" />
         </service>
 
-        <service id="Ferienpass\AdminBundle\Payments\ReceiptNumberGenerator">
-            <argument>%ferienpass.receipt_number_prefix%</argument>
-            <argument>%ferienpass.receipt_number_suffix%</argument>
-            <argument type="service" id="Ferienpass\CoreBundle\Repository\PaymentRepository"/>
-        </service>
-
         <service id="Ferienpass\AdminBundle\LiveComponent\QueryBuilderHydrationExtension">
             <argument type="service" id="doctrine"/>
             <tag name="live_component.hydration_extension"/>

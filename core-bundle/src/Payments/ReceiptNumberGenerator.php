@@ -11,43 +11,39 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\AdminBundle\Payments;
+namespace Ferienpass\CoreBundle\Payments;
 
 use Ferienpass\CoreBundle\Repository\PaymentRepository;
 
 class ReceiptNumberGenerator
 {
-    private string $prefix = '';
-
-    private string $suffix = '';
-
     private int $length = 0;
 
-    public function __construct(string $prefix, string $suffix, private PaymentRepository $paymentRepository)
+    public function __construct(private string $prefix, private PaymentRepository $paymentRepository)
     {
     }
 
     public function generate(): string
     {
-        $offset1 = mb_strlen($this->prefix) + 1;
-        $offset2 = mb_strlen($this->suffix) * (-1);
+        $offset1 = mb_strlen($this->prefix);
 
         $qb = $this->paymentRepository->createQueryBuilder('p');
 
-        $qb->select("substring(substring(p.receiptNumber, $offset1), $offset2) AS HIDDEN docNumber");
-
-        if ($this->prefix) {
-            $qb->where($qb->expr()->like('p.receiptNumber', "$this->prefix%"));
+        $select = 'p.receiptNumber';
+        if ($offset1) {
+            $select = sprintf('substring(%s, %s)', $select, ++$offset1);
         }
 
-        if ($this->suffix) {
-            $qb->where($qb->expr()->like('p.receiptNumber', "%$this->suffix"));
+        $qb->select("$select AS docNumber");
+
+        if ($this->prefix) {
+            $qb->where($qb->expr()->like('p.receiptNumber', "'$this->prefix%'"));
         }
 
         $qb->orderBy('docNumber', 'DESC');
 
         $result = $qb->getQuery()->getOneOrNullResult();
-        $docNumber = null === $result ? 0 : $result->docNumber;
+        $docNumber = null === $result ? 0 : ((int) ($result['docNumber'] ?? 0));
 
         return sprintf('%s%s%s',
             $this->prefix,
