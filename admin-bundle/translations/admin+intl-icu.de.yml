@@ -237,3 +237,51 @@ export.xlsx.receiptNumber: Belegnummer
 export.xlsx.status: Status
 export.xlsx.totalAmountExcel: Summe
 export.xlsx.userEmail: Benutzer
+
+
+notifications:
+  action: Ansehen
+  emailLegend.0: E-Mail
+  emailLegend.1: Definieren Sie die Texte, die per E-Mail versendet werden.
+  smsLegend.0: SMS
+  smsLegend.1: Definieren Sie den Text, die als Kurznachricht versendet werden.
+  label.emailSubject: Betreff
+  label.emailText: Text
+  label.submit: Speichern
+  help.emailText: Geben Sie den Text ohne Anrede ein.
+  attendance_newly_confirmed:
+    - 'Kind hat einen Platz bekommen (vorher Warteliste)'
+    - 'Diese Benachrichtigung wird an Teilnehmer:innen geschickt, sobald sich der Teilnahmestatus auf
+                    bestätigt ändert. Das heißt, dass das Kind schon auf der Warteliste o.vgl. stand und die Anmeldung
+                    nun zugesagt wird. Wenn sich ein Kind von einem Angebot abmeldet und das nächste Kind nachrückt,
+                    dann erhält die Nachrücker:in diese Benachrichtigung.'
+  attendance_confirmed:
+    - 'Kind hat erfolgreich einen Platz gebucht'
+    - 'Diese Benachrichtigung wird an Teilnehmer:innen geschickt, die sich soeben für ein Angebot
+                           angemeldet haben und die Zusage erhalten haben. Die Nachricht bestätigt die Anmeldung und kann einen
+                           Kalendereintrag des Angebotes enthalten.'
+  attendance_decisions:
+    - 'Zulassungsbescheid'
+    - 'Diese Benachrichtigung wird manuell nach dem Zuteilen der Plätze verschickt. Die Nachricht geht
+                           raus an die Eltern und enthält eine Übersicht über alle Teilnahmen der Kinder inkl. Anmeldestatus.'
+  attendance_reminder:
+    - 'Teilnahme-Erinnerung'
+    - 'Diese Benachrichtigung wird an Teilnehmer:innen verschickt, wenn eine eine Veranstaltung, zu der
+                           das Kind angemeldet ist, in weniger als 24 Stunden stattfindet. Diese Nachricht soll an das Angebot
+                           erinnern und die Möglichkeit geben, sich notfalls noch rechtzeitig vom Angebot abmelden zu können.'
+  host_invitation:
+    - 'Veranstalter-Einladung'
+    - 'Diese Benachrichtigung wird verschickt, wenn Veranstalter:innen andere Personen zu ihrem Team
+                           einladen. Die E-Mail muss den Link zum Annehmen der Einladung enthalten.'
+  host_registration:
+    - 'Veranstalter-Registrierung'
+    - 'Diese Benachrichtigung wird verschickt, wenn Veranstalter:innen sich auf der Seite registrieren.'
+  attendance_withdrawn:
+    - 'Angebot wurde abgesagt'
+    - 'Diese Benachrichtigung wird an alle Kinder verschickt, die auf der Teilnahmeliste eines
+                           Angebotes standen, das abgesagt wurde.'
+  proofs.0: Korrekturabzüge
+  offer_cancelled.0: Angebot abgesagt
+  offer_relaunched.0: Angebot abgesagt
+  payment_created.0: Beleg erstellt
+  payment_created.1: Beleg wird als PDF an Rechnungsempfänger versendet.

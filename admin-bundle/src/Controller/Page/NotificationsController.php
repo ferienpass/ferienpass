@@ -13,15 +13,15 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
-use Ferienpass\AdminBundle\Form\NotificationType;
+use Ferienpass\AdminBundle\Form\EditNotificationType;
 use Ferienpass\CoreBundle\Applications\UnconfirmedApplications;
 use Ferienpass\CoreBundle\Entity\Notification;
 use Ferienpass\CoreBundle\Message\ConfirmApplications;
 use Ferienpass\CoreBundle\Notifier;
 use Ferienpass\CoreBundle\Repository\NotificationRepository;
-use Ferienpass\CoreBundle\Ux\Flash;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -42,61 +42,60 @@ final class NotificationsController extends AbstractController
     {
     }
 
-    #[Route('{type}', name: 'admin_notifications', defaults: ['type' => ''])]
-    public function index(string $type, NotificationRepository $notificationRepository, Request $request): Response
+    #[Route('', name: 'admin_notifications_index')]
+    public function index(Notifier $notifier, Breadcrumb $breadcrumb): Response
     {
-        if ('' === $type) {
-            return $this->redirectToRoute($request->get('_route'), ['type' => $this->notifier->getNotificationNames()[0]]);
-        }
+        return $this->render('@FerienpassAdmin/page/notifications/index.html.twig', [
+            'notifications' => $notifier->getNotificationNames(),
+            'breadcrumb' => $breadcrumb->generate('Benachrichtigungen'),
+        ]);
+    }
 
+    #[Route('/{type}', name: 'admin_notifications_show')]
+    public function show(string $type, NotificationRepository $notificationRepository, Breadcrumb $breadcrumb): Response
+    {
         if (!$this->notifier->has($type)) {
             throw new NotFoundHttpException('');
         }
 
         $notification = $notificationRepository->findOneBy(['type' => $type]);
 
-        return $this->render('@FerienpassAdmin/page/notifications/index.html.twig', [
+        return $this->render('@FerienpassAdmin/page/notifications/show.html.twig', [
             'notification' => $notification,
-            'aside_headline' => 'Benachrichtigungen',
-            'aside_nav' => $this->getMenu(),
+            'breadcrumb' => $breadcrumb->generate('Benachrichtigungen', 'notifications.'.$type.'.0'),
         ]);
     }
 
-    #[Route('{type}/bearbeiten', name: 'admin_notification_edit', defaults: ['type' => ''])]
-    public function edit(string $type, NotificationRepository $notificationRepository, Request $request)
+    #[Route('/{type}/bearbeiten', name: 'admin_notifications_edit')]
+    public function edit(string $type, NotificationRepository $notificationRepository, Notifier $notifier, Request $request, EntityManagerInterface $em, \Ferienpass\CoreBundle\Session\Flash $flash, Breadcrumb $breadcrumb)
     {
-        $em = $this->doctrine->getManager();
-
         $notification = $notificationRepository->findOneBy(['type' => $type]);
         if (null === $notification) {
             $notification = new Notification($type);
         }
 
-        $form = $this->formFactory->create(NotificationType::class, $notification);
+        $form = $this->formFactory->create(EditNotificationType::class, $notification);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var Notification $notification */
-            $notification = $form->getData();
+            if (!$em->contains($notification)) {
+                $em->persist($notification);
 
-            $em->persist($notification);
+                $flash->addConfirmationModal('Benachrichtigung erstellt', 'Die Benachrichtigung wurde erstellt und ist ab sofort aktiv.', dismissable: true);
+            } else {
+                $flash->addConfirmation(text: 'Die Änderungen würden gespeichert.');
+            }
+
             $em->flush();
 
-            $this->addFlash(...Flash::confirmationModal()
-                ->headline(new TranslatableMessage('notifications.confirmSubmit.headline'))
-                ->text(new TranslatableMessage('notifications.confirmSubmit.text'))
-                ->dismissable()
-                ->create()
-            );
-
-            return $this->redirectToRoute('admin_notifications', $request->get('_route_params'));
+            return $this->redirectToRoute('admin_notifications_show', ['type' => $type]);
         }
 
         return $this->render('@FerienpassAdmin/page/notifications/edit.html.twig', [
             'form' => $form,
             'notification' => $notification,
-            'aside_headline' => 'notifications.headline',
-            'aside_nav' => $this->getMenu(),
+            'headline' => 'notifications.'.$type.'.0',
+            'breadcrumb' => $breadcrumb->generate('Benachrichtigungen', 'notifications.'.$type.'.0', 'Bearbeiten'),
         ]);
     }
 
