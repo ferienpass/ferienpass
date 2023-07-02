@@ -228,3 +228,11 @@ organizationReader.headline: Stammdaten
 organizationReader.caption: Bitte überprüfen Sie, ob die im System hinterlegten Stammdaten aktuell sind.
 inviteTeam.headline: Mitarbeiter:in einladen
 inviteTeam.caption: Sie können eine Mitarbeiter:in zu Ihrem Team hinzufügen. Dazu benötigen wir die E-Mail-Adresse.
+
+export.xlsx.createdAt: Buchungsdatum
+export.xlsx.billingAddress: Rechnungsanschrift
+export.xlsx.billingEmail: E-Mail
+export.xlsx.receiptNumber: Belegnummer
+export.xlsx.status: Status
+export.xlsx.totalAmountExcel: Summe
+export.xlsx.userEmail: Benutzer

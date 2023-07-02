@@ -16,6 +16,7 @@ namespace Ferienpass\AdminBundle\Controller\Page;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
+use Ferienpass\AdminBundle\Export\XlsxExport;
 use Ferienpass\AdminBundle\Form\MultiSelectType;
 use Ferienpass\AdminBundle\Payments\ReceiptNumberGenerator;
 use Ferienpass\CoreBundle\Entity\Payment;
@@ -40,14 +41,23 @@ final class PaymentsController extends AbstractController
     {
     }
 
-    #[Route('', name: 'admin_payments_index')]
-    public function index(PaymentRepository $repository, Breadcrumb $breadcrumb): Response
+    #[Route('{_suffix}', name: 'admin_payments_index', defaults: ['_suffix' => ''])]
+    public function index(PaymentRepository $repository, Breadcrumb $breadcrumb, string $_suffix, XlsxExport $xlsxExport): Response
     {
         $qb = $repository->createQueryBuilder('i');
         $qb->orderBy('i.createdAt', 'DESC');
 
+        $_suffix = ltrim($_suffix, '.');
+        if ('' !== $_suffix) {
+            // TODO service-tagged exporter
+            if ('xlsx' === $_suffix) {
+                return $this->file($xlsxExport->generate($qb), 'zahlungen.xlsx');
+            }
+        }
+
         return $this->render('@FerienpassAdmin/page/payments/index.html.twig', [
             'qb' => $qb,
+            'exports' => ['xlsx'],
             'searchable' => ['billingAddress', 'billingEmail', 'receiptNumber'],
             'breadcrumb' => $breadcrumb->generate('payments.title'),
         ]);

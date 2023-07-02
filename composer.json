@@ -36,7 +36,7 @@
     "league/flysystem-sftp-v3": "^3.0",
     "mpdf/mpdf": "^8.0",
     "knplabs/knp-snappy-bundle": "^1.7",
-    "phpoffice/phpspreadsheet": "^1.6",
+    "phpoffice/phpspreadsheet": "^1.29",
     "phpoffice/phpword": "^0.18",
     "michelf/php-markdown": "^1.8",
     "psr/log": "^1.0",

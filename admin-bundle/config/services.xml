@@ -95,6 +95,15 @@
             <tag name="live_component.hydration_extension"/>
         </service>
 
+        <service id="Ferienpass\AdminBundle\Export\XlsxExport">
+            <argument type="service" id="serializer"/>
+            <argument type="service" id="translator"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Normalizer\CurrencyExcelNormalizer">
+            <tag name="serializer.normalizer" priority="100"/>
+        </service>
+
 
     </services>
 </container>
