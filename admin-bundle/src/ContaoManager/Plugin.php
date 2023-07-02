@@ -65,6 +65,10 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface, ConfigPlu
                     'logout' => [
                         'path' => 'admin_logout',
                     ],
+                    'remember_me' => [
+                        'secret' => '%kernel.secret%',
+                        'always_remember_me' => true
+                    ]
                 ];
 
                 array_unshift($extensionConfig['access_control'], [

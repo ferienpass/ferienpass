@@ -49,7 +49,7 @@ class SearchableQueryableList
             unset($this->originalQuery['page']);
         }
 
-        return (new Paginator($this->qb, 50))->paginate((int) $this->originalQuery['page'] ?? 1);
+        return (new Paginator($this->qb, 50))->paginate((int) ($this->originalQuery['page'] ?? 1));
     }
 
     private function addQueryBuilderSearch(): void

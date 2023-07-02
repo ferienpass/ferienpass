@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
+use Contao\FrontendUser;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Dto\BillingAddressDto;
@@ -24,6 +25,7 @@ use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Entity\Payment;
 use Ferienpass\CoreBundle\Entity\PaymentItem;
 use Ferienpass\CoreBundle\Facade\AttendanceFacade;
+use Ferienpass\CoreBundle\Message\PaymentReceiptCreated;
 use Ferienpass\CoreBundle\Payments\ReceiptNumberGenerator;
 use Ferienpass\CoreBundle\Repository\AttendanceRepository;
 use Ferienpass\CoreBundle\Repository\ParticipantRepository;
@@ -32,6 +34,7 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -48,6 +51,8 @@ final class ParticipantsController extends AbstractController
     {
         $qb = $repository->createQueryBuilder('i');
         $qb->orderBy('i.lastname');
+
+        // $filter = $this->filterFactory->create($qb)->applyFilter($request->query->all());
 
         return $this->render('@FerienpassAdmin/page/participants/index.html.twig', [
             'qb' => $qb,
@@ -112,7 +117,7 @@ final class ParticipantsController extends AbstractController
     }
 
     #[Route('/abrechnen', name: 'admin_attendances_settle', methods: ['POST'])]
-    public function settle(Request $request, FormFactoryInterface $formFactory, Breadcrumb $breadcrumb, AttendanceRepository $attendanceRepository): Response
+    public function settle(Request $request, FormFactoryInterface $formFactory, Breadcrumb $breadcrumb, AttendanceRepository $attendanceRepository, MessageBusInterface $messageBus): Response
     {
         $user = $this->getUser();
         $attendances = $this->getAttendancesFromRequest($attendanceRepository, $request);
@@ -132,6 +137,8 @@ final class ParticipantsController extends AbstractController
             $em = $this->doctrine->getManager();
             $em->persist($payment);
             $em->flush();
+
+            $messageBus->dispatch(new PaymentReceiptCreated($payment->getId()));
 
             return $this->redirectToRoute('admin_payments_receipt', ['id' => $payment->getId()]);
         }
