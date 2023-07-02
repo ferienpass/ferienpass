@@ -67,8 +67,8 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface, ConfigPlu
                     ],
                     'remember_me' => [
                         'secret' => '%kernel.secret%',
-                        'always_remember_me' => true
-                    ]
+                        'always_remember_me' => true,
+                    ],
                 ];
 
                 array_unshift($extensionConfig['access_control'], [

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Components;
 
+use Contao\StringUtil;
 use Doctrine\ORM\QueryBuilder;
 use Ferienpass\CoreBundle\Pagination\Paginator;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -54,13 +55,20 @@ class SearchableQueryableList
 
     private function addQueryBuilderSearch(): void
     {
-        $where = $this->qb->expr()->orX();
+        $where = $this->qb->expr()->andX();
+        foreach (array_filter(StringUtil::trimsplit(' ', $this->query)) as $j => $token) {
+            $or = $this->qb->expr()->orX();
 
-        foreach ($this->searchable as $i => $field) {
-            $where->add("i.$field LIKE :query_$i");
-            $this->qb->setParameter("query_$i", "%{$this->query}%");
+            foreach ($this->searchable as $i => $field) {
+                $or->add("i.$field LIKE :query_$i$j");
+                $this->qb->setParameter("query_$i$j", "%{$token}%");
+            }
+
+            $where->add($or);
         }
 
-        $this->qb->andWhere($where);
+        if ($where->count()) {
+            $this->qb->andWhere($where);
+        }
     }
 }
