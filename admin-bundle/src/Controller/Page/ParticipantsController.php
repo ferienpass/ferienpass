@@ -53,7 +53,7 @@ final class ParticipantsController extends AbstractController
             'qb' => $qb,
             'searchable' => ['firstname', 'lastname', 'email', 'mobile', 'phone'],
             'createUrl' => $this->generateUrl('admin_participants_create'),
-            'breadcrumb' => $breadcrumb->generate('Teilnehmende'),
+            'breadcrumb' => $breadcrumb->generate('participants.title'),
         ]);
     }
 
@@ -114,6 +114,7 @@ final class ParticipantsController extends AbstractController
     #[Route('/abrechnen', name: 'admin_attendances_settle', methods: ['POST'])]
     public function settle(Request $request, FormFactoryInterface $formFactory, Breadcrumb $breadcrumb, AttendanceRepository $attendanceRepository): Response
     {
+        $user = $this->getUser();
         $attendances = $this->getAttendancesFromRequest($attendanceRepository, $request);
         $attendances = array_filter($attendances, fn (Attendance $a) => !$a->isPaid());
 
@@ -123,7 +124,7 @@ final class ParticipantsController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $payment = new Payment($this->numberGenerator->generate());
+            $payment = new Payment($this->numberGenerator->generate(), $user instanceof FrontendUser ? $user->id : null);
             $dto->toPayment($payment);
 
             $payment->getItems()->map(fn (PaymentItem $item) => $item->getAttendance()->setPaid());
