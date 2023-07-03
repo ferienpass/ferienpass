@@ -19,9 +19,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Export\XlsxExport;
 use Ferienpass\AdminBundle\Form\MultiSelectType;
+use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Payment;
 use Ferienpass\CoreBundle\Entity\PaymentItem;
 use Ferienpass\CoreBundle\Export\Payments\ReceiptExportInterface;
+use Ferienpass\CoreBundle\Message\ParticipantListChanged;
 use Ferienpass\CoreBundle\Message\PaymentReceiptCreated;
 use Ferienpass\CoreBundle\Payments\ReceiptNumberGenerator;
 use Ferienpass\CoreBundle\Repository\PaymentRepository;
@@ -82,13 +84,13 @@ final class PaymentsController extends AbstractController
 
         /** @var Form $ms */
         $ms = $formFactory->create(MultiSelectType::class, options: [
-            'buttons' => ['reverse'],
+            'buttons' => ['reverse', 'reverse_and_withdraw'],
             'items' => $items->toArray(),
         ]);
 
         $ms->handleRequest($request);
-        if ($ms->isSubmitted() && $ms->isValid() && 'reverse' === $ms->getClickedButton()->getName()) {
-            return $this->reverseFormSubmit($ms, $payment, $numberGenerator, $em, $flash, $messageBus);
+        if ($ms->isSubmitted() && $ms->isValid() && \in_array($ms->getClickedButton()->getName(), ['reverse', 'reverse_and_withdraw'], true)) {
+            return $this->reverseFormSubmit($ms, $payment, $numberGenerator, $em, $flash, $messageBus, 'reverse_and_withdraw' === $ms->getClickedButton()->getName());
         }
 
         return $this->render('@FerienpassAdmin/page/payments/reverse.html.twig', [
@@ -106,7 +108,7 @@ final class PaymentsController extends AbstractController
         return $this->file($path, sprintf('beleg-%s.pdf', $payment->getId()));
     }
 
-    private function reverseFormSubmit(Form $ms, Payment $payment, ReceiptNumberGenerator $numberGenerator, EntityManagerInterface $em, Flash $flash, MessageBusInterface $messageBus): RedirectResponse
+    private function reverseFormSubmit(Form $ms, Payment $payment, ReceiptNumberGenerator $numberGenerator, EntityManagerInterface $em, Flash $flash, MessageBusInterface $messageBus, bool $withdraw = false): RedirectResponse
     {
         $user = $this->getUser();
 
@@ -127,7 +129,15 @@ final class PaymentsController extends AbstractController
             $reversalPayment->addItem(new PaymentItem($item->getAttendance(), (-1) * $item->getAmount()));
         }
 
-        $payment->getItems()->map(fn (PaymentItem $item) => $item->getAttendance()->setPaid(false));
+        $reversalPayment->getItems()->map(fn (PaymentItem $item) => $item->getAttendance()->setPaid(false));
+
+        if ($withdraw) {
+            foreach ($reversalPayment->getItems() as $item) {
+                $item->getAttendance()->setStatus(Attendance::STATUS_WITHDRAWN);
+
+                $messageBus->dispatch(new ParticipantListChanged($item->getAttendance()->getOffer()->getId()));
+            }
+        }
 
         $em->persist($reversalPayment);
         $em->flush();

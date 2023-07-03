@@ -131,15 +131,18 @@ payments:
   email: E-Mail-Adresse
   submit: Abrechnen
   payable: Zu bezahlen
+  amount: Belegsumme
+  user: Benutzer:in
   downloadReceipt: Beleg herunterladen (PDF)
   action.receipt: Beleg öffnen
   status.paid: bezahlt
   status.unpaid: unbezahlt
   status.reversed: storniert
   th.receiptNumber: '#'
-  th.billingName: Rechnungsempfänger
+  th.billingName: Rechnungsempfänger:in
   th.date: Datum
   th.amount: Betrag
+  th.user: Benutzer:in
   th.status: Status
   th.participant: Teilnehmer:in
   th.offer: Angebot
@@ -165,6 +168,7 @@ editConfirm: Die Daten wurden erfolgreich gespeichert.
 
 ms.settle: abrechnen
 ms.reverse: stornieren
+ms.reverse_and_withdraw: stornieren und abmelden
 
 statusDescription:
   confirmed: Kinder sind zugesagt und nehmen am Angebot teil.

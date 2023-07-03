@@ -7,8 +7,20 @@
         columns: {
             receiptNumber: '{{ item.receiptNumber }}',
             billingName: '{{ item.billingAddress|split("\n")|first }}',
-            date: '{{ item.createdAt|date("d.m.Y") }}',
+            date: '{{ item.createdAt|date("d.m.Y H:i") }}',
             amount: '{{ (item.totalAmount/100)|format_currency("EUR", locale="de") }}',
+            user: '
+{% if item.user|default %}
+<span class="inline-flex items-center justify-center h-6 w-6 rounded-full bg-gray-400">
+    <span class="text-xs font-medium leading-none text-white">{{ item.user.firstname|first|upper ~ item.user.lastname|first|upper }}</span>
+</span>
+<span>
+    {{ item.user.firstname ~ " " ~ item.user.lastname }}
+</span>
+{% else %}
+-
+{% endif %}
+',
             status: '
 {% import "@FerienpassAdmin/components/content_elements.html.twig" as partials %}
 {% trans_default_domain "admin" %}

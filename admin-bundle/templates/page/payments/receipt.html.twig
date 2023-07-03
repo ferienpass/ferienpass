@@ -1,4 +1,6 @@
 {% extends "@FerienpassAdmin/layout/base.html.twig" %}
+{% import "@FerienpassAdmin/components/content_elements.html.twig" as partials %}
+
 {% trans_default_domain 'admin' %}
 
 {% block header %}
@@ -12,7 +14,8 @@
     </div>
     <div class="mt-2 md:flex md:items-center md:justify-between">
         <div class="flex-1 min-w-0">
-            <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-gray-50 sm:text-3xl sm:leading-9 sm:truncate">Beleg</h2>
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-gray-50 sm:text-3xl sm:leading-9 sm:truncate">
+                Beleg</h2>
         </div>
         <div class="mt-5 flex md:flex-row-reverse md:mt-0 md:ml-4">
             {#            {{ form_widget(form.submit) }} #}
@@ -28,18 +31,36 @@
         <div class="lg:col-start-3 lg:row-end-1">
             <div class="rounded-lg bg-white p-6 shadow-sm ring-1 ring-gray-900/5">
                 <dl>
-                    <dt class="text-sm font-semibold leading-6 text-gray-900">{{ 'payments.payable'|trans }}</dt>
-                    <dd class="mt-1 text-base font-semibold leading-6 text-gray-900">{{ (payment.totalAmount/100)|format_currency('EUR', locale='de') }}</dd>
+                    <dt class="text-sm font-semibold leading-6 text-gray-900">{{ 'payments.amount'|trans }}</dt>
+                    <dd class="mt-1 text-base font-semibold leading-6 text-gray-900 flex items-center space-x-2">
+                        <span>{{ (payment.totalAmount/100)|format_currency('EUR', locale='de') }}</span>
+                        {{ partials.badge_green('payments.status.paid', 'sm') }}
+                    </dd>
+                    {% if payment.user|default %}
+                        <dt class="mt-5 text-sm font-semibold leading-6 text-gray-900">{{ 'payments.user'|trans }}</dt>
+                        <dd class="font-semibold leading-6 text-gray-900 flex items-center space-x-1">
+                            <span class="inline-flex items-center justify-center h-6 w-6 rounded-full bg-gray-400">
+                                <span class="text-xs font-medium leading-none text-white">{{ payment.user.firstname|first|upper ~ payment.user.lastname|first|upper }}</span>
+                            </span>
+                            <span>
+                                {{ payment.user.firstname ~ ' '~payment.user.lastname }}
+                            </span>
+                        </dd>
+                    {% endif %}
                 </dl>
                 <div class="mt-6 border-t border-gray-900/5 py-6 flex space-y-4 flex-col">
-                    <a href="{{ path('admin_payments_receipt_pdf', { id: app.request.attributes.get('id') } ) }}" class="text-sm font-semibold leading-6 text-gray-900">{{ 'payments.downloadReceipt'|trans }} <span aria-hidden="true">&rarr;</span></a>
-                    <a href="{{ path('admin_payments_reverse', { id: app.request.attributes.get('id') } ) }}" class="text-sm font-semibold leading-6 text-gray-900">{{ 'payments.reverse'|trans }} <span aria-hidden="true">&rarr;</span></a>
+                    <a href="{{ path('admin_payments_receipt_pdf', { id: app.request.attributes.get('id') } ) }}"
+                       class="text-sm font-semibold leading-6 text-gray-900">{{ 'payments.downloadReceipt'|trans }}
+                        <span aria-hidden="true">&rarr;</span></a>
+                    <a href="{{ path('admin_payments_reverse', { id: app.request.attributes.get('id') } ) }}"
+                       class="text-sm font-semibold leading-6 text-gray-900">{{ 'payments.reverse'|trans }} <span
+                                aria-hidden="true">&rarr;</span></a>
                 </div>
             </div>
         </div>
 
         <div class="-mx-4 px-4 py-8 bg-white shadow-sm ring-1 ring-gray-900/5 sm:mx-0 sm:rounded-lg sm:px-8 sm:pb-14 lg:col-span-2 lg:row-span-2 lg:row-end-2 xl:px-16 xl:pb-20 xl:pt-16">
-            {% include '@FerienpassAdmin/components/invoice.html.twig' with {headline: 'payments.receipt'}%}
+            {% include '@FerienpassAdmin/components/invoice.html.twig' with {headline: 'payments.receipt'} %}
         </div>
     </div>
 
