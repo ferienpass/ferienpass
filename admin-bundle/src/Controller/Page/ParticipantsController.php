@@ -17,6 +17,7 @@ use Contao\FrontendUser;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Dto\BillingAddressDto;
+use Ferienpass\AdminBundle\Export\XlsxExport;
 use Ferienpass\AdminBundle\Form\EditParticipantType;
 use Ferienpass\AdminBundle\Form\MultiSelectType;
 use Ferienpass\AdminBundle\Form\SettleAttendancesType;
@@ -46,16 +47,25 @@ final class ParticipantsController extends AbstractController
     {
     }
 
-    #[Route('', name: 'admin_participants_index')]
-    public function index(ParticipantRepository $repository, Breadcrumb $breadcrumb): Response
+    #[Route('{_suffix}', name: 'admin_participants_index', defaults: ['_suffix' => ''])]
+    public function index(ParticipantRepository $repository, Breadcrumb $breadcrumb, string $_suffix, XlsxExport $xlsxExport): Response
     {
         $qb = $repository->createQueryBuilder('i');
         $qb->orderBy('i.lastname');
 
         // $filter = $this->filterFactory->create($qb)->applyFilter($request->query->all());
 
+        $_suffix = ltrim($_suffix, '.');
+        if ('' !== $_suffix) {
+            // TODO service-tagged exporter
+            if ('xlsx' === $_suffix) {
+                return $this->file($xlsxExport->generate($qb), 'teilnehmende.xlsx');
+            }
+        }
+
         return $this->render('@FerienpassAdmin/page/participants/index.html.twig', [
             'qb' => $qb,
+            'exports' => ['xlsx'],
             'searchable' => ['firstname', 'lastname', 'email', 'mobile', 'phone'],
             'createUrl' => $this->generateUrl('admin_participants_create'),
             'breadcrumb' => $breadcrumb->generate('participants.title'),

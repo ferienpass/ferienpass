@@ -237,6 +237,20 @@ export.xlsx.receiptNumber: Belegnummer
 export.xlsx.status: Status
 export.xlsx.totalAmountExcel: Summe
 export.xlsx.userEmail: Benutzer
+export.xlsx.id: ID
+export.xlsx.firstname: Vorname
+export.xlsx.lastname: Nachname
+export.xlsx.dateOfBirth: Geburtsdatum
+export.xlsx.phone: Telefon
+export.xlsx.mobile: Handynummer
+export.xlsx.email: E-Mail-Adresse
+export.xlsx.discounted: Ermäßigung
+export.xlsx.attendancesConfirmedCount: zugesagt
+export.xlsx.attendancesWaitlistedCount: Warteliste
+export.xlsx.attendancesWaitingCount: nicht zugeteilt
+export.xlsx.attendancesErroredCount: fehlerhaft
+export.xlsx.attendancesPaidCount: bezahlt
+export.xlsx.unpaidAttendances: unbezahlt
 
 
 notifications:
