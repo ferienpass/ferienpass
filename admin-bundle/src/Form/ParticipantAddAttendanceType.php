@@ -44,7 +44,7 @@ class ParticipantAddAttendanceType extends AbstractType
                 'class' => Offer::class,
                 'query_builder' => fn (EntityRepository $er) => $er->createQueryBuilder('o')
                     ->leftJoin('o.dates', 'dates')
-                    // ->where('dates.begin >= CURRENT_TIMESTAMP()')
+                    ->where('dates.begin >= CURRENT_TIMESTAMP()')
                     ->andWhere('o.onlineApplication = 1')
                     ->orderBy('o.name'),
                 'choice_label' => 'name',

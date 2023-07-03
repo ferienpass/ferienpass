@@ -3,6 +3,14 @@
 {% set config = {
     columns: {
         offer: '{{ item.offer.name }}',
+        date: '
+{% import "@FerienpassCore/Macro/offer.html.twig" as offer_macro %}
+{% if item.offer.dates is not empty %}
+  {{ offer_macro.date_single(item.offer.dates|first) }}
+{% else %}
+  Dauerangebot
+{% endif %}
+',
         fee: '
 {% if not item.participant.discounted %}
         {{ (item.offer.fee/100)|format_currency("EUR", locale="de") }}

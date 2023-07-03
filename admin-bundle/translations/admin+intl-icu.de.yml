@@ -116,6 +116,7 @@ participants:
   th.email: E-Mail-Adresse
   th.mobile: Handynummer
   th.offer: Angebot
+  th.date: Datum
   th.fee: Gebühr
   th.status: Status
   th.attendances: Anmeldungen

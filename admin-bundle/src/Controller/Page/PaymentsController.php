@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
+use Contao\FrontendUser;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
@@ -21,6 +22,7 @@ use Ferienpass\AdminBundle\Form\MultiSelectType;
 use Ferienpass\CoreBundle\Entity\Payment;
 use Ferienpass\CoreBundle\Entity\PaymentItem;
 use Ferienpass\CoreBundle\Export\Payments\ReceiptExportInterface;
+use Ferienpass\CoreBundle\Message\PaymentReceiptCreated;
 use Ferienpass\CoreBundle\Payments\ReceiptNumberGenerator;
 use Ferienpass\CoreBundle\Repository\PaymentRepository;
 use Ferienpass\CoreBundle\Session\Flash;
@@ -30,6 +32,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -73,7 +76,7 @@ final class PaymentsController extends AbstractController
     }
 
     #[Route('/{id}/storno', name: 'admin_payments_reverse')]
-    public function reverse(Payment $payment, Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $em, Breadcrumb $breadcrumb, Flash $flash, ReceiptNumberGenerator $numberGenerator): Response
+    public function reverse(Payment $payment, Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $em, Breadcrumb $breadcrumb, Flash $flash, ReceiptNumberGenerator $numberGenerator, MessageBusInterface $messageBus): Response
     {
         $items = $payment->getItems();
 
@@ -85,7 +88,7 @@ final class PaymentsController extends AbstractController
 
         $ms->handleRequest($request);
         if ($ms->isSubmitted() && $ms->isValid() && 'reverse' === $ms->getClickedButton()->getName()) {
-            return $this->reverseFormSubmit($ms, $payment, $numberGenerator, $em, $flash);
+            return $this->reverseFormSubmit($ms, $payment, $numberGenerator, $em, $flash, $messageBus);
         }
 
         return $this->render('@FerienpassAdmin/page/payments/reverse.html.twig', [
@@ -103,8 +106,10 @@ final class PaymentsController extends AbstractController
         return $this->file($path, sprintf('beleg-%s.pdf', $payment->getId()));
     }
 
-    private function reverseFormSubmit(Form $ms, Payment $payment, ReceiptNumberGenerator $numberGenerator, EntityManagerInterface $em, Flash $flash): RedirectResponse
+    private function reverseFormSubmit(Form $ms, Payment $payment, ReceiptNumberGenerator $numberGenerator, EntityManagerInterface $em, Flash $flash, MessageBusInterface $messageBus): RedirectResponse
     {
+        $user = $this->getUser();
+
         /** @var Collection $items */
         $items = $ms->get('items')->getData();
         $items = $items->filter(fn (PaymentItem $pi) => $pi->getAttendance()->isPaid());
@@ -115,7 +120,7 @@ final class PaymentsController extends AbstractController
             return $this->redirectToRoute('admin_payments_receipt', ['id' => $payment->getId()]);
         }
 
-        $reversalPayment = new Payment($numberGenerator->generate());
+        $reversalPayment = new Payment($numberGenerator->generate(), $user instanceof FrontendUser ? $user->id : null);
         $reversalPayment->setBillingAddress($payment->getBillingAddress());
         $reversalPayment->setBillingEmail($payment->getBillingEmail());
         foreach ($items as $item) {
@@ -126,6 +131,8 @@ final class PaymentsController extends AbstractController
 
         $em->persist($reversalPayment);
         $em->flush();
+
+        $messageBus->dispatch(new PaymentReceiptCreated($reversalPayment->getId()));
 
         $flash->addConfirmation(text: 'Der Stornobeleg wurde erstellt.');
 
