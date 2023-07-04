@@ -133,6 +133,10 @@ final class PaymentsController extends AbstractController
 
         if ($withdraw) {
             foreach ($reversalPayment->getItems() as $item) {
+                if ($item->getAttendance()->isWithdrawn()) {
+                    continue;
+                }
+
                 $item->getAttendance()->setStatus(Attendance::STATUS_WITHDRAWN);
 
                 $messageBus->dispatch(new ParticipantListChanged($item->getAttendance()->getOffer()->getId()));
