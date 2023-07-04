@@ -24,6 +24,7 @@ final class FerienpassAdminExtension extends Extension implements PrependExtensi
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
+        // $container->getParameter('router.request_context.host')
         $config = $this->processConfiguration(new Configuration(), $configs);
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../../config'));
