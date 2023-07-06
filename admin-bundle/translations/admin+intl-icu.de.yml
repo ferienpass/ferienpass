@@ -104,9 +104,9 @@ participants:
     lastname: Nachname
     member: Sorgeberechtigte:r
     dateOfBirth: Geburtsdatum
-    email: E-Mail-Adresse
-    phone: Telefonnummer
-    mobile: Handynummer
+    ownEmail: E-Mail-Adresse
+    ownPhone: Telefonnummer
+    ownMobile: Handynummer
   help.email: Wird für Benachrichtigungen verwendet.
   help.mobile: Wird für SMS verwendet.
   help.member: Wählen Sie einen Account vom Typ „Eltern“.

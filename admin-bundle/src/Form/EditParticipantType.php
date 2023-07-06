@@ -53,9 +53,9 @@ class EditParticipantType extends AbstractType
                 'help' => 'participants.help.member',
             ])
             ->add('dateOfBirth', BirthdayType::class, ['widget' => 'single_text', 'fieldset_group' => 'age', 'width' => '1/3'])
-            ->add('email', EmailType::class, ['fieldset_group' => 'contact', 'width' => '1/2', 'help' => 'participants.help.email'])
-            ->add('mobile', null, ['fieldset_group' => 'contact', 'width' => '1/2', 'help' => 'participants.help.mobile'])
-            ->add('phone', null, ['fieldset_group' => 'contact', 'width' => '1/2'])
+            ->add('ownEmail', EmailType::class, ['fieldset_group' => 'contact', 'width' => '1/2', 'help' => 'participants.help.email'])
+            ->add('ownMobile', null, ['fieldset_group' => 'contact', 'width' => '1/2', 'help' => 'participants.help.mobile'])
+            ->add('ownPhone', null, ['fieldset_group' => 'contact', 'width' => '1/2'])
             ->add('discounted', CheckboxType::class, ['fieldset_group' => 'allowance', 'help' => 'participants.help.discounted'])
             ->add('submit', SubmitType::class, [
                 'label' => 'Daten speichern',
