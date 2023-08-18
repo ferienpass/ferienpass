@@ -88,9 +88,20 @@
 
                             {% for td in columns %}
 
-                                <td class="whitespace-nowrap py-2 pl-2 pr-1 text-sm {% if loop.first %}font-medium text-gray-900 sm:pl-0{% else %}text-gray-700{% endif %}">
-                                    {{ include(template_from_string(td)) }}
-                                </td>
+                                {% if loop.first %}
+                                    <td class="whitespace-nowrap py-2 pl-2 pr-1 text-sm font-medium text-gray-900 sm:pl-0">
+                                        <a href="#"
+                                           class="hover:underline"
+                                           data-action="live#emit"
+                                           data-event="view(participant={{ item.id }})">
+                                            {{ include(template_from_string(td)) }}
+                                        </a>
+                                    </td>
+                                {% else %}
+                                    <td class="whitespace-nowrap py-2 pl-2 pr-1 text-sm text-gray-700">
+                                        {{ include(template_from_string(td)) }}
+                                    </td>
+                                {% endif %}
 
                             {% endfor %}
 

@@ -4,7 +4,7 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <defaults autoconfigure="true"/>
+        <defaults autoconfigure="true" autowire="true"/>
 
         <instanceof id="Symfony\Bundle\FrameworkBundle\Controller\AbstractController">
             <call method="setContainer">
@@ -17,6 +17,9 @@
         </service>
 
         <service id="Ferienpass\AdminBundle\Components\SearchableQueryableList">
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Components\SlideOver">
         </service>
 
     </services>

@@ -58,12 +58,14 @@
             <argument type="service" id="form.factory"/>
         </service>
 
-
         <service id="Ferienpass\AdminBundle\Controller\Page\NotificationsController">
             <argument type="service" id="Ferienpass\CoreBundle\Notifier"/>
             <argument type="service" id="form.factory"/>
             <argument type="service" id="doctrine"/>
             <argument type="service" id="knp_menu.factory"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\NotificationsOutboxController">
         </service>
 
         <service id="Ferienpass\AdminBundle\Controller\Page\OfferApplicationsController">

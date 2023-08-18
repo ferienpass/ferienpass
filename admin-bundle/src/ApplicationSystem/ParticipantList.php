@@ -22,12 +22,13 @@ use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Facade\AttendanceFacade;
 use Ferienpass\CoreBundle\Message\AttendanceStatusChanged;
 use Ferienpass\CoreBundle\Message\ParticipantListChanged;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class ParticipantList
 {
-    public function __construct(private MessageBusInterface $messageBus, private Connection $connection, private ApplicationSystems $applicationSystems, private AttendanceFacade $attendanceFacade, private ManagerRegistry $doctrine)
+    public function __construct(private MessageBusInterface $messageBus, private Connection $connection, private ApplicationSystems $applicationSystems, private AttendanceFacade $attendanceFacade, private ManagerRegistry $doctrine, private Security $security)
     {
     }
 
@@ -53,7 +54,7 @@ class ParticipantList
                 continue;
             }
 
-            $attendance->setStatus(Attendance::STATUS_CONFIRMED);
+            $attendance->setStatus(Attendance::STATUS_CONFIRMED, $this->security->getUser()?->id);
 
             $this->dispatchMessage(new AttendanceStatusChanged($attendance->getId(), $oldStatus, $attendance->getStatus()));
         }
@@ -77,7 +78,7 @@ class ParticipantList
                 continue;
             }
 
-            $attendance->setStatus(Attendance::STATUS_WITHDRAWN);
+            $attendance->setStatus(Attendance::STATUS_WITHDRAWN, $this->security->getUser()?->id);
 
             $this->dispatchMessage(new AttendanceStatusChanged($attendance->getId(), $oldStatus, $attendance->getStatus()));
         }

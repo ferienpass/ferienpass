@@ -119,7 +119,7 @@ final class ParticipantsController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/participants/attendances.html.twig', [
             'ms' => $ms,
-            'msPreferred' => $items->filter(fn (Attendance $a) => $a->isConfirmed())->toArray(),
+            'msPreferred' => $items->filter(fn (Attendance $a) => $a->isConfirmed() && !$a->isPaid())->toArray(),
             'items' => $items,
             'participant' => $participant,
             'breadcrumb' => $breadcrumb->generate(['participants.title', ['route' => 'admin_participants_index']], $participant->getName().' (Anmeldungen)'),
