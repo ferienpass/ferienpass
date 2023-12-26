@@ -194,6 +194,13 @@ class MenuBuilder
                 'display' => $this->isGranted('participants.view', $offer),
                 'extras' => ['icon' => 'user-group-solid'],
             ]);
+            $menu->addChild('participantList.pdf', [
+                'label' => 'offers.action.participantListPdf',
+                'route' => 'admin_offer_attendances',
+                'routeParameters' => ['id' => $offer->getId(), '_suffix' => '.pdf'],
+                'display' => $this->isGranted('participants.view', $offer),
+                'extras' => ['icon' => 'user-group-solid'],
+            ]);
         }
 
         $menuEvent = new MenuEvent($this->factory, $menu, $options);
