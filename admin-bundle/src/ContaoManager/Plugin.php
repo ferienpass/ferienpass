@@ -16,17 +16,15 @@ namespace Ferienpass\AdminBundle\ContaoManager;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
-use Contao\ManagerPlugin\Config\ConfigPluginInterface;
 use Contao\ManagerPlugin\Config\ContainerBuilder;
 use Contao\ManagerPlugin\Config\ExtensionPluginInterface;
 use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
 use Ferienpass\AdminBundle\FerienpassAdminBundle;
 use Ferienpass\CoreBundle\FerienpassCoreBundle;
-use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-class Plugin implements BundlePluginInterface, RoutingPluginInterface, ConfigPluginInterface, ExtensionPluginInterface
+class Plugin implements BundlePluginInterface, RoutingPluginInterface, ExtensionPluginInterface
 {
     public function getBundles(ParserInterface $parser): array
     {
@@ -34,11 +32,6 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface, ConfigPlu
             BundleConfig::create(FerienpassAdminBundle::class)
                 ->setLoadAfter([FerienpassCoreBundle::class]),
         ];
-    }
-
-    public function registerContainerConfiguration(LoaderInterface $loader, array $managerConfig): void
-    {
-        // $loader->load(__DIR__.'/../../config/packages/security.xml');
     }
 
     public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel)

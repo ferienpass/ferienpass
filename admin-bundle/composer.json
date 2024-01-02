@@ -20,8 +20,8 @@
     "ext-json": "*",
 
     "contao/core-bundle": "^5.1",
-    "ferienpass/core-bundle": "dev-main as 4.0.0",
-    "ferienpass/ux-host-portal": "dev-main as 4.0.0",
+    "ferienpass/core-bundle": "*",
+    "ferienpass/ux-host-portal": "*",
 
     "knplabs/knp-menu-bundle": "^3.0",
     "michelf/php-markdown": "^1.9",

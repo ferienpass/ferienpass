@@ -41,13 +41,15 @@ final class FerienpassAdminExtension extends Extension implements PrependExtensi
 
     public function prepend(ContainerBuilder $container): void
     {
-        // Register the custom form types theme if TwigBundle is available
         $bundles = $container->getParameter('kernel.bundles');
 
-        if (!isset($bundles['TwigBundle'])) {
-            return;
+        if (isset($bundles['TwigBundle'])) {
+            $this->prependTwigBundle($container);
         }
+    }
 
+    private function prependTwigBundle(ContainerBuilder $container): void
+    {
         $config = ['form_themes' => [
             '@FerienpassAdmin/form/custom_types.html.twig',
         ]];

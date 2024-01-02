@@ -20,7 +20,7 @@ use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
-#[AsLiveComponent(template: '@FerienpassAdmin/components/SearchableQueryableList.html.twig')]
+#[AsLiveComponent(name: 'SearchableQueryableList', template: '@FerienpassAdmin/components/SearchableQueryableList.html.twig')]
 class SearchableQueryableList
 {
     use DefaultActionTrait;

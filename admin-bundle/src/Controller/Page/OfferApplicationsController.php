@@ -22,7 +22,6 @@ use Ferienpass\CoreBundle\Export\ParticipantList\PdfExport;
 use Ferienpass\CoreBundle\Export\ParticipantList\WordExport;
 use Ferienpass\CoreBundle\Form\SimpleType\ContaoRequestTokenType;
 use Ferienpass\CoreBundle\Repository\AttendanceRepository;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -36,7 +35,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_ADMIN')]
 #[Route('/{edition}/angebote/{id}/anmeldungen', requirements: ['id' => '\d+'])]
-#[ParamConverter('edition', options: ['mapping' => ['edition' => 'alias']])]
 class OfferApplicationsController extends AbstractController
 {
     public function __construct(private AttendanceRepository $attendanceRepository, private PdfExport $pdfExport, private WordExport $wordExport, private FormFactoryInterface $formFactory)

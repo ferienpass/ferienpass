@@ -27,14 +27,13 @@ use Symfony\UX\LiveComponent\Attribute\LiveListener;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
-use Symfony\UX\LiveComponent\LiveResponder;
 use Symfony\UX\LiveComponent\ValidatableComponentTrait;
 
-#[AsLiveComponent(template: '@FerienpassAdmin/components/SlideOver.html.twig')]
+#[AsLiveComponent(name: 'SlideOver', template: '@FerienpassAdmin/components/SlideOver.html.twig')]
 class SlideOver extends AbstractController
 {
-    use DefaultActionTrait;
     use ComponentToolsTrait;
+    use DefaultActionTrait;
     use ValidatableComponentTrait;
 
     #[LiveProp]
@@ -55,7 +54,7 @@ class SlideOver extends AbstractController
 
     public function activity()
     {
-        if (null === $this->participant){
+        if (null === $this->participant) {
             return null;
         }
 
@@ -67,7 +66,7 @@ class SlideOver extends AbstractController
         }
 
         $activity = array_merge(...$activity);
-        usort($activity, fn(AttendanceLog|ParticipantLog $a, AttendanceLog|ParticipantLog $b) => $a->getCreatedAt() <=> $b->getCreatedAt());
+        usort($activity, fn (AttendanceLog|ParticipantLog $a, AttendanceLog|ParticipantLog $b) => $a->getCreatedAt() <=> $b->getCreatedAt());
 
         return $activity;
     }
@@ -78,7 +77,7 @@ class SlideOver extends AbstractController
         $this->validate();
 
         $user = $this->getUser();
-        if (!$user instanceof FrontendUser){
+        if (!$user instanceof FrontendUser) {
             return;
         }
 

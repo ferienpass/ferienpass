@@ -35,7 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_ADMIN')]
-#[Route('/export', name: 'admin_export')]
+#[Route('/export')]
 final class ExportController extends AbstractController
 {
     public function __construct(private OfferRepository $offerRepository, private OfferExporter $exporter, private FormFactoryInterface $formFactory)
@@ -90,6 +90,12 @@ final class ExportController extends AbstractController
         return $this->render('@FerienpassAdmin/page/export/index.html.twig', [
             'form' => $form,
         ]);
+    }
+
+    #[Route('', name: 'admin_export_index')]
+    public function index()
+    {
+        return $this->render('@FerienpassAdmin/page/tools/noop.html.twig');
     }
 
     private function exportOffers(string $key, iterable $offers): BinaryFileResponse

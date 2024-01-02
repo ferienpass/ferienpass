@@ -6,7 +6,6 @@
 
     <meta name="robots" content="noindex,follow">
     <meta name="description" content="">
-    <meta name="generator" content="Contao Open Source CMS">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="apple-touch-icon" sizes="180x180"
           href="{{ asset('favicon/apple-touch-icon.png', 'ferienpass_core') }}">
@@ -22,10 +21,7 @@
     <meta name="msapplication-config" content="{{ asset('favicon/browserconfig.xml', 'ferienpass_core') }}">
     <meta name="theme-color" content="#209bc9">
 
-    {{ encore_entry_link_tags('app', null, 'ferienpass_admin') }}
-    {{ encore_entry_script_tags('app', null, 'ferienpass_admin', {
-        defer: true
-    }) }}
+    {{ importmap('admin') }}
 
     {{ head|default }}
 </head>

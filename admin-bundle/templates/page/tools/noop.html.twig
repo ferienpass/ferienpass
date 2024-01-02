@@ -1,0 +1,8 @@
+{% extends "@FerienpassAdmin/layout/base.html.twig" %}
+{% trans_default_domain 'admin' %}
+
+{% block main %}
+
+    {% include '@FerienpassAdmin/components/alert/error.html.twig' with {'message': 'Die Funktion ist in diser Demo nicht vorhanden.' } %}
+
+{% endblock %}

@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Menu;
 
+use Contao\MemberModel;
 use Ferienpass\CoreBundle\Entity\Attendance;
+use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\Participant;
@@ -58,6 +60,12 @@ class ActionsBuilder
             return $menu;
         }
 
+        if ($item instanceof Edition) {
+            $this->editions($menu, $item);
+
+            return $menu;
+        }
+
         if ($item instanceof Attendance) {
             $this->attendances($menu, $item);
 
@@ -66,6 +74,12 @@ class ActionsBuilder
 
         if ($item instanceof Payment) {
             $this->payments($menu, $item);
+
+            return $menu;
+        }
+
+        if ($item instanceof MemberModel) {
+            $this->accounts($menu, $item);
 
             return $menu;
         }
@@ -222,6 +236,25 @@ class ActionsBuilder
         ]);
     }
 
+    private function editions(ItemInterface $root, Edition $item)
+    {
+        $root->addChild('edit', [
+            'label' => 'editions.action.edit',
+            'route' => 'admin_editions_edit',
+            'routeParameters' => ['alias' => $item->getAlias()],
+            'display' => $this->isGranted('edit', $item),
+            'extras' => ['icon' => 'pencil-solid'],
+        ]);
+
+        $root->addChild('stats', [
+            'label' => 'editions.action.stats',
+            'route' => 'admin_editions_stats',
+            'routeParameters' => ['alias' => $item->getAlias()],
+            'display' => $this->isGranted('stats', $item),
+            'extras' => ['icon' => 'pencil-solid'],
+        ]);
+    }
+
     private function attendances(ItemInterface $root, Attendance $item)
     {
         $root->addChild('offer', [
@@ -239,6 +272,17 @@ class ActionsBuilder
             'route' => 'admin_payments_receipt',
             'routeParameters' => ['id' => $item->getId()],
             //   'display' => $this->isGranted('view', $item->getOffer()),
+            'extras' => ['icon' => 'pencil-solid'],
+        ]);
+    }
+
+    private function accounts(ItemInterface $root, MemberModel $item)
+    {
+        $root->addChild('edit', [
+            'label' => 'accounts.action.edit',
+            'route' => 'admin_accounts_edit',
+            'routeParameters' => ['id' => $item->id],
+            // 'display' => $this->isGranted('edit', $item),
             'extras' => ['icon' => 'pencil-solid'],
         ]);
     }

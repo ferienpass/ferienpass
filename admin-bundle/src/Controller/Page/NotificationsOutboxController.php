@@ -13,26 +13,12 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
-use Ferienpass\AdminBundle\Form\EditNotificationType;
-use Ferienpass\CoreBundle\Applications\UnconfirmedApplications;
-use Ferienpass\CoreBundle\Entity\Notification;
-use Ferienpass\CoreBundle\Message\ConfirmApplications;
 use Ferienpass\CoreBundle\Notifier;
-use Ferienpass\CoreBundle\Repository\NotificationRepository;
-use Knp\Menu\FactoryInterface;
-use Knp\Menu\ItemInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Translation\TranslatableMessage;
 
 #[IsGranted('ROLE_ADMIN')]
 #[Route('/gesendete-nachrichten')]

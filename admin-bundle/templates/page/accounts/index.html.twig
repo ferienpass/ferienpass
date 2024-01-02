@@ -1,0 +1,12 @@
+{% extends "@FerienpassAdmin/layout/2col.html.twig" %}
+
+{% block main %}
+
+    {% include '@FerienpassAdmin/components/list.html.twig' with {
+        title: "{{ item.firstname ~' '~ item.lastname }}",
+        info: [
+
+        ]
+    } %}
+
+{% endblock %}

@@ -1,3 +1,29 @@
+accounts:
+  title: Accounts
+  index.empty: Es wurden keine Accounts gefunden.
+  action.edit: Bearbeiten
+  baseLegend:
+    - Name
+  contactLegend:
+    - Kontaktdaten
+  addressLegend:
+    - Postanschrift
+  ROLE_MEMBER: Eltern
+  ROLE_HOST: Veranstaltende
+  ROLE_ADMIN: Admins
+
+
+  label:
+    firstname: Vorname
+    lastname: Nachname
+    phone: Telefon
+    fax: Faxnummer
+    mobile: Mobilnummer
+    email: E-Mail-Adresse
+    street: Straße
+    postal: PLZ
+    city: Ort
+
 offers:
   title: Angebote
   action:
@@ -50,7 +76,7 @@ offers:
     onlineApplication: Die Anmeldungen über das Online-System laufen lassen.
 
 hosts:
-  title: Veranstalter
+  title: Veranstaltende
   new: Neuer Veranstalter
   action:
     show: Anzeigen
@@ -78,6 +104,39 @@ hosts:
     city: Ort
   help:
     alias: Der Alias wird automatisch generiert.
+
+editions:
+  title: Saisons
+  new: Neue Saison
+  action:
+    edit: Bearbeiten
+    stats: Statistiken
+  baseLegend:
+    - Name der Saison
+  tasksLegend:
+    - Zeiträume und Einstellungen
+    - Die Konfiguration des Ferienpasses funktioniert zeitgesteuert. Erstellen Sie einen Zeitraum, in dem die Bearbeitung möglich ist, einen Zeitraum, in dem Anmeldungen möglich sind, usw. usf.
+  label:
+    name: Name
+    alias: Alias
+    type: Typ
+    application_system: Anmeldesystem
+    periodBegin: Beginn
+    periodEnd: Ende
+    max_applications: maximale Anmeldungen
+    max_applications_day: maximale Anmeldungen pro Tag
+    skip_max_applications: Mehr Anmeldungen erlauben
+    allow_anonymous: Anmeldungen ohne Benutzerkonto
+    allow_anonymous_fee: Anmeldungen ohne Benutzerkonto auch für kostenpflichtige Angebote
+    hide_status: Aktuellen Status verbergen
+  help:
+    alias: Der Alias wird automatisch generiert.
+    max_applications: Zu wie vielen Angeboten darf ein Kind sich in dieser Phase anmelden?
+    max_applications_per_day: Wie viele Anmeldungen darf ein Kind pro Tag machen?
+    skip_max_applications: Es können unbegrenzt viele Anmeldungen vorgenommen werden, jedoch können nur die angegebene Anzahl an Anmeldungen priorisiert werden.
+    allow_anonymous: Erlauben Sie Anmeldungen ohne Benutzerkonto.
+    allow_anonymous_fee: Erlauben Sie Anmeldungen ohne Benutzerkonto auch für kostenpflichtige Angebote
+    hide_status: Den Eltern den aktuellen Status nicht anzeigen. Dies sollte aktiviert werden für das Losverfahren, damit die Eltern den Status erst nach dem Losen einsehen können.
 
 participants:
   title: Teilnehmende

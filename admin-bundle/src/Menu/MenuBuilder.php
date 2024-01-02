@@ -51,24 +51,21 @@ class MenuBuilder
         }
 
         if ($this->isGranted('ROLE_ADMIN')) {
-            $menu->addChild('hosts.title', [
-                'route' => 'admin_hosts_index',
-            ]);
             $menu->addChild('participants.title', [
                 'route' => 'admin_participants_index',
             ]);
-            //        $menu->addChild('Accounts', [
-            //            'route' => 'admin_payments_index',
-            //        ]);
+            $menu->addChild('hosts.title', [
+                'route' => 'admin_hosts_index',
+            ]);
             $menu->addChild('payments.title', [
                 'route' => 'admin_payments_index',
             ]);
-            //        $menu->addChild('Einstellungen', [
-            //            'route' => 'admin_payments_index',
-            //        ]);
-            //        $menu->addChild('Inhalte', [
-            //            'route' => 'admin_payments_index',
-            //        ]);
+            $menu->addChild('Accounts', [
+                'route' => 'admin_accounts_index',
+            ]);
+            $menu->addChild('Werkzeuge & Einstellungen', [
+                'route' => 'admin_tools',
+            ]);
         }
 
         return $menu;

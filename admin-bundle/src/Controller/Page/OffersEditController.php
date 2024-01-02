@@ -24,7 +24,6 @@ use Ferienpass\AdminBundle\Form\EditOfferType;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Ux\Flash;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -34,7 +33,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/{edition}/angebote')]
-#[ParamConverter('edition', options: ['mapping' => ['edition' => 'alias']])]
 final class OffersEditController extends AbstractController
 {
     public function __construct(private Slug $slug, private string $imagesDir, private string $projectDir, private ManagerRegistry $doctrine, private FormFactoryInterface $formFactory)

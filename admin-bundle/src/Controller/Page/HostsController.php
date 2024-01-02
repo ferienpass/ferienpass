@@ -28,7 +28,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[IsGranted('ROLE_ADMIN')]
-#[Route('/veranstalter')]
+#[Route('/veranstaltende')]
 final class HostsController extends AbstractController
 {
     #[Route('', name: 'admin_hosts_index')]

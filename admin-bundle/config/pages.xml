@@ -12,6 +12,9 @@
             </call>
         </instanceof>
 
+        <service id="Ferienpass\AdminBundle\Controller\Page\AccountsController">
+        </service>
+
         <service id="Ferienpass\AdminBundle\Controller\Page\ChangePasswordController">
             <argument type="expression">
                 service('security.password_hasher_factory').getPasswordHasher('Contao\\FrontendUser')
@@ -42,6 +45,7 @@
             <argument type="tagged_iterator" tag="ferienpass.dashboard_widget"/>
         </service>
 
+        <service id="Ferienpass\AdminBundle\Controller\Page\Editio"/>
         <service id="Ferienpass\AdminBundle\Controller\Page\HostsController"/>
 
         <service id="Ferienpass\AdminBundle\Controller\Page\LoginController">
@@ -128,6 +132,10 @@
             <argument>%env(ADMIN_EMAIL)%</argument>
             <argument type="service" id="serializer"/>
             <argument type="service" id="form.factory"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\ToolsController">
+
         </service>
 
     </services>
