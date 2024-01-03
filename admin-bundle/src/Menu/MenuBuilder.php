@@ -38,7 +38,7 @@ class MenuBuilder
 
         $edition = $this->editionRepository->findDefaultForHost();
         $menu->addChild('offers.title', [
-            'route' => 'admin_offer_index',
+            'route' => 'admin_offers_index',
             'routeParameters' => [
                 'edition' => $edition->getAlias(),
             ],
@@ -122,7 +122,7 @@ class MenuBuilder
 
         $menu->addChild('newVariant', [
             'label' => 'offers.action.newVariant',
-            'route' => 'admin_offer_new',
+            'route' => 'admin_offers_new',
             'routeParameters' => ['source' => null === $offer->getVariantBase() ? $offer->getId() : $offer->getVariantBase()?->getId(), 'act' => 'newVariant', 'edition' => $offer->getEdition()->getAlias()],
             'display' => $this->isGranted('create', $offer) && $this->isGranted('edit', $offer),
             'extras' => ['icon' => 'calendar-solid'],
@@ -131,7 +131,7 @@ class MenuBuilder
         foreach ($this->editionRepository->findWithActiveTask('host_editing_stage') as $edition) {
             $menu->addChild('copy'.$edition->getId(), [
                 'label' => 'offers.action.copy',
-                'route' => 'admin_offer_new',
+                'route' => 'admin_offers_new',
                 'routeParameters' => ['source' => $offer->getId(), 'act' => 'copy', 'edition' => $edition->getAlias()],
                 'display' => $this->isGranted('view', $offer),
                 'extras' => ['icon' => 'duplicate-solid', 'translation_params' => ['edition' => $edition->getName()]],
@@ -224,7 +224,7 @@ class MenuBuilder
         foreach ($editions as $edition) {
             $editionNav->addChild((string) $edition->getAlias(), [
                 'label' => $edition->getName(),
-                'route' => 'admin_offer_index',
+                'route' => 'admin_offers_index',
                 'routeParameters' => ['edition' => $edition->getAlias()] + $request?->query->all() ?? [],
                 'current' => $request?->query->has('edition')
                     ? $edition->getAlias() === $request?->query->get('edition')
@@ -236,7 +236,7 @@ class MenuBuilder
         foreach ($this->hostRepository->findByMemberId((int) $user->id) as $host) {
             $hostNav->addChild((string) $host->getAlias(), [
                 'label' => $host->getName(),
-                'route' => 'admin_offer_index',
+                'route' => 'admin_offers_index',
                 'routeParameters' => ['host' => $host->getAlias(), 'edition' => $edition->getAlias()] + $request?->query->all() ?? [],
                 'current' => !$request?->query->has('host') || $host->getAlias() === $request?->query->get('host'),
             ]);

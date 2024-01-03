@@ -40,11 +40,13 @@ final class EditionController extends AbstractController
     #[Route('', name: 'admin_editions_index')]
     public function index(Request $request, Breadcrumb $breadcrumb): Response
     {
+        return $this->render('@FerienpassAdmin/page/tools/noop.html.twig');
+
         $items = $this->editionRepository->findAll();
 
         return $this->render('@FerienpassAdmin/page/edition/index.html.twig', [
             'items' => $items,
-            'breadcrumb' => $breadcrumb->generate(['Werkzeuge & Einstellungen', ['route' => 'admin_tools']], 'Saisons konfigurieren'),
+            'breadcrumb' => $breadcrumb->generate(['Werkzeuge & Einstellungen', ['route' => 'admin_tools']], 'Saisons'),
         ]);
     }
 
@@ -69,10 +71,10 @@ final class EditionController extends AbstractController
 
         $breadcrumbTitle = $edition ? $edition->getName().' (bearbeiten)' : 'editions.new';
 
-        return $this->render('@FerienpassAdmin/page/hosts/edit.html.twig', [
+        return $this->render('@FerienpassAdmin/page/edition/edit.html.twig', [
             'item' => $edition,
             'form' => $form,
-            'breadcrumb' => $breadcrumb->generate(['editions.title', ['route' => 'admin_editions_index']], $breadcrumbTitle),
+            'breadcrumb' => $breadcrumb->generate(['Werkzeuge & Einstellungen', ['route' => 'admin_tools']], ['editions.title', ['route' => 'admin_editions_index']], $breadcrumbTitle),
         ]);
     }
 

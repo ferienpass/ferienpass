@@ -22,8 +22,10 @@ use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExports;
 use Ferienpass\CoreBundle\Message\OfferCancelled;
 use Ferienpass\CoreBundle\Message\OfferRelaunched;
+use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Ferienpass\CoreBundle\Repository\HostRepository;
 use Ferienpass\CoreBundle\Repository\OfferRepository;
+use Knp\Menu\FactoryInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,10 +34,10 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/{edition}/angebote')]
-final class OfferController extends AbstractController
+final class OffersController extends AbstractController
 {
-    #[Route('', name: 'admin_offer_index')]
-    public function index(#[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, OfferRepository $repository, HostRepository $hostRepository, Request $request, Breadcrumb $breadcrumb): Response
+    #[Route('', name: 'admin_offers_index')]
+    public function index(#[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, OfferRepository $repository, HostRepository $hostRepository, Request $request, Breadcrumb $breadcrumb, FactoryInterface $factory, EditionRepository $editionRepository): Response
     {
         $user = $this->getUser();
         if (!$user) {
@@ -71,10 +73,17 @@ final class OfferController extends AbstractController
             ->getResult()
         ;
 
+        $menu = $factory->createItem('Editions');
+
+        foreach ($editionRepository->findAll() as $edition1) {
+            $menu->addChild($edition1->getName(), ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $edition1->getAlias()]]);
+        }
+
         return $this->render('@FerienpassAdmin/page/offers/index.html.twig', [
             'edition' => $edition,
             'offers' => $offers,
             'items' => $offers,
+            'aside_nav' => $menu,
             'breadcrumb' => $breadcrumb->generate($edition->getName(), 'Angebote'),
         ]);
     }
@@ -144,7 +153,7 @@ final class OfferController extends AbstractController
         return $this->render('@FerienpassAdmin/page/offers/show.html.twig', [
             'offer' => $offer,
             'hasPdf' => $pdfExports->has(),
-            'breadcrumb' => $breadcrumb->generate([$offer->getEdition()->getName(), ['route' => 'admin_offer_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], $offer->getName()),
+            'breadcrumb' => $breadcrumb->generate([$offer->getEdition()->getName(), ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], $offer->getName()),
         ]);
     }
 }

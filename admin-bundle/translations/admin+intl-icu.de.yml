@@ -1,5 +1,10 @@
 accounts:
-  title: Accounts
+  title:
+    0: Accounts
+    ROLE_MEMBER: Eltern-Accounts
+    ROLE_HOST: Veranstalter-Accounts
+    ROLE_ADMIN: Admin-Accounts
+  new: Neuer Account
   index.empty: Es wurden keine Accounts gefunden.
   action.edit: Bearbeiten
   baseLegend:
@@ -26,6 +31,7 @@ accounts:
 
 offers:
   title: Angebote
+  index.empty: Es sind hier noch keine Angebote erstellt worden.
   action:
     view: Angebot öffnen
     edit: Angebot bearbeiten
@@ -140,6 +146,7 @@ editions:
 
 participants:
   title: Teilnehmende
+  index.empty: Offensichtlich hat sich noch kein Teilnehmer registriert… Hier ist zumindest noch niemand.
   attendances.title: Anmeldungen
   attendances.empty: Es sind keine Anmeldungen vorhanden.
   action.edit: Bearbeiten
@@ -206,7 +213,7 @@ payments:
   th.participant: Teilnehmer:in
   th.offer: Angebot
   th.paid: Zahlung
-  index.empty: Es sind keine Zahlungen erfasst.
+  index.empty: Es sind noch keine Zahlungen erfasst worden.
 
 attendances:
   label.offer: Angebot

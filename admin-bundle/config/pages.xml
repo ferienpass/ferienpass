@@ -79,7 +79,7 @@
             <argument type="service" id="form.factory"/>
         </service>
 
-        <service id="Ferienpass\AdminBundle\Controller\Page\OfferController"/>
+        <service id="Ferienpass\AdminBundle\Controller\Page\OffersController"/>
 
         <service id="Ferienpass\AdminBundle\Controller\Page\OffersEditController">
             <argument type="service" id="contao.slug"/>

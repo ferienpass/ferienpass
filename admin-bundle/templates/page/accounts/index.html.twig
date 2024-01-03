@@ -1,11 +1,77 @@
 {% extends "@FerienpassAdmin/layout/2col.html.twig" %}
+{% trans_default_domain 'admin' %}
+{% set translationPrefix = app.request.get('_route')|split('_')[1] %}
+{% set action = app.request.get('_route')|split('_')[2] %}
+{% import "@FerienpassAdmin/components/content_elements.html.twig" as partials %}
 
 {% block main %}
+
+
+    {# todo dupliacted from list.html.twig #}
+    {% set headline = headline is defined ? headline|trans : "#{translationPrefix}.#{action}.title"|trans %}
+
+    <div class="flex justify-between">
+
+        {{ partials.h1((headline == "#{translationPrefix}.#{action}.title") ? "#{translationPrefix}.title"|trans : headline) }}
+
+        <div class="flex space-x-3 justify-end">
+
+            {% block headline_actions %}
+
+                {% if exports is defined %}
+                    {% embed '@FerienpassAdmin/components/dropdown.html.twig' %}
+                        {% block toggle %}
+                            <button type="button"
+                                    class="inline-flex items-center gap-x-0.5 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                    id="options-menu-0-button" aria-expanded="false"
+                                    aria-haspopup="true">
+                                <span class="flex items-center space-x-1">
+                                    <span>Exportieren</span>
+                                    <span class="h-5 w-5 text-gray-500">{{ source('@FerienpassAdmin/icons/chevron-down-solid.svg') }}</span>
+                                </span>
+                            </button>
+                        {% endblock %}
+
+                        {% block dropdown %}
+
+                            {% for format in exports %}
+                                {% embed '@FerienpassAdmin/components/dropdown-a.html.twig' with {'uri': path(app.request.attributes.get('_route'), app.request.query.all|merge({ '_suffix': ".#{format}" }))} %}
+                                    {% block link %}
+                                        <span class="mr-3 h-5 w-5 text-gray-400 flex-shrink-0">{{ source('@FerienpassAdmin/icons/'~format~'.svg', ignore_missing = true) }}</span>
+                                        <span class="text-left leading-tight">{{ format|upper }}</span>
+                                    {% endblock %}
+                                {% endembed %}
+                            {% endfor %}
+
+                        {% endblock %}
+
+                    {% endembed %}
+                {% endif %}
+
+                {% if createUrl is defined %}
+                    <a href="{{ createUrl }}"
+                       class="rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">
+                        <span class="flex items-center space-x-1">
+                            <span class="h-5 w-5">{{ source('@FerienpassAdmin/icons/plus-solid.svg') }}</span>
+                            <span>Neu anlegen</span>
+                        </span>
+                    </a>
+                {% endif %}
+
+            {% endblock %}
+
+        </div>
+
+    </div>
+    {# end duplicate #}
+
+
+
 
     {% include '@FerienpassAdmin/components/list.html.twig' with {
         title: "{{ item.firstname ~' '~ item.lastname }}",
         info: [
-
+            "{{ item.email }}"
         ]
     } %}
 

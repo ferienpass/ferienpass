@@ -2,15 +2,15 @@
 
     <div class="my-4">
         <div class="flex justify-center">
-            <offer-datepicker data-min-date="" data-max-date="">
+            <div data-controller="hello" data-hello-min-date-value="" data-hello-max-date-value="">
 
                 <p class="text-sm font-medium leading-5 text-gray-700 dark:text-gray-50">Termin</p>
                 <div class="mt-1">
-                    {{ form_widget(form.begin.date, {'attr': {'data-target': 'offer-datepicker.begin'}}) }}
-                    {{ form_widget(form.end.date, {'attr': {'data-target': 'offer-datepicker.end'}}) }}
+                    {{ form_widget(form.begin.date, {'attr': {'data-hello-target': 'begin'}}) }}
+                    {{ form_widget(form.end.date, {'attr': {'data-hello-target': 'end'}}) }}
                 </div>
 
-            </offer-datepicker>
+            </div>
         </div>
 
         <div class="mt-4 flex justify-center">

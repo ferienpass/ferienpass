@@ -42,7 +42,9 @@ final class AccountsController extends AbstractController
             throw $this->createNotFoundException('The role does not exist');
         }
 
-        $items = MemberModel::findBy('role', self::ROLES[$role]);
+        $actualRole = self::ROLES[$role];
+
+        $items = MemberModel::findBy('role', $actualRole);
 
         $nav = $menuFactory->createItem('Accounts');
         foreach (self::ROLES as $slug => $r) {
@@ -50,9 +52,11 @@ final class AccountsController extends AbstractController
         }
 
         return $this->render('@FerienpassAdmin/page/accounts/index.html.twig', [
+            'createUrl' => $this->generateUrl('admin_accounts_create', ['role' => $role]),
+            'headline' => 'accounts.title.'.$actualRole,
             'items' => $items,
             'aside_nav' => $nav,
-            'breadcrumb' => $breadcrumb->generate('accounts.title', 'accounts.'.self::ROLES[$role]),
+            'breadcrumb' => $breadcrumb->generate('accounts.title.0', 'accounts.'.self::ROLES[$role]),
         ]);
     }
 
@@ -66,6 +70,7 @@ final class AccountsController extends AbstractController
 
         if (null === $id) {
             $account = new MemberModel();
+            $account->role = self::ROLES[$role];
         } elseif (null === $account = MemberModel::findByPk($id)) {
             throw $this->createNotFoundException('The account does not exist');
         }
@@ -88,8 +93,9 @@ final class AccountsController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/accounts/edit.html.twig', [
             'item' => $account,
+            'headline' => $account->id ? sprintf('%s %s', $account->firstname, $account->lastname) : 'accounts.new',
             'form' => $form,
-            'breadcrumb' => $breadcrumb->generate(['accounts.title', ['route' => 'admin_accounts_index', 'routeParameters' => $role]], [$role, ['route' => 'admin_accounts_index', 'routeParameters' => $role]], $breadcrumbTitle),
+            'breadcrumb' => $breadcrumb->generate(['accounts.title'], [$role], $breadcrumbTitle),
         ]);
     }
 }

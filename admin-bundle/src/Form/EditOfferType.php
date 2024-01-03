@@ -16,22 +16,16 @@ namespace Ferienpass\AdminBundle\Form;
 use Ferienpass\AdminBundle\Dto\Annotation\FormType as FormTypeAnnotation;
 use Ferienpass\AdminBundle\Form\CompoundType\DatesType;
 use Ferienpass\CoreBundle\Entity\Offer;
-use Ferienpass\CoreBundle\Entity\OfferCategory;
-use Ferienpass\CoreBundle\Form\SimpleType\ContaoRequestTokenType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\File;
 
 class EditOfferType extends AbstractType
 {
@@ -53,7 +47,7 @@ class EditOfferType extends AbstractType
             ->add('name', null, ['fieldset_group' => 'base', 'width' => '2/3'])
             ->add('description', TextareaType::class, ['fieldset_group' => 'base'])
 //            ->add('parent', EntityType::class, [ 'class' => User::class ])
-            ->add('categories', EntityType::class, ['class' => OfferCategory::class, 'choice_label' => 'name', 'fieldset_group' => 'base'])
+            // ->add('categories', EntityType::class, ['class' => OfferCategory::class, 'choice_label' => 'name', 'fieldset_group' => 'base'])
             ->add('dates', DatesType::class, ['help' => 'Sie können eine zusätzliche Zeit eintragen, wenn die gleiche Gruppe von Kindern an mehreren Terminen erscheinen muss. Wenn Sie das Angebot mehrmals anbieten, verwenden Sie stattdessen die Kopierfunktion auf der Übersichtsseite.', 'fieldset_group' => 'dates'])
             ->add('applicationDeadline', DateType::class, ['help' => 'offers.help.applicationDeadline', 'input_format' => \Contao\Config::get('dateFormat'), 'widget' => 'single_text', 'fieldset_group' => 'dates', 'width' => '1/3'])
             ->add('minAge', IntegerType::class, ['attr' => ['placeholder' => 'kein Mindestalter'], 'fieldset_group' => 'details', 'width' => '1/3'])
@@ -97,34 +91,34 @@ class EditOfferType extends AbstractType
             $builder->add($property->getName(), null, $fieldOptions);
         }
 
-        $builder
-            ->add('image', FileType::class, [
-                'mapped' => false,
-                'disabled' => $options['is_variant'],
-                'required' => false,
-                'constraints' => [
-                    new File([
-                        'maxSize' => '6Mi',
-                        'mimeTypes' => [
-                            'image/jpeg',
-                            'image/png',
-                        ],
-                        'mimeTypesMessage' => 'Folgende Dateiformate sind erlaubt: JPG, PNG',
-                    ]),
-                ],
-            ])
-            ->add('imgCopyright', TextType::class, [
-                'mapped' => false,
-                'disabled' => $options['is_variant'],
-                'required' => false,
-                'label' => 'tl_files.imgCopyright.0',
-                'help' => 'tl_files.imgCopyright.1',
-                'translation_domain' => 'contao_tl_files',
-            ])
-            ->add('request_token', ContaoRequestTokenType::class)
-            ->add('submit', SubmitType::class, [
-                'label' => 'Daten speichern',
-            ])
-        ;
+        //        $builder
+        //            ->add('image', FileType::class, [
+        //                'mapped' => false,
+        //                'disabled' => $options['is_variant'],
+        //                'required' => false,
+        //                'constraints' => [
+        //                    new File([
+        //                        'maxSize' => '6Mi',
+        //                        'mimeTypes' => [
+        //                            'image/jpeg',
+        //                            'image/png',
+        //                        ],
+        //                        'mimeTypesMessage' => 'Folgende Dateiformate sind erlaubt: JPG, PNG',
+        //                    ]),
+        //                ],
+        //            ])
+        //            ->add('imgCopyright', TextType::class, [
+        //                'mapped' => false,
+        //                'disabled' => $options['is_variant'],
+        //                'required' => false,
+        //                'label' => 'tl_files.imgCopyright.0',
+        //                'help' => 'tl_files.imgCopyright.1',
+        //                'translation_domain' => 'contao_tl_files',
+        //            ])
+        //            ->add('request_token', ContaoRequestTokenType::class)
+        //            ->add('submit', SubmitType::class, [
+        //                'label' => 'Daten speichern',
+        //            ])
+        //        ;
     }
 }

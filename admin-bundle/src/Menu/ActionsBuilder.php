@@ -106,7 +106,7 @@ class ActionsBuilder
 
         $root->addChild('newVariant', [
             'label' => 'offers.action.newVariant',
-            'route' => 'admin_offer_new',
+            'route' => 'admin_offers_new',
             'routeParameters' => ['source' => null === $item->getVariantBase() ? $item->getId() : $item->getVariantBase()?->getId(), 'act' => 'newVariant', 'edition' => $item->getEdition()->getAlias()],
             'display' => $this->isGranted('create', $item) && $this->isGranted('edit', $item),
             'extras' => ['icon' => 'calendar-solid'],
@@ -115,7 +115,7 @@ class ActionsBuilder
         foreach ($this->editionRepository->findWithActiveTask('host_editing_stage') as $edition) {
             $root->addChild('copy'.$edition->getId(), [
                 'label' => 'offers.action.copy',
-                'route' => 'admin_offer_new',
+                'route' => 'admin_offers_new',
                 'routeParameters' => ['source' => $item->getId(), 'act' => 'copy', 'edition' => $edition->getAlias()],
                 'display' => $this->isGranted('view', $item),
                 'extras' => ['icon' => 'duplicate-solid', 'translation_params' => ['edition' => $edition->getName()]],

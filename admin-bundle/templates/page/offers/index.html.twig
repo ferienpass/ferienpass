@@ -5,12 +5,12 @@
 
 {% block main %}
 
-    {{ partials.h2('offers.headline'|trans) }}
+    {{ partials.h2('offers.title'|trans) }}
 
     {% set disabled = edition and not is_granted('offer.create', edition) %}
 
     <div class="text-right">
-        {% embed '@FerienpassAdmin/components/button-primary.html.twig' with { disabled: disabled, 'uri': path('admin_offer_new', { edition: edition ? edition.alias : null })} %}
+        {% embed '@FerienpassAdmin/components/button-primary.html.twig' with { 'uri': path('admin_offers_new', { edition: edition ? edition.alias : null })} %}
             {% block link %}
                 <span class="block h-5 w-5 mr-1">{{ source('@FerienpassAdmin/icons/plus-solid.svg') }}</span>
                 <span>Neues Angebot</span>
@@ -19,8 +19,10 @@
     </div>
 
     {% if disabled %}
-        <p class=" mt-1 text-right max-w-xs text-xs text-gray-500">Das Erstellen von
-            Angeboten in „{{ edition.name }}“ ist aktuell nicht möglich.</p>
+        <div class="mt-1 flex justify-end">
+            <p class="max-w-xs text-xs text-gray-500 text-right">Das Erstellen von Angeboten in „{{ edition.name }}“ ist aktuell
+                nicht möglich.
+            </p></div>
     {% endif %}
 
     {#              <p class="rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset text-green-700 bg-green-50 ring-green-600/20">

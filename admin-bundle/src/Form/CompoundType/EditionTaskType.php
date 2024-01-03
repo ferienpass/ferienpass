@@ -33,11 +33,11 @@ class EditionTaskType extends AbstractType
         $builder
             ->add('periodBegin', DateTimeType::class, [
                 'date_widget' => 'single_text',
-                'with_minutes' => true,
+                'minutes' => [0, 15, 30, 45],
             ])
             ->add('periodEnd', DateTimeType::class, [
                 'date_widget' => 'single_text',
-                'with_minutes' => true,
+                'minutes' => [0, 15, 30, 45],
             ])
             ->add('type', ChoiceType::class, [
                 'choices' => [

@@ -24,6 +24,7 @@ use Ferienpass\AdminBundle\Form\EditOfferType;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Ux\Flash;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -40,10 +41,10 @@ final class OffersEditController extends AbstractController
     }
 
     #[Route('/{id}/bearbeiten', name: 'admin_offers_edit', requirements: ['id' => '\d+'])]
-    #[Route('/neu', name: 'admin_offer_new')]
-    public function __invoke(EntityManagerInterface $em, Request $request, Breadcrumb $breadcrumb): Response
+    #[Route('/neu', name: 'admin_offers_new')]
+    public function __invoke(#[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, EntityManagerInterface $em, Request $request, Breadcrumb $breadcrumb): Response
     {
-        $offer = $this->getOffer($request);
+        $offer = $this->getOffer($request, $edition);
 
         $form = $this->formFactory->create(EditOfferType::class, $offer, ['is_variant' => !$offer->isVariantBase()]);
         $form->handleRequest($request);
@@ -96,23 +97,15 @@ final class OffersEditController extends AbstractController
         return $this->renderForm('@FerienpassAdmin/page/offers/edit.html.twig', [
             'item' => $offer,
             'form' => $form,
-            'breadcrumb' => $breadcrumb->generate([$offer->getEdition()->getName(), ['route' => 'admin_offer_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], $offer->getName().' (bearbeiten)'),
+            'breadcrumb' => $breadcrumb->generate([$offer->getEdition()->getName(), ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], $offer->getName().' (bearbeiten)'),
         ]);
     }
 
-    private function getOffer(Request $request): Offer
+    private function getOffer(Request $request, ?Edition $edition): Offer
     {
         if (0 === $offerId = $request->attributes->getInt('id')) {
             $offer = new Offer();
-
-            $edition = null;
-            if ($alias = $request->query->get('edition')) {
-                $edition = $this->doctrine->getRepository(Edition::class)->findOneBy(['alias' => $alias]);
-            }
-
-            if (null !== $edition) {
-                $offer->setEdition($edition);
-            }
+            $offer->setEdition($edition);
 
             $this->denyAccessUnlessGranted('create', $offer);
 
