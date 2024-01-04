@@ -19,6 +19,9 @@
         "symfony/http-kernel": "^5.0 || ^6.1"
     },
     "extra": {
-        "contao-manager-plugin": "Ferienpass\\UX\\HostPortal\\ContaoManager\\Plugin"
+        "contao-manager-plugin": "Ferienpass\\UX\\HostPortal\\ContaoManager\\Plugin",
+        "branch-alias": {
+            "dev-4.x": "4.x-dev"
+        }
     }
 }
