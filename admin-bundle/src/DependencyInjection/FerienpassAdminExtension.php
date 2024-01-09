@@ -13,7 +13,10 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\DependencyInjection;
 
+use DoctrineExtensions\Query\Mysql\DateFormat;
+use DoctrineExtensions\Query\Mysql\TimestampDiff;
 use Ferienpass\AdminBundle\State\PrivacyConsent;
+use Symfony\Component\AssetMapper\AssetMapperInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -41,10 +44,17 @@ final class FerienpassAdminExtension extends Extension implements PrependExtensi
 
     public function prepend(ContainerBuilder $container): void
     {
-        $bundles = $container->getParameter('kernel.bundles');
+        $this->prependTwigBundle($container);
+        $this->prependDoctrineBundle($container);
 
-        if (isset($bundles['TwigBundle'])) {
-            $this->prependTwigBundle($container);
+        if ($this->isAssetMapperAvailable($container)) {
+            $container->prependExtensionConfig('framework', [
+                'asset_mapper' => [
+                    'paths' => [
+                        __DIR__.'/../../assets/dist' => '@ferienpass/ux-admin',
+                    ],
+                ],
+            ]);
         }
     }
 
@@ -52,8 +62,38 @@ final class FerienpassAdminExtension extends Extension implements PrependExtensi
     {
         $config = ['form_themes' => [
             '@FerienpassAdmin/form/custom_types.html.twig',
+            '@FerienpassAdmin/form/form_types.html.twig',
         ]];
 
         $container->prependExtensionConfig('twig', $config);
+    }
+
+    private function prependDoctrineBundle(ContainerBuilder $container): void
+    {
+        $container->prependExtensionConfig('doctrine', [
+            'orm' => [
+                'dql' => [
+                    'string_functions' => [
+                        'DATE_FORMAT' => DateFormat::class,
+                        'TIMESTAMPDIFF' => TimestampDiff::class,
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    private function isAssetMapperAvailable(ContainerBuilder $container): bool
+    {
+        if (!interface_exists(AssetMapperInterface::class)) {
+            return false;
+        }
+
+        // check that FrameworkBundle 6.3 or higher is installed
+        $bundlesMetadata = $container->getParameter('kernel.bundles_metadata');
+        if (!isset($bundlesMetadata['FrameworkBundle'])) {
+            return false;
+        }
+
+        return is_file($bundlesMetadata['FrameworkBundle']['path'].'/Resources/config/asset_mapper.php');
     }
 }

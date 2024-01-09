@@ -73,10 +73,14 @@ final class OffersController extends AbstractController
             ->getResult()
         ;
 
-        $menu = $factory->createItem('Editions');
+        $menu = $factory->createItem('offers.editions');
 
         foreach ($editionRepository->findAll() as $edition1) {
-            $menu->addChild($edition1->getName(), ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $edition1->getAlias()]]);
+            $menu->addChild($edition1->getName(), [
+                'route' => 'admin_offers_index',
+                'routeParameters' => ['edition' => $edition1->getAlias()],
+                'current' => $edition1->getAlias() === $edition->getAlias(),
+            ]);
         }
 
         return $this->render('@FerienpassAdmin/page/offers/index.html.twig', [

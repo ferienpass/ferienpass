@@ -27,8 +27,6 @@ class GanttController extends AbstractController
 
     public function __invoke(): Response
     {
-        return new Response('', Response::HTTP_NO_CONTENT);
-
         if (!$this->isGranted('ROLE_ADMIN')) {
             return new Response('', Response::HTTP_NO_CONTENT);
         }
@@ -52,11 +50,9 @@ class GanttController extends AbstractController
                     'description' => $this->getDescription($task),
                     'progress' => $task->getProgress(),
                     'dependencies' => implode(', ', $task->getDependencies()->map(fn (EditionTask $t) => $t->getId())->toArray()),
-                    'editLink' => [
-                        'link' => $this->translator->trans('EditionTask.edit.0', [], 'contao_EditionTask'),
-                        'title' => $this->translator->trans('EditionTask.edit.1', [$task->getId()], 'contao_EditionTask'),
-                        'href' => $this->generateUrl('contao_backend', ['do' => 'editions', 'table' => 'EditionTask', 'pid' => $edition->getId(), 'act' => 'edit', 'id' => $task->getId()]),
-                    ],
+                    'editLink' => $this->translator->trans('EditionTask.edit.0', [], 'contao_EditionTask'),
+                    'editTitle' => $this->translator->trans('EditionTask.edit.1', [$task->getId()], 'contao_EditionTask'),
+                    'editHref' => $this->generateUrl('contao_backend', ['do' => 'editions', 'table' => 'EditionTask', 'pid' => $edition->getId(), 'act' => 'edit', 'id' => $task->getId()]),
                 ];
             }
 

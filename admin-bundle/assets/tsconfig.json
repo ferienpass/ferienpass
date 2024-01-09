@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "es6",
+    "strict": true,
+    "outDir": "dist",
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "moduleResolution": "Node"
+  },
+  "include": [
+    "src"
+  ]
+}

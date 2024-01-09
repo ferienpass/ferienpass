@@ -1,0 +1,8 @@
+{% trans_default_domain 'admin' %}
+{% set translationPrefix = app.request.get('_route')|split('_')[1] %}
+
+<div {{ attributes }}>
+
+    {% include '@FerienpassAdmin/layout/_edit.html.twig' %}
+
+</div>

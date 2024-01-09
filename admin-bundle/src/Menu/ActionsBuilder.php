@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Menu;
 
 use Contao\MemberModel;
+use Ferienpass\AdminBundle\Controller\Page\AccountsController;
 use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Host;
@@ -251,7 +252,7 @@ class ActionsBuilder
             'route' => 'admin_editions_stats',
             'routeParameters' => ['alias' => $item->getAlias()],
             'display' => $this->isGranted('stats', $item),
-            'extras' => ['icon' => 'pencil-solid'],
+            'extras' => ['icon' => 'chart-pie.mini'],
         ]);
     }
 
@@ -281,7 +282,7 @@ class ActionsBuilder
         $root->addChild('edit', [
             'label' => 'accounts.action.edit',
             'route' => 'admin_accounts_edit',
-            'routeParameters' => ['id' => $item->id],
+            'routeParameters' => ['id' => $item->id, 'role' => array_search($item->role, AccountsController::ROLES, true)],
             // 'display' => $this->isGranted('edit', $item),
             'extras' => ['icon' => 'pencil-solid'],
         ]);

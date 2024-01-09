@@ -18,7 +18,7 @@
                                  viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path
                                         d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM14 11a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1h-1a1 1 0 110-2h1v-1a1 1 0 011-1z"></path></svg>
                         </a>
-                        <a href="{{ path('admin_edition_stats', {alias: element.edition.alias}) }}"
+                        <a href="{{ path('admin_editions_stats', {alias: element.edition.alias}) }}"
                            title="Statistiken"
                            class="relative inline-flex items-center px-3 py-1.5 border rounded-r-md border-gray-300 bg-white text-sm font-medium text-gray-400 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
                             <span class="sr-only">Statistiken</span>
@@ -32,7 +32,11 @@
             </div>
         </div>
 
-        <div class="mt-2" x-data='DashboardGantt({{ element.tasks|json_encode|raw }})'>
+        <div class="mt-2"
+                {{ stimulus_controller('ferienpass/admin-dashboard-gantt', {
+                    tasks: element.tasks,
+                }) }}
+        >
 
             <div class="flex items-center justify-between mb-2">
                 <div>

@@ -40,7 +40,7 @@ class MenuBuilder
         $menu->addChild('offers.title', [
             'route' => 'admin_offers_index',
             'routeParameters' => [
-                'edition' => $edition->getAlias(),
+                'edition' => $edition?->getAlias() ?? 'tes',
             ],
         ]);
 

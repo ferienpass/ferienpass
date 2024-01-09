@@ -6,7 +6,7 @@
 
     {% for organization in organizations %}
 
-        <h2 class="mb-2 text-gray-900 dark:text-gray-50">{{ organization.host.name }}</h2>
+        <h2 class="mb-2 text-gray-900 _dark:text-gray-50">{{ organization.host.name }}</h2>
 
         {% embed '@FerienpassAdmin/fragment/_box_33_66.html.twig' with {
             'headline': 'organizationReader.headline'|trans,
@@ -22,7 +22,7 @@
                                         {{ contao_figure(organization.host.logo, '_host_details_logo') }}
                                     </div>
                                 {% endif %}
-                                <h3 class="text-gray-900 dark:text-gray-50">{{ organization.host.name }}</h3>
+                                <h3 class="text-gray-900 _dark:text-gray-50">{{ organization.host.name }}</h3>
                             </div>
                             {% embed '@FerienpassAdmin/components/button-primary.html.twig' with {'uri': path('admin_profile_edit', { 'id': organization.host.id })} %}
                                 {% block link %}
@@ -32,7 +32,7 @@
                             {% endembed %}
                         </div>
 
-                        <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-5">
+                        <div class="space-y-4 text-gray-700 _dark:text-gray-300 leading-5">
                             <div>
                                 <p>{{ organization.host.street }}</p>
                                 <p>
@@ -46,7 +46,7 @@
                                 <p>{{ organization.host.website }}</p>
                             </div>
                             {% if organization.host.text %}
-                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ organization.host.text|nl2br }}</p>
+                                <p class="text-sm text-gray-500 _dark:text-gray-400">{{ organization.host.text|nl2br }}</p>
                             {% endif %}
                         </div>
                     </div>
@@ -69,7 +69,7 @@
         <div class="mt-10 md:grid md:grid-cols-3 md:gap-6">
             <div class="md:col-span-1">
                 <div class="px-4 sm:px-0">
-                    <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-50">Team</h3>
+                    <h3 class="text-lg font-medium leading-6 text-gray-900 _dark:text-gray-50">Team</h3>
                     <p class="mt-1 text-sm leading-5 text-gray-500">Alle Mitglieder haben vollen Zugriff auf die
                         Angebote.</p>
                 </div>
@@ -82,13 +82,13 @@
 
                 <span class="inline-block relative">
 
-                    <span class="inline-flex items-center justify-center h-14 w-14 rounded-full bg-gray-400 dark:bg-gray-600">
-                        <span class="text-xl font-medium leading-none text-white dark:text-gray-200">{{ member.firstname|first|upper ~ member.lastname|first|upper }}</span>
+                    <span class="inline-flex items-center justify-center h-14 w-14 rounded-full bg-gray-400 _dark:bg-gray-600">
+                        <span class="text-xl font-medium leading-none text-white _dark:text-gray-200">{{ member.firstname|first|upper ~ member.lastname|first|upper }}</span>
                     </span>
                 </span>
 
-                            <h3 class="font-medium text-gray-900 dark:text-gray-50 truncate">{{ member.firstname ~ ' ' ~ member.lastname }}</h3>
-                            <p class="leading-4 text-xs text-gray-400 dark:text-gray-500 truncate">
+                            <h3 class="font-medium text-gray-900 _dark:text-gray-50 truncate">{{ member.firstname ~ ' ' ~ member.lastname }}</h3>
+                            <p class="leading-4 text-xs text-gray-400 _dark:text-gray-500 truncate">
                                 <a href="{{ 'mailto:' ~ member.email }}" class="hover:underline">{{ member.email }}</a>
                             </p>
                         </div>

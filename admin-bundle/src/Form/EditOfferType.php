@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Form;
 
 use Ferienpass\AdminBundle\Dto\Annotation\FormType as FormTypeAnnotation;
-use Ferienpass\AdminBundle\Form\CompoundType\DatesType;
+use Ferienpass\AdminBundle\Form\CompoundType\OfferDatesType;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -48,7 +48,7 @@ class EditOfferType extends AbstractType
             ->add('description', TextareaType::class, ['fieldset_group' => 'base'])
 //            ->add('parent', EntityType::class, [ 'class' => User::class ])
             // ->add('categories', EntityType::class, ['class' => OfferCategory::class, 'choice_label' => 'name', 'fieldset_group' => 'base'])
-            ->add('dates', DatesType::class, ['help' => 'Sie können eine zusätzliche Zeit eintragen, wenn die gleiche Gruppe von Kindern an mehreren Terminen erscheinen muss. Wenn Sie das Angebot mehrmals anbieten, verwenden Sie stattdessen die Kopierfunktion auf der Übersichtsseite.', 'fieldset_group' => 'dates'])
+            ->add('dates', OfferDatesType::class, ['help' => 'Sie können eine zusätzliche Zeit eintragen, wenn die gleiche Gruppe von Kindern an mehreren Terminen erscheinen muss. Wenn Sie das Angebot mehrmals anbieten, verwenden Sie stattdessen die Kopierfunktion auf der Übersichtsseite.', 'fieldset_group' => 'dates'])
             ->add('applicationDeadline', DateType::class, ['help' => 'offers.help.applicationDeadline', 'input_format' => \Contao\Config::get('dateFormat'), 'widget' => 'single_text', 'fieldset_group' => 'dates', 'width' => '1/3'])
             ->add('minAge', IntegerType::class, ['attr' => ['placeholder' => 'kein Mindestalter'], 'fieldset_group' => 'details', 'width' => '1/3'])
             ->add('maxAge', IntegerType::class, ['attr' => ['placeholder' => 'kein Höchstalter'], 'fieldset_group' => 'details', 'width' => '1/3'])

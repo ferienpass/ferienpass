@@ -82,6 +82,7 @@
 
                                         {% for action in actions %}
                                             {% embed '@FerienpassAdmin/components/dropdown-a.html.twig' with {'uri': action.uri} %}
+                                                {% trans_default_domain 'admin' %}
                                                 {% block link %}
                                                     <span class="mr-3 h-5 w-5 text-gray-400 flex-shrink-0">{{ source('@FerienpassAdmin/icons/'~action.extra('icon')~'.svg', ignore_missing = true) }}</span>
                                                     {%- set label = action.label -%}

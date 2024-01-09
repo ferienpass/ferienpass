@@ -1,26 +1,20 @@
 accounts:
-  title:
-    0: Accounts
-    ROLE_MEMBER: Eltern-Accounts
-    ROLE_HOST: Veranstalter-Accounts
-    ROLE_ADMIN: Admin-Accounts
+  title: Accounts
+  roles: Rollen
   new: Neuer Account
   index.empty: Es wurden keine Accounts gefunden.
   action.edit: Bearbeiten
-  baseLegend:
-    - Name
-  contactLegend:
-    - Kontaktdaten
-  addressLegend:
-    - Postanschrift
+  legend:
+    base.0: Name
+    contact.0: Kontaktdaten
+    address.0: Postanschrift
   ROLE_MEMBER: Eltern
   ROLE_HOST: Veranstaltende
   ROLE_ADMIN: Admins
-
-
   label:
     firstname: Vorname
     lastname: Nachname
+    hosts: Veranstalter-Profile
     phone: Telefon
     fax: Faxnummer
     mobile: Mobilnummer
@@ -28,9 +22,12 @@ accounts:
     street: Straße
     postal: PLZ
     city: Ort
+  help:
+    hosts: Dieser Account erhält Zugriff auf alle Daten (also Angebote, Teilnehmerlisten) dieses Veranstalters.
 
 offers:
   title: Angebote
+  editions: Saisons
   index.empty: Es sind hier noch keine Angebote erstellt worden.
   action:
     view: Angebot öffnen
@@ -43,19 +40,19 @@ offers:
     reactivate: Angebot wiederherstellen
     participantList: Teilnahmeliste
   new: Neues Angebot
-  baseLegend:
+  legend.base:
     - Titel und Beschreibung
     - Geben Sie dem Angebot einen griffigen Titel und eine attraktive Beschreibung.
-  datesLegend:
+  legend.dates:
     - Termin
     - Geben Sie den Termin (Datum und Uhrzeit) des Angebotes an.
-  detailsLegend:
+  legend.details:
     - Details
     - Genaueres zum Angebot.
-  applicationsLegend:
+  legend.applications:
     - Anmeldungen
     - Geben Sie an, welche Anmeldungen Sie zulassen.
-  mediaLegend:
+  legend.media:
     - Foto
     - Laden Sie ein Foto zur Veröffentlichung hoch. Nutzen Sie nur gemeinfreie Fotos und geben Sie in jedem Fall den/die Fotografin an.
   label:
@@ -80,6 +77,8 @@ offers:
     contact: Wer gibt Auskunft (z.B. Name + TelNr)? Leer lassen, falls die Info schon in "Anmeldung unter" steht.
     requiresApplication: Eine vorherige Anmeldung ist erforderlich, um am Angebot teilnehmen zu können.
     onlineApplication: Die Anmeldungen über das Online-System laufen lassen.
+  edit_offer_dates_add: Zusätzliche Zeit zu diesem Termin
+  edit_offer_dates_entry_delete: Zeitraum löschen
 
 hosts:
   title: Veranstaltende
@@ -87,15 +86,16 @@ hosts:
   action:
     show: Anzeigen
     edit: Bearbeiten
-  baseLegend:
-    - 'Basisdaten'
-    - 'test'
-  contactLegend:
-    - 'Kontaktdaten'
-    - 'test'
-  addressLegend:
-    - 'Postanschrift'
-    - 'test'
+  legend:
+    base:
+      - 'Basisdaten'
+      - 'test'
+    contact:
+      - 'Kontaktdaten'
+      - 'test'
+    address:
+      - 'Postanschrift'
+      - 'test'
   label:
     name: Name
     alias: Alias
@@ -113,15 +113,20 @@ hosts:
 
 editions:
   title: Saisons
+  stats: Statistiken
   new: Neue Saison
   action:
     edit: Bearbeiten
     stats: Statistiken
-  baseLegend:
-    - Name der Saison
-  tasksLegend:
-    - Zeiträume und Einstellungen
-    - Die Konfiguration des Ferienpasses funktioniert zeitgesteuert. Erstellen Sie einen Zeitraum, in dem die Bearbeitung möglich ist, einen Zeitraum, in dem Anmeldungen möglich sind, usw. usf.
+  legend:
+    base:
+      - Name der Saison
+    tasks:
+      - Zeiträume und Einstellungen
+      - Die Konfiguration des Ferienpasses funktioniert zeitgesteuert. Erstellen Sie einen Zeitraum, in dem die Bearbeitung möglich ist, einen Zeitraum, in dem Anmeldungen möglich sind, usw. usf.
+  task:
+    holiday: Ferien
+    host_editing_stage: Bearbeitungsphase für Veranstaltende
   label:
     name: Name
     alias: Alias
@@ -143,6 +148,8 @@ editions:
     allow_anonymous: Erlauben Sie Anmeldungen ohne Benutzerkonto.
     allow_anonymous_fee: Erlauben Sie Anmeldungen ohne Benutzerkonto auch für kostenpflichtige Angebote
     hide_status: Den Eltern den aktuellen Status nicht anzeigen. Dies sollte aktiviert werden für das Losverfahren, damit die Eltern den Status erst nach dem Losen einsehen können.
+  edit_edition_tasks_entry_delete: Phase löschen
+  edit_edition_tasks_add: Neue Phase definieren
 
 participants:
   title: Teilnehmende

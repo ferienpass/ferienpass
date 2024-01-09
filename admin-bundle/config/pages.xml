@@ -21,9 +21,13 @@
             </argument>
         </service>
 
-        <service id="Ferienpass\AdminBundle\Controller\Page\EditionController">
+        <service id="Ferienpass\AdminBundle\Controller\Page\EditionsController">
             <argument type="service" id="Ferienpass\CoreBundle\Repository\EditionRepository"/>
             <argument type="tagged_iterator" tag="ferienpass.stats_widget"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Controller\Page\EditionsEditController">
+            <argument type="service" id="form.factory"/>
         </service>
 
         <service id="Ferienpass\AdminBundle\Controller\Page\ExportController">

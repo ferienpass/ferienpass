@@ -5,12 +5,12 @@
     {% for item in menu.children|filter(v => v.isDisplayed) %}
         {% if item.current %}
             <strong aria-current="page"
-                    class="rounded-md py-2 px-3 inline-flex items-center text-sm font-semibold text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800">
+                    class="rounded-md py-2 px-3 inline-flex items-center text-sm font-semibold text-gray-900 _dark:text-white bg-gray-50 _dark:bg-gray-800">
                 {{ item.label|trans }}
             </strong>
         {% else %}
             <a href="{{ item.uri }}"
-               class="rounded-md py-2 px-3 inline-flex items-center text-sm font-medium text-gray-900 dark:text-white {% if item.extra('isTrail') %}bg-gray-50 dark:bg-gray-800 {% endif %}hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white">
+               class="rounded-md py-2 px-3 inline-flex items-center text-sm font-medium text-gray-900 _dark:text-white {% if item.extra('isTrail') %}bg-gray-50 _dark:bg-gray-800 {% endif %}hover:bg-gray-100 _dark:hover:bg-gray-800 hover:text-gray-900 _dark:hover:text-white">
                 {{ item.label|trans }}
             </a>
         {% endif %}

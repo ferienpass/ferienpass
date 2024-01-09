@@ -27,15 +27,27 @@ use Ferienpass\CoreBundle\Ux\Flash;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\Attribute\LiveProp;
+use Symfony\UX\LiveComponent\DefaultActionTrait;
+use Symfony\UX\LiveComponent\LiveCollectionTrait;
 
 #[Route('/{edition}/angebote')]
+#[AsLiveComponent(name: 'OffersEdit', template: '@FerienpassAdmin/components/EditOffer.html.twig')]
 final class OffersEditController extends AbstractController
 {
+    use DefaultActionTrait;
+    use LiveCollectionTrait;
+
+    #[LiveProp]
+    public Offer $initialFormData;
+
     public function __construct(private Slug $slug, private string $imagesDir, private string $projectDir, private ManagerRegistry $doctrine, private FormFactoryInterface $formFactory)
     {
     }
@@ -44,18 +56,13 @@ final class OffersEditController extends AbstractController
     #[Route('/neu', name: 'admin_offers_new')]
     public function __invoke(#[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, EntityManagerInterface $em, Request $request, Breadcrumb $breadcrumb): Response
     {
-        $offer = $this->getOffer($request, $edition);
+        $offer = $this->initialFormData = $this->getOffer($request, $edition);
 
-        $form = $this->formFactory->create(EditOfferType::class, $offer, ['is_variant' => !$offer->isVariantBase()]);
+        $form = $this->instantiateForm();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $offer->setTimestamp(time());
-
             // Add alias to the change-set, later the {@see AliasListener.php} kicks in
             $offer->setAlias(uniqid());
-            // Add fields to the change-set, later the {@see SortingFieldsListener.php} kicks in
-            $offer->setDatesSorting(random_int(0, 99999));
-            $offer->setHostsSorting(uniqid());
 
             /** @var UploadedFile|null $imageFile */
             $imageFile = $form->get('image')->getData();
@@ -94,11 +101,16 @@ final class OffersEditController extends AbstractController
             return $this->redirectToRoute($request->attributes->get('_route'), ['id' => $offer->getId()]);
         }
 
-        return $this->renderForm('@FerienpassAdmin/page/offers/edit.html.twig', [
+        return $this->render('@FerienpassAdmin/page/offers/edit.html.twig', [
             'item' => $offer,
             'form' => $form,
             'breadcrumb' => $breadcrumb->generate([$offer->getEdition()->getName(), ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], $offer->getName().' (bearbeiten)'),
         ]);
+    }
+
+    protected function instantiateForm(): FormInterface
+    {
+        return $this->formFactory->create(EditOfferType::class, $this->initialFormData, ['is_variant' => !$this->initialFormData->isVariantBase()]);
     }
 
     private function getOffer(Request $request, ?Edition $edition): Offer

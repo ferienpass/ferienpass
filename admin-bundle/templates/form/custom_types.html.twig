@@ -1,65 +1,77 @@
-{% block offer_dates_widget %}
+{%- block _edit_edition_tasks_entry_row -%}
 
-    <div x-data="OfferDatesWidget()">
-
-        <div {{ block('widget_container_attributes') }} x-ref="list" class="divide-y">
-            {% for child in form|filter(child => not child.rendered) %}
-                <div>
-                    {{- form_row(child) -}}
-
-                    <div class="flex justify-end mt-2">
-                        <button type="button" class="text-red-700 hover:text-red-800 text-sm flex items-center"
-                                @click="$event.currentTarget.parentNode.parentNode.remove()">
-                            <span class="block w-6 h-6 mr-1">{{ source('@FerienpassAdmin/icons/trash.svg') }}</span>Zeiteintrag
-                            löschen
-                        </button>
-                    </div>
-                </div>
-            {% endfor %}
+    <div class="mt-10 relative">
+        <div class="absolute inset-0 flex items-center" aria-hidden="true">
+            <div class="w-full border-t border-gray-300"></div>
         </div>
+        <div class="relative flex items-center justify-between">
+            <h2 class="bg-gray-50 pr-3 text-xl font-medium leading-6 text-gray-900">
+               {{ data.type == 'custom' ? data.title : "editions.task.#{data.type}"|trans([], 'admin') }}
+            </h2>
 
-        <template x-ref="prototype">
-            <div>
-                {% set prototype = form_widget(form.vars.prototype) %}
-                {{ prototype|raw }}
-                <div class="flex justify-end mt-2">
-                    <button type="button" class="text-red-700 hover:text-red-800 text-sm flex items-center"
-                            @click="$event.currentTarget.parentNode.parentNode.remove()">
-                        <span class="block w-6 h-6 mr-1">{{ source('@FerienpassAdmin/icons/trash.svg') }}</span>Zeiteintrag
-                        löschen
-                    </button>
-                </div>
-            </div>
-        </template>
+            {%- if button_delete is defined and not button_delete.rendered -%}
+                {{ form_widget(button_delete) }}
+            {%- endif -%}
 
-        <div class="mt-4">
-            <button class="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-500 hover:bg-green-400 focus:outline-none focus:border-green-600 focus:shadow-outline-blue active:bg-green-600 transition ease-in-out duration-150"
-                    type="button"
-                    @click="addEntry()">
-                <span class="-ml-1 mr-2 h-5 w-5">{{ source('@FerienpassAdmin/icons/plus.svg') }}</span>
-                Zusätzliche Zeit für diesen Termin
-            </button>
         </div>
-
     </div>
 
-    <script>
-        const OfferDatesWidget = () => ({
-            index: -1,
-            addEntry() {
-                this.$refs.list.insertAdjacentHTML('beforeend', this.$refs.prototype.innerHTML.replace(/__name__/g, ++this.index))
-            },
-            init() {
-                this.index = this.$refs.list.children.length - 1
+    {{ block('form_row') }}
 
-                if (this.index < 0) {
-                    this.addEntry()
-                }
-            }
-        })
-    </script>
+{%- endblock -%}
 
-{% endblock offer_dates_widget %}
+{%- block _edit_offer_dates_entry_row -%}
+
+    <div class="mt-10 relative">
+        <div class="absolute inset-0 flex items-center" aria-hidden="true">
+            <div class="w-full border-t border-gray-300"></div>
+        </div>
+        <div class="relative flex items-center justify-between">
+            <h2 class="bg-gray-50 pr-3 text-xl font-medium leading-6 text-gray-900">
+
+            </h2>
+
+            {%- if button_delete is defined and not button_delete.rendered -%}
+                {{ form_widget(button_delete) }}
+            {%- endif -%}
+
+        </div>
+    </div>
+
+    {{ block('form_row') }}
+
+{%- endblock -%}
+
+{% block live_collection_button_delete_widget %}
+
+    <button type="{{ type|default("button") }}" {{ block('button_attributes') }}
+            class="inline-flex items-center gap-x-1.5 rounded-full bg-white px-3 py-1.5 text-sm text-red-800 font-medium shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+        <span class="-ml-1 -mr-0.5 h-5 w-5">{{ source('@FerienpassAdmin/icons/trash-solid.svg') }}</span>
+        <span>{{ label_format|replace({'label.': '', '%name%': unique_block_prefix[1:]})|trans({}, 'admin') }}</span>
+    </button>
+
+{% endblock live_collection_button_delete_widget %}
+
+{% block live_collection_button_add_widget %}
+
+    <div class="mt-10 relative">
+        <div class="absolute inset-0 flex items-center" aria-hidden="true">
+            <div class="w-full border-t border-gray-300"></div>
+        </div>
+        <div class="relative flex justify-center">
+            <button type="{{ type|default('button') }}" {{ block('button_attributes') }}
+                    class="inline-flex items-center gap-x-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                <svg class="-ml-1 -mr-0.5 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+                     aria-hidden="true">
+                    <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z"/>
+                </svg>
+                {{ label_format|replace({'label.': '', '%name%': unique_block_prefix[1:]})|trans({}, 'admin') }}
+            </button>
+        </div>
+    </div>
+
+{% endblock live_collection_button_add_widget %}
+
 
 {% block estimated_expense_widget %}
     <div class="grid grid-cols-3 gap-4">
@@ -117,23 +129,23 @@
            name="{{ form.vars.full_name }}"/>
 
     <div class="flex space-x-3">
-            <button type="button"
-                    @click="status='confirmed'"
-                    :class="{'bg-green-100 ring-green-600 ring-2': 'confirmed' === status}"
-                    class="focus:outline-none inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-green-50 hover:bg-green-100 text-green-800">
-                angemeldet
-            </button>
-            <button type="button"
-                    :class="{'bg-yellow-100 ring-yellow-600 ring-2': 'waitlisted' === status}"
-                    @click="status='waitlisted'"
-                    class="focus:outline-none inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-yellow-50 hover:bg-yellow-100 text-yellow-800">
-                Warteliste
-            </button>
-            <button type="button"
-                    @click="status='waiting'"
-                    :class="{'bg-gray-100 ring-gray-500 ring-2': 'waiting' === status}"
-                    class="focus:outline-none inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-gray-50 hover:bg-gray-100 text-gray-800">
-                wartend
-            </button>
-        </div>
+        <button type="button"
+                @click="status='confirmed'"
+                :class="{'bg-green-100 ring-green-600 ring-2': 'confirmed' === status}"
+                class="focus:outline-none inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-green-50 hover:bg-green-100 text-green-800">
+            angemeldet
+        </button>
+        <button type="button"
+                :class="{'bg-yellow-100 ring-yellow-600 ring-2': 'waitlisted' === status}"
+                @click="status='waitlisted'"
+                class="focus:outline-none inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-yellow-50 hover:bg-yellow-100 text-yellow-800">
+            Warteliste
+        </button>
+        <button type="button"
+                @click="status='waiting'"
+                :class="{'bg-gray-100 ring-gray-500 ring-2': 'waiting' === status}"
+                class="focus:outline-none inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-gray-50 hover:bg-gray-100 text-gray-800">
+            wartend
+        </button>
+    </div>
 {% endblock %}

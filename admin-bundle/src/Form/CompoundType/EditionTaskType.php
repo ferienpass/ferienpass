@@ -17,12 +17,12 @@ use Ferienpass\CoreBundle\Entity\EditionTask;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -31,13 +31,9 @@ class EditionTaskType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('periodBegin', DateTimeType::class, [
-                'date_widget' => 'single_text',
-                'minutes' => [0, 15, 30, 45],
-            ])
-            ->add('periodEnd', DateTimeType::class, [
-                'date_widget' => 'single_text',
-                'minutes' => [0, 15, 30, 45],
+            ->add('period', DateRangeType::class, [
+                'field_begin' => 'periodBegin',
+                'field_end' => 'periodEnd',
             ])
             ->add('type', ChoiceType::class, [
                 'choices' => [
@@ -50,17 +46,19 @@ class EditionTaskType extends AbstractType
                     'show_offers',
                     'custom',
                 ],
+                'placeholder' => '-',
                 'choice_label' => function ($choice): TranslatableMessage|string {
                     return new TranslatableMessage('EditionTask.type_options.'.$choice, [], 'contao_EditionTask');
                 },
                 'width' => '1/2',
-            ])
-        ;
+            ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
             $form = $event->getForm();
-            /** @var EditionTask $data */
-            $data = $event->getData();
+
+            if (!($data = $event->getData()) instanceof EditionTask) {
+                return;
+            }
 
             if ('custom' === $data->getType()) {
                 $form->add('title');
@@ -101,6 +99,9 @@ class EditionTaskType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => EditionTask::class,
+            'empty_data' => function (FormInterface $form): EditionTask {
+                return new EditionTask();
+            },
             // We rely on the fact that the parent form is a DatesType
             // and its parent form is a OfferType that is linked to an Offer entity.
             // 'empty_data' => fn (FormInterface $form) => new OfferDate($form->getParent()->getParent()->getData()->offerEntity()),

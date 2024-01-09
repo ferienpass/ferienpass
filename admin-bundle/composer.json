@@ -2,6 +2,9 @@
   "name": "ferienpass/admin-bundle",
   "license": "proprietary",
   "description": "",
+  "keywords": [
+    "symfony-ux"
+  ],
   "type": "contao-bundle",
   "homepage": "https://ferienpass.online/",
   "authors": [
@@ -21,8 +24,8 @@
 
     "contao/core-bundle": "^5.1",
     "ferienpass/core-bundle": "*",
-    "ferienpass/ux-host-portal": "*",
 
+    "beberlei/doctrineextensions": "^1.3",
     "knplabs/knp-menu-bundle": "^3.0",
     "michelf/php-markdown": "^1.9",
     "psr/log": "^1.1",

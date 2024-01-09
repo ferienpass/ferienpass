@@ -13,10 +13,9 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Form;
 
-use Ferienpass\AdminBundle\Form\CompoundType\EditionTaskType;
+use Ferienpass\AdminBundle\Form\CompoundType\EditionTasksType;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -38,12 +37,7 @@ class EditEditionType extends AbstractType
         $builder
             ->add('name', null, ['fieldset_group' => 'base', 'width' => '1/2'])
             ->add('alias', null, ['fieldset_group' => 'base', 'width' => '1/2', 'help' => 'editions.help.alias'])
-            ->add('tasks', CollectionType::class, [
-                'fieldset_group' => 'tasks',
-                'entry_type' => EditionTaskType::class,
-                'entry_options' => ['label' => false],
-                'label' => false,
-            ])
+            ->add('tasks', EditionTasksType::class, ['fieldset_group' => 'tasks'])
             ->add('submit', SubmitType::class, [
                 'label' => 'Daten speichern',
             ])

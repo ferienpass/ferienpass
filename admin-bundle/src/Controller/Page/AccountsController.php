@@ -29,14 +29,14 @@ use Symfony\Component\Translation\TranslatableMessage;
 #[Route('/accounts/{!role}', defaults: ['role' => 'eltern'])]
 final class AccountsController extends AbstractController
 {
-    private const ROLES = [
+    public const ROLES = [
         'eltern' => 'ROLE_MEMBER',
         'veranstaltende' => 'ROLE_HOST',
         'admins' => 'ROLE_ADMIN',
     ];
 
     #[Route('', name: 'admin_accounts_index')]
-    public function index(string $role, Request $request, Breadcrumb $breadcrumb, FactoryInterface $menuFactory): Response
+    public function index(string $role, Breadcrumb $breadcrumb, FactoryInterface $menuFactory): Response
     {
         if (!\in_array($role, array_keys(self::ROLES), true)) {
             throw $this->createNotFoundException('The role does not exist');
@@ -46,17 +46,21 @@ final class AccountsController extends AbstractController
 
         $items = MemberModel::findBy('role', $actualRole);
 
-        $nav = $menuFactory->createItem('Accounts');
+        $nav = $menuFactory->createItem('accounts.roles');
         foreach (self::ROLES as $slug => $r) {
-            $nav->addChild('accounts.'.$r, ['route' => 'admin_accounts_index', 'routeParameters' => ['role' => $slug]]);
+            $nav->addChild('accounts.'.$r, [
+                'route' => 'admin_accounts_index',
+                'routeParameters' => ['role' => $slug],
+                'current' => $slug === $role,
+            ]);
         }
 
         return $this->render('@FerienpassAdmin/page/accounts/index.html.twig', [
             'createUrl' => $this->generateUrl('admin_accounts_create', ['role' => $role]),
-            'headline' => 'accounts.title.'.$actualRole,
+            'headline' => 'accounts.'.$actualRole,
             'items' => $items,
             'aside_nav' => $nav,
-            'breadcrumb' => $breadcrumb->generate('accounts.title.0', 'accounts.'.self::ROLES[$role]),
+            'breadcrumb' => $breadcrumb->generate('accounts.title', 'accounts.'.self::ROLES[$role]),
         ]);
     }
 
@@ -72,6 +76,10 @@ final class AccountsController extends AbstractController
             $account = new MemberModel();
             $account->role = self::ROLES[$role];
         } elseif (null === $account = MemberModel::findByPk($id)) {
+            throw $this->createNotFoundException('The account does not exist');
+        }
+
+        if ($account->role !== self::ROLES[$role]) {
             throw $this->createNotFoundException('The account does not exist');
         }
 
@@ -95,7 +103,7 @@ final class AccountsController extends AbstractController
             'item' => $account,
             'headline' => $account->id ? sprintf('%s %s', $account->firstname, $account->lastname) : 'accounts.new',
             'form' => $form,
-            'breadcrumb' => $breadcrumb->generate(['accounts.title'], [$role], $breadcrumbTitle),
+            'breadcrumb' => $breadcrumb->generate(['accounts.title', ['route' => 'admin_accounts_index', 'routeParameters' => ['role' => $role]]], ['accounts.'.self::ROLES[$role], ['route' => 'admin_accounts_index', 'routeParameters' => ['role' => $role]]], $breadcrumbTitle),
         ]);
     }
 }

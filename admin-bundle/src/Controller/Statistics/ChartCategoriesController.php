@@ -27,6 +27,7 @@ class ChartCategoriesController extends AbstractController
 
     public function __invoke(Edition $edition): Response
     {
+        return new Response();
         $data = $this->getData($edition->getId());
         if (empty($data)) {
             return new Response();

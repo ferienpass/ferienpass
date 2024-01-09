@@ -1,0 +1,82 @@
+{
+    "name": "@ferienpass/ux-admin",
+    "description": "UX components for admin-bundle",
+    "license": "proprietary",
+    "version": "1.0.0",
+    "scripts": {
+        "build:js": "tsc"
+    },
+    "main": "dist/index.js",
+    "symfony": {
+        "controllers": {
+            "chart_age": {
+                "main": "dist/controllers/chart_age.js",
+                "name": "ferienpass/admin-chart-age",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true
+            },
+            "chart_attendances": {
+                "main": "dist/controllers/chart_attendances.js",
+                "name": "ferienpass/admin-chart-attendances",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true
+            },
+            "chart_status": {
+                "main": "dist/controllers/chart_status.js",
+                "name": "ferienpass/admin-chart-status",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true
+            },
+            "chart_utilization": {
+                "main": "dist/controllers/chart_utilization.js",
+                "name": "ferienpass/admin-chart-utilization",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true
+            },
+            "dashboard_gantt": {
+                "main": "dist/controllers/dashboard_gantt.js",
+                "name": "ferienpass/admin-dashboard-gantt",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true,
+                "autoimport": {
+                    "@ferienpass/admin-bundle/dist/gantt.css": true
+                }
+            },
+            "form_date_period": {
+                "main": "dist/controllers/form_date_period.js",
+                "name": "ferienpass/admin-form-date-period",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true
+            }
+        },
+        "importmap": {
+        "@easepick/bundle": "^1.2.1",
+            "@hotwired/stimulus": "^3.0.0",
+            "frappe-charts": "^1.6.0",
+            "frappe-gantt": "^0.6.0"
+        }
+    },
+    "dependencies": {
+        "@easepick/bundle": "^1.2.1",
+        "frappe-charts": "^1.6.0",
+        "frappe-gantt": "^0.6.0",
+        "sortablejs": "^1.10.2",
+        "tailwindcss": "^3.3.0"
+    },
+    "peerDependencies": {
+        "@hotwired/stimulus": "^3.0.0"
+    },
+    "devDependencies": {
+        "@hotwired/stimulus": "^3.0.0",
+        "@types/frappe-gantt": "^0.6.1",
+        "@types/node": "^16.0",
+        "@types/sortablejs": "^1.15.1",
+        "typescript": "^4.2.4"
+    }
+}

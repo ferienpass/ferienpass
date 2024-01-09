@@ -1,13 +1,15 @@
 {% extends "@FerienpassAdmin/layout/base.html.twig" %}
+{% import "@FerienpassAdmin/components/content_elements.html.twig" as partials %}
+{% trans_default_domain 'admin' %}
 
 {% block content %}
 
-    <div class="px-8 py-4 space-y-10">
+    {{ partials.h1("editions.stats"|trans) }}
+
+    <div class="py-4 space-y-10">
 
         {% for widget in widgets %}
-
             {{ render(controller(widget, { edition: edition })) }}
-
         {% endfor %}
 
     </div>

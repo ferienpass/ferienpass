@@ -1,1 +1,21 @@
-{% extends "@FerienpassAdmin/layout/edit.html.twig" %}
+{% extends "@FerienpassAdmin/layout/base.html.twig" %}
+
+{% import "@FerienpassAdmin/components/content_elements.html.twig" as partials %}
+
+{% trans_default_domain 'admin' %}
+{% set translationPrefix = app.request.get('_route')|split('_')[1] %}
+
+{% block main %}
+
+    <div class="max-w-3xl mx-auto">
+
+        {{ partials.h1(headline|default(item.name|default("#{translationPrefix}.new"))|trans) }}
+
+        {{ component('EditionsEdit', {
+            initialFormData: item,
+            form: form
+        }) }}
+
+    </div>
+
+{% endblock %}

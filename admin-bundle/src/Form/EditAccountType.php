@@ -14,10 +14,14 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Form;
 
 use Contao\MemberModel;
+use Ferienpass\CoreBundle\Entity\Host;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EditAccountType extends AbstractType
@@ -48,5 +52,24 @@ class EditAccountType extends AbstractType
                 'label' => 'Daten speichern',
             ])
         ;
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
+            $form = $event->getForm();
+
+            if (!($data = $event->getData()) instanceof MemberModel) {
+                return;
+            }
+
+            if ('ROLE_HOST' === $data->role) {
+                $form->add('hosts', EntityType::class, [
+                    'class' => Host::class,
+                    'choice_label' => 'name',
+                    'fieldset_group' => 'base',
+                    'multiple' => true,
+                    'expanded' => false,
+                    'help' => 'accounts.help.hosts',
+                ]);
+            }
+        });
     }
 }
