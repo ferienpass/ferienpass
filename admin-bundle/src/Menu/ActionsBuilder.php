@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Menu;
 
-use Contao\MemberModel;
 use Ferienpass\AdminBundle\Controller\Page\AccountsController;
 use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Edition;
@@ -21,6 +20,7 @@ use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Entity\Payment;
+use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Ferienpass\CoreBundle\Repository\PaymentRepository;
 use Knp\Menu\FactoryInterface;
@@ -79,7 +79,7 @@ class ActionsBuilder
             return $menu;
         }
 
-        if ($item instanceof MemberModel) {
+        if ($item instanceof User) {
             $this->accounts($menu, $item);
 
             return $menu;
@@ -221,13 +221,6 @@ class ActionsBuilder
 
     private function hosts(ItemInterface $root, Host $item)
     {
-        $root->addChild('show', [
-            'label' => 'hosts.action.show',
-            'route' => 'admin_hosts_show',
-            'routeParameters' => ['alias' => $item->getAlias()],
-            'display' => $this->isGranted('view', $item),
-        ]);
-
         $root->addChild('edit', [
             'label' => 'hosts.action.edit',
             'route' => 'admin_hosts_edit',
@@ -277,12 +270,12 @@ class ActionsBuilder
         ]);
     }
 
-    private function accounts(ItemInterface $root, MemberModel $item)
+    private function accounts(ItemInterface $root, User $item)
     {
         $root->addChild('edit', [
             'label' => 'accounts.action.edit',
             'route' => 'admin_accounts_edit',
-            'routeParameters' => ['id' => $item->id, 'role' => array_search($item->role, AccountsController::ROLES, true)],
+            'routeParameters' => ['id' => $item->getId(), 'role' => array_search($item->getRoles()[0], AccountsController::ROLES, true)],
             // 'display' => $this->isGranted('edit', $item),
             'extras' => ['icon' => 'pencil-solid'],
         ]);

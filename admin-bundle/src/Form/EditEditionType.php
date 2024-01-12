@@ -37,7 +37,7 @@ class EditEditionType extends AbstractType
         $builder
             ->add('name', null, ['fieldset_group' => 'base', 'width' => '1/2'])
             ->add('alias', null, ['fieldset_group' => 'base', 'width' => '1/2', 'help' => 'editions.help.alias'])
-            ->add('tasks', EditionTasksType::class, ['fieldset_group' => 'tasks'])
+            ->add('tasks', EditionTasksType::class, ['fieldset_group' => 'tasks', 'label' => false])
             ->add('submit', SubmitType::class, [
                 'label' => 'Daten speichern',
             ])

@@ -17,6 +17,8 @@
         </service>
 
         <service id="Ferienpass\AdminBundle\Components\SearchableQueryableList">
+            <argument tag="service" id="form.factory"/>
+            <argument tag="service" id="Ferienpass\AdminBundle\Form\Filter\FilterRegistry"/>
         </service>
 
         <service id="Ferienpass\AdminBundle\Components\SlideOver">

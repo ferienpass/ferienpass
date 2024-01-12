@@ -16,6 +16,7 @@ namespace Ferienpass\AdminBundle\DependencyInjection;
 use DoctrineExtensions\Query\Mysql\DateFormat;
 use DoctrineExtensions\Query\Mysql\TimestampDiff;
 use Ferienpass\AdminBundle\State\PrivacyConsent;
+use Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mysql\JsonSearch;
 use Symfony\Component\AssetMapper\AssetMapperInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -76,6 +77,7 @@ final class FerienpassAdminExtension extends Extension implements PrependExtensi
                     'string_functions' => [
                         'DATE_FORMAT' => DateFormat::class,
                         'TIMESTAMPDIFF' => TimestampDiff::class,
+                        'JSON_SEARCH' => JsonSearch::class,
                     ],
                 ],
             ],

@@ -34,12 +34,14 @@ final class HostsController extends AbstractController
     #[Route('', name: 'admin_hosts_index')]
     public function index(HostRepository $repository, Request $request, Breadcrumb $breadcrumb): Response
     {
-        $qb = $repository->createQueryBuilder('e');
-        $qb->orderBy('e.name');
+        $qb = $repository->createQueryBuilder('i');
+        $qb->orderBy('i.name');
 
         $paginator = (new Paginator($qb))->paginate($request->query->getInt('page', 1));
 
         return $this->render('@FerienpassAdmin/page/hosts/index.html.twig', [
+            'qb' => $qb,
+            'searchable' => ['name'],
             'createUrl' => $this->generateUrl('admin_hosts_create'),
             'pagination' => $paginator,
             'breadcrumb' => $breadcrumb->generate('hosts.title'),
@@ -71,15 +73,6 @@ final class HostsController extends AbstractController
             'item' => $host,
             'form' => $form,
             'breadcrumb' => $breadcrumb->generate(['hosts.title', ['route' => 'admin_hosts_index']], $breadcrumbTitle),
-        ]);
-    }
-
-    #[Route('/{alias}', name: 'admin_hosts_show')]
-    public function show(Host $host, Breadcrumb $breadcrumb): Response
-    {
-        return $this->render('@FerienpassAdmin/page/hosts/show.html.twig', [
-            'host' => $host,
-            'breadcrumb' => $breadcrumb->generate(['hosts.title', ['route' => 'admin_hosts_index']], $host->getName()),
         ]);
     }
 }

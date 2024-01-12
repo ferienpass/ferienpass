@@ -1,10 +1,15 @@
 {% extends "@FerienpassAdmin/layout/list.html.twig" %}
 
-{% set config = {
-    title: "{{ item.name }}",
-    info: [
-        "{{ item.website }}",
-        "{{ item.email }}",
-        "{{ item.phone }}",
-    ]
-} %}
+
+{% block list %}
+    {{ component('SearchableQueryableList', { qb: qb, originalRoute: app.request.get('_route'), originalQuery: app.request.query.all,
+        searchable: searchable,
+        config: {
+            columns: {
+                name: '{{ item.name }}',
+                email: '{{ item.email }}',
+                phone: '{{ item.phone }}',
+                accounts: '{{ item.users|map(u => "#{u.firstname} #{u.lastname}")|join(", ") }}'
+            }
+        }}) }}
+{% endblock %}

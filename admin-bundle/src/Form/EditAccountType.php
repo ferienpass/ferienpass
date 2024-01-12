@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Form;
 
-use Contao\MemberModel;
 use Ferienpass\CoreBundle\Entity\Host;
+use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -29,22 +29,20 @@ class EditAccountType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => MemberModel::class,
+            'data_class' => User::class,
             'label_format' => 'accounts.label.%name%',
             'translation_domain' => 'admin',
-            'required' => false,
         ]);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('firstname', null, ['fieldset_group' => 'base', 'width' => '1/2'])
-            ->add('lastname', null, ['fieldset_group' => 'base', 'width' => '1/2'])
+            ->add('firstname', null, ['fieldset_group' => 'base', 'width' => '1/2', 'required' => true])
+            ->add('lastname', null, ['fieldset_group' => 'base', 'width' => '1/2', 'required' => true])
             ->add('phone', null, ['fieldset_group' => 'contact', 'width' => '1/2'])
-            ->add('fax', null, ['fieldset_group' => 'contact', 'width' => '1/2'])
             ->add('mobile', null, ['fieldset_group' => 'contact', 'width' => '1/2'])
-            ->add('email', EmailType::class, ['fieldset_group' => 'contact', 'width' => '1/2|clr'])
+            ->add('email', EmailType::class, ['fieldset_group' => 'contact', 'width' => '1/2|clr', 'required' => true])
             ->add('street', null, ['fieldset_group' => 'address'])
             ->add('postal', null, ['fieldset_group' => 'address', 'width' => '1/3'])
             ->add('city', null, ['fieldset_group' => 'address', 'width' => '2/3'])
@@ -56,11 +54,11 @@ class EditAccountType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
             $form = $event->getForm();
 
-            if (!($data = $event->getData()) instanceof MemberModel) {
+            if (!($account = $event->getData()) instanceof User) {
                 return;
             }
 
-            if ('ROLE_HOST' === $data->role) {
+            if (\in_array('ROLE_HOST', $account->getRoles(), true)) {
                 $form->add('hosts', EntityType::class, [
                     'class' => Host::class,
                     'choice_label' => 'name',
@@ -71,5 +69,13 @@ class EditAccountType extends AbstractType
                 ]);
             }
         });
+
+        //        foreach (['phone'] as $field) {
+        //            $builder->get($field)
+        //                ->addModelTransformer(new CallbackTransformer(
+        //                    fn($v) => null === $v ? '' : $v,
+        //                    fn($v) => $v
+        //                ));
+        //        }
     }
 }

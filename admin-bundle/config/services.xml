@@ -6,6 +6,10 @@
     <services>
         <defaults autoconfigure="true"/>
 
+        <instanceof id="Ferienpass\AdminBundle\Form\Filter\AbstractFilter" autowire="true">
+            <tag name="ferienpass_admin.filter"/>
+        </instanceof>
+
         <service id="Twig\Extension\StringLoaderExtension">
             <tag name="twig.extension"/>
         </service>
@@ -99,6 +103,12 @@
             <tag name="serializer.normalizer" priority="100"/>
         </service>
 
+        <service id="Ferienpass\AdminBundle\Form\Filter\FilterRegistry">
+            <argument type="tagged_iterator" tag="ferienpass_admin.filter" default-index-method="getEntity"/>
+        </service>
+
+        <service id="Ferienpass\AdminBundle\Form\Filter\PaymentsFilter">
+        </service>
 
     </services>
 </container>

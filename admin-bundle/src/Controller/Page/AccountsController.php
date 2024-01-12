@@ -13,10 +13,11 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
-use Contao\MemberModel;
 use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Form\EditAccountType;
+use Ferienpass\CoreBundle\Entity\User;
+use Ferienpass\CoreBundle\Repository\UserRepository;
 use Ferienpass\CoreBundle\Session\Flash;
 use Knp\Menu\FactoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -36,7 +37,7 @@ final class AccountsController extends AbstractController
     ];
 
     #[Route('', name: 'admin_accounts_index')]
-    public function index(string $role, Breadcrumb $breadcrumb, FactoryInterface $menuFactory): Response
+    public function index(string $role, UserRepository $repository, Breadcrumb $breadcrumb, FactoryInterface $menuFactory): Response
     {
         if (!\in_array($role, array_keys(self::ROLES), true)) {
             throw $this->createNotFoundException('The role does not exist');
@@ -44,7 +45,10 @@ final class AccountsController extends AbstractController
 
         $actualRole = self::ROLES[$role];
 
-        $items = MemberModel::findBy('role', $actualRole);
+        $qb = $repository->createQueryBuilder('i')
+            ->where("JSON_SEARCH(i.roles, 'one', :role) IS NOT NULL")
+            ->setParameter('role', $actualRole)
+        ;
 
         $nav = $menuFactory->createItem('accounts.roles');
         foreach (self::ROLES as $slug => $r) {
@@ -58,7 +62,7 @@ final class AccountsController extends AbstractController
         return $this->render('@FerienpassAdmin/page/accounts/index.html.twig', [
             'createUrl' => $this->generateUrl('admin_accounts_create', ['role' => $role]),
             'headline' => 'accounts.'.$actualRole,
-            'items' => $items,
+            'items' => $qb->getQuery()->execute(),
             'aside_nav' => $nav,
             'breadcrumb' => $breadcrumb->generate('accounts.title', 'accounts.'.self::ROLES[$role]),
         ]);
@@ -66,42 +70,41 @@ final class AccountsController extends AbstractController
 
     #[Route('/neu', name: 'admin_accounts_create')]
     #[Route('/{id}', name: 'admin_accounts_edit')]
-    public function edit(string $role, ?int $id, Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $em, Breadcrumb $breadcrumb, Flash $flash): Response
+    public function edit(string $role, ?User $user, Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $em, Breadcrumb $breadcrumb, Flash $flash): Response
     {
         if (!\in_array($role, array_keys(self::ROLES), true)) {
             throw $this->createNotFoundException('The role does not exist');
         }
 
-        if (null === $id) {
-            $account = new MemberModel();
-            $account->role = self::ROLES[$role];
-        } elseif (null === $account = MemberModel::findByPk($id)) {
+        if (null === $user) {
+            $user = new User();
+            $user->setRoles([self::ROLES[$role]]);
+        }
+
+        if (!\in_array(self::ROLES[$role], $user->getRoles(), true)) {
             throw $this->createNotFoundException('The account does not exist');
         }
 
-        if ($account->role !== self::ROLES[$role]) {
-            throw $this->createNotFoundException('The account does not exist');
-        }
-
-        $form = $formFactory->create(EditAccountType::class, $account);
+        $form = $formFactory->create(EditAccountType::class, $user);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var MemberModel $account */
-            $account = $form->getData();
+            if (!$em->contains($user = $form->getData())) {
+                $em->persist($user);
+            }
 
-            $account->save();
+            $em->flush();
 
             $flash->addConfirmation(text: new TranslatableMessage('editConfirm', domain: 'admin'));
 
-            return $this->redirectToRoute('admin_accounts_edit', ['id' => $account->id]);
+            return $this->redirectToRoute('admin_accounts_edit', ['id' => $user->getId()]);
         }
 
-        $breadcrumbTitle = $account->id ? sprintf('%s %s (bearbeiten)', $account->firstname, $account->lastname) : 'accounts.new';
+        $breadcrumbTitle = $user->getId() ? sprintf('%s (bearbeiten)', $user->getName()) : 'accounts.new';
 
         return $this->render('@FerienpassAdmin/page/accounts/edit.html.twig', [
-            'item' => $account,
-            'headline' => $account->id ? sprintf('%s %s', $account->firstname, $account->lastname) : 'accounts.new',
+            'item' => $user,
+            'headline' => $user->getId() ? $user->getName() : 'accounts.new',
             'form' => $form,
             'breadcrumb' => $breadcrumb->generate(['accounts.title', ['route' => 'admin_accounts_index', 'routeParameters' => ['role' => $role]]], ['accounts.'.self::ROLES[$role], ['route' => 'admin_accounts_index', 'routeParameters' => ['role' => $role]]], $breadcrumbTitle),
         ]);

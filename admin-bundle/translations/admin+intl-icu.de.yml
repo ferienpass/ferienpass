@@ -108,6 +108,12 @@ hosts:
     street: Straße
     postal: PLZ
     city: Ort
+  th:
+    name: Name
+    email: E-Mail-Adresse
+    phone: Telefon
+    website: Webseite
+    accounts: Accounts mit Zugriff
   help:
     alias: Der Alias wird automatisch generiert.
 
@@ -160,16 +166,16 @@ participants:
   action.attendances: Anmeldungen
   action.show_payment: 'Beleg #{number}'
   new: Neuer Teilnehmer
-  baseLegend:
+  legend.base:
     - Name und Sorgeberechtigter
     - Ein:e Sorgeberechtigte:r ist ein von Eltern erstellter Account, der vollen Zugriff auf die Daten und Anmeldungen ermöglicht (inkl. Löschung und Auskunftsrechte).
-  ageLegend:
+  legend.age:
     - Geburtsdatum und Alter
     - Das Geburtsdatum wird für die Berechnung des Alters benötigt.
-  contactLegend:
+  legend.contact:
     - Kontaktdaten
     - Die Kontaktdaten werden von der bzw. dem Sorgeberechtigten übernommen. Diese Daten werden für System-Benachrichtigungen verwendet und mit den Veranstaltern geteilt.
-  allowanceLegend:
+  legend.allowance:
     - Ermäßigung
     - Bei einer genehmigten Ermäßigung wird die reduzierte Teilnahmegebühr abgerechnet.
   label:
@@ -220,6 +226,10 @@ payments:
   th.participant: Teilnehmer:in
   th.offer: Angebot
   th.paid: Zahlung
+  filter.status: Bezahlstatus
+  filter.user: Benutzer:in
+  sorting.createdAt: Sortieren nach Datum
+  sorting.amount: Sortieren nach Betrag
   index.empty: Es sind noch keine Zahlungen erfasst worden.
 
 attendances:

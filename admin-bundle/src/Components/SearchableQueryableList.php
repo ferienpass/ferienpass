@@ -15,14 +15,22 @@ namespace Ferienpass\AdminBundle\Components;
 
 use Contao\StringUtil;
 use Doctrine\ORM\QueryBuilder;
+use Ferienpass\AdminBundle\Form\Filter\AbstractFilter;
+use Ferienpass\AdminBundle\Form\Filter\FilterRegistry;
 use Ferienpass\CoreBundle\Pagination\Paginator;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
+use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 #[AsLiveComponent(name: 'SearchableQueryableList', template: '@FerienpassAdmin/components/SearchableQueryableList.html.twig')]
-class SearchableQueryableList
+class SearchableQueryableList extends AbstractController
 {
+    use ComponentWithFormTrait;
     use DefaultActionTrait;
 
     #[LiveProp]
@@ -35,6 +43,9 @@ class SearchableQueryableList
     public string $query = '';
 
     #[LiveProp]
+    public array $initialFormData = [];
+
+    #[LiveProp]
     public QueryBuilder $qb;
 
     #[LiveProp]
@@ -42,15 +53,51 @@ class SearchableQueryableList
     #[LiveProp]
     public ?array $originalQuery = null;
 
+    #[LiveProp(writable: true)]
+    public string $sorting = '';
+
+    public function __construct(private FormFactoryInterface $formFactory, private FilterRegistry $filterRegistry)
+    {
+    }
+
     public function getPagination(): Paginator
     {
         $this->addQueryBuilderSearch();
+        $this->addQueryBuilderSorting();
 
         if ('' !== $this->query) {
             unset($this->originalQuery['page']);
         }
 
         return (new Paginator($this->qb, 50))->paginate((int) ($this->originalQuery['page'] ?? 1));
+    }
+
+    public function getSortingFields(): array
+    {
+        return $this->getFilter()?->getSortingFields() ?? [];
+    }
+
+    #[LiveAction]
+    public function filter()
+    {
+        if (null === $filter = $this->getFilter()) {
+            return $this->redirectToRoute($this->originalRoute);
+        }
+
+        $this->submitForm();
+
+        $filter->apply($this->qb, $this->getForm());
+
+        return $this->redirectToRoute($this->originalRoute);
+    }
+
+    protected function instantiateForm(): FormInterface
+    {
+        if (null === $filter = $this->getFilter()) {
+            return $this->formFactory->create();
+        }
+
+        return $this->formFactory->create($filter::class, $this->initialFormData);
     }
 
     private function addQueryBuilderSearch(): void
@@ -70,5 +117,20 @@ class SearchableQueryableList
         if ($where->count()) {
             $this->qb->andWhere($where);
         }
+    }
+
+    private function addQueryBuilderSorting(): void
+    {
+        $sorting = $this->getFilter()?->getSortingDir($this->sorting);
+        if ($sorting) {
+            $this->qb->addOrderBy(...(array) $sorting);
+        }
+    }
+
+    private function getFilter(): ?AbstractFilter
+    {
+        $entity = explode(' ', (string) $this->qb->getDQLPart('from')[0], 2)[0];
+
+        return $this->filterRegistry->byEntity($entity);
     }
 }

@@ -5,7 +5,7 @@
     {% set pagination = this.pagination(app.request) %}
     {% set items = pagination.results %}
 
-    {% embed '@FerienpassAdmin/components/list.html.twig' %}
+    {% embed '@FerienpassAdmin/components/list.html.twig' with { filter: form } %}
         {% block head_before %}
 
             <div>
