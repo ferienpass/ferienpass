@@ -22,7 +22,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class NextStepsController extends AbstractController
 {
-    public function __construct(private EditionRepository $editionRepository)
+    public function __construct(private readonly EditionRepository $editionRepository)
     {
     }
 

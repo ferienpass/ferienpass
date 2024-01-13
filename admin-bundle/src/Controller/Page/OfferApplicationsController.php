@@ -30,14 +30,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_ADMIN')]
 #[Route('/{edition}/angebote/{id}/anmeldungen', requirements: ['id' => '\d+'])]
 class OfferApplicationsController extends AbstractController
 {
-    public function __construct(private AttendanceRepository $attendanceRepository, private PdfExport $pdfExport, private WordExport $wordExport, private FormFactoryInterface $formFactory)
+    public function __construct(private readonly AttendanceRepository $attendanceRepository, private readonly PdfExport $pdfExport, private readonly WordExport $wordExport, private readonly FormFactoryInterface $formFactory)
     {
     }
 

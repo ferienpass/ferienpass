@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class InformSleepController extends AbstractController
 {
-    public function __construct(private EditionRepository $editionRepository)
+    public function __construct(private readonly EditionRepository $editionRepository)
     {
     }
 

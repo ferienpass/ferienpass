@@ -30,12 +30,12 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/angebot/{id}/anmeldungen{_suffix}', name: 'admin_offer_attendances', requirements: ['id' => '\d+'], defaults: ['_suffix' => ''])]
 final class ParticipantListController extends AbstractController
 {
-    public function __construct(private PrivacyConsent $privacyConsent, private AttendanceFacade $attendanceFacade, private ManagerRegistry $doctrine, private ParticipantList $participantList, private FormFactoryInterface $formFactory)
+    public function __construct(private readonly PrivacyConsent $privacyConsent, private readonly AttendanceFacade $attendanceFacade, private readonly ManagerRegistry $doctrine, private readonly ParticipantList $participantList, private readonly FormFactoryInterface $formFactory)
     {
     }
 

@@ -20,7 +20,7 @@ use Twig\TwigFunction;
 
 class MenuExtension extends AbstractExtension
 {
-    public function __construct(private Helper $helper)
+    public function __construct(private readonly Helper $helper)
     {
     }
 
@@ -30,7 +30,7 @@ class MenuExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('list_actions', [$this, 'get']),
+            new TwigFunction('list_actions', $this->get(...)),
         ];
     }
 

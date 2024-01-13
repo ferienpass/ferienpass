@@ -18,7 +18,7 @@ use Knp\Menu\ItemInterface;
 
 class MenuEvent extends \Contao\CoreBundle\Event\MenuEvent
 {
-    public function __construct(FactoryInterface $factory, ItemInterface $tree, private array $options)
+    public function __construct(FactoryInterface $factory, ItemInterface $tree, private readonly array $options)
     {
         parent::__construct($factory, $tree);
     }

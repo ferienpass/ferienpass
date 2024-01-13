@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class FiguresController extends AbstractController
 {
-    public function __construct(private AttendanceRepository $attendanceRepository, private OfferRepository $offerRepository, private EditionRepository $editionRepository)
+    public function __construct(private readonly AttendanceRepository $attendanceRepository, private readonly OfferRepository $offerRepository, private readonly EditionRepository $editionRepository)
     {
     }
 

@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CreateSeasonController extends AbstractController
 {
-    public function __construct(private Connection $connection)
+    public function __construct(private readonly Connection $connection)
     {
     }
 

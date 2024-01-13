@@ -80,7 +80,7 @@ class EditOfferDto implements OfferDto
 
     public ?string $image = null;
 
-    public function __construct(private ?Offer $offerEntity)
+    public function __construct(private readonly ?Offer $offerEntity)
     {
     }
 

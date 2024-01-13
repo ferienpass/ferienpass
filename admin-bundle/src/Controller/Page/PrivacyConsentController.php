@@ -27,7 +27,7 @@ use Symfony\Component\Validator\Constraints\EqualTo;
 
 class PrivacyConsentController extends AbstractController
 {
-    public function __construct(private Connection $connection, private PrivacyConsentState $consentState)
+    public function __construct(private readonly Connection $connection, private readonly PrivacyConsentState $consentState)
     {
     }
 

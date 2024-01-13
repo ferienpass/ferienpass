@@ -35,14 +35,14 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_ADMIN')]
 #[Route('/zahlungen')]
 final class PaymentsController extends AbstractController
 {
-    public function __construct(private ReceiptExportInterface $receiptExport)
+    public function __construct(private readonly ReceiptExportInterface $receiptExport)
     {
     }
 

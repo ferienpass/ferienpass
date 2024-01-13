@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EraseDataController extends AbstractController
 {
-    public function __construct(private EraseDataFacade $eraseDataFacade, private EditionRepository $editionRepository)
+    public function __construct(private readonly EraseDataFacade $eraseDataFacade, private readonly EditionRepository $editionRepository)
     {
     }
 

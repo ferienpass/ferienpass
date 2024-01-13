@@ -28,7 +28,7 @@ use Symfony\Component\Security\Http\Logout\LogoutUrlGenerator;
 
 class MenuBuilder
 {
-    public function __construct(private FactoryInterface $factory, private LogoutUrlGenerator $logoutUrlGenerator, private AuthorizationCheckerInterface $authorizationChecker, private RequestStack $requestStack, private EditionRepository $editionRepository, private Security $security, private HostRepository $hostRepository, private EventDispatcherInterface $dispatcher)
+    public function __construct(private readonly FactoryInterface $factory, private readonly LogoutUrlGenerator $logoutUrlGenerator, private readonly AuthorizationCheckerInterface $authorizationChecker, private readonly RequestStack $requestStack, private readonly EditionRepository $editionRepository, private readonly Security $security, private readonly HostRepository $hostRepository, private readonly EventDispatcherInterface $dispatcher)
     {
     }
 

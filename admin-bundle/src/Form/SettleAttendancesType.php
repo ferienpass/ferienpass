@@ -25,7 +25,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SettleAttendancesType extends AbstractType
 {
-    public const FORM_NAME = 'settle';
+    final public const FORM_NAME = 'settle';
 
     public function getBlockPrefix()
     {

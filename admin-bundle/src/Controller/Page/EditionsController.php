@@ -24,15 +24,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/saisons')]
 final class EditionsController extends AbstractController
 {
-    private array $stats;
+    private readonly array $stats;
 
-    public function __construct(private EditionRepository $editionRepository, iterable $stats)
+    public function __construct(private readonly EditionRepository $editionRepository, iterable $stats)
     {
         $this->stats = $stats instanceof \Traversable ? iterator_to_array($stats) : $stats;
     }

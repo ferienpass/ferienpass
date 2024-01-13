@@ -30,7 +30,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ActionsBuilder
 {
-    public function __construct(private FactoryInterface $factory, private AuthorizationCheckerInterface $authorizationChecker, private EditionRepository $editionRepository, private PaymentRepository $paymentRepository, private EventDispatcherInterface $dispatcher)
+    public function __construct(private readonly FactoryInterface $factory, private readonly AuthorizationCheckerInterface $authorizationChecker, private readonly EditionRepository $editionRepository, private readonly PaymentRepository $paymentRepository, private readonly EventDispatcherInterface $dispatcher)
     {
     }
 

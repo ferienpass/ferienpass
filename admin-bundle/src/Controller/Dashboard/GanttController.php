@@ -21,7 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class GanttController extends AbstractController
 {
-    public function __construct(private TranslatorInterface $translator, private EditionRepository $editionRepository)
+    public function __construct(private readonly TranslatorInterface $translator, private readonly EditionRepository $editionRepository)
     {
     }
 

@@ -19,7 +19,7 @@ use Symfony\UX\LiveComponent\Hydration\HydrationExtensionInterface;
 
 class QueryBuilderHydrationExtension implements HydrationExtensionInterface
 {
-    public function __construct(private ManagerRegistry $doctrine)
+    public function __construct(private readonly ManagerRegistry $doctrine)
     {
     }
 

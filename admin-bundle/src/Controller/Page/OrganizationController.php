@@ -33,13 +33,13 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('/stammdaten')]
 final class OrganizationController extends AbstractController
 {
-    public function __construct(private FormFactoryInterface $formFactory, private Connection $connection, private OptIn $optIn, private HostRepository $hostRepository, private Slug $slug, private string $logosDir, private string $projectDir, private ManagerRegistry $doctrine)
+    public function __construct(private readonly FormFactoryInterface $formFactory, private readonly Connection $connection, private readonly OptIn $optIn, private readonly HostRepository $hostRepository, private readonly Slug $slug, private readonly string $logosDir, private readonly string $projectDir, private readonly ManagerRegistry $doctrine)
     {
     }
 

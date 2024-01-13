@@ -26,7 +26,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class XlsxExport implements QueryBuilderExportInterface
 {
-    public function __construct(private NormalizerInterface $normalizer, private TranslatorInterface $translator)
+    public function __construct(private readonly NormalizerInterface $normalizer, private readonly TranslatorInterface $translator)
     {
     }
 

@@ -32,7 +32,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -48,7 +48,7 @@ final class OffersEditController extends AbstractController
     #[LiveProp]
     public Offer $initialFormData;
 
-    public function __construct(private Slug $slug, private string $imagesDir, private string $projectDir, private ManagerRegistry $doctrine, private FormFactoryInterface $formFactory)
+    public function __construct(private readonly Slug $slug, private readonly string $imagesDir, private readonly string $projectDir, private readonly ManagerRegistry $doctrine, private readonly FormFactoryInterface $formFactory)
     {
     }
 

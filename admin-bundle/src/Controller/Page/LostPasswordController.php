@@ -26,13 +26,13 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
 
 #[Route('/passwort-vergessen', name: 'admin_lost_password')]
 final class LostPasswordController extends AbstractController
 {
-    public function __construct(private LoggerInterface $logger, private OptInInterface $optIn, private RouterInterface $router, private PasswordHasherInterface $passwordHasher, private FormFactoryInterface $formFactory)
+    public function __construct(private readonly LoggerInterface $logger, private readonly OptInInterface $optIn, private readonly RouterInterface $router, private readonly PasswordHasherInterface $passwordHasher, private readonly FormFactoryInterface $formFactory)
     {
     }
 

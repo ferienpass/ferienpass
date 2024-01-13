@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SendAcceptancesController extends AbstractController
 {
-    public function __construct(private UnconfirmedApplications $unconfirmedApplications)
+    public function __construct(private readonly UnconfirmedApplications $unconfirmedApplications)
     {
     }
 

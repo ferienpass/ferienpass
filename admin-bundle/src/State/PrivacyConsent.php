@@ -20,7 +20,7 @@ use Michelf\MarkdownExtra;
 
 class PrivacyConsent
 {
-    public function __construct(private ContaoFramework $framework, private Connection $connection, private string $consentText)
+    public function __construct(private readonly ContaoFramework $framework, private readonly Connection $connection, private readonly string $consentText)
     {
     }
 

@@ -28,7 +28,7 @@ use Symfony\Component\Security\Core\Security;
 
 class PrettyErrorScreenListener
 {
-    public function __construct(private Security $security)
+    public function __construct(private readonly Security $security)
     {
     }
 
@@ -44,7 +44,7 @@ class PrettyErrorScreenListener
             return;
         }
 
-        if (!str_starts_with($request->getHttpHost(), 'veranstalter.')) {
+        if (!str_starts_with((string) $request->getHttpHost(), 'veranstalter.')) {
             return;
         }
 

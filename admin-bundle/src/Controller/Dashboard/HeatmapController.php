@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class HeatmapController extends AbstractController
 {
-    public function __construct(private Connection $connection)
+    public function __construct(private readonly Connection $connection)
     {
     }
 
@@ -75,7 +75,7 @@ SQL
         $return = [];
         foreach ($days as $row) {
             $ymd = $row[0];
-            $ymd = strtotime($ymd);
+            $ymd = strtotime((string) $ymd);
             $return[$ymd] = (int) $row[1];
         }
 

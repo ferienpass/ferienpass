@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ChartAttendancesController extends AbstractController
 {
-    public function __construct(private AttendanceRepository $attendanceRepository)
+    public function __construct(private readonly AttendanceRepository $attendanceRepository)
     {
     }
 

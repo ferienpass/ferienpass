@@ -30,7 +30,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -38,7 +38,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 #[Route('/benachrichtigungen')]
 final class NotificationsController extends AbstractController
 {
-    public function __construct(private Notifier $notifier, private FormFactoryInterface $formFactory, private ManagerRegistry $doctrine, private FactoryInterface $menuFactory)
+    public function __construct(private readonly Notifier $notifier, private readonly FormFactoryInterface $formFactory, private readonly ManagerRegistry $doctrine, private readonly FactoryInterface $menuFactory)
     {
     }
 

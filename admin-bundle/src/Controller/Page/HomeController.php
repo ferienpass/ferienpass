@@ -17,12 +17,12 @@ use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('', name: 'admin_index')]
 final class HomeController extends AbstractController
 {
-    private array $fragments;
+    private readonly array $fragments;
 
     public function __construct(iterable $fragments)
     {

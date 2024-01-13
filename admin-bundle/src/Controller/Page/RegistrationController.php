@@ -26,13 +26,13 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 #[Route('/registrierung', name: 'admin_registration')]
 final class RegistrationController extends AbstractController
 {
-    public function __construct(private ManagerRegistry $doctrine, private PasswordHasherInterface $passwordHasher, private string $adminEmail, private NormalizerInterface $normalizer, private FormFactoryInterface $formFactory)
+    public function __construct(private readonly ManagerRegistry $doctrine, private readonly PasswordHasherInterface $passwordHasher, private string $adminEmail, private readonly NormalizerInterface $normalizer, private readonly FormFactoryInterface $formFactory)
     {
     }
 

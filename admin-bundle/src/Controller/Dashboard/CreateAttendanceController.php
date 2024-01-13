@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CreateAttendanceController extends AbstractController
 {
-    public function __construct(private AttendanceFacade $attendanceFacade, private ManagerRegistry $doctrine, private FormFactoryInterface $formFactory)
+    public function __construct(private readonly AttendanceFacade $attendanceFacade, private readonly ManagerRegistry $doctrine, private readonly FormFactoryInterface $formFactory)
     {
     }
 

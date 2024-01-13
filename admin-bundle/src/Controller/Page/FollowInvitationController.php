@@ -24,12 +24,12 @@ use Ferienpass\CoreBundle\Ux\Flash;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/einladung', name: 'admin_invitation')]
 final class FollowInvitationController extends AbstractController
 {
-    public function __construct(private UserPasswordHasherInterface $passwordHasher, private OptIn $optIn, private HostRepository $hostRepository)
+    public function __construct(private readonly UserPasswordHasherInterface $passwordHasher, private readonly OptIn $optIn, private readonly HostRepository $hostRepository)
     {
     }
 

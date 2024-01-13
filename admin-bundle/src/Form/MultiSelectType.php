@@ -21,7 +21,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MultiSelectType extends AbstractType
 {
-    public const FORM_NAME = 'ms';
+    final public const FORM_NAME = 'ms';
 
     public function getBlockPrefix()
     {

@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class Breadcrumb
 {
-    public function __construct(private FactoryInterface $factory, private RequestStack $requestStack)
+    public function __construct(private readonly FactoryInterface $factory, private readonly RequestStack $requestStack)
     {
     }
 

@@ -56,7 +56,7 @@ class SearchableQueryableList extends AbstractController
     #[LiveProp(writable: true)]
     public string $sorting = '';
 
-    public function __construct(private FormFactoryInterface $formFactory, private FilterRegistry $filterRegistry)
+    public function __construct(private readonly FormFactoryInterface $formFactory, private readonly FilterRegistry $filterRegistry)
     {
     }
 

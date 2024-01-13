@@ -38,7 +38,7 @@ class AddAttendance extends AbstractController
     #[LiveProp]
     public Participant|null $participant = null;
 
-    public function __construct(private FormFactoryInterface $formFactory)
+    public function __construct(private readonly FormFactoryInterface $formFactory)
     {
     }
 

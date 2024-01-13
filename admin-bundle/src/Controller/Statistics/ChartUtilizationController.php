@@ -22,7 +22,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ChartUtilizationController extends AbstractController
 {
-    public function __construct(private AttendanceRepository $attendanceRepository, private TranslatorInterface $translator)
+    public function __construct(private readonly AttendanceRepository $attendanceRepository, private readonly TranslatorInterface $translator)
     {
     }
 

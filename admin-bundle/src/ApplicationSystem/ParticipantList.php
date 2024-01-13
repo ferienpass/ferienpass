@@ -28,7 +28,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 class ParticipantList
 {
-    public function __construct(private MessageBusInterface $messageBus, private Connection $connection, private ApplicationSystems $applicationSystems, private AttendanceFacade $attendanceFacade, private ManagerRegistry $doctrine, private Security $security)
+    public function __construct(private readonly MessageBusInterface $messageBus, private readonly Connection $connection, private readonly ApplicationSystems $applicationSystems, private readonly AttendanceFacade $attendanceFacade, private readonly ManagerRegistry $doctrine, private readonly Security $security)
     {
     }
 
