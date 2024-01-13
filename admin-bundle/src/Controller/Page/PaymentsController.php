@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
-use Contao\FrontendUser;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
@@ -22,6 +21,7 @@ use Ferienpass\AdminBundle\Form\MultiSelectType;
 use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Payment;
 use Ferienpass\CoreBundle\Entity\PaymentItem;
+use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Export\Payments\ReceiptExportInterface;
 use Ferienpass\CoreBundle\Message\ParticipantListChanged;
 use Ferienpass\CoreBundle\Message\PaymentReceiptCreated;
@@ -122,7 +122,7 @@ final class PaymentsController extends AbstractController
             return $this->redirectToRoute('admin_payments_receipt', ['id' => $payment->getId()]);
         }
 
-        $reversalPayment = new Payment($numberGenerator->generate(), $user instanceof FrontendUser ? $user->id : null);
+        $reversalPayment = new Payment($numberGenerator->generate(), $user);
         $reversalPayment->setBillingAddress($payment->getBillingAddress());
         $reversalPayment->setBillingEmail($payment->getBillingEmail());
         foreach ($items as $item) {
@@ -137,7 +137,7 @@ final class PaymentsController extends AbstractController
                     continue;
                 }
 
-                $item->getAttendance()->setStatus(Attendance::STATUS_WITHDRAWN, $user instanceof FrontendUser ? $user->id : null);
+                $item->getAttendance()->setStatus(Attendance::STATUS_WITHDRAWN, $user instanceof User ? $user->getId() : null);
 
                 $messageBus->dispatch(new ParticipantListChanged($item->getAttendance()->getOffer()->getId()));
             }

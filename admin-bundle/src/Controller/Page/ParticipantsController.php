@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
-use Contao\FrontendUser;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Dto\BillingAddressDto;
@@ -139,7 +138,7 @@ final class ParticipantsController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $payment = new Payment($this->numberGenerator->generate(), $user instanceof FrontendUser ? $user->id : null);
+            $payment = new Payment($this->numberGenerator->generate(), $user);
             $dto->toPayment($payment);
 
             $payment->getItems()->map(fn (PaymentItem $item) => $item->getAttendance()->setPaid());

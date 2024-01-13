@@ -107,6 +107,8 @@
             <argument type="tagged_iterator" tag="ferienpass_admin.filter" default-index-method="getEntity"/>
         </service>
 
+        <service id="Ferienpass\AdminBundle\Form\Filter\OffersFilter">
+        </service>
         <service id="Ferienpass\AdminBundle\Form\Filter\PaymentsFilter">
         </service>
 

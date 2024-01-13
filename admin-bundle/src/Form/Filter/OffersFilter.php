@@ -13,16 +13,20 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Form\Filter;
 
+use Ferienpass\AdminBundle\Form\Filter\Payment\CancelledFilter;
+use Ferienpass\AdminBundle\Form\Filter\Payment\EditionFilter;
 use Ferienpass\AdminBundle\Form\Filter\Payment\HostsFilter;
 use Ferienpass\AdminBundle\Form\Filter\Payment\OnlineApplicationFilter;
-use Ferienpass\CoreBundle\Entity\Payment;
+use Ferienpass\AdminBundle\Form\Filter\Payment\PublishedFilter;
+use Ferienpass\AdminBundle\Form\Filter\Payment\RequiresApplicationFilter;
+use Ferienpass\CoreBundle\Entity\Offer;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PaymentsFilter extends AbstractFilter
+class OffersFilter extends AbstractFilter
 {
     public static function getEntity(): string
     {
-        return Payment::class;
+        return Offer::class;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -30,23 +34,28 @@ class PaymentsFilter extends AbstractFilter
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'label_format' => 'payments.filter.%name%',
+            'label_format' => 'offers.filter.%name%',
         ]);
     }
 
     protected static function getFilters(): array
     {
         return [
-            'status' => OnlineApplicationFilter::class,
-            'user' => HostsFilter::class,
+            'editions' => EditionFilter::class,
+            'hosts' => HostsFilter::class,
+            'requires_application' => RequiresApplicationFilter::class,
+            'online_application' => OnlineApplicationFilter::class,
+            'cancelled' => CancelledFilter::class,
+            'published' => PublishedFilter::class,
         ];
     }
 
     protected static function getSorting(): array
     {
         return [
-            'createdAt' => ['createdAt', 'DESC'],
-            'amount' => ['totalAmount', 'DESC'],
+            'name' => 'name',
+            'date' => 'd.begin',
+            'host' => 'h.name',
         ];
     }
 }

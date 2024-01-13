@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Menu;
 
-use Contao\FrontendUser;
 use Ferienpass\AdminBundle\Event\MenuEvent;
 use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Ferienpass\CoreBundle\Repository\HostRepository;
 use Knp\Menu\FactoryInterface;
@@ -37,12 +37,14 @@ class MenuBuilder
         $menu = $this->factory->createItem('root');
 
         $edition = $this->editionRepository->findDefaultForHost();
-        $menu->addChild('offers.title', [
-            'route' => 'admin_offers_index',
-            'routeParameters' => [
-                'edition' => $edition?->getAlias() ?? 'tes',
-            ],
-        ]);
+        if (null !== $edition) {
+            $menu->addChild('offers.title', [
+                'route' => 'admin_offers_index',
+                'routeParameters' => [
+                    'edition' => $edition->getAlias(),
+                ],
+            ]);
+        }
 
         if (!$this->isGranted('ROLE_ADMIN')) {
             $menu->addChild('profile.title', [
@@ -212,7 +214,7 @@ class MenuBuilder
         $menu = $this->factory->createItem('root');
 
         $user = $this->security->getUser();
-        if (!$user instanceof FrontendUser) {
+        if (!$user instanceof User) {
             return $menu;
         }
 
@@ -233,7 +235,7 @@ class MenuBuilder
         }
 
         $edition = $this->editionRepository->findDefaultForHost();
-        foreach ($this->hostRepository->findByMemberId((int) $user->id) as $host) {
+        foreach ($this->hostRepository->findByUser($user) as $host) {
             $hostNav->addChild((string) $host->getAlias(), [
                 'label' => $host->getName(),
                 'route' => 'admin_offers_index',

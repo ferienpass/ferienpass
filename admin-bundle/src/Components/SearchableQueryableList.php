@@ -74,7 +74,7 @@ class SearchableQueryableList extends AbstractController
 
     public function getSortingFields(): array
     {
-        return $this->getFilter()?->getSortingFields() ?? [];
+        return $this->getFilter()?->getSearchable() ?? [];
     }
 
     #[LiveAction]
@@ -121,7 +121,7 @@ class SearchableQueryableList extends AbstractController
 
     private function addQueryBuilderSorting(): void
     {
-        $sorting = $this->getFilter()?->getSortingDir($this->sorting);
+        $sorting = $this->getFilter()?->getOrderByFor($this->sorting);
         if ($sorting) {
             $this->qb->addOrderBy(...(array) $sorting);
         }

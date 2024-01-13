@@ -13,16 +13,22 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Form;
 
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-final class LoginUsernameType extends TextType
+final class LoginUsernameType extends AbstractType
 {
     public function __construct(private AuthenticationUtils $authenticationUtils)
     {
+    }
+
+    public function getParent()
+    {
+        return EmailType::class;
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
@@ -34,12 +40,8 @@ final class LoginUsernameType extends TextType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        parent::configureOptions(
-            $resolver
-                ->setDefault('data', $this->authenticationUtils->getLastUsername())
-                ->setDefault('label', 'MSC.username')
-                ->setDefault('translation_domain', 'contao_default')
-                ->setDefault('mapped', false)
-        );
+        $resolver->setDefaults([
+            'data', $this->authenticationUtils->getLastUsername(),
+        ]);
     }
 }

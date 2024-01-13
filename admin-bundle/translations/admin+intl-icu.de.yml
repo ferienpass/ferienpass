@@ -29,6 +29,13 @@ offers:
   title: Angebote
   editions: Saisons
   index.empty: Es sind hier noch keine Angebote erstellt worden.
+  th.name: Titel
+  th.hosts: Veranstalter
+  th.date: Datum
+  th.attendances: Anmeldungen
+  sorting.name: Sortieren nach Titel
+  sorting.date: Sortieren nach Datum
+  sorting.host: Sortieren nach Veranstalter
   action:
     view: Angebot öffnen
     edit: Angebot bearbeiten
@@ -133,6 +140,7 @@ editions:
   task:
     holiday: Ferien
     host_editing_stage: Bearbeitungsphase für Veranstaltende
+    show_offers: Angebote veröffentlichen
   label:
     name: Name
     alias: Alias

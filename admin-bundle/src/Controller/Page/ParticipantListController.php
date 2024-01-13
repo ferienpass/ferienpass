@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
-use Contao\FrontendUser;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\ApplicationSystem\ParticipantList;
 use Ferienpass\AdminBundle\Dto\AddParticipantDto;
@@ -21,6 +20,7 @@ use Ferienpass\AdminBundle\Form\AddParticipantType;
 use Ferienpass\AdminBundle\State\PrivacyConsent;
 use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Facade\AttendanceFacade;
 use Ferienpass\CoreBundle\Form\SimpleType\ContaoRequestTokenType;
 use Ferienpass\CoreBundle\Ux\Flash;
@@ -49,7 +49,7 @@ final class ParticipantListController extends AbstractController
         }
 
         $user = $this->getUser();
-        if (!$user instanceof FrontendUser) {
+        if (!$user instanceof User) {
             return new Response('', Response::HTTP_NO_CONTENT);
         }
 
@@ -126,8 +126,8 @@ final class ParticipantListController extends AbstractController
         ]);
     }
 
-    private function isPrivacyStatementMissing(FrontendUser $user): bool
+    private function isPrivacyStatementMissing(User $user): bool
     {
-        return !$this->privacyConsent->isSignedFor((int) $user->id);
+        return !$this->privacyConsent->isSignedFor((int) $user->getId());
     }
 }

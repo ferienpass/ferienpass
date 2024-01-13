@@ -14,26 +14,26 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Controller\Page;
 
 use Contao\CoreBundle\OptIn\OptIn;
-use Contao\FrontendUser;
-use Contao\MemberModel;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Form\AcceptInvitationType;
+use Ferienpass\CoreBundle\Entity\Host;
+use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Repository\HostRepository;
+use Ferienpass\CoreBundle\Repository\UserRepository;
 use Ferienpass\CoreBundle\Ux\Flash;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\PasswordHasher\PasswordHasherInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/einladung', name: 'admin_invitation')]
 final class FollowInvitationController extends AbstractController
 {
-    public function __construct(private Connection $connection, private PasswordHasherInterface $passwordHasher, private OptIn $optIn, private HostRepository $hostRepository)
+    public function __construct(private UserPasswordHasherInterface $passwordHasher, private OptIn $optIn, private HostRepository $hostRepository)
     {
     }
 
-    public function __invoke(Request $request)
+    public function __invoke(UserRepository $userRepository, EntityManagerInterface $em, Request $request)
     {
         // Find an unconfirmed token
         if ((!$optInToken = $this->optIn->find((string) $request->query->get('token')))
@@ -52,35 +52,37 @@ final class FollowInvitationController extends AbstractController
             return $this->render('@FerienpassAdmin/fragment/follow_invitation.html.twig', ['error' => $error]);
         }
 
-        $user = $this->container->get('contao.framework')->createInstance(FrontendUser::class);
-
-        $memberModel = new MemberModel();
-        if ($user->id) {
-            $form = $this->createForm(AcceptInvitationType::class, $user);
-        } else {
-            $form = $this->createForm(AcceptInvitationType::class, $memberModel);
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            $user = new User();
         }
+
+        $form = $this->createForm(AcceptInvitationType::class, $user);
 
         $hostId = reset($relatedRecords['Host']);
         $inviter = reset($relatedRecords['tl_member']);
 
+        /** @var Host $host */
         $host = $this->hostRepository->find($hostId);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if (!$user->id) {
-                $memberModel->password = $this->passwordHasher->hash($memberModel->password ?? '');
-                $this->createNewUser($memberModel);
-                $this->addHost((int) $memberModel->id, (int) $hostId);
+            if (!$user->getId()) {
+                $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword() ?? ''));
+                $host->addMember($user);
 
                 $this->addFlash(...Flash::confirmation()->text('Account erstellt. Bitte melden Sie sich nun mit Ihrer E-Mail-Adresse an.')->create());
 
                 $optInToken->confirm();
 
+                $em->persist($user);
+                $em->flush();
+
                 return $this->redirect('/');
             }
 
-            $this->addHost((int) $user->id, (int) $hostId);
+            $host->addMember($user);
+            $em->flush();
 
             $optInToken->confirm();
 
@@ -89,34 +91,11 @@ final class FollowInvitationController extends AbstractController
             return $this->redirect('/');
         }
 
-        return $this->renderForm('@FerienpassAdmin/fragment/follow_invitation.html.twig', [
-            'member' => MemberModel::findByPk($inviter),
+        return $this->render('@FerienpassAdmin/fragment/follow_invitation.html.twig', [
+            'member' => $userRepository->find($inviter),
             'host' => $host,
             'form' => $form,
             'invitee_email' => $optInToken->getEmail(),
         ]);
-    }
-
-    private function createNewUser(MemberModel $user): void
-    {
-        $user->username = $user->email;
-        $user->tstamp = $user->dateAdded = time();
-        $user->login = true;
-        $user->groups = serialize(['1']);
-
-        $user->save();
-
-        // $this->dispatchMessage(new AccountCreated((int) $user->id));
-    }
-
-    private function addHost(int $userId, int $hostId): void
-    {
-        try {
-            $this->connection->insert('HostMemberAssociation', ['member_id' => $userId, 'host_id' => $hostId]);
-        } catch (UniqueConstraintViolationException) {
-            return;
-        }
-
-        // $this->dispatchMessage(new AccountCreated((int) $user->id));
     }
 }

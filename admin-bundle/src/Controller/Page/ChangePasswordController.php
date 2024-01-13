@@ -13,36 +13,40 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
-use Contao\FrontendUser;
+use Doctrine\ORM\EntityManagerInterface;
+use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Form\UserChangePasswordType;
+use Ferienpass\CoreBundle\Session\Flash;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\PasswordHasherInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/passwort-aendern', name: 'admin_password')]
 final class ChangePasswordController extends AbstractController
 {
-    public function __construct(private PasswordHasherInterface $passwordHasher)
+    public function __construct(private UserPasswordHasherInterface $passwordHasher)
     {
     }
 
-    public function __invoke(Request $request, FormFactoryInterface $formFactory, \Ferienpass\CoreBundle\Session\Flash $flash): Response
+    public function __invoke(EntityManagerInterface $em, Request $request, FormFactoryInterface $formFactory, Flash $flash): Response
     {
         $user = $this->getUser();
-        if (!$user instanceof FrontendUser) {
+        if (!$user instanceof User) {
             return new Response('', Response::HTTP_NO_CONTENT);
         }
 
         $form = $formFactory->create(UserChangePasswordType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $user->tstamp = time();
-            $user->password = $this->passwordHasher->hash($form->getData()['password'] ?? '');
-            $user->save();
+            $hashedPassword = $this->passwordHasher->hashPassword($user, $form->getData()['password'] ?? '');
+            $user->setPassword($hashedPassword);
+            $user->setModifiedAt();
+
+            $em->flush();
 
             $flash->addConfirmation(text: new TranslatableMessage('MSC.newPasswordSet', [], 'contao_default'));
         }

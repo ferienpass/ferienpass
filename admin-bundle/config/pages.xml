@@ -16,9 +16,7 @@
         </service>
 
         <service id="Ferienpass\AdminBundle\Controller\Page\ChangePasswordController">
-            <argument type="expression">
-                service('security.password_hasher_factory').getPasswordHasher('Contao\\FrontendUser')
-            </argument>
+            <argument type="service" id="security.user_password_hasher"></argument>
         </service>
 
         <service id="Ferienpass\AdminBundle\Controller\Page\EditionsController">
@@ -37,10 +35,7 @@
         </service>
 
         <service id="Ferienpass\AdminBundle\Controller\Page\FollowInvitationController">
-            <argument type="service" id="database_connection"/>
-            <argument type="expression">
-                service('security.password_hasher_factory').getPasswordHasher('Contao\\FrontendUser')
-            </argument>
+            <argument type="service" id="security.user_password_hasher"/>
             <argument type="service" id="contao.opt_in"/>
             <argument type="service" id="Ferienpass\CoreBundle\Repository\HostRepository"/>
         </service>

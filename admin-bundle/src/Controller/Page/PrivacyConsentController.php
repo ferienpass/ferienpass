@@ -14,8 +14,6 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Controller\Page;
 
 use Contao\Config;
-use Contao\FrontendUser;
-use Contao\User;
 use Doctrine\DBAL\Connection;
 use Ferienpass\AdminBundle\State\PrivacyConsent as PrivacyConsentState;
 use Ferienpass\CoreBundle\Form\SimpleType\ContaoRequestTokenType;
@@ -37,7 +35,7 @@ class PrivacyConsentController extends AbstractController
     {
         $error = null;
         $user = $this->getUser();
-        if (!$user instanceof FrontendUser) {
+        if (!$user instanceof \Ferienpass\CoreBundle\Entity\User) {
             return new Response('', Response::HTTP_NO_CONTENT);
         }
 
@@ -46,7 +44,7 @@ class PrivacyConsentController extends AbstractController
             ->from('tl_ferienpass_host_privacy_consent')
             ->where('member=:member')
             ->andWhere('type="sign"')
-            ->setParameter('member', $user->id)
+            ->setParameter('member', $user->getId())
             ->setMaxResults(1)
             ->orderBy('tstamp', 'DESC')
             ->executeQuery()
@@ -86,24 +84,24 @@ class PrivacyConsentController extends AbstractController
         ]);
     }
 
-    private function consentForm(FrontendUser $user): FormInterface
+    private function consentForm(\Ferienpass\CoreBundle\Entity\User $user): FormInterface
     {
         $formBuilder = $this->createFormBuilder(null, ['csrf_protection' => false])
             ->add('request_token', ContaoRequestTokenType::class)
             ->add('firstname', TextType::class, [
                 'label' => 'tl_member.firstname.0',
                 'translation_domain' => 'contao_tl_member',
-                'attr' => ['placeholder' => $user->firstname],
+                'attr' => ['placeholder' => $user->getFirstname()],
                 'constraints' => [
-                    new EqualTo(['value' => $user->firstname]),
+                    new EqualTo(['value' => $user->getFirstname()]),
                 ],
             ])
             ->add('lastname', TextType::class, [
                 'label' => 'tl_member.lastname.0',
-                'attr' => ['placeholder' => $user->lastname],
+                'attr' => ['placeholder' => $user->getLastname()],
                 'translation_domain' => 'contao_tl_member',
                 'constraints' => [
-                    new EqualTo(['value' => $user->lastname]),
+                    new EqualTo(['value' => $user->getLastname()]),
                 ],
             ])
             ->add('submit', SubmitType::class, ['label' => 'Unterzeichnen'])
@@ -112,7 +110,7 @@ class PrivacyConsentController extends AbstractController
         return $formBuilder->getForm();
     }
 
-    private function sign(FormInterface $form, User $user): void
+    private function sign(FormInterface $form, \Ferienpass\CoreBundle\Entity\User $user): void
     {
         $this->connection->createQueryBuilder()
             ->insert('tl_ferienpass_host_privacy_consent')
@@ -125,7 +123,7 @@ class PrivacyConsentController extends AbstractController
             ])
             ->setParameters([
                 time(),
-                $user->id,
+                $user->getId(),
                 'sign',
                 json_encode($form->getData(), \JSON_THROW_ON_ERROR),
                 sha1($this->consentState->getFormattedConsentText()),

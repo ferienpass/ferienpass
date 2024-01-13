@@ -16,7 +16,6 @@ namespace Ferienpass\AdminBundle\Controller\Page;
 use Contao\CoreBundle\OptIn\OptIn;
 use Contao\CoreBundle\Slug\Slug;
 use Contao\Dbafs;
-use Contao\FrontendUser;
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
@@ -24,6 +23,7 @@ use Ferienpass\AdminBundle\Dto\EditHostDto;
 use Ferienpass\AdminBundle\Form\EditHostType;
 use Ferienpass\AdminBundle\Form\UserInviteType;
 use Ferienpass\CoreBundle\Entity\Host;
+use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Repository\HostRepository;
 use Ferienpass\CoreBundle\Ux\Flash;
 use NotificationCenter\Model\Notification;
@@ -47,13 +47,13 @@ final class OrganizationController extends AbstractController
     public function index(Request $request, Breadcrumb $breadcrumb): Response
     {
         $user = $this->getUser();
-        if (!$user instanceof FrontendUser) {
+        if (!$user instanceof User) {
             return new Response('', Response::HTTP_NO_CONTENT);
         }
 
         $organizations = [];
 
-        foreach ($this->hostRepository->findByMemberId((int) $user->id) as $host) {
+        foreach ($this->hostRepository->findByUser($user) as $host) {
             $form = $this->formFactory->create(UserInviteType::class);
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
@@ -115,7 +115,7 @@ final class OrganizationController extends AbstractController
         ]);
     }
 
-    private function invite(string $email, Host $host, FrontendUser $user): void
+    private function invite(string $email, Host $host, User $user): void
     {
         /** @var Notification $notification */
         $notification = Notification::findOneBy('type', 'host_invite_member');
@@ -125,7 +125,7 @@ final class OrganizationController extends AbstractController
 
         $tokens = [];
 
-        $optInToken = $this->optIn->create('invite', $email, ['Host' => [$host->getId()], 'tl_member' => [$user->id]]);
+        $optInToken = $this->optIn->create('invite', $email, ['Host' => [$host->getId()], 'tl_member' => [$user->getId()]]);
 
         $tokens['invitee_email'] = $email;
         $tokens['admin_email'] = $GLOBALS['TL_ADMIN_EMAIL'];
@@ -134,9 +134,8 @@ final class OrganizationController extends AbstractController
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
-        foreach ($user->getData() as $k => $v) {
-            $tokens['member_'.$k] = $v;
-        }
+        $tokens['member_firstname'] = $user->getFirstname();
+        $tokens['member_lastname'] = $user->getLastname();
 
         $tokens['host_name'] = $host->getName();
 

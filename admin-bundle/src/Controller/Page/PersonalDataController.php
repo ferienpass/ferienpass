@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
-use Contao\FrontendUser;
-use Contao\MemberModel;
+use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Form\PersonalDataType;
+use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,26 +25,18 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/persoenliche-daten', name: 'admin_user_index')]
 final class PersonalDataController extends AbstractController
 {
-    public function __invoke(Request $request, FormFactoryInterface $formFactory): Response
+    public function __invoke(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
-        if (!$user instanceof FrontendUser) {
+        if (!$user instanceof User) {
             return new Response();
         }
 
-        $memberModel = MemberModel::findByPk($user->id);
-        $data = $memberModel->row();
-
-        $form = $formFactory->create(PersonalDataType::class, $data);
+        $form = $formFactory->create(PersonalDataType::class, $user);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = array_filter($form->getData());
-            foreach ($data as $k => $v) {
-                $memberModel->$k = $v;
-            }
-
-            $memberModel->save();
+            $em->flush();
 
             return $this->redirectToRoute('admin_user_index');
         }

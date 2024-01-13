@@ -18,19 +18,17 @@
         {% endembed %}
     </div>
 
-    {% if disabled %}
-        <div class="mt-1 flex justify-end">
-            <p class="max-w-xs text-xs text-gray-500 text-right">Das Erstellen von Angeboten in „{{ edition.name }}“ ist aktuell
-                nicht möglich.
-            </p></div>
-    {% endif %}
 
-    {#              <p class="rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset text-green-700 bg-green-50 ring-green-600/20">
-                    Complete</p> #}
-    {% include '@FerienpassAdmin/components/list.html.twig' with {
-        title: "{{ item.name }}",
-        info: [
-            '
+
+    {% if is_granted('ROLE_ADMIN') %}
+
+        {{ component('SearchableQueryableList', { qb: qb, originalRoute: app.request.get('_route'), originalQuery: app.request.query.all,
+            searchable: searchable,
+            config: {
+                columns: {
+                    name: '{{ item.name }}',
+                    hosts: '{{ item.hosts|map(h => h.name)|join(", ") }}',
+                    date: '
 {% if item.dates is not empty %}
     {% set startDate = item.dates|first.begin %}
     <time datetime="{{ startDate|date(\'c\') }}">{{ startDate|format_datetime(pattern="E, dd.MM.yyyy HH:mm") }}</time>
@@ -38,8 +36,7 @@
     <span>Dauerangebot</span>
 {% endif %}
 ',
-            "{{ item.hosts|map(h => h.name)|join(', ') }}",
-            '
+                    attendances: '
                 <p class="flex items-center space-x-1" title="aktuelle Anmeldungen">
                     <span class="{{ (item.maxParticipants and item.attendancesConfirmed|length >= item.maxParticipants) ? \'text-red-700\' : \'text-green-700\' }}">
                         <svg viewBox="0 0 2 2" class="h-2 w-2 fill-current">
@@ -52,7 +49,48 @@
                     </span>
                 </p>
 ',
-        ]
-    } %}
+                }
+            }}) }}
+
+
+    {% else %}
+
+        {% if disabled %}
+            <div class="mt-1 flex justify-end">
+                <p class="max-w-xs text-xs text-gray-500 text-right">Das Erstellen von Angeboten in „{{ edition.name }}“ ist aktuell
+                    nicht möglich.
+                </p></div>
+        {% endif %}
+
+        {% include '@FerienpassAdmin/components/list.html.twig' with {
+            title: "{{ item.name }}",
+            info: [
+                '
+{% if item.dates is not empty %}
+    {% set startDate = item.dates|first.begin %}
+    <time datetime="{{ startDate|date(\'c\') }}">{{ startDate|format_datetime(pattern="E, dd.MM.yyyy HH:mm") }}</time>
+{% else %}
+    <span>Dauerangebot</span>
+{% endif %}
+',
+                "{{ item.hosts|map(h => h.name)|join(', ') }}",
+                '
+                <p class="flex items-center space-x-1" title="aktuelle Anmeldungen">
+                    <span class="{{ (item.maxParticipants and item.attendancesConfirmed|length >= item.maxParticipants) ? \'text-red-700\' : \'text-green-700\' }}">
+                        <svg viewBox="0 0 2 2" class="h-2 w-2 fill-current">
+                            <circle cx="1" cy="1" r="1"/>
+                        </svg>
+                    </span>
+
+                    <span>
+                        {{ item.attendancesNotWithdrawn|length ~ \' / \' ~ (item.maxParticipants ?: \'∞\') ~ \'\' }}
+                    </span>
+                </p>
+',
+            ]
+        } %}
+
+
+    {% endif %}
 
 {% endblock %}

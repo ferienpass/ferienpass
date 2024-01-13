@@ -33,7 +33,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/{edition}/angebote')]
+#[Route('/angebote/{edition?}')]
 final class OffersController extends AbstractController
 {
     #[Route('', name: 'admin_offers_index')]
@@ -44,51 +44,44 @@ final class OffersController extends AbstractController
             throw new \RuntimeException('No user');
         }
 
-        $qb = $repository->createQueryBuilder('o');
+        $qb = $repository->createQueryBuilder('i');
 
         if ($request->query->has('host')) {
             $host = $hostRepository->find($request->query->get('host'));
             $this->denyAccessUnlessGranted('view', $host);
 
-            $qb->andWhere(':host MEMBER OF o.hosts')->setParameter('host', $host);
-        } else {
-            if (!$this->isGranted('ROLE_ADMIN')) {
-                $hosts = $hostRepository->findByMemberId((int) $user->id);
-                $qb
-                    ->innerJoin('o.hosts', 'h', Join::WITH, 'h IN (:hosts)')
-                    ->setParameter('hosts', $hosts);
-            }
+            $qb->andWhere(':host MEMBER OF i.hosts')->setParameter('host', $host);
+        } elseif (!$this->isGranted('ROLE_ADMIN')) {
+            $hosts = $hostRepository->findByUser($user);
+            $qb->innerJoin('i.hosts', 'h', Join::WITH, 'h IN (:hosts)')->setParameter('hosts', $hosts);
         }
 
         if (null !== $edition) {
-            $qb
-                ->andWhere('o.edition = :edition')
-                ->setParameter('edition', $edition->getId(), Types::INTEGER);
+            $qb->andWhere('i.edition = :edition')->setParameter('edition', $edition->getId(), Types::INTEGER);
         }
 
-        $offers = $qb
-            ->leftJoin('o.dates', 'd')
-            ->orderBy('d.begin')
-            ->getQuery()
-            ->getResult()
-        ;
+        // $qb->leftJoin('i.dates', 'd')->orderBy('d.begin');
+
+        $items = $qb->getQuery()->getResult();
 
         $menu = $factory->createItem('offers.editions');
 
-        foreach ($editionRepository->findAll() as $edition1) {
-            $menu->addChild($edition1->getName(), [
+        foreach ($editionRepository->findAll() as $e) {
+            $menu->addChild($e->getName(), [
                 'route' => 'admin_offers_index',
-                'routeParameters' => ['edition' => $edition1->getAlias()],
-                'current' => $edition1->getAlias() === $edition->getAlias(),
+                'routeParameters' => ['edition' => $e->getAlias()],
+                'current' => $e->getAlias() === $edition->getAlias(),
             ]);
         }
 
         return $this->render('@FerienpassAdmin/page/offers/index.html.twig', [
+            'qb' => $qb,
+            'exports' => ['xlsx'],
+            'searchable' => ['name'],
             'edition' => $edition,
-            'offers' => $offers,
-            'items' => $offers,
+            'items' => $items,
             'aside_nav' => $menu,
-            'breadcrumb' => $breadcrumb->generate($edition->getName(), 'Angebote'),
+            'breadcrumb' => $breadcrumb->generate('Angebote', $edition->getName()),
         ]);
     }
 

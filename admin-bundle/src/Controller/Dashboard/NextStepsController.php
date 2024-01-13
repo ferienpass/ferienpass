@@ -36,7 +36,7 @@ class NextStepsController extends AbstractController
         }
 
         return $this->render('@FerienpassAdmin/fragment/dashboard/next_steps.html.twig', [
-            'editions' => $editions,
+            'editions' => $editions ?? [],
         ]);
     }
 

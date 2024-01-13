@@ -1,4 +1,5 @@
 {% trans_default_domain 'admin' %}
+{% set translationPrefix = app.request.get('_route')|split('_')[1] %}
 
 <div class="flex space-x-3">
     {% if this.sortingFields %}
@@ -8,7 +9,7 @@
                 <select data-model="sorting" id="sorting" name="sorting"
                         class="py-1.5 text-sm font-medium hover:bg-gray-50">
                     {% for field in this.sortingFields %}
-                        <option>{{ "payments.sorting.#{field}"|trans }}</option>
+                        <option>{{ "#{translationPrefix}.sorting.#{field}"|trans }}</option>
                     {% endfor %}
                 </select>
             </div>

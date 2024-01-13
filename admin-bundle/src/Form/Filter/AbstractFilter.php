@@ -24,12 +24,12 @@ abstract class AbstractFilter extends AbstractType
 {
     abstract public static function getEntity(): string;
 
-    public function getSortingFields(): array
+    public function getSearchable(): array
     {
         return array_keys(static::getSorting());
     }
 
-    public function getSortingDir(string $field): string|array|null
+    public function getOrderByFor(string $field): string|array|null
     {
         return static::getSorting()[$field] ?? null;
     }
@@ -37,7 +37,6 @@ abstract class AbstractFilter extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'label_format' => 'payments.filter.%name%',
             'translation_domain' => 'admin',
             'required' => false,
         ]);

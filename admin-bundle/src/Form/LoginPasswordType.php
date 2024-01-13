@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Form;
 
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
-final class LoginPasswordType extends PasswordType
+final class LoginPasswordType extends AbstractType
 {
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
@@ -27,13 +27,8 @@ final class LoginPasswordType extends PasswordType
         $view->vars['full_name'] = '_password';
     }
 
-    public function configureOptions(OptionsResolver $resolver): void
+    public function getParent()
     {
-        parent::configureOptions(
-            $resolver
-                ->setDefault('label', 'MSC.password.0')
-                ->setDefault('translation_domain', 'contao_default')
-                ->setDefault('mapped', false)
-        );
+        return PasswordType::class;
     }
 }

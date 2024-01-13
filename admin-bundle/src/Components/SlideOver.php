@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Components;
 
-use Contao\FrontendUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\CoreBundle\Entity\AttendanceLog;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Entity\ParticipantLog;
+use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -77,11 +77,11 @@ class SlideOver extends AbstractController
         $this->validate();
 
         $user = $this->getUser();
-        if (!$user instanceof FrontendUser) {
+        if (!$user instanceof User) {
             return;
         }
 
-        $comment = new ParticipantLog($this->participant, $this->newComment, $user->id);
+        $comment = new ParticipantLog($this->participant, $this->newComment, $user);
 
         $em->persist($comment);
         $em->flush();

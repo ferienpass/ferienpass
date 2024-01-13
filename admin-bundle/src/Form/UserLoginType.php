@@ -26,24 +26,18 @@ class UserLoginType extends AbstractType
         $builder
             ->add('username', LoginUsernameType::class)
             ->add('password', LoginPasswordType::class)
-            ->add('autologin', CheckboxType::class, [
-                'required' => false,
-                'label' => 'MSC.autologin',
-                'translation_domain' => 'contao_default',
-            ])
+            ->add('autologin', CheckboxType::class, ['required' => false])
             ->add('_target_path', LoginTargetPathType::class, ['data' => $options['target_path']])
-            ->add('submit', SubmitType::class, [
-                'label' => 'MSC.login',
-                'translation_domain' => 'contao_default',
-            ])
+            ->add('submit', SubmitType::class)
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'csrf_protection' => false,
+            // 'csrf_protection' => false,
             'target_path' => '',
+            'mapped' => false,
         ]);
 
         $resolver

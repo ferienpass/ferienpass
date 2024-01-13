@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Form;
 
-use Contao\FrontendUser;
+use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Form\SimpleType\ContaoRequestTokenType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -30,7 +30,7 @@ class AcceptInvitationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        if (!$options['data'] instanceof FrontendUser) {
+        if (!$options['data'] instanceof User) {
             $builder
                 ->add('firstname', TextType::class, [
                     'label' => 'tl_member.firstname.0',

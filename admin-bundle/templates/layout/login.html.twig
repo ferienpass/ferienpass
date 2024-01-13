@@ -11,11 +11,10 @@
 
             {% block content %}{% endblock %}
         </div>
-        {% if splashSrc is defined %}
-            <div class="hidden lg:block relative w-0 flex-1 dark:opacity-70">
-                <img class="absolute inset-0 h-full w-full object-cover" src="{{ splashSrc }}" alt="">
+
+            <div class="hidden lg:block relative w-0 flex-1 _dark:opacity-70">
+                <img class="absolute inset-0 h-full w-full object-cover" src="{{ asset('nordhorn/images/splash.jpg') }}" alt="">
             </div>
-        {% endif %}
     </div>
 
     {% include '@FerienpassCore/Page/_flash_modals.html.twig' %}
