@@ -86,7 +86,7 @@ class OfferApplicationsController extends AbstractController
             ->getResult()
         ;
 
-        $emails = array_map(fn (Attendance $a) => $a->getParticipant()?->getEmail() ?? $a->getParticipant()?->getMember()?->email, $attendances);
+        $emails = array_map(fn (Attendance $a) => $a->getParticipant()?->getEmail() ?? $a->getParticipant()?->getUser()?->email, $attendances);
 
         return $this->render('@FerienpassAdmin/page/offers/applications.html.twig', [
             'offer' => $offer,

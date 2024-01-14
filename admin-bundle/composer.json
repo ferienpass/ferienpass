@@ -69,7 +69,6 @@
     }
   },
   "extra": {
-    "contao-manager-plugin": "Ferienpass\\AdminBundle\\ContaoManager\\Plugin",
     "branch-alias": {
       "dev-4.x": "4.x-dev"
     }

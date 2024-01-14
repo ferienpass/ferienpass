@@ -19,9 +19,9 @@ use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\FrontendUser;
 use Contao\PageModel;
 use Ferienpass\CmsBundle\Controller\Frontend\AbstractController;
+use Ferienpass\CmsBundle\Fragment\FragmentReference;
 use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Entity\Offer;
-use Ferienpass\CoreBundle\Fragment\FragmentReference;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 

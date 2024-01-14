@@ -16,9 +16,9 @@ namespace Ferienpass\CmsBundle\Controller\Page;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsPage;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Ferienpass\CmsBundle\Controller\Frontend\AbstractController;
-use Ferienpass\CoreBundle\Fragment\FragmentReference;
-use Ferienpass\CoreBundle\UserAccount\UserAccountFragments;
-use Ferienpass\CoreBundle\UserAccount\UserAccountFragmentValueHolder;
+use Ferienpass\CmsBundle\Fragment\FragmentReference;
+use Ferienpass\CmsBundle\UserAccount\UserAccountFragments;
+use Ferienpass\CmsBundle\UserAccount\UserAccountFragmentValueHolder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 

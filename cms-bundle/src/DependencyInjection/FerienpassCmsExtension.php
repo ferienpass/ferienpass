@@ -38,15 +38,24 @@ final class FerienpassCmsExtension extends Extension implements PrependExtension
         $this->prependTwigBundle($container);
         $this->prependDoctrineBundle($container);
 
-                if ($this->isAssetMapperAvailable($container)) {
-                    $container->prependExtensionConfig('framework', [
-                        'asset_mapper' => [
-                            'paths' => [
-                                __DIR__.'/../../assets/dist' => '@ferienpass/ux-cms',
-                            ],
-                        ],
-                    ]);
-                }
+        $container->prependExtensionConfig('twig_component', [
+            'defaults' => [
+                'Ferienpass\CmsBundle\Components\\' => [
+                    'template_directory' => '@FerienpassCms/components',
+                    'name_prefix' => 'Cms',
+                ],
+            ],
+        ]);
+
+        if ($this->isAssetMapperAvailable($container)) {
+            $container->prependExtensionConfig('framework', [
+                'asset_mapper' => [
+                    'paths' => [
+                        __DIR__.'/../../assets/dist' => '@ferienpass/ux-cms',
+                    ],
+                ],
+            ]);
+        }
     }
 
     private function prependTwigBundle(ContainerBuilder $container): void

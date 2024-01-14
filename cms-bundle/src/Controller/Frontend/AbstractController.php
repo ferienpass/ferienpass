@@ -17,8 +17,8 @@ use Contao\CoreBundle\Controller\AbstractController as ContaoAbstractController;
 use Contao\CoreBundle\Exception\AccessDeniedException;
 use Contao\CoreBundle\Security\ContaoCorePermissions;
 use Contao\PageModel;
-use Ferienpass\CoreBundle\Page\PageBuilder;
-use Ferienpass\CoreBundle\Page\PageBuilderFactory;
+use Ferienpass\CmsBundle\Page\PageBuilder;
+use Ferienpass\CmsBundle\Page\PageBuilderFactory;
 use Symfony\Component\Security\Core\Security;
 
 class AbstractController extends ContaoAbstractController

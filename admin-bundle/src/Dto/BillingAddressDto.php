@@ -56,10 +56,10 @@ EOF;
             $participant = $item->getAttendance()->getParticipant();
         }
 
-        if (null === $participant?->getMember()) {
+        if (null === $participant?->getUser()) {
             $self = new self();
         } else {
-            $self = self::fromMemberModel($participant->getMember());
+            $self = self::fromMemberModel($participant->getUser());
         }
 
         $self->items = $payment->getItems();

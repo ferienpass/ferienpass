@@ -11,7 +11,7 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CoreBundle\Fragment;
+namespace Ferienpass\CmsBundle\Fragment;
 
 class FragmentReference extends \Contao\CoreBundle\Fragment\Reference\FragmentReference
 {

@@ -11,10 +11,10 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CoreBundle\Menu;
+namespace Ferienpass\CmsBundle\Menu;
 
 use Contao\PageModel;
-use Ferienpass\CoreBundle\UserAccount\UserAccountFragments;
+use Ferienpass\CmsBundle\UserAccount\UserAccountFragments;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Symfony\Component\HttpFoundation\RequestStack;

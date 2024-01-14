@@ -15,8 +15,8 @@ namespace Ferienpass\CmsBundle\Controller\Page;
 
 use Contao\ArticleModel;
 use Ferienpass\CmsBundle\Controller\Frontend\AbstractController;
-use Ferienpass\CoreBundle\Fragment\FragmentReference;
-use Ferienpass\CoreBundle\Page\PageBuilder;
+use Ferienpass\CmsBundle\Fragment\FragmentReference;
+use Ferienpass\CmsBundle\Page\PageBuilder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 

@@ -1,0 +1,40 @@
+<div {{ attributes }}>
+
+    <div class="mx-auto w-full max-w-sm">
+        <div>
+            <p class="font-semibold leading-5 text-gray-600">Registrieren Sie sich als
+                Eltern im Ferienpass.</p>
+        </div>
+        <div class="mt-8">
+
+            {{ form_start(form, {
+                attr: {
+                    'data-action': 'live#action',
+                    'data-action-name': 'prevent|submit'
+                }
+            }) }}
+
+            <div class="grid gap-4 grid-cols-2">
+                <div>{{ form_row(form.firstname) }}</div>
+                <div>{{ form_row(form.lastname) }}</div>
+                <div class="col-span-2">{{ form_row(form.email) }}</div>
+                <div class="col-span-2">{{ form_row(form.plainPassword) }}</div>
+                <div class="col-span-2">{{ form_row(form.mobile) }}</div>
+                <div class="col-span-2">{{ form_row(form.phone) }}</div>
+            </div>
+
+            <p class="mt-6 text-sm leading-5 text-gray-600">Die Namen Ihrer Kinder geben Sie
+                im nächsten Schritt ein.</p>
+
+            <div class="mt-6">
+                <span class="block w-full rounded-md shadow-sm">
+                    <button class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-500 focus:outline-none focus:border-primary-700 focus:shadow-outline-primary active:bg-primary-700 transition duration-150 ease-in-out"
+                            type="submit">Registrieren</button>
+                </span>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+</div>

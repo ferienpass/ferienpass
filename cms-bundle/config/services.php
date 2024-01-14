@@ -9,6 +9,9 @@ use Ferienpass\CmsBundle\Controller\Fragment\ChangePasswordController;
 use Ferienpass\CmsBundle\Controller\Fragment\CloseAccount;
 use Ferienpass\CmsBundle\Controller\Fragment\ParticipantsController;
 use Ferienpass\CmsBundle\Controller\Fragment\PersonalDataController;
+use Ferienpass\CmsBundle\Menu\MenuBuilder;
+use Ferienpass\CmsBundle\Page\PageBuilderFactory;
+use Symfony\Component\Security\Http\Logout\LogoutUrlGenerator;
 
 return function(ContainerConfigurator $container): void {
     $services = $container->services()
@@ -37,6 +40,8 @@ return function(ContainerConfigurator $container): void {
     // Aliases for autowiring
     $services->alias(ContaoContext::class, 'contao.assets.files_context');
     $services->alias(OptInInterface::class, 'contao.opt_in');
+    $services->alias(LogoutUrlGenerator::class, 'security.logout_url_generator');
+    $services->alias(\Symfony\Component\HttpKernel\Fragment\FragmentHandler::class, 'contao.fragment.handler');
 
     // Tagged user account fragments
     $services->set(ParticipantsController::class)
@@ -53,6 +58,17 @@ return function(ContainerConfigurator $container): void {
 
     $services->set(CloseAccount::class)
         ->tag('ferienpass.user_account', ['key'=>'close_account', 'alias'=>'account-löschen', 'icon'=>'trash'])
+    ;
+
+    // Tagged menu builders
+    $services->set(MenuBuilder::class)
+        ->tag('knp_menu.menu_builder', ['method'=>'userNavigation', 'alias'=>'user_navigation'])
+        ->tag('knp_menu.menu_builder', ['method'=>'userAccountNavigation', 'alias'=>'user_account_navigation'])
+    ;
+
+    // Public services
+    $services->set(PageBuilderFactory::class)
+        ->public()
     ;
 
 

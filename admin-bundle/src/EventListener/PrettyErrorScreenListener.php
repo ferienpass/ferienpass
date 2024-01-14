@@ -15,7 +15,7 @@ namespace Ferienpass\AdminBundle\EventListener;
 
 use Contao\CoreBundle\Exception\ResponseException;
 use Contao\LayoutModel;
-use Ferienpass\CoreBundle\Fragment\FragmentReference;
+use Ferienpass\CmsBundle\Fragment\FragmentReference;
 use Symfony\Component\HttpFoundation\AcceptHeader;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class OfferDetailsController extends AbstractController
 {
-    public function __construct(#[Autowire('%kernel.project_dir%')]private readonly string $projectDir)
+    public function __construct(#[Autowire('%kernel.project_dir%')] private readonly string $projectDir)
     {
     }
 

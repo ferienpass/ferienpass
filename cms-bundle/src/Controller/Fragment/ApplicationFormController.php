@@ -100,7 +100,7 @@ class ApplicationFormController extends AbstractController
         $this->doctrine->getManager()->persist($participant);
         $this->doctrine->getManager()->flush();
 
-        if (null === $participant->getMember()) {
+        if (null === $participant->getUser()) {
             $request->getSession()->set('participant_ids', array_unique(array_merge($request->getSession()->get('participant_ids', []), [$participant->getId()])));
 
             // Verify email address

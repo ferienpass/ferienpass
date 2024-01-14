@@ -20,13 +20,14 @@ use Doctrine\DBAL\Connection;
 
 class SetupCmsPagesMigration extends AbstractMigration
 {
-    private const REQUIRED_PAGES =  [
+    private const REQUIRED_PAGES = [
         'offer_details',
         'offer_list',
         'lost_password',
     ];
 
-    public function __construct(private readonly Connection $connection) {
+    public function __construct(private readonly Connection $connection)
+    {
     }
 
     public function shouldRun(): bool
@@ -35,7 +36,7 @@ class SetupCmsPagesMigration extends AbstractMigration
             return false;
         }
 
-        return $this->connection->fetchOne('SELECT COUNT(*) FROM tl_page WHERE type IN (?)', [self::REQUIRED_PAGES], [ArrayParameterType::STRING]) < count(self::REQUIRED_PAGES);
+        return $this->connection->fetchOne('SELECT COUNT(*) FROM tl_page WHERE type IN (?)', [self::REQUIRED_PAGES], [ArrayParameterType::STRING]) < \count(self::REQUIRED_PAGES);
     }
 
     public function run(): MigrationResult

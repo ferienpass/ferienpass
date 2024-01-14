@@ -13,7 +13,10 @@ declare(strict_types=1);
 
 namespace Ferienpass\CmsBundle;
 
+use Contao\CoreBundle\DependencyInjection\Compiler\RegisterFragmentsPass;
+use Ferienpass\CmsBundle\DependencyInjection\Compiler\UserAccountFragmentsPass;
 use Ferienpass\CmsBundle\DependencyInjection\FerienpassCmsExtension;
+use Ferienpass\CmsBundle\Fragment\FragmentReference;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -31,6 +34,13 @@ class FerienpassCmsBundle extends AbstractBundle
         return new FerienpassCmsExtension();
     }
 
+    public function build(ContainerBuilder $container): void
+    {
+        parent::build($container);
+
+        $container->addCompilerPass(new RegisterFragmentsPass(FragmentReference::TAG_NAME));
+        $container->addCompilerPass(new UserAccountFragmentsPass());
+    }
 
     public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
     {

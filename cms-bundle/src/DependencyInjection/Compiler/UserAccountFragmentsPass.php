@@ -11,9 +11,9 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CoreBundle\DependencyInjection\Compiler;
+namespace Ferienpass\CmsBundle\DependencyInjection\Compiler;
 
-use Ferienpass\CoreBundle\UserAccount\UserAccountFragments;
+use Ferienpass\CmsBundle\UserAccount\UserAccountFragments;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

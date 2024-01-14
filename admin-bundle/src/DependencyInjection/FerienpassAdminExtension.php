@@ -48,6 +48,15 @@ final class FerienpassAdminExtension extends Extension implements PrependExtensi
         $this->prependTwigBundle($container);
         $this->prependDoctrineBundle($container);
 
+        $container->prependExtensionConfig('twig_component', [
+            'defaults' => [
+                'Ferienpass\AdminBundle\Components\\' => [
+                    'template_directory' => '@FerienpassAdmin/components',
+                    'name_prefix' => 'Admin',
+                ],
+            ],
+        ]);
+
         if ($this->isAssetMapperAvailable($container)) {
             $container->prependExtensionConfig('framework', [
                 'asset_mapper' => [

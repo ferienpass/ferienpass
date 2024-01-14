@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Ferienpass\CmsBundle\Controller\Page;
 
 use Contao\CoreBundle\DependencyInjection\Attribute\AsPage;
-use Ferienpass\CoreBundle\Fragment\FragmentReference;
-use Ferienpass\CoreBundle\Page\PageBuilder;
+use Ferienpass\CmsBundle\Fragment\FragmentReference;
+use Ferienpass\CmsBundle\Page\PageBuilder;
 
 #[AsPage('offer_list')]
 class OfferListPage extends AbstractContentPage

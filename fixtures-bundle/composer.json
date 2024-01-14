@@ -35,8 +35,5 @@
     "psr-4": {
       "Ferienpass\\FixturesBundle\\": "src/"
     }
-  },
-  "extra": {
-    "contao-manager-plugin": "Ferienpass\\FixturesBundle\\ContaoManager\\Plugin"
   }
 }

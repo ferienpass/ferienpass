@@ -1,0 +1,73 @@
+<div {{ attributes }}>
+
+    <div class="mx-auto w-full max-w-sm">
+        <div>
+            <p class="font-semibold leading-5 text-gray-600">Melden Sie sich mit Ihrer
+                Benutzerkennung und Ihrem Passwort an.</p>
+        </div>
+
+        <div class="mt-8"
+             x-data="{ validEmail: null, authError: null, message: null, isLoading: false }">
+
+            {{ form_start(form, {
+                attr: {
+                    'data-action': 'live#action',
+                    'data-action-name': 'prevent|submit'
+                }
+            }) }}
+
+            <template x-if="authError">
+                <div class="mt-6 mb-6">
+                    {% embed '@FerienpassCore/Alert/error.html.twig' with {headline: 'Anmeldung fehlgeschlagen'} %}
+                        {% block content %}
+                            <ul class="list-disc">
+                                <li>Überprüfen Sie nochmal Ihre E-Mail-Adresse und Ihr
+                                    Passwort.
+                                </li>
+                                <li class="mt-1">
+                                    Sind Sie neu hier und wollen Sie ein neues Konto
+                                    erstellen? Klicken Sie oben auf „Registrieren“.
+                                </li>
+                            </ul>
+                        {% endblock %}
+                    {% endembed %}
+                </div>
+
+            </template>
+            <template x-if="message">
+                <div class="mt-6 mb-6">
+                    {% embed '@FerienpassCore/Alert/error.html.twig' %}
+                        {% block content %}<p x-text="message"></p>{% endblock %}
+                    {% endembed %}
+                </div>
+
+            </template>
+
+                <div class="grid gap-4">
+                    {{ form_row(form.username) }}
+                    {{ form_row(form.password) }}
+                </div>
+
+                <div class="mt-6 flex items-center justify-between">
+
+                    <div class="flex items-center">
+                        {{ form_row(form.autologin) }}
+                    </div>
+
+                    <div class="text-sm leading-5">
+                        <a class="font-medium text-primary-600 hover:text-primary-500 focus:outline-none focus:underline transition ease-in-out duration-150"
+                           href="{{ path('lost_password') }}">Passwort vergessen?</a>
+                    </div>
+                </div>
+
+            <div class="mt-6">
+                {{ form_row(form.submit, {'attr': {'class': 'w-full'}}) }}
+            </div>
+            {{ form_end(form) }}
+
+            {% include '@FerienpassCore/Partial/loading-overlay.html.twig' %}
+
+        </div>
+    </div>
+
+</div>

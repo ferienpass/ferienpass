@@ -73,7 +73,7 @@ class RegistrationActivateController extends AbstractController
 
         $this->logger->info('User account ID {id} has been activated', ['id' => $memberModel->id]);
 
-       // $this->loginUser($memberModel->username, $request);
+        // $this->loginUser($memberModel->username, $request);
 
         $this->messageBus->dispatch(new AccountActivated((int) $memberModel->id));
 
@@ -82,11 +82,11 @@ class RegistrationActivateController extends AbstractController
 
     private function loginUser(string $username, Request $request): void
     {
-//        try {
-//            $user = $this->userProvider->loadUserByIdentifier($username);
-//        } catch (UsernameNotFoundException) {
-//            return;
-//        }
+        //        try {
+        //            $user = $this->userProvider->loadUserByIdentifier($username);
+        //        } catch (UsernameNotFoundException) {
+        //            return;
+        //        }
 
         if (!$user instanceof FrontendUser) {
             return;

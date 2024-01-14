@@ -11,14 +11,16 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CoreBundle\EventListener\Routing;
+namespace Ferienpass\CmsBundle\EventListener\Routing;
 
 use Contao\PageModel;
 use Symfony\Cmf\Component\Routing\Event\RouterGenerateEvent;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 /**
  * Generates the URL for a Contao page by its page type.
  */
+#[AsEventListener('cmf_routing.pre_dynamic_generate')]
 class PageUrlGeneratorListener
 {
     public function __invoke(RouterGenerateEvent $event)

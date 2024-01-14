@@ -29,8 +29,5 @@
     "psr-4": {
       "Ferienpass\\BackupSftpBundle\\": "src/"
     }
-  },
-  "extra": {
-    "contao-manager-plugin": "Ferienpass\\BackupSftpBundle\\ContaoManager\\Plugin"
   }
 }
