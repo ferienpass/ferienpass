@@ -17,6 +17,7 @@ jobs:
           - base
           - backup-sftp-bundle
           - core-bundle
+          - cms-bundle
           - admin-bundle
           - deployer-recipes
 
