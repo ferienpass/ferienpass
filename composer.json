@@ -88,21 +88,13 @@
     "ferienpass/base-bundle": "self.version",
     "ferienpass/backup-sftp-bundle": "self.version",
     "ferienpass/core-bundle": "self.version",
+    "ferienpass/cms-bundle": "self.version",
     "ferienpass/fixtures-bundle": "self.version",
-    "ferienpass/admin-bundle": "self.version",
-    "ferienpass/ux-theme": "self.version",
-    "ferienpass/ux-host-portal": "self.version"
+    "ferienpass/admin-bundle": "self.version"
   },
   "extra": {
-    "contao-manager-plugin": {
-      "ferienpass/fixtures-bundle": "Ferienpass\\FixturesBundle\\ContaoManager\\Plugin",
-      "ferienpass/backup-sftp-bundle": "Ferienpass\\BackupSftpBundle\\ContaoManager\\Plugin",
-      "ferienpass/core-bundle": "Ferienpass\\CoreBundle\\ContaoManager\\Plugin",
-      "ferienpass/admin-bundle": "Ferienpass\\AdminBundle\\ContaoManager\\Plugin",
-      "ferienpass/ux-host-portal": "Ferienpass\\UX\\HostPortal\\ContaoManager\\Plugin"
-    },
     "symfony": {
-      "require": "^5.2"
+      "require": "^6.2"
     }
   },
   "minimum-stability": "dev",
@@ -110,6 +102,7 @@
   "autoload": {
     "psr-4": {
       "Ferienpass\\BackupSftpBundle\\": "backup-sftp-bundle/src/",
+      "Ferienpass\\CmsBundle\\": "cms-bundle/src/",
       "Ferienpass\\CoreBundle\\": "core-bundle/src/",
       "Ferienpass\\FixturesBundle\\": "fixtures-bundle/src/",
       "Ferienpass\\AdminBundle\\": "admin-bundle/src/",
@@ -136,9 +129,6 @@
   },
   "config": {
     "allow-plugins": {
-      "contao-components/installer": true,
-      "contao-community-alliance/composer-plugin": true,
-      "contao/manager-plugin": true,
       "php-http/discovery": true
     }
   }

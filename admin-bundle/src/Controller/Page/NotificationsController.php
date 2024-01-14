@@ -22,6 +22,7 @@ use Ferienpass\CoreBundle\Entity\Notification;
 use Ferienpass\CoreBundle\Message\ConfirmApplications;
 use Ferienpass\CoreBundle\Notifier;
 use Ferienpass\CoreBundle\Repository\NotificationRepository;
+use Ferienpass\CoreBundle\Session\Flash;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -69,7 +70,7 @@ final class NotificationsController extends AbstractController
     }
 
     #[Route('/{type}/bearbeiten', name: 'admin_notifications_edit')]
-    public function edit(string $type, NotificationRepository $notificationRepository, Notifier $notifier, Request $request, EntityManagerInterface $em, \Ferienpass\CoreBundle\Session\Flash $flash, Breadcrumb $breadcrumb)
+    public function edit(string $type, NotificationRepository $notificationRepository, Notifier $notifier, Request $request, EntityManagerInterface $em, Flash $flash, Breadcrumb $breadcrumb)
     {
         $notification = $notificationRepository->findOneBy(['type' => $type]);
         if (null === $notification) {

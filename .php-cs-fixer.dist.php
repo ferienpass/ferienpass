@@ -47,7 +47,7 @@ return (new PhpCsFixer\Config())
         'strict_comparison' => true,
         'strict_param' => true,
     ])
-    ->setFinder((new PhpCsFixer\Finder())->in([__DIR__.'/core-bundle/src', __DIR__.'/core-bundle/contao', __DIR__.'/admin-bundle/src', __DIR__.'/admin-bundle/contao']))
+    ->setFinder((new PhpCsFixer\Finder())->in([__DIR__.'/core-bundle/src', __DIR__.'/cms-bundle/src', __DIR__.'/cms-bundle/contao', __DIR__.'/admin-bundle/src', __DIR__.'/admin-bundle/contao']))
     ->setRiskyAllowed(true)
     ->setUsingCache(false)
 ;

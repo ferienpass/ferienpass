@@ -1,0 +1,28 @@
+{
+    "name": "@ferienpass/ux-cms",
+    "description": "UX components for cms-bundle",
+    "license": "proprietary",
+    "version": "1.0.0",
+    "scripts": {
+        "build:js": "tsc"
+    },
+    "main": "dist/index.js",
+    "symfony": {
+        "controllers": {
+        },
+        "importmap": {
+            "@hotwired/stimulus": "^3.0.0"
+        }
+    },
+    "dependencies": {
+        "tailwindcss": "^3.3.0"
+    },
+    "peerDependencies": {
+        "@hotwired/stimulus": "^3.0.0"
+    },
+    "devDependencies": {
+        "@hotwired/stimulus": "^3.0.0",
+        "@types/node": "^16.0",
+        "typescript": "^4.2.4"
+    }
+}
