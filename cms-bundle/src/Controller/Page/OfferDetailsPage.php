@@ -25,7 +25,7 @@ use Ferienpass\CoreBundle\Entity\Offer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-#[AsPage('host_details', path: '{alias}', contentComposition: false)]
+#[AsPage('offer_details', path: '{alias}', contentComposition: false)]
 class OfferDetailsPage extends AbstractController
 {
     public function __invoke(Offer $offer, Request $request): Response

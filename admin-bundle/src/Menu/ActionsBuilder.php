@@ -90,18 +90,19 @@ class ActionsBuilder
 
     private function offers(ItemInterface $root, Offer $item)
     {
-        $root->addChild('view', [
-            'label' => 'offers.action.view',
-            'route' => 'admin_offer_show',
-            'routeParameters' => ['id' => $item->getId(), 'edition' => $item->getEdition()->getAlias()],
-            'display' => $this->isGranted('view', $item),
-            'extras' => ['icon' => 'pencil-solid'],
-        ]);
         $root->addChild('edit', [
             'label' => 'offers.action.edit',
             'route' => 'admin_offers_edit',
             'routeParameters' => ['id' => $item->getId(), 'edition' => $item->getEdition()->getAlias()],
             'display' => $this->isGranted('edit', $item),
+            'extras' => ['icon' => 'pencil-solid'],
+        ]);
+
+        $root->addChild('proof', [
+            'label' => 'offers.action.proof',
+            'route' => 'admin_offer_proof',
+            'routeParameters' => ['id' => $item->getId(), 'edition' => $item->getEdition()->getAlias()],
+            'display' => $this->isGranted('view', $item),
             'extras' => ['icon' => 'pencil-solid'],
         ]);
 
@@ -123,49 +124,49 @@ class ActionsBuilder
             ]);
         }
 
-        $root->addChild('delete', [
-            'label' => 'offers.action.delete',
-            'route' => 'admin_offer_show',
-            'routeParameters' => ['id' => $item->getId(), 'edition' => $item->getEdition()->getAlias()],
-            'display' => $this->isGranted('delete', $item),
-            'extras' => [
-                'method' => 'delete',
-                'icon' => 'trash-solid',
-            ],
-        ]);
+        //        $root->addChild('delete', [
+        //            'label' => 'offers.action.delete',
+        //            'route' => 'admin_offer_show',
+        //            'routeParameters' => ['id' => $item->getId(), 'edition' => $item->getEdition()->getAlias()],
+        //            'display' => $this->isGranted('delete', $item),
+        //            'extras' => [
+        //                'method' => 'delete',
+        //                'icon' => 'trash-solid',
+        //            ],
+        //        ]);
+        //
+        //        if (!$item->isCancelled()
+        //            && ((null === $edition = $item->getEdition()) || !$edition->getActiveTasks('show_offers')->isEmpty())) {
+        //            $root->addChild('cancel', [
+        //                'label' => 'offers.action.cancel',
+        //                'route' => 'admin_offer_show',
+        //                'routeParameters' => ['id' => $item->getId(), 'act' => 'cancel', 'edition' => $item->getEdition()->getAlias()],
+        //                'display' => $this->isGranted('cancel', $item),
+        //                'extras' => [
+        //                    'method' => 'post',
+        //                    'icon' => 'ban-solid',
+        //                ],
+        //            ]);
+        //        }
 
-        if (!$item->isCancelled()
-            && ((null === $edition = $item->getEdition()) || !$edition->getActiveTasks('show_offers')->isEmpty())) {
-            $root->addChild('cancel', [
-                'label' => 'offers.action.cancel',
-                'route' => 'admin_offer_show',
-                'routeParameters' => ['id' => $item->getId(), 'act' => 'cancel', 'edition' => $item->getEdition()->getAlias()],
-                'display' => $this->isGranted('cancel', $item),
-                'extras' => [
-                    'method' => 'post',
-                    'icon' => 'ban-solid',
-                ],
-            ]);
-        }
-
-        if ($item->isCancelled()) {
-            $root->addChild('reactivate', [
-                'label' => 'offers.action.reactivate',
-                'route' => 'admin_offer_show',
-                'routeParameters' => ['id' => $item->getId(), 'act' => 'relaunch', 'edition' => $item->getEdition()->getAlias()],
-                'display' => $this->isGranted('reactivate', $item),
-                'extras' => [
-                    'method' => 'post',
-                    'icon' => 'trash-solid',
-                ],
-            ]);
-        }
+        //        if ($item->isCancelled()) {
+        //            $root->addChild('reactivate', [
+        //                'label' => 'offers.action.reactivate',
+        //                'route' => 'admin_offer_show',
+        //                'routeParameters' => ['id' => $item->getId(), 'act' => 'relaunch', 'edition' => $item->getEdition()->getAlias()],
+        //                'display' => $this->isGranted('reactivate', $item),
+        //                'extras' => [
+        //                    'method' => 'post',
+        //                    'icon' => 'trash-solid',
+        //                ],
+        //            ]);
+        //        }
 
         if ($item->isOnlineApplication()) {
             $root->addChild('participantList', [
                 'label' => 'offers.action.participantList',
                 'route' => 'admin_offer_attendances',
-                'routeParameters' => ['id' => $item->getId()],
+                'routeParameters' => ['id' => $item->getId(), 'edition' => $item->getEdition()->getAlias()],
                 'display' => $this->isGranted('participants.view', $item),
                 'extras' => ['icon' => 'user-group-solid'],
             ]);

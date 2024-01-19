@@ -85,7 +85,7 @@ final class OffersController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'admin_offer_show', requirements: ['id' => '\d+'])]
+    #[Route('/{id}', name: 'admin_offer_proof', requirements: ['id' => '\d+'])]
     public function show(Offer $offer, Request $request, PdfExports $pdfExports, EntityManagerInterface $em, \Ferienpass\CoreBundle\Session\Flash $flash, MessageBusInterface $messageBus, Breadcrumb $breadcrumb): Response
     {
         if ($request->isMethod('delete')) {
@@ -147,7 +147,7 @@ final class OffersController extends AbstractController
 
         $this->denyAccessUnlessGranted('view', $offer);
 
-        return $this->render('@FerienpassAdmin/page/offers/show.html.twig', [
+        return $this->render('@FerienpassAdmin/page/offers/proof.html.twig', [
             'offer' => $offer,
             'hasPdf' => $pdfExports->has(),
             'breadcrumb' => $breadcrumb->generate([$offer->getEdition()->getName(), ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], $offer->getName()),

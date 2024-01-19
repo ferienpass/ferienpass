@@ -118,6 +118,9 @@
 
         <service id="Ferienpass\AdminBundle\Controller\Page\PersonalDataController"/>
 
+        <service id="Ferienpass\AdminBundle\Controller\Page\PrintSheetProofController">
+            <argument type="service" id="Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExports"/>
+        </service>
         <service id="Ferienpass\AdminBundle\Controller\Page\PrivacyConsentController">
             <argument type="service" id="database_connection"/>
             <argument type="service" id="Ferienpass\AdminBundle\State\PrivacyConsent"/>

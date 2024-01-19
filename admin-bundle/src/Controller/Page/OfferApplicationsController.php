@@ -34,7 +34,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_ADMIN')]
-#[Route('/{edition}/angebote/{id}/anmeldungen', requirements: ['id' => '\d+'])]
+#[Route('/angebote/{edition}/{id}/anmeldungen', requirements: ['id' => '\d+'])]
 class OfferApplicationsController extends AbstractController
 {
     public function __construct(private readonly AttendanceRepository $attendanceRepository, private readonly PdfExport $pdfExport, private readonly WordExport $wordExport, private readonly FormFactoryInterface $formFactory)
@@ -86,7 +86,7 @@ class OfferApplicationsController extends AbstractController
             ->getResult()
         ;
 
-        $emails = array_map(fn (Attendance $a) => $a->getParticipant()?->getEmail() ?? $a->getParticipant()?->getUser()?->email, $attendances);
+        $emails = array_map(fn (Attendance $a) => $a->getParticipant()?->getEmail(), $attendances);
 
         return $this->render('@FerienpassAdmin/page/offers/applications.html.twig', [
             'offer' => $offer,

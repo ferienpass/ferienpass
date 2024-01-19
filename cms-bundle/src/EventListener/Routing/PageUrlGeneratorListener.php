@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\CmsBundle\EventListener\Routing;
 
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\PageModel;
 use Symfony\Cmf\Component\Routing\Event\RouterGenerateEvent;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
@@ -23,8 +24,14 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 #[AsEventListener('cmf_routing.pre_dynamic_generate')]
 class PageUrlGeneratorListener
 {
+    public function __construct(private readonly ContaoFramework $contaoFramework)
+    {
+    }
+
     public function __invoke(RouterGenerateEvent $event)
     {
+        $this->contaoFramework->initialize();
+
         if (null === $page = PageModel::findOneBy(["type=? AND published='1'"], [$event->getRoute()])) {
             return;
         }

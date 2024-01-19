@@ -16,6 +16,7 @@ namespace Ferienpass\AdminBundle\Controller\Page;
 use Contao\Config;
 use Doctrine\DBAL\Connection;
 use Ferienpass\AdminBundle\State\PrivacyConsent as PrivacyConsentState;
+use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Form\SimpleType\ContaoRequestTokenType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -35,7 +36,7 @@ class PrivacyConsentController extends AbstractController
     {
         $error = null;
         $user = $this->getUser();
-        if (!$user instanceof \Ferienpass\CoreBundle\Entity\User) {
+        if (!$user instanceof User) {
             return new Response('', Response::HTTP_NO_CONTENT);
         }
 
@@ -84,7 +85,7 @@ class PrivacyConsentController extends AbstractController
         ]);
     }
 
-    private function consentForm(\Ferienpass\CoreBundle\Entity\User $user): FormInterface
+    private function consentForm(User $user): FormInterface
     {
         $formBuilder = $this->createFormBuilder(null, ['csrf_protection' => false])
             ->add('request_token', ContaoRequestTokenType::class)
@@ -110,7 +111,7 @@ class PrivacyConsentController extends AbstractController
         return $formBuilder->getForm();
     }
 
-    private function sign(FormInterface $form, \Ferienpass\CoreBundle\Entity\User $user): void
+    private function sign(FormInterface $form, User $user): void
     {
         $this->connection->createQueryBuilder()
             ->insert('tl_ferienpass_host_privacy_consent')

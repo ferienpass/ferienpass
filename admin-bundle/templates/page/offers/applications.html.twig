@@ -70,10 +70,9 @@
                                        @click.prevent="Backend.openModalIframe({'title':'Kind bearbeiten','url':'{{ path('contao_backend', { do: 'participants', act: 'edit', id: attendance.participant.id, popup: '1', rt: contao_request_token()}) }}'})"
                                        class="font-medium mb-1 block text-gray-700 truncate">{{ attendance.participant.firstname ~ ' ' ~ attendance.participant.lastname }}</a>
                                     <div>
-                                        {% if attendance.participant.memberId %}
+                                        {% if attendance.participant.user %}
                                             <a class="text-gray-400 hover:text-gray-500"
-                                               href="{{ path('contao_backend', { do: 'member_parents', act: 'edit', id: attendance.participant.memberId, popup: '1', rt: contao_request_token()}) }}"
-                                               @click.prevent="Backend.openModalIframe({'title':'Eltern bearbeiten','url':'{{ path('contao_backend', { do: 'member_parents', act: 'edit', id: attendance.participant.memberId, popup: '1', rt: contao_request_token()}) }}'})">
+                                               href="">
                                                 <span class="w-5 h-5 block">{{ source('@FerienpassCore/Icons/user-circle-solid.svg.twig') }}</span>
                                             </a>
                                         {% endif %}
@@ -223,20 +222,20 @@
                                     <div class="rounded-md bg-white shadow-xs" role="menu" aria-orientation="vertical"
                                          aria-labelledby="options-menu">
                                         <div class="py-1">
-                                            <a href="{{ path('contao_backend_preview', { url: path('offer_details', { alias: offer.alias })|trim('/', 'left')}) }}"
-                                               target="_blank"
-                                               class="group flex items-center px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
-                                               role="menuitem">
-                                                <span class="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500">{% include '@FerienpassCore/Icons/external-link-solid.svg.twig' %}</span>
-                                                Ansehen
-                                            </a>
-                                            <a href="{{ path('contao_backend', { do: 'offers', act: 'edit', id: offer.id, rt: contao_request_token() }) }}"
-                                               target="_blank"
-                                               class="group flex items-center px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
-                                               role="menuitem">
-                                                <span class="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500">{% include '@FerienpassCore/Icons/pencil-solid.svg.twig' %}</span>
-                                                Bearbeiten
-                                            </a>
+{#                                            <a href="{{ path('contao_backend_preview', { url: path('offer_details', { alias: offer.alias })|trim('/', 'left')}) }}"#}
+{#                                               target="_blank"#}
+{#                                               class="group flex items-center px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"#}
+{#                                               role="menuitem">#}
+{#                                                <span class="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500">{% include '@FerienpassCore/Icons/external-link-solid.svg.twig' %}</span>#}
+{#                                                Ansehen#}
+{#                                            </a>#}
+{#                                            <a href="{{ path('contao_backend', { do: 'offers', act: 'edit', id: offer.id, rt: contao_request_token() }) }}"#}
+{#                                               target="_blank"#}
+{#                                               class="group flex items-center px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"#}
+{#                                               role="menuitem">#}
+{#                                                <span class="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500">{% include '@FerienpassCore/Icons/pencil-solid.svg.twig' %}</span>#}
+{#                                                Bearbeiten#}
+{#                                            </a>#}
                                         </div>
                                         <div class="border-t border-gray-100"></div>
                                         <div class="py-1">
@@ -304,11 +303,7 @@
                                  role="dialog"
                                  :aria-modal="!!modalCancel"
                                  aria-labelledby="modal-headline">
-                                <form method="post"
-                                      action="{{ path('backend_api_offer_cancel', { id: offer.id }) }}"
-                                      @submit.prevent="
-                          fetch($event.target.action, { method: 'POST', headers: {'X-Requested-With': 'XMLHttpRequest'} })
-                            .then(response => {if (response.ok) { window.location.reload(); return; } alert(response.statusText);})">
+                                <form method="post">
                                     <input type="hidden" name="REQUEST_TOKEN" value="{{ contao_request_token() }}">
                                     <div class="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
                                         <button @click="modalCancel = false"

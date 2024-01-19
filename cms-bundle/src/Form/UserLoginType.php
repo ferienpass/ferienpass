@@ -13,10 +13,8 @@ declare(strict_types=1);
 
 namespace Ferienpass\CmsBundle\Form;
 
-use Ferienpass\CoreBundle\Form\SimpleType\ContaoLoginPasswordType;
-use Ferienpass\CoreBundle\Form\SimpleType\ContaoLoginUsernameType;
-use Ferienpass\CoreBundle\Form\SimpleType\ContaoTargetPathType;
-use Ferienpass\CoreBundle\Form\SimpleType\ContaoUseTargetPathType;
+use Ferienpass\CmsBundle\Form\SimpleType\LoginPasswordType;
+use Ferienpass\CmsBundle\Form\SimpleType\LoginUsernameType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -28,18 +26,16 @@ class UserLoginType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('username', ContaoLoginUsernameType::class)
-            ->add('password', ContaoLoginPasswordType::class)
+            ->add('username', LoginUsernameType::class)
+            ->add('password', LoginPasswordType::class)
             ->add('autologin', CheckboxType::class, [
                 'required' => false,
-                'label' => 'MSC.autologin',
-                'translation_domain' => 'contao_default',
+                // 'label' => 'MSC.autologin',
+                // 'translation_domain' => 'contao_default',
             ])
-            ->add('_target_path', ContaoTargetPathType::class, ['data' => $options['target_path']])
-            ->add('_always_use_target_path', ContaoUseTargetPathType::class)
             ->add('submit', SubmitType::class, [
-                'label' => 'MSC.login',
-                'translation_domain' => 'contao_default',
+                // 'label' => 'MSC.login',
+                // 'translation_domain' => 'contao_default',
             ])
         ;
     }
@@ -48,12 +44,7 @@ class UserLoginType extends AbstractType
     {
         $resolver->setDefaults([
             'csrf_protection' => false,
-            'target_path' => '',
+            'mapped' => false,
         ]);
-
-        $resolver
-            ->setAllowedTypes('target_path', 'string')
-            ->setRequired('target_path')
-        ;
     }
 }

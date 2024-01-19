@@ -1,6 +1,10 @@
 {% extends '@FerienpassAdmin/layout/base.html.twig' %}
 
 {% block body %}
+
+    {% set logo = logo|default('bundles/ferienpassadmin/images/ferienpass-logo.svg') %}
+    {% set splashImage = splashImage|default('bundles/ferienpassadmin/images/splash.jpg') %}
+
     <div class="min-h-screen flex">
 
         {% include '@FerienpassCore/Page/_flash_banners.html.twig' %}
@@ -9,12 +13,36 @@
 
             {% include '@FerienpassCore/Page/_flashes.html.twig' %}
 
-            {% block content %}{% endblock %}
+            {% block main %}
+                <div class="mx-auto w-full max-w-sm">
+                    <div>
+                        <div class="w-48">
+                            <img class="max-h-24 w-auto" src="{{ asset(logo) }}" alt="Logo"/>
+                        </div>
+
+                        <h2 class="mt-4 text-3xl leading-9 font-extrabold text-gray-900 _dark:text-gray-50">
+                            {{ 'pageTitle'|trans }}<br>
+                            <span class="font-thin">{{ 'hostPortal'|trans }}</span>
+                        </h2>
+                    </div>
+
+                    {% block content %}
+                    {% endblock %}
+
+                    <div class="mt-12 flex justify-center">
+                        <a href="https://ferienpass.online" target="_blank"
+                           class="opacity-50 filter-grayscale hover:filter-none hover:opacity-100 transition duration-150">
+                            <img class="h-6"
+                                 src="{{ asset('bundles/ferienpassadmin/images/ferienpass-logo.svg') }}" alt="">
+                        </a>
+                    </div>
+                </div>
+            {% endblock %}
         </div>
 
-            <div class="hidden lg:block relative w-0 flex-1 _dark:opacity-70">
-                <img class="absolute inset-0 h-full w-full object-cover" src="{{ asset('nordhorn/images/splash.jpg') }}" alt="">
-            </div>
+        <div class="hidden lg:block relative w-0 flex-1 _dark:opacity-70">
+            <img class="absolute inset-0 h-full w-full object-cover" src="{{ asset(splashImage) }}" alt="">
+        </div>
     </div>
 
     {% include '@FerienpassCore/Page/_flash_modals.html.twig' %}

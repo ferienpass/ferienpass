@@ -49,7 +49,7 @@ class EditionTaskType extends AbstractType
                 ],
                 'placeholder' => '-',
                 'choice_label' => function ($choice): TranslatableMessage|string {
-                    return new TranslatableMessage('EditionTask.type_options.'.$choice, [], 'contao_EditionTask');
+                    return new TranslatableMessage('editions.task.'.$choice, [], 'admin');
                 },
                 'width' => '1/2',
             ]);
@@ -101,11 +101,8 @@ class EditionTaskType extends AbstractType
         $resolver->setDefaults([
             'data_class' => EditionTask::class,
             'empty_data' => function (FormInterface $form): EditionTask {
-                return new EditionTask();
+                return new EditionTask($form->getParent()->getParent()->getData());
             },
-            // We rely on the fact that the parent form is a DatesType
-            // and its parent form is a OfferType that is linked to an Offer entity.
-            // 'empty_data' => fn (FormInterface $form) => new OfferDate($form->getParent()->getParent()->getData()->offerEntity()),
         ]);
     }
 }

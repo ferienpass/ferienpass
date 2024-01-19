@@ -7,31 +7,29 @@
         </div>
 
         <div class="mt-8"
-             x-data="{ validEmail: null, authError: null, message: null, isLoading: false }">
+             x-data="{ validEmail: null, message: null, isLoading: false }">
 
             {{ form_start(form, {
-                attr: {
-                    'data-action': 'live#action',
-                    'data-action-name': 'prevent|submit'
-                }
+
             }) }}
 
-            <template x-if="authError">
-                <div class="mt-6 mb-6">
-                    {% embed '@FerienpassCore/Alert/error.html.twig' with {headline: 'Anmeldung fehlgeschlagen'} %}
-                        {% block content %}
-                            <ul class="list-disc">
-                                <li>Überprüfen Sie nochmal Ihre E-Mail-Adresse und Ihr
-                                    Passwort.
-                                </li>
-                                <li class="mt-1">
-                                    Sind Sie neu hier und wollen Sie ein neues Konto
-                                    erstellen? Klicken Sie oben auf „Registrieren“.
-                                </li>
-                            </ul>
-                        {% endblock %}
-                    {% endembed %}
-                </div>
+            {% if error %}
+            <div class="mt-6 mb-6">
+                {% embed '@FerienpassCore/Alert/error.html.twig' with {headline: 'Anmeldung fehlgeschlagen'} %}
+                    {% block content %}
+                        <ul class="list-disc">
+                            <li>Überprüfen Sie nochmal Ihre E-Mail-Adresse und Ihr
+                                Passwort.
+                            </li>
+                            <li class="mt-1">
+                                Sind Sie neu hier und wollen Sie ein neues Konto
+                                erstellen? Klicken Sie oben auf „Registrieren“.
+                            </li>
+                        </ul>
+                    {% endblock %}
+                {% endembed %}
+            </div>
+            {% endif %}
 
             </template>
             <template x-if="message">
@@ -65,7 +63,7 @@
             </div>
             {{ form_end(form) }}
 
-            {% include '@FerienpassCore/Partial/loading-overlay.html.twig' %}
+{#            {% include '@FerienpassCore/Partial/loading-overlay.html.twig' %}#}
 
         </div>
     </div>

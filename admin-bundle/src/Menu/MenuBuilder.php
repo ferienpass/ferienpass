@@ -107,13 +107,13 @@ class MenuBuilder
 
         $menu = $this->factory->createItem('offerActions');
 
-        $menu->addChild('view', [
-            'label' => 'offers.action.view',
-            'route' => 'admin_offer_show',
-            'routeParameters' => ['id' => $offer->getId(), 'edition' => $offer->getEdition()->getAlias()],
-            'display' => $this->isGranted('view', $offer),
-            'extras' => ['icon' => 'pencil-solid'],
-        ]);
+        //        $menu->addChild('view', [
+        //            'label' => 'offers.action.view',
+        //            'route' => 'admin_offer_show',
+        //            'routeParameters' => ['id' => $offer->getId(), 'edition' => $offer->getEdition()->getAlias()],
+        //            'display' => $this->isGranted('view', $offer),
+        //            'extras' => ['icon' => 'pencil-solid'],
+        //        ]);
         $menu->addChild('edit', [
             'label' => 'offers.action.edit',
             'route' => 'admin_offers_edit',
@@ -140,43 +140,43 @@ class MenuBuilder
             ]);
         }
 
-        $menu->addChild('delete', [
-            'label' => 'offers.action.delete',
-            'route' => 'admin_offer_show',
-            'routeParameters' => ['id' => $offer->getId(), 'edition' => $offer->getEdition()->getAlias()],
-            'display' => $this->isGranted('delete', $offer),
-            'extras' => [
-                'method' => 'delete',
-                'icon' => 'trash-solid',
-            ],
-        ]);
-
-        if (!$offer->isCancelled()
-            && ((null === $edition = $offer->getEdition()) || !$edition->getActiveTasks('show_offers')->isEmpty())) {
-            $menu->addChild('cancel', [
-                'label' => 'offers.action.cancel',
-                'route' => 'admin_offer_show',
-                'routeParameters' => ['id' => $offer->getId(), 'act' => 'cancel', 'edition' => $offer->getEdition()->getAlias()],
-                'display' => $this->isGranted('cancel', $offer),
-                'extras' => [
-                    'method' => 'post',
-                    'icon' => 'ban-solid',
-                ],
-            ]);
-        }
-
-        if ($offer->isCancelled()) {
-            $menu->addChild('reactivate', [
-                'label' => 'offers.action.reactivate',
-                'route' => 'admin_offer_show',
-                'routeParameters' => ['id' => $offer->getId(), 'act' => 'relaunch', 'edition' => $offer->getEdition()->getAlias()],
-                'display' => $this->isGranted('reactivate', $offer),
-                'extras' => [
-                    'method' => 'post',
-                    'icon' => 'trash-solid',
-                ],
-            ]);
-        }
+        //        $menu->addChild('delete', [
+        //            'label' => 'offers.action.delete',
+        //            'route' => 'admin_offer_show',
+        //            'routeParameters' => ['id' => $offer->getId(), 'edition' => $offer->getEdition()->getAlias()],
+        //            'display' => $this->isGranted('delete', $offer),
+        //            'extras' => [
+        //                'method' => 'delete',
+        //                'icon' => 'trash-solid',
+        //            ],
+        //        ]);
+        //
+        //        if (!$offer->isCancelled()
+        //            && ((null === $edition = $offer->getEdition()) || !$edition->getActiveTasks('show_offers')->isEmpty())) {
+        //            $menu->addChild('cancel', [
+        //                'label' => 'offers.action.cancel',
+        //                'route' => 'admin_offer_show',
+        //                'routeParameters' => ['id' => $offer->getId(), 'act' => 'cancel', 'edition' => $offer->getEdition()->getAlias()],
+        //                'display' => $this->isGranted('cancel', $offer),
+        //                'extras' => [
+        //                    'method' => 'post',
+        //                    'icon' => 'ban-solid',
+        //                ],
+        //            ]);
+        //        }
+        //
+        //        if ($offer->isCancelled()) {
+        //            $menu->addChild('reactivate', [
+        //                'label' => 'offers.action.reactivate',
+        //                'route' => 'admin_offer_show',
+        //                'routeParameters' => ['id' => $offer->getId(), 'act' => 'relaunch', 'edition' => $offer->getEdition()->getAlias()],
+        //                'display' => $this->isGranted('reactivate', $offer),
+        //                'extras' => [
+        //                    'method' => 'post',
+        //                    'icon' => 'trash-solid',
+        //                ],
+        //            ]);
+        //        }
 
         if ($offer->isOnlineApplication()) {
             $menu->addChild('participantList', [
@@ -261,39 +261,39 @@ class MenuBuilder
 
         $menu->addChild('pdf', [
             'label' => 'offers.action.participantList',
-            'route' => 'host_participant_list',
-            'routeParameters' => ['id' => $offer->getId(), '_suffix' => '.pdf'],
+            'route' => 'admin_offer_attendances',
+            'routeParameters' => ['id' => $offer->getId(), 'edition' => $offer->getEdition()->getAlias(), '_suffix' => '.pdf'],
             'extras' => [
                 'icon' => 'document-download-solid',
             ],
         ]);
 
-        if (!$offer->isCancelled()
-            && ((null === $edition = $offer->getEdition()) || !$edition->getActiveTasks('show_offers')->isEmpty())) {
-            $menu->addChild('cancel', [
-                'label' => 'offers.action.cancel',
-                'route' => 'admin_offer_show',
-                'routeParameters' => ['id' => $offer->getId(), 'act' => 'cancel'],
-                'display' => $this->isGranted('cancel', $offer),
-                'extras' => [
-                    'method' => 'post',
-                    'icon' => 'ban-solid',
-                ],
-            ]);
-        }
-
-        if ($offer->isCancelled()) {
-            $menu->addChild('reactivate', [
-                'label' => 'offers.action.reactivate',
-                'route' => 'admin_offer_show',
-                'routeParameters' => ['id' => $offer->getId(), 'act' => 'relaunch', 'edition' => $offer->getEdition()->getAlias()],
-                'display' => $this->isGranted('reactivate', $offer),
-                'extras' => [
-                    'method' => 'post',
-                    'icon' => 'trash-solid',
-                ],
-            ]);
-        }
+        //        if (!$offer->isCancelled()
+        //            && ((null === $edition = $offer->getEdition()) || !$edition->getActiveTasks('show_offers')->isEmpty())) {
+        //            $menu->addChild('cancel', [
+        //                'label' => 'offers.action.cancel',
+        //                'route' => 'admin_offer_show',
+        //                'routeParameters' => ['id' => $offer->getId(), 'act' => 'cancel'],
+        //                'display' => $this->isGranted('cancel', $offer),
+        //                'extras' => [
+        //                    'method' => 'post',
+        //                    'icon' => 'ban-solid',
+        //                ],
+        //            ]);
+        //        }
+        //
+        //        if ($offer->isCancelled()) {
+        //            $menu->addChild('reactivate', [
+        //                'label' => 'offers.action.reactivate',
+        //                'route' => 'admin_offer_show',
+        //                'routeParameters' => ['id' => $offer->getId(), 'act' => 'relaunch', 'edition' => $offer->getEdition()->getAlias()],
+        //                'display' => $this->isGranted('reactivate', $offer),
+        //                'extras' => [
+        //                    'method' => 'post',
+        //                    'icon' => 'trash-solid',
+        //                ],
+        //            ]);
+        //        }
 
         return $menu;
     }

@@ -13,12 +13,14 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Form;
 
-use Contao\MemberModel;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Ferienpass\CoreBundle\Entity\Participant;
+use Ferienpass\CoreBundle\Entity\User;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -41,16 +43,17 @@ class EditParticipantType extends AbstractType
         $builder
             ->add('firstname', null, ['required' => true, 'fieldset_group' => 'base', 'width' => '1/2'])
             ->add('lastname', null, ['fieldset_group' => 'base', 'width' => '1/2'])
-            ->add('member', ChoiceType::class, [
-                'choices' => MemberModel::findAll(['order' => 'lastname'])->getModels(),
-                'choice_value' => 'id',
-                'choice_label' => function (?MemberModel $memberModel): string {
-                    return $memberModel ? sprintf('%s, %s', $memberModel->lastname, $memberModel->firstname) : '';
+            ->add('user', EntityType::class, [
+                'class' => User::class,
+                'query_builder' => function (EntityRepository $er): QueryBuilder {
+                    return $er->createQueryBuilder('u')
+                        ->orderBy('u.lastname', 'ASC');
                 },
+                'choice_label' => 'name',
                 'fieldset_group' => 'base',
                 'placeholder' => '-',
                 'width' => '2/3',
-                'help' => 'participants.help.member',
+                'help' => 'participants.help.user',
             ])
             ->add('dateOfBirth', BirthdayType::class, ['widget' => 'single_text', 'fieldset_group' => 'age', 'width' => '1/3'])
             ->add('ownEmail', EmailType::class, ['fieldset_group' => 'contact', 'width' => '1/2', 'help' => 'participants.help.email'])

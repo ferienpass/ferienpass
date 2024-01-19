@@ -17,6 +17,7 @@ use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -32,6 +33,7 @@ class EditAccountType extends AbstractType
             'data_class' => User::class,
             'label_format' => 'accounts.label.%name%',
             'translation_domain' => 'admin',
+            'required' => false,
         ]);
     }
 
@@ -46,6 +48,7 @@ class EditAccountType extends AbstractType
             ->add('street', null, ['fieldset_group' => 'address'])
             ->add('postal', null, ['fieldset_group' => 'address', 'width' => '1/3'])
             ->add('city', null, ['fieldset_group' => 'address', 'width' => '2/3'])
+            ->add('disabled', CheckboxType::class, ['fieldset_group' => 'disable'])
             ->add('submit', SubmitType::class, [
                 'label' => 'Daten speichern',
             ])

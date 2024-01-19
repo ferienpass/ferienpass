@@ -196,10 +196,10 @@
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-900">
-                                                <span class="text-gray-500">{{ ((participant.phone ?: (participant.member and participant.member.phone ? participant.member.phone : '')) ~ ' / ' ~ (participant.mobile ?: (participant.member and participant.member.mobile ? participant.member.mobile : '')))|trim('/ ') }}</span>
+                                                <span class="text-gray-500">{{ (participant.phone ~ ' / ' ~ participant.mobile)|trim('/ ') }}</span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-900">
-                                                <span class="text-gray-500">{{ participant.email ?: (participant.member and participant.member.email ? participant.member.email : '-') }}</span>
+                                                <span class="text-gray-500">{{ participant.email }}</span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ colorClass }}">{{ attendance.status|trans }}</span>

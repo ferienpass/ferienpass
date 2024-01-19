@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\ApplicationSystem\ParticipantList;
 use Ferienpass\AdminBundle\Dto\AddParticipantDto;
@@ -21,6 +22,7 @@ use Ferienpass\AdminBundle\State\PrivacyConsent;
 use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\User;
+use Ferienpass\CoreBundle\Export\ParticipantList\PdfExport;
 use Ferienpass\CoreBundle\Facade\AttendanceFacade;
 use Ferienpass\CoreBundle\Form\SimpleType\ContaoRequestTokenType;
 use Ferienpass\CoreBundle\Ux\Flash;
@@ -32,20 +34,20 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/angebot/{id}/anmeldungen{_suffix}', name: 'admin_offer_attendances', requirements: ['id' => '\d+'], defaults: ['_suffix' => ''])]
+#[Route('/angebote/{edition}/{id}/teilnahmeliste{_suffix}', name: 'admin_offer_attendances', requirements: ['id' => '\d+'], defaults: ['_suffix' => ''])]
 final class ParticipantListController extends AbstractController
 {
     public function __construct(private readonly PrivacyConsent $privacyConsent, private readonly AttendanceFacade $attendanceFacade, private readonly ManagerRegistry $doctrine, private readonly ParticipantList $participantList, private readonly FormFactoryInterface $formFactory)
     {
     }
 
-    public function __invoke(string $_suffix, Offer $offer, Request $request): Response
+    public function __invoke(string $_suffix, Offer $offer, Request $request, PdfExport $pdfExport, EntityManagerInterface $em, AttendanceFacade $attendanceFacade): Response
     {
         $this->denyAccessUnlessGranted('participants.view', $offer);
 
         $_suffix = ltrim($_suffix, '.');
         if ('pdf' === $_suffix) {
-            return $this->file($this->pdfExport->generate($offer), 'teilnahmeliste.pdf');
+            return $this->file($pdfExport->generate($offer), 'teilnahmeliste.pdf');
         }
 
         $user = $this->getUser();
@@ -54,17 +56,17 @@ final class ParticipantListController extends AbstractController
         }
 
         if ($this->isPrivacyStatementMissing($user)) {
-            return $this->render('@FerienpassAdmin/fragment/participant_list.html.twig', [
+            return $this->render('@FerienpassAdmin/page/offers/participant_list.html.twig', [
                 'missingPrivacyStatement' => true,
             ]);
         }
 
         $edition = $offer->getEdition();
-        if (null !== $edition && !$edition->isParticipantListReleased()) {
-            return $this->render('@FerienpassAdmin/fragment/participant_list.html.twig', [
-                'notReleased' => true,
-            ]);
-        }
+        //        if (null !== $edition && !$edition->isParticipantListReleased()) {
+        //            return $this->render('@FerienpassAdmin/page/offers/participant_list.html.twig', [
+        //                'notReleased' => true,
+        //            ]);
+        //        }
 
         $addForm = $this->formFactory->create(AddParticipantType::class, $participantDto = new AddParticipantDto());
         $addForm->handleRequest($request);
@@ -72,9 +74,9 @@ final class ParticipantListController extends AbstractController
             $this->denyAccessUnlessGranted('participants.add', $offer);
 
             $newParticipant = $participantDto->toEntity();
-            $this->doctrine->getManager()->persist($newParticipant);
+            $em->persist($newParticipant);
 
-            $this->attendanceFacade->create($offer, $newParticipant);
+            $attendanceFacade->create($offer, $newParticipant);
 
             $this->addFlash(...Flash::confirmation()->text('Die Teilnehmer:in wurde auf die Teilnahmeliste geschrieben.')->create());
 

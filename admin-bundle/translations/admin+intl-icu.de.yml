@@ -8,6 +8,7 @@ accounts:
     base.0: Name
     contact.0: Kontaktdaten
     address.0: Postanschrift
+    disable.0: Account-Status
   ROLE_MEMBER: Eltern
   ROLE_HOST: Veranstaltende
   ROLE_ADMIN: Admins
@@ -25,6 +26,8 @@ accounts:
   help:
     hosts: Dieser Account erhält Zugriff auf alle Daten (also Angebote, Teilnehmerlisten) dieses Veranstalters.
 
+offer.tab.web: Webansicht
+offer.tab.pdf: Druckansicht
 offers:
   title: Angebote
   editions: Saisons
@@ -37,8 +40,8 @@ offers:
   sorting.date: Sortieren nach Datum
   sorting.host: Sortieren nach Veranstalter
   action:
-    view: Angebot öffnen
     edit: Angebot bearbeiten
+    proof: Korrekturabzug
     copy: Angebot kopieren nach „{edition}“
     delete: Angebot löschen
     newVariant: Neuen Termin erstellen
@@ -70,6 +73,7 @@ offers:
     minAge: Mindestalter
     maxAge: Maximalalter
     meetingPoint: Treffpunkt
+    dates: Datum
     bring: Mitzubringen
     fee: Teilnahmegebühr
     wheelchairAccessible: Rollstuhl-zugängig
@@ -84,6 +88,7 @@ offers:
     contact: Wer gibt Auskunft (z.B. Name + TelNr)? Leer lassen, falls die Info schon in "Anmeldung unter" steht.
     requiresApplication: Eine vorherige Anmeldung ist erforderlich, um am Angebot teilnehmen zu können.
     onlineApplication: Die Anmeldungen über das Online-System laufen lassen.
+    applicationDeadline: Ab folgendem Tag sind Anmeldungen zum Angebot nicht mehr möglich.
   edit_offer_dates_add: Zusätzliche Zeit zu diesem Termin
   edit_offer_dates_entry_delete: Zeitraum löschen
 
@@ -189,14 +194,14 @@ participants:
   label:
     firstname: Vorname
     lastname: Nachname
-    member: Sorgeberechtigte:r
+    user: Sorgeberechtigte:r
     dateOfBirth: Geburtsdatum
     ownEmail: E-Mail-Adresse
     ownPhone: Telefonnummer
     ownMobile: Handynummer
   help.email: Wird für Benachrichtigungen verwendet.
   help.mobile: Wird für SMS verwendet.
-  help.member: Wählen Sie einen Account vom Typ „Eltern“.
+  help.user: Wählen Sie einen Account vom Typ „Eltern“.
   help.discounted: Reduzierte Teilnahmegebühren nutzen.
   th.name: Name
   th.dateOfBirth: Geburtsdatum

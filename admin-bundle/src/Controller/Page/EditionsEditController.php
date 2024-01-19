@@ -24,12 +24,14 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\LiveCollectionTrait;
 
+#[IsGranted('ROLE_ADMIN')]
 #[Route('/saisons')]
 #[AsLiveComponent(name: 'EditionsEdit', template: '@FerienpassAdmin/components/EditOffer.html.twig')]
 final class EditionsEditController extends AbstractController

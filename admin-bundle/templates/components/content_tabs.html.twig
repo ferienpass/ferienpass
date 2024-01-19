@@ -1,3 +1,6 @@
+{% trans_default_domain 'admin' %}
+{% set translationPrefix = app.request.get('_route')|split('_')[1] %}
+
 <div class="bg-white overflow-hidden shadow rounded-lg" x-data="{ tab: '{{ tabs|first }}' }">
     <div class="border-b border-gray-200">
         <nav class="-mb-px flex px-4 sm:px-6">
@@ -6,7 +9,7 @@
                    class="whitespace-no-wrap py-4 px-1 border-b-2  font-medium text-sm leading-5  focus:outline-none  "
                    :class="tab === '{{ tab }}' ? 'border-primary-500 text-gray-900 focus:text-gray-800 focus:border-primary-700' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:text-gray-700 focus:border-gray-300'"
                    :aria-current="tab === '{{ tab }}' ? 'page' : ''">
-                    {{ ('tab.'~tab)|trans }}
+                    {{ "#{translationPrefix}.tab.#{tab}"|trans }}
                 </a>
             {% endfor %}
         </nav>
