@@ -14,12 +14,21 @@ declare(strict_types=1);
 namespace Ferienpass\CoreBundle\Notification;
 
 use Ferienpass\CoreBundle\Entity\User;
+use Ferienpass\CoreBundle\Twig\Mime\NotificationEmail;
+use Symfony\Component\Notifier\Message\EmailMessage;
+use Symfony\Component\Notifier\Notification\EmailNotificationInterface;
 use Symfony\Component\Notifier\Notification\Notification;
+use Symfony\Component\Notifier\Recipient\EmailRecipientInterface;
 use Symfony\Component\Notifier\Recipient\RecipientInterface;
 
-class AccountActivatedNotification extends Notification
+class AccountActivatedNotification extends Notification implements NotificationInterface, EmailNotificationInterface
 {
     private User $user;
+
+    public static function getName(): string
+    {
+        return 'account_activated';
+    }
 
     public function getChannels(RecipientInterface $recipient): array
     {
@@ -31,5 +40,19 @@ class AccountActivatedNotification extends Notification
         $this->user = $user;
 
         return $this;
+    }
+
+    public function asEmailMessage(EmailRecipientInterface $recipient, string $transport = null): ?EmailMessage
+    {
+        $email = (new NotificationEmail(self::getName()))
+            ->to($recipient->getEmail())
+            ->subject($this->getSubject())
+            ->content($this->getContent())
+            ->context([
+                'user' => $this->user,
+            ])
+        ;
+
+        return new EmailMessage($email);
     }
 }

@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Notification;
 
-use Ferienpass\CoreBundle\Entity\Attendance;
-use Ferienpass\CoreBundle\Export\Offer\ICal\ICalExport;
+use Ferienpass\CoreBundle\Entity\Host;
+use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Twig\Mime\NotificationEmail;
 use Symfony\Component\Notifier\Message\EmailMessage;
 use Symfony\Component\Notifier\Notification\EmailNotificationInterface;
@@ -22,18 +22,15 @@ use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\Recipient\EmailRecipientInterface;
 use Symfony\Component\Notifier\Recipient\RecipientInterface;
 
-class RemindAttendanceNotification extends Notification implements NotificationInterface, EmailNotificationInterface
+class UserInvitationNotification extends Notification implements NotificationInterface, EmailNotificationInterface
 {
-    private Attendance $attendance;
-
-    public function __construct(private readonly ICalExport $iCalExport)
-    {
-        parent::__construct();
-    }
+    private User $user;
+    private Host $host;
+    private string $email;
 
     public static function getName(): string
     {
-        return 'remind_attendance';
+        return 'user_invitation';
     }
 
     public function getChannels(RecipientInterface $recipient): array
@@ -41,9 +38,23 @@ class RemindAttendanceNotification extends Notification implements NotificationI
         return ['email'];
     }
 
-    public function attendance(Attendance $attendance): static
+    public function user(User $user): static
     {
-        $this->attendance = $attendance;
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function host(Host $host): static
+    {
+        $this->host = $host;
+
+        return $this;
+    }
+
+    public function email(string $email): static
+    {
+        $this->email = $email;
 
         return $this;
     }
@@ -54,9 +65,10 @@ class RemindAttendanceNotification extends Notification implements NotificationI
             ->to($recipient->getEmail())
             ->subject($this->getSubject())
             ->content($this->getContent())
-            ->attachFromPath($this->iCalExport->generate([$this->attendance->getOffer()]), $this->attendance->getOffer()->getAlias())
             ->context([
-                'attendance' => $this->attendance,
+                'user' => $this->user,
+                'host' => $this->host,
+                'email' => $this->email,
             ])
         ;
 

@@ -47,7 +47,7 @@ final class NotificationsController extends AbstractController
     public function index(Notifier $notifier, Breadcrumb $breadcrumb): Response
     {
         return $this->render('@FerienpassAdmin/page/notifications/index.html.twig', [
-            'notifications' => $notifier->getNotificationNames(),
+            // 'notifications' => $notifier->getNotificationNames(),
             'breadcrumb' => $breadcrumb->generate('Tools', 'Benachrichtigungen'),
         ]);
     }

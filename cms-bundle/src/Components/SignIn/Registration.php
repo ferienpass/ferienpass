@@ -57,6 +57,8 @@ class Registration extends AbstractController
         /** @var User $user */
         $user = $this->getForm()->getData();
 
+        $user->setRoles(['ROLE_MEMBER']);
+
         dd($user);
 
         if (false) {
@@ -82,7 +84,7 @@ class Registration extends AbstractController
 
         $em->flush();
 
-        $messageBus->dispatch(new AccountCreated((int) $user->getId()));
+        $messageBus->dispatch(new AccountCreated($user->getId()));
 
         return $this->redirectToRoute('registration_confirm');
     }

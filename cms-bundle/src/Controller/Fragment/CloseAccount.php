@@ -19,6 +19,7 @@ use Contao\FormTextField;
 use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Message\AccountDelete;
 use Psr\Log\LoggerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +33,7 @@ final class CloseAccount extends AbstractController
     {
     }
 
-    public function __invoke(Request $request, Session $session): Response
+    public function __invoke(Request $request, Session $session, Security $security): Response
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
@@ -61,10 +62,9 @@ final class CloseAccount extends AbstractController
             if (!$passwordWidget->hasErrors()) {
                 $this->messageBus->dispatch(new AccountDelete($user->getId()));
 
-                $this->container->get('security.token_storage')->setToken();
-                $session->invalidate();
+                $security->logout();
 
-                throw new ResponseException($this->redirectToRoute('account_deleted'));
+                return $this->redirectToRoute('account_deleted');
             }
 
             throw new ResponseException(new JsonResponse(['error' => $passwordWidget->getErrorAsString()], Response::HTTP_BAD_REQUEST));

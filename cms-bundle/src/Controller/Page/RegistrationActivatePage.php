@@ -14,20 +14,37 @@ declare(strict_types=1);
 namespace Ferienpass\CmsBundle\Controller\Page;
 
 use Contao\CoreBundle\DependencyInjection\Attribute\AsPage;
+use Contao\CoreBundle\Exception\PageNotFoundException;
 use Ferienpass\CmsBundle\Controller\Frontend\AbstractController;
 use Ferienpass\CmsBundle\Fragment\FragmentReference;
+use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\UriSigner;
 
-#[AsPage('registration_activate', contentComposition: false)]
+#[AsPage('registration_activate', path: '{id}', requirements: ['id' => '\d+'], contentComposition: false)]
 class RegistrationActivatePage extends AbstractController
 {
-    public function __invoke(Request $request): Response
+    public function __construct(private readonly UriSigner $uriSigner)
     {
-        $this->initializeContaoFramework();
+    }
+
+    public function __invoke(int $id, Request $request): Response
+    {
+        if (!$this->uriSigner->checkRequest($request)) {
+            throw new PageNotFoundException();
+        }
+
+        /** @var User $user */
+        if (null !== $user = $this->getUser()) {
+            if ($user->getId() === $id) {
+                return $this->redirectToRoute('registration_welcome');
+            }
+            throw new PageNotFoundException();
+        }
 
         return $this->createPageBuilder($request->attributes->get('pageModel'))
-            ->addFragment('main', new FragmentReference('ferienpass.fragment.registration_activate'))
+            ->addFragment('main', new FragmentReference('ferienpass.fragment.registration_activate', ['id' => $id]))
             ->getResponse()
         ;
     }
