@@ -15,10 +15,10 @@ namespace Ferienpass\AdminBundle\Controller\Page;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
+use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Export\Offer\OfferExporter;
-use Ferienpass\CoreBundle\Form\SimpleType\ContaoRequestTokenType;
 use Ferienpass\CoreBundle\Repository\OfferRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,10 +29,9 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Translation\TranslatableMessage;
 
 #[IsGranted('ROLE_ADMIN')]
 #[Route('/export')]
@@ -42,7 +41,8 @@ final class ExportController extends AbstractController
     {
     }
 
-    public function __invoke(Request $request, NotifierInterface $notifier): Response
+    #[Route('', name: 'admin_export_index')]
+    public function index(Request $request, Breadcrumb $breadcrumb)
     {
         $types = $this->exporter->getAllNames();
 
@@ -52,8 +52,8 @@ final class ExportController extends AbstractController
                 'choices' => array_combine($types, $types),
                 'ui' => 'cards',
                 'data' => $types[0],
-                'choice_label' => fn ($choice, $key, $value): string => sprintf('export.%s.0', $key),
-                'choice_attr' => fn ($choice, $key, $value): array => ['help' => sprintf('export.%s.1', $key)],
+                'choice_label' => fn ($choice, $key, $value): TranslatableMessage => new TranslatableMessage(sprintf('export.%s.0', $key), [], 'admin'),
+                'choice_attr' => fn ($choice, $key, $value): array => ['help' => new TranslatableMessage(sprintf('export.%s.1', $key)), [], 'admin'],
             ])
             ->add('editions', EntityType::class, [
                 'class' => Edition::class,
@@ -74,8 +74,7 @@ final class ExportController extends AbstractController
                 'label' => 'nur veröffentlichte',
                 'required' => false,
             ])
-            ->add('export', SubmitType::class, ['label' => 'Export starten'])
-            ->add('request_token', ContaoRequestTokenType::class)
+            ->add('submit', SubmitType::class, ['label' => 'Export starten'])
             ->getForm()
         ;
 
@@ -89,13 +88,8 @@ final class ExportController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/export/index.html.twig', [
             'form' => $form,
+            'breadcrumb' => $breadcrumb->generate('Tools', 'Export'),
         ]);
-    }
-
-    #[Route('', name: 'admin_export_index')]
-    public function index()
-    {
-        return $this->render('@FerienpassAdmin/page/tools/noop.html.twig');
     }
 
     private function exportOffers(string $key, iterable $offers): BinaryFileResponse

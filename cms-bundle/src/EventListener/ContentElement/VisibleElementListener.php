@@ -11,24 +11,23 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CoreBundle\HookListener;
+namespace Ferienpass\CmsBundle\EventListener\ContentElement;
 
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\CoreBundle\Routing\ScopeMatcher;
 use Contao\CoreBundle\Security\Authentication\Token\TokenChecker;
 use Contao\Model;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+#[AsHook('isVisibleElement')]
 class VisibleElementListener
 {
     public function __construct(private readonly EditionRepository $passEditionRepository, private readonly TokenChecker $tokenChecker, private readonly RequestStack $requestStack, private readonly ScopeMatcher $scopeMatcher)
     {
     }
 
-    /**
-     * @psalm-suppress UndefinedConstant
-     */
-    public function onIsVisibleElement(Model $element, bool $visible): bool
+    public function __invoke(Model $element, bool $visible): bool
     {
         if (false === $visible) {
             return false;

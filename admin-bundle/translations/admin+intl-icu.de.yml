@@ -360,6 +360,9 @@ export.xlsx.attendancesErroredCount: fehlerhaft
 export.xlsx.attendancesPaidCount: bezahlt
 export.xlsx.unpaidAttendances: unbezahlt
 
+export.pdf.print.0: 'Druckbögen (PDF)'
+export.pdf.print.1: 'Exportiert alle Angebote im druckfertigen PDF-Format.'
+
 
 notifications:
   action: Ansehen
