@@ -18,7 +18,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -80,18 +79,18 @@ class EditionTaskType extends AbstractType
 
             if ($data->isAnApplicationSystem() && 'lot' === $data->getApplicationSystem()) {
                 $form->add('max_applications', IntegerType::class, ['help' => 'editions.help.max_applications']);
-                $form->add('skip_max_applications', CheckboxType::class, ['help' => 'editions.help.skip_max_applications']);
-                $form->add('hide_status', CheckboxType::class, ['help' => 'editions.help.hide_status']);
-                $form->add('allow_anonymous', CheckboxType::class, ['help' => 'editions.help.allow_anonymous']);
+                $form->add('skip_max_applications', CheckboxType::class, ['label' => 'editions.label.skip_max_applications', 'help' => 'editions.help.skip_max_applications']);
+                $form->add('hide_status', CheckboxType::class, ['label' => 'editions.label.hide_status', 'help' => 'editions.help.hide_status']);
+                $form->add('allow_anonymous', CheckboxType::class, ['label' => 'editions.label.allow_anonymous', 'help' => 'editions.help.allow_anonymous']);
             }
 
             if ($data->isAnApplicationSystem() && 'firstcome' === $data->getApplicationSystem()) {
-                $form->add('max_applications_day', IntegerType::class, ['help' => 'editions.help.max_applications_per_day']);
-                $form->add('allow_anonymous', CheckboxType::class, ['help' => 'editions.help.allow_anonymous']);
+                $form->add('max_applications_day', IntegerType::class, ['label' => 'editions.label.max_applications_day', 'help' => 'editions.help.max_applications_per_day']);
+                $form->add('allow_anonymous', CheckboxType::class, ['label' => 'editions.label.allow_anonymous', 'help' => 'editions.help.allow_anonymous']);
             }
 
             if ($data->isAnApplicationSystem() && $data->isAllowAnonymous()) {
-                $form->add('allowAnonymousFee', MoneyType::class, ['help' => 'editions.help.allow_anonymous_fee']);
+                $form->add('allowAnonymousFee', CheckboxType::class, ['label' => 'editions.label.allow_anonymous_fee', 'help' => 'editions.help.allow_anonymous_fee']);
             }
         });
     }

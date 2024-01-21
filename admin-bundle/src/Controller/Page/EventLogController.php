@@ -11,36 +11,35 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CoreBundle\Controller\Backend;
+namespace Ferienpass\AdminBundle\Controller\Page;
 
-use Contao\CoreBundle\Controller\AbstractBackendController;
 use Doctrine\Common\Collections\Criteria;
+use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\CoreBundle\Message\ParticipantListChanged;
 use Ferienpass\CoreBundle\Repository\EventLogRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route(path: '/ereignisse', name: 'backend_event_log')]
-final class EventLogController extends AbstractBackendController
+#[IsGranted('ROLE_ADMIN')]
+#[Route('/ereignisse')]
+final class EventLogController extends AbstractController
 {
-    public function __construct(private readonly EventLogRepository $eventLogRepository)
-    {
-    }
-
-    public function __invoke(Request $request): Response
+    #[Route('', name: 'admin_event_log')]
+    public function index(EventLogRepository $repository, Breadcrumb $breadcrumb, Request $request): Response
     {
         $criteria = (new Criteria())
             ->where(Criteria::expr()->neq('message', ParticipantListChanged::class))
             ->orderBy(['createdAt' => 'DESC'])
         ;
 
-        $this->initializeContaoFramework();
+        $events = $repository->matching($criteria);
 
-        $events = $this->eventLogRepository->matching($criteria);
-
-        return $this->render('@FerienpassCore/Backend/event-log.html.twig', [
+        return $this->render('@FerienpassAdmin/page/tools/event_log.html.twig', [
             'events' => $events,
+            'breadcrumb' => $breadcrumb->generate('Tools & Werkzeuge', 'Ereignisse'),
         ]);
     }
 }

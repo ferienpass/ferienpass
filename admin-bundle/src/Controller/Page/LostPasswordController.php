@@ -25,14 +25,14 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\PasswordHasherInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
 
 #[Route('/passwort-vergessen', name: 'admin_lost_password')]
 final class LostPasswordController extends AbstractController
 {
-    public function __construct(private readonly LoggerInterface $logger, private readonly OptInInterface $optIn, private readonly RouterInterface $router, private readonly PasswordHasherInterface $passwordHasher, private readonly FormFactoryInterface $formFactory)
+    public function __construct(private readonly LoggerInterface $logger, private readonly OptInInterface $optIn, private readonly RouterInterface $router, private readonly UserPasswordHasherInterface $passwordHasher, private readonly FormFactoryInterface $formFactory)
     {
     }
 
@@ -125,7 +125,7 @@ final class LostPasswordController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $memberModel->password = $this->passwordHasher->hash($memberModel->password ?? '');
+            $memberModel->password = $this->passwordHasher->hashPassword($memberModel, $memberModel->password ?? '');
             $memberModel->tstamp = time();
             $memberModel->locked = 0;
 

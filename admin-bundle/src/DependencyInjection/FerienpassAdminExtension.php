@@ -22,7 +22,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 
 final class FerienpassAdminExtension extends Extension implements PrependExtensionInterface
 {
@@ -31,13 +31,8 @@ final class FerienpassAdminExtension extends Extension implements PrependExtensi
         // $container->getParameter('router.request_context.host')
         $config = $this->processConfiguration(new Configuration(), $configs);
 
-        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../../config'));
-        $loader->load('components.xml');
-        $loader->load('dashboard.xml');
-        $loader->load('fragments.xml');
-        $loader->load('pages.xml');
-        $loader->load('services.xml');
-        $loader->load('statistics.xml');
+        $loader = new PhpFileLoader($container, new FileLocator(__DIR__.'/../../config'));
+        $loader->load('services.php');
 
         $definition = $container->getDefinition(PrivacyConsent::class);
         $definition->setArgument(2, $config['privacy_consent'] ?? '');

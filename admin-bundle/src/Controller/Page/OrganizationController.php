@@ -28,6 +28,7 @@ use Ferienpass\CoreBundle\Repository\HostRepository;
 use Ferienpass\CoreBundle\Ux\Flash;
 use NotificationCenter\Model\Notification;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -39,7 +40,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 #[Route('/stammdaten')]
 final class OrganizationController extends AbstractController
 {
-    public function __construct(private readonly FormFactoryInterface $formFactory, private readonly Connection $connection, private readonly OptIn $optIn, private readonly HostRepository $hostRepository, private readonly Slug $slug, private readonly string $logosDir, private readonly string $projectDir, private readonly ManagerRegistry $doctrine)
+    public function __construct(private readonly FormFactoryInterface $formFactory, private readonly Connection $connection, private readonly OptIn $optIn, private readonly HostRepository $hostRepository, private readonly Slug $slug, #[Autowire('%contao.upload_path%/logo')] private readonly string $logosDir, #[Autowire('%kernel.project_dir%')] private readonly string $projectDir, private readonly ManagerRegistry $doctrine)
     {
     }
 

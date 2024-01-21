@@ -11,7 +11,7 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\AdminBundle\Form\Filter\Payment;
+namespace Ferienpass\AdminBundle\Form\Filter\Offer;
 
 use Doctrine\ORM\QueryBuilder;
 use Ferienpass\AdminBundle\Form\Filter\AbstractFilterType;
@@ -19,7 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class CancelledFilter extends AbstractFilterType
+class PublishedFilter extends AbstractFilterType
 {
     //    public static function getName(): string
     //    {
@@ -45,7 +45,7 @@ class CancelledFilter extends AbstractFilterType
         $v = $form->getData();
 
         $qb
-            ->andWhere('i.cancelled = :q_'.$k)
+            ->andWhere('i.published = :q_'.$k)
             ->setParameter('q_'.$k, $v)
         ;
     }

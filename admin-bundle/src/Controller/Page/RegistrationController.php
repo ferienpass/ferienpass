@@ -22,17 +22,18 @@ use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Ux\Flash;
 use NotificationCenter\Model\Notification;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\PasswordHasherInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 #[Route('/registrierung', name: 'admin_registration')]
 final class RegistrationController extends AbstractController
 {
-    public function __construct(private readonly ManagerRegistry $doctrine, private readonly PasswordHasherInterface $passwordHasher, private string $adminEmail, private readonly NormalizerInterface $normalizer, private readonly FormFactoryInterface $formFactory)
+    public function __construct(private readonly ManagerRegistry $doctrine, private readonly UserPasswordHasherInterface $passwordHasher, #[Autowire(env: 'ADMIN_EMAIL')] private string $adminEmail, private readonly NormalizerInterface $normalizer, private readonly FormFactoryInterface $formFactory)
     {
     }
 
@@ -53,7 +54,7 @@ final class RegistrationController extends AbstractController
             $memberModel->disable = '1';
 
             if (isset($memberModel->plainPassword)) {
-                $memberModel->password = $this->passwordHasher->hash($memberModel->plainPassword);
+                $memberModel->password = $this->passwordHasher->hashPassword($memberModel, $memberModel->plainPassword);
                 unset($memberModel->plainPassword);
             }
 

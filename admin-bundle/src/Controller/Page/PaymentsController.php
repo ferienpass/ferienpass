@@ -22,7 +22,7 @@ use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Payment;
 use Ferienpass\CoreBundle\Entity\PaymentItem;
 use Ferienpass\CoreBundle\Entity\User;
-use Ferienpass\CoreBundle\Export\Payments\ReceiptExportInterface;
+use Ferienpass\CoreBundle\Export\Payments\ReceiptPdfExport;
 use Ferienpass\CoreBundle\Message\ParticipantListChanged;
 use Ferienpass\CoreBundle\Message\PaymentReceiptCreated;
 use Ferienpass\CoreBundle\Payments\ReceiptNumberGenerator;
@@ -42,7 +42,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/zahlungen')]
 final class PaymentsController extends AbstractController
 {
-    public function __construct(private readonly ReceiptExportInterface $receiptExport)
+    public function __construct(private readonly ReceiptPdfExport $receiptExport)
     {
     }
 

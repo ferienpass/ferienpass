@@ -33,7 +33,7 @@ use Symfony\UX\LiveComponent\LiveCollectionTrait;
 
 #[IsGranted('ROLE_ADMIN')]
 #[Route('/saisons')]
-#[AsLiveComponent(name: 'EditionsEdit', template: '@FerienpassAdmin/components/EditOffer.html.twig')]
+#[AsLiveComponent(name: 'Admin:EditionsEdit', template: '@FerienpassAdmin/components/EditOffer.html.twig')]
 final class EditionsEditController extends AbstractController
 {
     use DefaultActionTrait;

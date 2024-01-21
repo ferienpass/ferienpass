@@ -1,16 +1,13 @@
-{% extends "@ContaoCore/Backend/be_page.html.twig" %}
-
-{% block headline %}
-    Vorherige personenbezogene Daten löschen
-{% endblock %}
-
-{% block error %}
-    {%- if error is defined -%}
-        {{- error -}}
-    {%- endif -%}
-{% endblock %}
+{% extends "@FerienpassAdmin/layout/base.html.twig" %}
+{% trans_default_domain 'admin' %}
 
 {% block main %}
+
+    {% if participants is empty %}
+    {% include '@FerienpassAdmin/components/alert/error.html.twig' with {'message': 'Es gibt nichts zu löschen.' } %}
+    {% else %}
+
+
     <div class="bg-white shadow sm:rounded-lg">
         <div class="px-4 py-5 sm:p-6">
             <h3 class="text-lg leading-6 font-medium text-gray-900">
@@ -50,7 +47,7 @@
                 <tr class="border-t border-gray-200">
                     <td class="px-4 py-2">
                         <p class="text-sm leading-5 font-medium text-gray-500">
-                            {{ participant.firstname  ~ ' ' ~ participant.lastname }}
+                            {{ participant.name }}
                         </p>
                     </td>
                     <td class="px-4 py-2">
@@ -62,4 +59,6 @@
             </tbody>
         </table>
     </div>
+    {% endif %}
+
 {% endblock %}

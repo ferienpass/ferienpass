@@ -15,6 +15,7 @@ namespace Ferienpass\AdminBundle\Controller\Page;
 
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -24,7 +25,7 @@ final class HomeController extends AbstractController
 {
     private readonly array $fragments;
 
-    public function __construct(iterable $fragments)
+    public function __construct(#[TaggedIterator('ferienpass_admin.dashboard_widget')] iterable $fragments)
     {
         $this->fragments = $fragments instanceof \Traversable ? iterator_to_array($fragments) : $fragments;
     }

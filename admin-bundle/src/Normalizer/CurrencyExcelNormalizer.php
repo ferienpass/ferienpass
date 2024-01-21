@@ -16,8 +16,10 @@ namespace Ferienpass\AdminBundle\Normalizer;
 use Ferienpass\CoreBundle\Dto\Currency;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Style\Style;
+use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
+#[AsTaggedItem('serializer.normalizer', priority: 100)]
 class CurrencyExcelNormalizer implements NormalizerInterface
 {
     public function normalize(mixed $object, string $format = null, array $context = [])

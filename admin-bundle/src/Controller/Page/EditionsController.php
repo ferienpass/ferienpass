@@ -21,6 +21,7 @@ use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Ferienpass\CoreBundle\Session\Flash;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,7 +35,7 @@ final class EditionsController extends AbstractController
 {
     private readonly array $stats;
 
-    public function __construct(private readonly EditionRepository $editionRepository, iterable $stats)
+    public function __construct(private readonly EditionRepository $editionRepository, #[TaggedIterator('ferienpass_admin.stats_widget')] iterable $stats)
     {
         $this->stats = $stats instanceof \Traversable ? iterator_to_array($stats) : $stats;
     }

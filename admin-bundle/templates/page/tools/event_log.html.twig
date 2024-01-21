@@ -1,16 +1,9 @@
-{% extends "@ContaoCore/Backend/be_page.html.twig" %}
-
-{% block headline %}
-    {{ 'MOD.notification_center'|trans([], 'contao_modules') }}
-{% endblock %}
-
-{% block error %}
-    {%- if error is defined -%}
-        {{- error -}}
-    {%- endif -%}
-{% endblock %}
+{% extends "@FerienpassAdmin/layout/base.html.twig" %}
+{% trans_default_domain 'admin' %}
 
 {% block main %}
+
+
     <div class="">
         <table class="w-full">
             <thead>
@@ -50,9 +43,9 @@
                     <td class="px-2 py-2">
                         {% if event.user|default %}
                             <p class="text-xs text-gray-500 font-medium truncate">
-                        <span class="inline-flex items-center justify-center h-6 w-6 rounded-full bg-gray-400">
-                            <span class="text-xs font-medium leading-none text-white">{{ 'AB' }}</span>
-                        </span>
+                                <span class="inline-flex items-center justify-center h-6 w-6 rounded-full bg-gray-400">
+                                    <span class="text-xs font-medium leading-none text-white">{{ 'AB' }}</span>
+                                </span>
                                 <span class="font-medium text-xs text-gray-500">{{ event.user }}</span>
                             </p>
                         {% else %}
@@ -73,7 +66,7 @@
                     <tr>
                         <td></td>
                         <td class="pb-1 px-2">
-                            {% set messageType = notification.message.gateway_type %}
+                           {# {% set messageType = notification.message.gateway_type %}
                             <div class="text-sm leading-5 text-gray-900 grid grid-cols-8">
                                 <p>
                                     {% set label = 'eventLog.notification.'~messageType~'.label' %}
@@ -85,13 +78,13 @@
                                 </p>
                                 <p class="truncate col-span-2 flex items-center text-gray-700 text-xs font-medium">
                                     <span class="inline-block h-6 w-6 mr-1 rounded-full overflow-hidden bg-gray-100">
-                                      <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"/>
-                                      </svg>
+                                        <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                        </svg>
                                     </span>
                                     {{ notification.tokens.participant_firstname|default ~' '~notification.tokens.participant_lastname|default }}
                                 </p>
-                            </div>
+                            </div>#}
 
                         </td>
                         <td></td>
@@ -157,8 +150,8 @@
                             3
                         </button>
                         <span class="-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-700">
-          ...
-        </span>
+                            ...
+                        </span>
                         <button type="button"
                                 class="hidden md:inline-flex -ml-px relative items-center px-4 py-2 border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150">
                             8
@@ -185,4 +178,5 @@
             </div>
         </div>
     </div>
+
 {% endblock %}

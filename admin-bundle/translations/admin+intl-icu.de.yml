@@ -146,10 +146,17 @@ editions:
     holiday: Ferien
     host_editing_stage: Bearbeitungsphase für Veranstaltende
     show_offers: Angebote veröffentlichen
+    application_system: Anmeldeverfahren
+    allocation: Zuteilung von Plätzen
+    pay_days: Zahltage
+    publish_lists: Teilnahmelisten öffentlich
+    custom: Benutzerdefiniert
   label:
     name: Name
     alias: Alias
     type: Typ
+    title: Title
+    description: Beschreibung
     application_system: Anmeldesystem
     periodBegin: Beginn
     periodEnd: Ende

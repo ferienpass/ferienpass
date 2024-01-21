@@ -26,6 +26,7 @@ use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Ux\Flash;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -48,7 +49,7 @@ final class OffersEditController extends AbstractController
     #[LiveProp]
     public Offer $initialFormData;
 
-    public function __construct(private readonly Slug $slug, private readonly string $imagesDir, private readonly string $projectDir, private readonly ManagerRegistry $doctrine, private readonly FormFactoryInterface $formFactory)
+    public function __construct(private readonly Slug $slug, #[Autowire('%contao.upload_path%/img')] private readonly string $imagesDir, #[Autowire('%kernel.project_dir%')] private readonly string $projectDir, private readonly ManagerRegistry $doctrine, private readonly FormFactoryInterface $formFactory)
     {
     }
 

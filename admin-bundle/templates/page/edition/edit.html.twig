@@ -11,7 +11,7 @@
 
         {{ partials.h1(headline|default(item.name|default("#{translationPrefix}.new"))|trans) }}
 
-        {{ component('EditionsEdit', {
+        {{ component('Admin:EditionsEdit', {
             initialFormData: item,
             form: form
         }) }}

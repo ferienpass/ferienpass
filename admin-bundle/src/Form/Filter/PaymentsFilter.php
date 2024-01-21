@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Form\Filter;
 
-use Ferienpass\AdminBundle\Form\Filter\Payment\HostsFilter;
-use Ferienpass\AdminBundle\Form\Filter\Payment\OnlineApplicationFilter;
+use Ferienpass\AdminBundle\Form\Filter\Offer\HostsFilter;
+use Ferienpass\AdminBundle\Form\Filter\Offer\OnlineApplicationFilter;
 use Ferienpass\CoreBundle\Entity\Payment;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 

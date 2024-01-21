@@ -11,15 +11,18 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\AdminBundle\Form\Filter\Payment;
+namespace Ferienpass\AdminBundle\Form\Filter\Offer;
 
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Ferienpass\AdminBundle\Form\Filter\AbstractFilterType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Ferienpass\CoreBundle\Entity\Host;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PublishedFilter extends AbstractFilterType
+class HostsFilter extends AbstractFilterType
 {
     //    public static function getName(): string
     //    {
@@ -28,7 +31,7 @@ class PublishedFilter extends AbstractFilterType
 
     public function getParent(): string
     {
-        return CheckboxType::class;
+        return EntityType::class;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -36,6 +39,16 @@ class PublishedFilter extends AbstractFilterType
         //        parent::configureOptions($resolver);
 
         $resolver->setDefaults([
+            'class' => Host::class,
+            'query_builder' => function (EntityRepository $er): QueryBuilder {
+                return $er->createQueryBuilder('h')
+                    // ->where("JSON_SEARCH(u.roles, 'one', :role) IS NOT NULL")
+                    // ->setParameter('role', 'ROLE_ADMIN')
+                    ->orderBy('h.name')
+                ;
+            },
+            'choice_label' => 'name',
+            'placeholder' => '-',
         ]);
     }
 
@@ -44,10 +57,7 @@ class PublishedFilter extends AbstractFilterType
         $k = $form->getName();
         $v = $form->getData();
 
-        $qb
-            ->andWhere('i.published = :q_'.$k)
-            ->setParameter('q_'.$k, $v)
-        ;
+        $qb->innerJoin('i.hosts', 'h', Join::WITH, 'h IN (:q_'.$k.')')->setParameter('q_'.$k, $v);
     }
 
     //    public function getViewData(FormInterface $form): ?TranslatableInterface

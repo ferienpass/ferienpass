@@ -13,11 +13,13 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Form\Filter;
 
+use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
+
 class FilterRegistry
 {
     private array $filters;
 
-    public function __construct(iterable $filters)
+    public function __construct(#[TaggedIterator('ferienpass_admin.filter')] iterable $filters)
     {
         $this->filters = $filters instanceof \Traversable ? iterator_to_array($filters) : $filters;
     }
