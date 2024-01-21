@@ -13,12 +13,14 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Notification;
 
+use Ferienpass\CoreBundle\Entity\Attendance;
 use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\Recipient\RecipientInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class AttendanceChangedConfirmedNotification extends Notification
 {
+    private Attendance $attendance;
+
     public function getChannels(RecipientInterface $recipient): array
     {
         return ['email', 'sms'];
@@ -34,4 +36,11 @@ class AttendanceChangedConfirmedNotification extends Notification
     //        $tokens['attachment'] = $this->iCal->generate([$offer]);
     //
     //        $tokens['link'] = $this->router->generate('applications', [], UrlGeneratorInterface::ABSOLUTE_URL);
+
+    public function attendance(Attendance $attendance): static
+    {
+        $this->attendance = $attendance;
+
+        return $this;
+    }
 }

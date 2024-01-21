@@ -13,13 +13,31 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Notification;
 
+use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\Recipient\RecipientInterface;
 
 class HostInviteMemberNotification extends Notification
 {
+    private User $user;
+    private string $email;
+
     public function getChannels(RecipientInterface $recipient): array
     {
         return ['email'];
+    }
+
+    public function user(User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function email(string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
     }
 }

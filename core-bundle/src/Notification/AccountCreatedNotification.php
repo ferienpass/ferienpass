@@ -13,13 +13,23 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Notification;
 
+use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\Recipient\RecipientInterface;
 
-class PdfProofsNotification extends Notification
+class AccountCreatedNotification extends Notification
 {
+    private User $user;
+
     public function getChannels(RecipientInterface $recipient): array
     {
         return ['email'];
+    }
+
+    public function user(User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
     }
 }

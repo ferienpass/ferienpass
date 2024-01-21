@@ -16,7 +16,6 @@ namespace Ferienpass\CoreBundle\Notification;
 use Ferienpass\CoreBundle\Entity\Payment;
 use Ferienpass\CoreBundle\Export\Payments\ReceiptExportInterface;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
-use Symfony\Component\Mime\Email;
 use Symfony\Component\Notifier\Message\EmailMessage;
 use Symfony\Component\Notifier\Notification\EmailNotificationInterface;
 use Symfony\Component\Notifier\Notification\Notification;
@@ -32,13 +31,11 @@ class PaymentCreatedNotification extends Notification implements EmailNotificati
         parent::__construct();
     }
 
-    public function withPayment(Payment $payment): self
+    public function payment(Payment $payment): static
     {
-        $clone = clone $this;
+        $this->payment = $payment;
 
-        $clone->payment = $payment;
-
-        return $clone;
+        return $this;
     }
 
     public function getChannels(RecipientInterface $recipient): array
@@ -48,16 +45,9 @@ class PaymentCreatedNotification extends Notification implements EmailNotificati
 
     public function asEmailMessage(EmailRecipientInterface $recipient, string $transport = null): ?EmailMessage
     {
-        //        $email = NotificationEmail::asPublicEmail()
-        //            ->theme('@FerienpassCore/Email/attendance_new.html.twig')
-        //            ->to($recipient->getEmail())
-        //            ->subject($this->getSubject() ?: 'test')
-        //            ->content($this->getContent() ?: 'test')
-        //            ->attachFromPath()
-        //            ->action('Sign in', 'asdf')
-        //        ;
-
-        $email = (new Email())
+        $email = NotificationEmail::asPublicEmail()
+            // ->theme()
+            ->context(['payment' => $this->payment])
             ->to($recipient->getEmail())
             ->subject($this->getSubject())
             ->text($this->getContent())

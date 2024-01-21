@@ -13,13 +13,23 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Notification;
 
+use Ferienpass\CoreBundle\Entity\Attendance;
 use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\Recipient\RecipientInterface;
 
-class AttendanceReminderNotification extends Notification
+class AttendanceWithdrawnNotification extends Notification
 {
+    private Attendance $attendance;
+
     public function getChannels(RecipientInterface $recipient): array
     {
-        return ['email'];
+        return ['email', 'sms'];
+    }
+
+    public function attendance(Attendance $attendance): static
+    {
+        $this->attendance = $attendance;
+
+        return $this;
     }
 }

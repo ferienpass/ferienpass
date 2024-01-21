@@ -54,7 +54,7 @@ class ParticipantList
                 continue;
             }
 
-            $attendance->setStatus(Attendance::STATUS_CONFIRMED, $this->security->getUser()?->id);
+            $attendance->setStatus(Attendance::STATUS_CONFIRMED, $this->security->getUser());
 
             $this->dispatchMessage(new AttendanceStatusChanged($attendance->getId(), $oldStatus, $attendance->getStatus()));
         }
@@ -78,7 +78,7 @@ class ParticipantList
                 continue;
             }
 
-            $attendance->setStatus(Attendance::STATUS_WITHDRAWN, $this->security->getUser()?->id);
+            $attendance->setStatus(Attendance::STATUS_WITHDRAWN, $this->security->getUser());
 
             $this->dispatchMessage(new AttendanceStatusChanged($attendance->getId(), $oldStatus, $attendance->getStatus()));
         }

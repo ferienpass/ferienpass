@@ -13,13 +13,24 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Notification;
 
+use Ferienpass\CoreBundle\Entity\Attendance;
 use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\Recipient\RecipientInterface;
 
 class AdmissionLetterNotification extends Notification
 {
+    /** @var array<int, array<int, Attendance>> */
+    private array $attendances;
+
     public function getChannels(RecipientInterface $recipient): array
     {
         return ['email'];
+    }
+
+    public function attendance(Attendance $attendance): static
+    {
+        $this->attendances[$attendance->getParticipant()->getId()][] = $this->attendances;
+
+        return $this;
     }
 }
