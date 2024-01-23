@@ -27,7 +27,7 @@ class Breadcrumb
     {
         $menu = $this->factory->createItem('root');
 
-        foreach ($items as $item) {
+        foreach (array_filter($items) as $item) {
             $this->addChild($menu, ...(array) $item);
         }
 

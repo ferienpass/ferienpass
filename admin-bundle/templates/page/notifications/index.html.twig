@@ -1,14 +1,96 @@
 {% extends "@FerienpassAdmin/layout/base.html.twig" %}
 
+{% trans_default_domain 'admin' %}
+{% set translationPrefix = app.request.get('_route')|split('_')[1] %}
+
 {% block main %}
 
-    {% include '@FerienpassAdmin/components/_list.html.twig' with {
-        items: notifications,
-        title: '{{ "notifications.#{item}.0"|trans({}, "admin") }}',
-        info: [
-            '{{ "notifications.#{item}.1"|trans({}, "admin") }}'
-        ],
-        actionUrl: '{{ path("admin_notifications_show", { type: item }) }}'
-    } %}
+    <div class="flex flex-1 xl:overflow-hidden">
+        <nav aria-label="Sections" class="w-96 flex-shrink-0 xl:flex xl:flex-col">
+            <div class="min-h-0 flex-1 overflow-y-auto">
+                {% for type in types|sort((a, b) => "notifications.#{a}.0"|trans <=> "notifications.#{b}.0"|trans) %}
+                    <a href="{{ path('admin_notifications', { type: type }) }}"
+                       class="{{ app.request.get('type') == type ? 'bg-blue-50/50' : 'hover:bg-blue-50/50' }} flex rounded px-6 py-4"
+                       aria-current="page">
+                        <svg class="-mt-0.5 h-6 w-6 flex-shrink-0 text-slate-400" data-slot="icon" aria-hidden="true"
+                             fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+                                  stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                        <div class="ml-3 text-sm">
+                            <p class="font-medium text-slate-900">
+                                <span>{{ "notifications.#{type}.0"|trans }}</span>
+                                <span class="w-2.5 h-2.5 inline-block {{ notifier.isActive(type) ? 'bg-green-600' : 'bg-red-600' }} rounded-full"
+                                      aria-hidden="true"></span>
+                            </p>
+                            <p class="mt-1 text-slate-500">{{ "notifications.#{type}.1"|trans }}</p>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </nav>
+
+        <div class="flex-1 xl:overflow-y-auto">
+            <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+
+                {% if not app.request.get('type') %}
+
+                    <div class="py-12 text-center">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor"
+                             aria-hidden="true">
+                            <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                        </svg>
+                        <h3 class="mt-2 text-sm font-semibold text-gray-900">Benachrichtigung auswählen</h3>
+                        <p class="mt-1 text-sm text-gray-500">Wählen Sie links eine Benachrichtigung aus, die Sie
+                            bearbeiten wollen.</p>
+
+                    </div>
+
+                {% endif %}
+
+                {% if form is defined %}
+
+                    <div>
+                        <nav class="-ml-3 flex space-x-4" aria-label="Tabs">
+                            {% if editions is not empty %}
+                                <a href="{{ path('admin_notifications', { type: app.request.get('type') }) }}"
+                                   class="{{ 'admin_notifications' == app.request.get('_route') and edition is empty ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:text-gray-700' }} rounded-md px-3 py-2 text-sm font-medium"
+                                   {% if 'admin_notifications' == app.request.get('_route') and edition is empty %}aria-current="page"{% endif %}>
+                                    <span>Standard</span>
+                                    <span class="ml-1 w-2.5 h-2.5 inline-block {{ notifier.isActive(app.request.get('type')) ? 'bg-green-600' : 'bg-red-600' }} rounded-full"
+                                          aria-hidden="true"></span>
+                                </a>
+                            {% endif %}
+
+                            {% for edition in editions %}
+                                <a href="{{ path('admin_notifications', { type: app.request.get('type'), edition: edition.alias }) }}"
+                                   class="{{ edition.alias == app.request.get('edition') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:text-gray-700' }} rounded-md px-3 py-2 text-sm font-medium"
+                                   {% if edition.alias == app.request.get('edition') %}aria-current="page"{% endif %}>
+                                    <span>{{ edition.name }}</span>
+                                    <span class="ml-1 w-2.5 h-2.5 inline-block {{ notifier.isActive(app.request.get('type', edition)) ? 'bg-green-600' : 'bg-red-600' }} rounded-full"
+                                          aria-hidden="true"></span>
+                                </a>
+                            {% endfor %}
+                            <a href="{{ path('admin_notifications_new', { type: app.request.get('type') }) }}"
+                               class="{{ app.request.get('_route') == 'admin_notifications_new' ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:text-gray-700' }} rounded-md px-3 py-2 text-sm font-medium"
+                               {% if app.request.get('_route') == 'admin_notifications_new' %}aria-current="page"{% endif %}>+
+                                Für eine Saison anpassen</a>
+                        </nav>
+                    </div>
+
+                    {% include '@FerienpassAdmin/layout/_edit.html.twig' %}
+
+                {% endif %}
+
+
+            </div>
+        </div>
+    </div>
+
+
 
 {% endblock %}
