@@ -87,7 +87,7 @@ final class ExportController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/export/index.html.twig', [
             'form' => $form->createView(),
-            'breadcrumb' => $breadcrumb->generate('Tools', 'Export'),
+            'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'exports.title'),
         ]);
     }
 

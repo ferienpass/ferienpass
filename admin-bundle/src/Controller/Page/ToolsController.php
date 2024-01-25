@@ -27,7 +27,7 @@ final class ToolsController extends AbstractController
     public function index(Request $request, Breadcrumb $breadcrumb): Response
     {
         return $this->render('@FerienpassAdmin/page/tools/index.html.twig', [
-            'breadcrumb' => $breadcrumb->generate('Werkzeuge & Einstellungen'),
+            'breadcrumb' => $breadcrumb->generate('tools.title'),
         ]);
     }
 

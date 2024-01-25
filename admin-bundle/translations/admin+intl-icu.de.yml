@@ -365,6 +365,7 @@ export.pdf.print.1: 'Exportiert alle Angebote im druckfertigen PDF-Format.'
 
 
 notifications:
+  title: Benachrichtigungen
   action: Ansehen
   legend.edition.0: Saison
   legend.edition.1: Diese Benachrichtigung wird nur für diese Saison verwendet.
@@ -417,3 +418,9 @@ notifications:
   payment_created.1: Beleg wird als PDF an Rechnungsempfänger versendet.
   user_password.0: Account › Passwort-Reset
   user_password.1: Enthält den Password-Link zum Zurücksetzen des Passworts.
+
+exports:
+  title: Export
+
+tools:
+  title: Werkzeuge & Einstellungen

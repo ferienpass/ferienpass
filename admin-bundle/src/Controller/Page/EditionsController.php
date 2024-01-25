@@ -46,7 +46,7 @@ final class EditionsController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/edition/index.html.twig', [
             'items' => $items,
-            'breadcrumb' => $breadcrumb->generate(['Werkzeuge & Einstellungen', ['route' => 'admin_tools']], 'Saisons'),
+            'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'editions.title'),
         ]);
     }
 
@@ -74,7 +74,7 @@ final class EditionsController extends AbstractController
         return $this->render('@FerienpassAdmin/page/edition/edit.html.twig', [
             'item' => $edition,
             'form' => $form->createView(),
-            'breadcrumb' => $breadcrumb->generate(['Werkzeuge & Einstellungen', ['route' => 'admin_tools']], ['editions.title', ['route' => 'admin_editions_index']], $breadcrumbTitle),
+            'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], ['editions.title', ['route' => 'admin_editions_index']], $breadcrumbTitle),
         ]);
     }
 
@@ -84,7 +84,7 @@ final class EditionsController extends AbstractController
         return $this->render('@FerienpassAdmin/page/edition/stats.html.twig', [
             'edition' => $edition,
             'widgets' => array_map(fn (object $controller) => $controller::class, $this->stats),
-            'breadcrumb' => $breadcrumb->generate(['Werkzeuge & Einstellungen', ['route' => 'admin_tools']], ['editions.title', ['route' => 'admin_editions_index']], [$edition->getName(), ['route' => 'admin_editions_edit', 'routeParameters' => ['alias' => $edition->getAlias()]]], 'editions.stats'),
+            'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], ['editions.title', ['route' => 'admin_editions_index']], [$edition->getName(), ['route' => 'admin_editions_edit', 'routeParameters' => ['alias' => $edition->getAlias()]]], 'editions.stats'),
         ]);
     }
 }

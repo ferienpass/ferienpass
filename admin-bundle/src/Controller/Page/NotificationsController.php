@@ -45,7 +45,7 @@ final class NotificationsController extends AbstractController
             return $this->render('@FerienpassAdmin/page/notifications/index.html.twig', [
                 'types' => $notifier->types(),
                 'notifier' => $notifier,
-                'breadcrumb' => $breadcrumb->generate('Tools', 'Benachrichtigungen'),
+                'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'notifications.title'),
             ]);
         }
 
@@ -89,7 +89,7 @@ final class NotificationsController extends AbstractController
             'editions' => $editions,
             'types' => $notifier->types(),
             'notifier' => $notifier,
-            'breadcrumb' => $breadcrumb->generate('Tools', 'Benachrichtigungen', 'notifications.'.$type.'.0', $edition?->getName()),
+            'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], ['notifications.title', ['route' => 'admin_notifications']], 'notifications.'.$type.'.0', $edition?->getName()),
         ]);
     }
 
