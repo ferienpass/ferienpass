@@ -25,7 +25,6 @@ use Ferienpass\CoreBundle\Repository\AttendanceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
@@ -37,7 +36,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/angebote/{edition}/{id}/anmeldungen', requirements: ['id' => '\d+'])]
 class OfferApplicationsController extends AbstractController
 {
-    public function __construct(private readonly AttendanceRepository $attendanceRepository, private readonly PdfExport $pdfExport, private readonly WordExport $wordExport, private readonly FormFactoryInterface $formFactory)
+    public function __construct(private readonly AttendanceRepository $attendanceRepository, private readonly PdfExport $pdfExport, private readonly WordExport $wordExport)
     {
     }
 
@@ -64,7 +63,7 @@ class OfferApplicationsController extends AbstractController
         $sessionBag = $session->getBag('contao_backend');
         $autoAssign = $sessionBag->get('autoAssign', false);
 
-        $toggleMode = $this->formFactory->createBuilder(FormType::class, ['auto' => $autoAssign])
+        $toggleMode = $this->createFormBuilder(FormType::class, ['auto' => $autoAssign])
             ->add('auto', CheckboxType::class, ['false_values' => ['']])
             ->add('REQUEST_TOKEN', ContaoRequestTokenType::class)
             ->getForm()

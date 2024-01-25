@@ -16,7 +16,6 @@ namespace Ferienpass\AdminBundle\Controller\Page;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\CoreBundle\Facade\EraseDataFacade;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -27,11 +26,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class EraseDataController extends AbstractController
 {
     #[Route('', name: 'admin_erase_data')]
-    public function index(EraseDataFacade $eraseDataFacade, Breadcrumb $breadcrumb, Request $request, FormFactoryInterface $formFactory): Response
+    public function index(EraseDataFacade $eraseDataFacade, Breadcrumb $breadcrumb, Request $request): Response
     {
         $participants = $eraseDataFacade->expiredParticipants();
 
-        $form = $formFactory->createBuilder()->getForm();
+        $form = $this->createFormBuilder()->getForm();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $eraseDataFacade->eraseData();

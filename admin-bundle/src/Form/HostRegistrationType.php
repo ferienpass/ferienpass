@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Form;
 
 use Ferienpass\AdminBundle\Dto\HostRegistrationDto;
-use Ferienpass\CoreBundle\Form\SimpleType\ContaoRequestTokenType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -31,7 +30,6 @@ class HostRegistrationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => HostRegistrationDto::class,
-            'csrf_protection' => false,
         ]);
     }
 
@@ -82,7 +80,6 @@ class HostRegistrationType extends AbstractType
                 'label' => new TranslatableMessage('Host.text.0', [], 'contao_Host'),
                 'required' => false,
             ])
-            ->add('request_token', ContaoRequestTokenType::class)
             ->add('submit', SubmitType::class, [
                 'label' => 'Registrierung absenden',
             ])

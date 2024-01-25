@@ -22,7 +22,6 @@ use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Ferienpass\CoreBundle\Session\Flash;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -53,9 +52,9 @@ final class EditionsController extends AbstractController
 
     #[Route('/neu', name: 'admin_editions_create')]
     #[Route('/{alias}', name: 'admin_editions_edit')]
-    public function edit(?Edition $edition, Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $em, Breadcrumb $breadcrumb, Flash $flash): Response
+    public function edit(?Edition $edition, Request $request, EntityManagerInterface $em, Breadcrumb $breadcrumb, Flash $flash): Response
     {
-        $form = $formFactory->create(EditEditionType::class, $edition ?? new Host());
+        $form = $this->createForm(EditEditionType::class, $edition ?? new Host());
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -74,7 +73,7 @@ final class EditionsController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/edition/edit.html.twig', [
             'item' => $edition,
-            'form' => $form,
+            'form' => $form->createView(),
             'breadcrumb' => $breadcrumb->generate(['Werkzeuge & Einstellungen', ['route' => 'admin_tools']], ['editions.title', ['route' => 'admin_editions_index']], $breadcrumbTitle),
         ]);
     }

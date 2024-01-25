@@ -1,14 +1,16 @@
-<div>
+{% extends "@FerienpassAdmin/layout/login.html.twig" %}
+
+{% block content %}
+
     <h2 class="mb-4">Einladung </h2>
 
     {% if error is defined %}
         <alert-error>{{ error|trans([], 'contao_default') }}</alert-error>
     {% endif %}
 
-    {% if member is defined and host is defined %}
+    {% if host is defined %}
         <p class="mt-2 mb-4 text-sm leading-5 text-gray-600 _dark:text-gray-200 max-w">
-            Sie wurden von {{ member.firstname ~ ' ' ~ member.lastname }} eingeladen, an den Ferienpass-Angeboten
-            von {{ host.name }} mitzuarbeiten.</p>
+            Sie wurden eingeladen, an den Ferienpass-Angeboten von {{ host.name }} mitzuarbeiten.</p>
     {% endif %}
 
     {% if invitee_email is defined %}
@@ -19,4 +21,5 @@
     {% if form is defined %}
         {{ form(form) }}
     {% endif %}
-</div>
+
+{% endblock %}

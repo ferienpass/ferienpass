@@ -13,134 +13,112 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
-use Contao\CoreBundle\OptIn\OptInInterface;
-use Contao\Input;
-use Contao\MemberModel;
-use Ferienpass\CoreBundle\Form\UserLostPasswordType;
-use Ferienpass\CoreBundle\Ux\Flash;
-use NotificationCenter\Model\Notification;
-use Psr\Log\LoggerInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Ferienpass\AdminBundle\Form\ChangePasswordFormType;
+use Ferienpass\AdminBundle\Form\ResetPasswordRequestFormType;
+use Ferienpass\AdminBundle\Message\HostLostPassword;
+use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
+use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
+use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
-#[Route('/passwort-vergessen', name: 'admin_lost_password')]
+#[Route('/passwort-vergessen')]
 final class LostPasswordController extends AbstractController
 {
-    public function __construct(private readonly LoggerInterface $logger, private readonly OptInInterface $optIn, private readonly RouterInterface $router, private readonly UserPasswordHasherInterface $passwordHasher, private readonly FormFactoryInterface $formFactory)
+    use ResetPasswordControllerTrait;
+
+    public function __construct(private ResetPasswordHelperInterface $resetPasswordHelper, private EntityManagerInterface $entityManager)
     {
     }
 
-    public function __invoke(Request $request): Response
+    #[Route('', name: 'admin_lost_password')]
+    public function index(Request $request, MessageBusInterface $messageBus): Response
     {
-        if ($request->query->has('token') && ($token = (string) $request->query->get('token'))
-            && str_starts_with($token, 'pw-')) {
-            return $this->setNewPassword($request);
-        }
-
-        $form = $this->formFactory->create(UserLostPasswordType::class);
-
+        $form = $this->createForm(ResetPasswordRequestFormType::class);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
+            $messageBus->dispatch(new HostLostPassword($form->get('email')->getData()));
 
-            $memberModel = MemberModel::findActiveByEmailAndUsername($data['email'] ?? '');
-            if (null === $memberModel) {
-                sleep(2); // Wait 2 seconds while brute forcing :)
-                $form->addError(new FormError($GLOBALS['TL_LANG']['MSC']['accountNotFound']));
-            } else {
-                $this->sendPasswordLink($memberModel, $request->attributes->get('_route'));
-
-                $this->addFlash(...Flash::confirmationModal()->headline('Passwort-Link versendet')->text('Bitte überprüfen Sie Ihre E-Mails')->linkText('Zur Startseite')->create());
-
-                return $this->redirectToRoute($request->attributes->get('_route'));
-            }
+            return $this->redirectToRoute('admin_lost_password_check_email');
         }
 
-        return $this->render('@FerienpassAdmin/page/login/lost_password.html.twig', [
-            'form' => $form,
+        return $this->render('@FerienpassAdmin/page/reset_password/request.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 
-    protected function sendPasswordLink(MemberModel $memberModel, string $route): void
+    #[Route('/email', name: 'admin_lost_password_check_email')]
+    public function checkEmail(): Response
     {
-        /** @var Notification|null $notification */
-        $notification = Notification::findOneBy('type', 'member_password');
-        if (null === $notification) {
-            throw new \RuntimeException('No notification for password reset found!');
+        // Generate a fake token if the user does not exist or someone hit this page directly.
+        // This prevents exposing whether or not a user was found with the given email address or not
+        if (null === ($resetToken = $this->getTokenObjectFromSession())) {
+            $resetToken = $this->resetPasswordHelper->generateFakeResetToken();
         }
 
-        $optInToken = $this->optIn->create('pw', $memberModel->email, ['tl_member' => [(int) $memberModel->id]]);
-
-        $tokens = [];
-
-        // Add member tokens
-        foreach ($memberModel->row() as $k => $v) {
-            $tokens['member_'.$k] = $v;
-        }
-
-        $tokens['recipient_email'] = $memberModel->email;
-        $tokens['link'] = $this->router->generate($route, ['token' => $optInToken->getIdentifier()], RouterInterface::ABSOLUTE_URL);
-
-        $notification->send($tokens, $GLOBALS['TL_LANGUAGE']);
-
-        $this->logger->info('A new password has been requested for user ID '.$memberModel->id);
+        return $this->render('@FerienpassAdmin/page/reset_password/check_email.html.twig', [
+            'resetToken' => $resetToken,
+        ]);
     }
 
-    protected function setNewPassword(Request $request): Response
+    #[Route('/reset/{token}', name: 'admin_lost_password_reset')]
+    public function reset(Request $request, UserPasswordHasherInterface $passwordHasher, TranslatorInterface $translator, string $token = null): Response
     {
-        // Find an unconfirmed token with only one related record
-        if ((!$optInToken = $this->optIn->find(Input::get('token')))
-            || !$optInToken->isValid()
-            || 1 !== \count($related = $optInToken->getRelatedRecords())
-            || 'tl_member' !== key($related)
-            || 1 !== (is_countable($arrIds = current($related)) ? \count($arrIds = current($related)) : 0)
-            || (!$memberModel = MemberModel::findByPk($arrIds[0]))) {
-            return $this->render(
-                '@FerienpassCore/Fragment/message.html.twig',
-                ['error' => $GLOBALS['TL_LANG']['MSC']['invalidToken']]
-            );
+        if ($token) {
+            // We store the token in session and remove it from the URL, to avoid the URL being
+            // loaded in a browser and potentially leaking the token to 3rd party JavaScript.
+            $this->storeTokenInSession($token);
+
+            return $this->redirectToRoute('admin_lost_password_reset');
         }
 
-        if ($optInToken->isConfirmed()) {
-            return $this->render(
-                '@FerienpassCore/Fragment/message.html.twig',
-                ['error' => $GLOBALS['TL_LANG']['MSC']['tokenConfirmed']]
-            );
+        $token = $this->getTokenFromSession();
+
+        if (null === $token) {
+            throw $this->createNotFoundException('No reset password token found in the URL or in the session.');
         }
 
-        if ($optInToken->getEmail() !== $memberModel->email) {
-            return $this->render(
-                '@FerienpassCore/Fragment/message.html.twig',
-                ['error' => $GLOBALS['TL_LANG']['MSC']['tokenEmailMismatch']]
-            );
+        try {
+            /** @var User $user */
+            $user = $this->resetPasswordHelper->validateTokenAndFetchUser($token);
+        } catch (ResetPasswordExceptionInterface $e) {
+            $this->addFlash('reset_password_error', sprintf(
+                '%s - %s',
+                $translator->trans(ResetPasswordExceptionInterface::MESSAGE_PROBLEM_VALIDATE, [], 'ResetPasswordBundle'),
+                $translator->trans($e->getReason(), [], 'ResetPasswordBundle')
+            ));
+
+            return $this->redirectToRoute('admin_lost_password');
         }
 
-        $form = $this->formFactory->create(UserLostPasswordType::class, $memberModel, ['reset_password' => true]);
-
+        // The token is valid; allow the user to change their password.
+        $form = $this->createForm(ChangePasswordFormType::class);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $memberModel->password = $this->passwordHasher->hashPassword($memberModel, $memberModel->password ?? '');
-            $memberModel->tstamp = time();
-            $memberModel->locked = 0;
+            // A password reset token should be used only once, remove it.
+            $this->resetPasswordHelper->removeResetRequest($token);
 
-            $memberModel->save();
-            $optInToken->confirm();
+            $encodedPassword = $passwordHasher->hashPassword($user, $form->get('plainPassword')->getData());
 
-            $this->addFlash(...Flash::confirmationModal()->headline('Passwort-Reset erfolgreich')->text('Sie können sich nun mit Ihrem neuen Passwort anmelden.')->linkText('Zur Startseite')->create());
+            $user->setPassword($encodedPassword);
+            $this->entityManager->flush();
 
-            return $this->render('@FerienpassAdmin/page/login/lost_password.html.twig', [
-                'form' => $form,
-            ]);
+            $this->cleanSessionAfterReset();
+
+            return $this->redirectToRoute('admin_index');
         }
 
-        return $this->render('@FerienpassAdmin/page/login/lost_password.html.twig', [
-            'form' => $form,
+        return $this->render('@FerienpassAdmin/page/reset_password/reset.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 }

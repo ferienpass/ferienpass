@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Form;
 
 use Ferienpass\CoreBundle\Entity\User;
-use Ferienpass\CoreBundle\Form\SimpleType\ContaoRequestTokenType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -57,7 +56,7 @@ class AcceptInvitationType extends AbstractType
                         new Email(),
                     ],
                 ])
-                ->add('password', PasswordType::class, [
+                ->add('plainPassword', PasswordType::class, [
                     'label' => 'MSC.password',
                     'translation_domain' => 'contao_default',
                     'help' => 'Ihr Passwort muss aus mindestens 8 Zeichen bestehen.',
@@ -71,7 +70,6 @@ class AcceptInvitationType extends AbstractType
         }
 
         $builder
-            ->add('request_token', ContaoRequestTokenType::class)
             ->add('submit', SubmitType::class, [
                 'label' => 'Einladung akzeptieren',
             ])

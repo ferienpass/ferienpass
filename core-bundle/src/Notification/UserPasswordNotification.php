@@ -23,6 +23,7 @@ use Symfony\Component\Notifier\Recipient\RecipientInterface;
 
 class UserPasswordNotification extends Notification implements NotificationInterface, EmailNotificationInterface
 {
+    private string $token;
     private User $user;
 
     public static function getName(): string
@@ -33,6 +34,13 @@ class UserPasswordNotification extends Notification implements NotificationInter
     public function getChannels(RecipientInterface $recipient): array
     {
         return ['email'];
+    }
+
+    public function token(string $token): static
+    {
+        $this->token = $this->token;
+
+        return $this;
     }
 
     public function user(User $user): static
@@ -49,6 +57,7 @@ class UserPasswordNotification extends Notification implements NotificationInter
             ->subject($this->getSubject())
             ->content($this->getContent())
             ->context([
+                'token' => $this->token,
                 'user' => $this->user,
             ])
         ;

@@ -27,7 +27,6 @@ use Ferienpass\CoreBundle\Ux\Flash;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -49,7 +48,7 @@ final class OffersEditController extends AbstractController
     #[LiveProp]
     public Offer $initialFormData;
 
-    public function __construct(private readonly Slug $slug, #[Autowire('%contao.upload_path%/img')] private readonly string $imagesDir, #[Autowire('%kernel.project_dir%')] private readonly string $projectDir, private readonly ManagerRegistry $doctrine, private readonly FormFactoryInterface $formFactory)
+    public function __construct(private readonly Slug $slug, #[Autowire('%contao.upload_path%/img')] private readonly string $imagesDir, #[Autowire('%kernel.project_dir%')] private readonly string $projectDir, private readonly ManagerRegistry $doctrine)
     {
     }
 
@@ -104,14 +103,14 @@ final class OffersEditController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/offers/edit.html.twig', [
             'item' => $offer,
-            'form' => $form,
+            'form' => $form->createView(),
             'breadcrumb' => $breadcrumb->generate([$offer->getEdition()->getName(), ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], $offer->getName().' (bearbeiten)'),
         ]);
     }
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->formFactory->create(EditOfferType::class, $this->initialFormData, ['is_variant' => !$this->initialFormData->isVariantBase()]);
+        return $this->createForm(EditOfferType::class, $this->initialFormData, ['is_variant' => !$this->initialFormData->isVariantBase()]);
     }
 
     private function getOffer(Request $request, ?Edition $edition): Offer

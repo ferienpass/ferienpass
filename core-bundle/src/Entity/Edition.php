@@ -27,6 +27,9 @@ class Edition
     #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
     private ?int $id = null;
 
+    #[ORM\Column(type: 'datetime_immutable', options: ['default' => 'CURRENT_TIMESTAMP'])]
+    private \DateTimeInterface $createdAt;
+
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $name = null;
 
@@ -55,6 +58,7 @@ class Edition
     {
         $this->tasks = new ArrayCollection();
         $this->offers = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int

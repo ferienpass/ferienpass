@@ -21,35 +21,25 @@ use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Repository\HostRepository;
 use Ferienpass\CoreBundle\Repository\UserRepository;
 use Ferienpass\CoreBundle\Ux\Flash;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\UriSigner;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/einladung', name: 'admin_invitation')]
+#[Route('/einladung/{email}/{host}', name: 'admin_invitation')]
 final class FollowInvitationController extends AbstractController
 {
     public function __construct(private readonly UserPasswordHasherInterface $passwordHasher, private readonly OptIn $optIn, private readonly HostRepository $hostRepository)
     {
     }
 
-    public function __invoke(UserRepository $userRepository, EntityManagerInterface $em, Request $request)
+    public function __invoke(string $email, #[MapEntity(mapping: ['host' => 'alias'])] ?Host $host, UserRepository $userRepository, EntityManagerInterface $em, Request $request, UriSigner $uriSigner)
     {
-        // Find an unconfirmed token
-        if ((!$optInToken = $this->optIn->find((string) $request->query->get('token')))
-            || !$optInToken->isValid()
-            || \count($relatedRecords = $optInToken->getRelatedRecords()) < 1
-            || !\array_key_exists('Host', $relatedRecords)
-            || !\array_key_exists('tl_member', $relatedRecords)) {
-            $error = 'MSC.invalidToken';
-
-            return $this->render('@FerienpassAdmin/fragment/follow_invitation.html.twig', ['error' => $error]);
-        }
-
-        if ($optInToken->isConfirmed()) {
-            $error = 'MSC.tokenConfirmed';
-
-            return $this->render('@FerienpassAdmin/fragment/follow_invitation.html.twig', ['error' => $error]);
+        if (!$uriSigner->checkRequest($request)) {
+            throw new NotFoundHttpException();
         }
 
         $user = $this->getUser();
@@ -59,43 +49,32 @@ final class FollowInvitationController extends AbstractController
 
         $form = $this->createForm(AcceptInvitationType::class, $user);
 
-        $hostId = reset($relatedRecords['Host']);
-        $inviter = reset($relatedRecords['tl_member']);
-
-        /** @var Host $host */
-        $host = $this->hostRepository->find($hostId);
-
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             if (!$user->getId()) {
-                $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword() ?? ''));
+                $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPlainPassword() ?? ''));
                 $host->addMember($user);
 
                 $this->addFlash(...Flash::confirmation()->text('Account erstellt. Bitte melden Sie sich nun mit Ihrer E-Mail-Adresse an.')->create());
 
-                $optInToken->confirm();
-
                 $em->persist($user);
                 $em->flush();
 
-                return $this->redirect('/');
+                return $this->redirectToRoute('admin_index');
             }
 
             $host->addMember($user);
             $em->flush();
 
-            $optInToken->confirm();
-
             $this->addFlash(...Flash::confirmation()->text('Einladung angenommen')->create());
 
-            return $this->redirect('/');
+            return $this->redirectToRoute('admin_index');
         }
 
-        return $this->render('@FerienpassAdmin/fragment/follow_invitation.html.twig', [
-            'member' => $userRepository->find($inviter),
+        return $this->render('@FerienpassAdmin/page/login/follow_invitation.html.twig', [
             'host' => $host,
-            'form' => $form,
-            'invitee_email' => $optInToken->getEmail(),
+            'form' => $form->createView(),
+            'invitee_email' => $email,
         ]);
     }
 }

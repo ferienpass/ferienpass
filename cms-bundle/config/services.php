@@ -7,10 +7,12 @@ use Contao\CoreBundle\Migration\MigrationInterface;
 use Contao\CoreBundle\OptIn\OptInInterface;
 use Ferienpass\CmsBundle\Controller\Fragment\ChangePasswordController;
 use Ferienpass\CmsBundle\Controller\Fragment\CloseAccount;
+use Ferienpass\CmsBundle\Controller\Fragment\LostPasswordController;
 use Ferienpass\CmsBundle\Controller\Fragment\ParticipantsController;
 use Ferienpass\CmsBundle\Controller\Fragment\PersonalDataController;
 use Ferienpass\CmsBundle\Menu\MenuBuilder;
 use Ferienpass\CmsBundle\Page\PageBuilderFactory;
+use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
 use Symfony\Component\Security\Http\Logout\LogoutUrlGenerator;
 
 return function(ContainerConfigurator $container): void {
@@ -37,11 +39,17 @@ return function(ContainerConfigurator $container): void {
         ->tag('ferienpass.fragment')
     ;
 
+    $services->get(LostPasswordController::class)
+        ->tag('ferienpass.fragment', ['type' => 'lost_password','method' => 'request'])
+        ->tag('ferienpass.fragment', ['type' => 'lost_password_requested','method' => 'requested'])
+        ->tag('ferienpass.fragment', ['type' => 'lost_password_reset','method' => 'reset'])
+    ;
+
     // Aliases for autowiring
     $services->alias(ContaoContext::class, 'contao.assets.files_context');
     $services->alias(OptInInterface::class, 'contao.opt_in');
     $services->alias(LogoutUrlGenerator::class, 'security.logout_url_generator');
-    $services->alias(\Symfony\Component\HttpKernel\Fragment\FragmentHandler::class, 'contao.fragment.handler');
+    $services->alias(FragmentHandler::class, 'contao.fragment.handler');
 
     // Tagged user account fragments
     $services->set(ParticipantsController::class)

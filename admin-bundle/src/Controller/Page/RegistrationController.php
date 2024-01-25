@@ -13,73 +13,43 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
-use Contao\Email;
-use Contao\MemberModel;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Dto\HostRegistrationDto;
 use Ferienpass\AdminBundle\Form\HostRegistrationType;
-use Ferienpass\CoreBundle\Entity\Host;
+use Ferienpass\CoreBundle\Message\HostCreated;
 use Ferienpass\CoreBundle\Ux\Flash;
-use NotificationCenter\Model\Notification;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 #[Route('/registrierung', name: 'admin_registration')]
 final class RegistrationController extends AbstractController
 {
-    public function __construct(private readonly ManagerRegistry $doctrine, private readonly UserPasswordHasherInterface $passwordHasher, #[Autowire(env: 'ADMIN_EMAIL')] private string $adminEmail, private readonly NormalizerInterface $normalizer, private readonly FormFactoryInterface $formFactory)
-    {
-    }
-
-    public function __invoke(Request $request): Response
+    public function __invoke(Request $request, EntityManagerInterface $em, MessageBusInterface $messageBus, UserPasswordHasherInterface $passwordHasher): Response
     {
         $dto = new HostRegistrationDto();
-        $form = $this->formFactory->create(HostRegistrationType::class, $dto);
+        $form = $this->createForm(HostRegistrationType::class, $dto);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->doctrine->getManager();
+            $user = $dto->toUser();
+            $user->setRoles(['ROLE_HOST']);
+            $user->setDisabled();
 
-            $memberModel = $dto->toMemberModel();
-            $memberModel->username = $memberModel->email;
-            $memberModel->groups = serialize(['1']);
-            $memberModel->dateAdded = $memberModel->tstamp = time();
-            $memberModel->login = '1';
-            $memberModel->disable = '1';
+            $user->setPassword($passwordHasher->hashPassword($user, $user->getPlainPassword()));
 
-            if (isset($memberModel->plainPassword)) {
-                $memberModel->password = $this->passwordHasher->hashPassword($memberModel, $memberModel->plainPassword);
-                unset($memberModel->plainPassword);
-            }
+            // TODO check for uniqueness
+            $em->persist($user);
 
-            try {
-                $memberModel->save();
-            } catch (\Exception) {
-                $this->addFlash(...Flash::error()->headline('Fehler')->text('Ein Fehler ist aufgetreten. Haben Sie bereits in Nutzerkonto?.')->create());
-
-                return $this->redirectToRoute($request->attributes->get('_route'));
-            }
-
-            $host = $dto->toHostEntity();
-            $host->addMember($memberModel);
+            $host = $dto->toHost();
+            $host->addMember($user);
             $em->persist($host);
             $em->flush();
 
-            $this->notify($host, $memberModel);
-
-            $email = new Email();
-
-            $email->subject = 'Neue Registrierungsanfrage als Veranstalter';
-
-            $email->text = 'Ein neuer Veranstalter hat sich registriert.';
-            $email->replyTo($memberModel->email);
-            $email->sendTo();
+            $messageBus->dispatch(new HostCreated($host->getId(), $user->getId()));
 
             $this->addFlash(...Flash::confirmationModal()->headline('Registrierung gesendet')->text('Ihre Registrierung haben wir erhalten. Wir werden sie schnellstmöglich bearbeiten. Sie bekommen von uns eine Mitteilung.')->linkText('Zur Startseite')->create());
 
@@ -87,30 +57,7 @@ final class RegistrationController extends AbstractController
         }
 
         return $this->render('@FerienpassAdmin/page/login/registration.html.twig', [
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
-    }
-
-    private function notify(Host $host, MemberModel $member): void
-    {
-        /** @var Notification $notification */
-        $notification = Notification::findOneBy('type', 'host_registration');
-        if (null === $notification) {
-            throw new \LogicException('Notification of type "host_registration" not found');
-        }
-
-        $tokens = [];
-
-        $tokens['admin_email'] = $this->adminEmail;
-
-        foreach ($member->row() as $k => $v) {
-            $tokens['member_'.$k] = $v;
-        }
-
-        foreach ((array) $this->normalizer->normalize($host, null, ['groups' => ['notification']]) as $k => $v) {
-            $tokens['host_'.$k] = $v;
-        }
-
-        $notification->send($tokens);
     }
 }

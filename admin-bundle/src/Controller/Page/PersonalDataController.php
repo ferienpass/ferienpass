@@ -17,7 +17,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Form\PersonalDataType;
 use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -25,14 +24,14 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/persoenliche-daten', name: 'admin_user_index')]
 final class PersonalDataController extends AbstractController
 {
-    public function __invoke(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $em): Response
+    public function __invoke(Request $request, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
             return new Response();
         }
 
-        $form = $formFactory->create(PersonalDataType::class, $user);
+        $form = $this->createForm(PersonalDataType::class, $user);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -43,7 +42,7 @@ final class PersonalDataController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/user/index.html.twig', [
             'headline' => 'user.title',
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 }

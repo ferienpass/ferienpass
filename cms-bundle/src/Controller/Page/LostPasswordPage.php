@@ -14,21 +14,35 @@ declare(strict_types=1);
 namespace Ferienpass\CmsBundle\Controller\Page;
 
 use Contao\CoreBundle\DependencyInjection\Attribute\AsPage;
+use Contao\CoreBundle\Exception\PageNotFoundException;
 use Ferienpass\CmsBundle\Controller\Frontend\AbstractController;
 use Ferienpass\CmsBundle\Fragment\FragmentReference;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-#[AsPage('lost_password', contentComposition: false)]
+#[AsPage('lost_password', path: '{method?request}', contentComposition: false)]
 class LostPasswordPage extends AbstractController
 {
-    public function __invoke(Request $request): Response
+    public function __invoke(string $method, Request $request): Response
     {
         $this->initializeContaoFramework();
 
-        return $this->createPageBuilder($request->attributes->get('pageModel'))
-            ->addFragment('main', new FragmentReference('ferienpass.fragment.lost_password'))
-            ->getResponse()
-        ;
+        $pageBuilder = $this->createPageBuilder($request->attributes->get('pageModel'));
+
+        switch ($method) {
+            case 'request':
+                $pageBuilder->addFragment('main', new FragmentReference('ferienpass.fragment.lost_password'));
+                break;
+            case 'requested':
+                $pageBuilder->addFragment('main', new FragmentReference('ferienpass.fragment.lost_password_requested'));
+                break;
+            case 'reset':
+                $pageBuilder->addFragment('main', new FragmentReference('ferienpass.fragment.lost_password_reset'));
+                break;
+            default:
+                throw new PageNotFoundException();
+        }
+
+        return $pageBuilder->getResponse();
     }
 }

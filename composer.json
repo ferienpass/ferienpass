@@ -73,6 +73,7 @@
     "symfony/twig-bridge": "^5.2 || ^6.0",
     "symfony/ux-live-component": "^2.0",
     "symfony/validator": "^5.2 || ^6.0",
+    "symfonycasts/reset-password-bundle": "^1.20",
     "twig/twig": "^2.12 || ^3.0",
     "twig/intl-extra": "^2.14 || ^3.0",
     "twig/cssinliner-extra": "^3.6",

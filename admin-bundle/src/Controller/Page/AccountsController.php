@@ -21,7 +21,6 @@ use Ferienpass\CoreBundle\Repository\UserRepository;
 use Ferienpass\CoreBundle\Session\Flash;
 use Knp\Menu\FactoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -72,7 +71,7 @@ final class AccountsController extends AbstractController
 
     #[Route('/neu', name: 'admin_accounts_create')]
     #[Route('/{id}', name: 'admin_accounts_edit')]
-    public function edit(string $role, ?User $user, Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $em, Breadcrumb $breadcrumb, Flash $flash): Response
+    public function edit(string $role, ?User $user, Request $request, EntityManagerInterface $em, Breadcrumb $breadcrumb, Flash $flash): Response
     {
         if (!\in_array($role, array_keys(self::ROLES), true)) {
             throw $this->createNotFoundException('The role does not exist');
@@ -87,7 +86,7 @@ final class AccountsController extends AbstractController
             throw $this->createNotFoundException('The account does not exist');
         }
 
-        $form = $formFactory->create(EditAccountType::class, $user);
+        $form = $this->createForm(EditAccountType::class, $user);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -107,7 +106,7 @@ final class AccountsController extends AbstractController
         return $this->render('@FerienpassAdmin/page/accounts/edit.html.twig', [
             'item' => $user,
             'headline' => $user->getId() ? $user->getName() : 'accounts.new',
-            'form' => $form,
+            'form' => $form->createView(),
             'breadcrumb' => $breadcrumb->generate(['accounts.title', ['route' => 'admin_accounts_index', 'routeParameters' => ['role' => $role]]], ['accounts.'.self::ROLES[$role], ['route' => 'admin_accounts_index', 'routeParameters' => ['role' => $role]]], $breadcrumbTitle),
         ]);
     }

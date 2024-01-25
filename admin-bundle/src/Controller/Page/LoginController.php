@@ -15,7 +15,6 @@ namespace Ferienpass\AdminBundle\Controller\Page;
 
 use Ferienpass\AdminBundle\Form\UserLoginType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -24,17 +23,13 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 #[Route('/login', name: 'admin_login')]
 final class LoginController extends AbstractController
 {
-    public function __construct(private readonly FormFactoryInterface $formFactory)
-    {
-    }
-
     public function __invoke(AuthenticationUtils $authenticationUtils, Request $request): Response
     {
-        $form = $this->formFactory->create(UserLoginType::class, null, ['target_path' => base64_encode($this->targetPath($request))]);
+        $form = $this->createForm(UserLoginType::class, null, ['target_path' => base64_encode($this->targetPath($request))]);
 
         return $this->render('@FerienpassAdmin/page/login/index.html.twig', [
             'error' => $authenticationUtils->getLastAuthenticationError(),
-            'login' => $form,
+            'login' => $form->createView(),
         ]);
     }
 

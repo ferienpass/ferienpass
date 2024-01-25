@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Controller\Page;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\ApplicationSystem\ParticipantList;
 use Ferienpass\AdminBundle\Dto\AddParticipantDto;
 use Ferienpass\AdminBundle\Form\AddParticipantType;
@@ -29,7 +28,6 @@ use Ferienpass\CoreBundle\Ux\Flash;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -37,7 +35,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/angebote/{edition}/{id}/teilnahmeliste{_suffix}', name: 'admin_offer_attendances', requirements: ['id' => '\d+'], defaults: ['_suffix' => ''])]
 final class ParticipantListController extends AbstractController
 {
-    public function __construct(private readonly PrivacyConsent $privacyConsent, private readonly AttendanceFacade $attendanceFacade, private readonly ManagerRegistry $doctrine, private readonly ParticipantList $participantList, private readonly FormFactoryInterface $formFactory)
+    public function __construct(private readonly PrivacyConsent $privacyConsent, private readonly ParticipantList $participantList)
     {
     }
 
@@ -68,7 +66,7 @@ final class ParticipantListController extends AbstractController
         //            ]);
         //        }
 
-        $addForm = $this->formFactory->create(AddParticipantType::class, $participantDto = new AddParticipantDto());
+        $addForm = $this->createForm(AddParticipantType::class, $participantDto = new AddParticipantDto());
         $addForm->handleRequest($request);
         if ($addForm->isSubmitted() && $addForm->isValid()) {
             $this->denyAccessUnlessGranted('participants.add', $offer);
@@ -83,7 +81,7 @@ final class ParticipantListController extends AbstractController
             return $this->redirect($request->getUri());
         }
 
-        $statusForm = $this->formFactory->createBuilder()
+        $statusForm = $this->createFormBuilder()
             ->add('confirm', SubmitType::class)
             ->add('reject', SubmitType::class)
             ->add('attendances', EntityType::class, [

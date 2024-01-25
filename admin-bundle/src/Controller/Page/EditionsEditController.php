@@ -19,7 +19,6 @@ use Ferienpass\AdminBundle\Form\EditEditionType;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Session\Flash;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,10 +40,6 @@ final class EditionsEditController extends AbstractController
 
     #[LiveProp]
     public Edition $initialFormData;
-
-    public function __construct(private readonly FormFactoryInterface $formFactory)
-    {
-    }
 
     #[Route('/neu', name: 'admin_editions_create')]
     #[Route('/{alias}', name: 'admin_editions_edit')]
@@ -70,13 +65,13 @@ final class EditionsEditController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/edition/edit.html.twig', [
             'item' => $edition,
-            'form' => $form,
+            'form' => $form->createView(),
             'breadcrumb' => $breadcrumb->generate(['Werkzeuge & Einstellungen', ['route' => 'admin_tools']], ['editions.title', ['route' => 'admin_editions_index']], $breadcrumbTitle),
         ]);
     }
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->formFactory->create(EditEditionType::class, $this->initialFormData);
+        return $this->createForm(EditEditionType::class, $this->initialFormData);
     }
 }

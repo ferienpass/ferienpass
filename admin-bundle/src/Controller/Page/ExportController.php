@@ -25,7 +25,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,7 +36,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 #[Route('/export')]
 final class ExportController extends AbstractController
 {
-    public function __construct(private readonly OfferRepository $offerRepository, private readonly OfferExporter $exporter, private readonly FormFactoryInterface $formFactory)
+    public function __construct(private readonly OfferRepository $offerRepository, private readonly OfferExporter $exporter)
     {
     }
 
@@ -46,7 +45,7 @@ final class ExportController extends AbstractController
     {
         $types = $this->exporter->getAllNames();
 
-        $form = $this->formFactory->createBuilder()
+        $form = $this->createFormBuilder()
             ->add('type', ChoiceType::class, [
                 'label' => 'Welches Format soll exportiert werden?',
                 'choices' => array_combine($types, $types),
@@ -87,7 +86,7 @@ final class ExportController extends AbstractController
         }
 
         return $this->render('@FerienpassAdmin/page/export/index.html.twig', [
-            'form' => $form,
+            'form' => $form->createView(),
             'breadcrumb' => $breadcrumb->generate('Tools', 'Export'),
         ]);
     }

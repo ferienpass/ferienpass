@@ -25,7 +25,6 @@ use Ferienpass\CoreBundle\Repository\NotificationRepository;
 use Ferienpass\CoreBundle\Session\Flash;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,7 +59,7 @@ final class NotificationsController extends AbstractController
 
         $editions = $em->createQuery('SELECT e FROM '.Edition::class.' e WHERE e IN (SELECT IDENTITY(n.edition) FROM '.Notification::class.' n WHERE n.type = :type)')->setParameter('type', $type)->getResult();
         $entity = $repository->findOneBy(['type' => $type, 'edition' => $edition]) ?? new Notification($type);
-        $form = $this->createForm(EditNotificationType::class, $entity, ['supports_sms' => 'attendance_newly_confirmed' === $type, 'new_edition' => 'admin_notifications_new' === $request->get('_route'), 'can_delete' => null !== $edition]);
+        $form = $this->createForm(EditNotificationType::class, $entity, ['notification_type' => $type, 'supports_sms' => 'attendance_newly_confirmed' === $type, 'new_edition' => 'admin_notifications_new' === $request->get('_route'), 'can_delete' => null !== $edition]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -81,7 +80,7 @@ final class NotificationsController extends AbstractController
 
             $em->flush();
 
-            return $this->redirectToRoute('admin_notifications', ['type' => $type, 'edition' => $edition]);
+            return $this->redirectToRoute('admin_notifications', ['type' => $type, 'edition' => $edition?->getAlias()]);
         }
 
         return $this->render('@FerienpassAdmin/page/notifications/index.html.twig', [
@@ -95,9 +94,9 @@ final class NotificationsController extends AbstractController
     }
 
     #[Route('/zusagen-versenden', name: 'admin_notifications_send_acceptances')]
-    public function sendAcceptances(Request $request, MessageBusInterface $messageBus, UnconfirmedApplications $unconfirmedApplications, FormFactoryInterface $formFactory, Breadcrumb $breadcrumb)
+    public function sendAcceptances(Request $request, MessageBusInterface $messageBus, UnconfirmedApplications $unconfirmedApplications, Breadcrumb $breadcrumb)
     {
-        $form = $formFactory->createBuilder()->getForm();
+        $form = $this->createFormBuilder()->getForm();
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -109,7 +108,7 @@ final class NotificationsController extends AbstractController
         return $this->renderForm('@FerienpassAdmin/page/notifications/send_attendances.html.twig', [
             'members' => $unconfirmedApplications->getUninformedMembers(),
             'participants' => $unconfirmedApplications->getUninformedParticipants(),
-            'form' => $form,
+            'form' => $form->createView(),
             'breadcrumb' => $breadcrumb->generate('Benachrichtigungen', 'Zusagen versenden'),
         ]);
     }

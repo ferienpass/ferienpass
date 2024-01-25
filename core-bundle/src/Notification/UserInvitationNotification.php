@@ -16,17 +16,24 @@ namespace Ferienpass\CoreBundle\Notification;
 use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Twig\Mime\NotificationEmail;
+use Symfony\Component\HttpFoundation\UriSigner;
 use Symfony\Component\Notifier\Message\EmailMessage;
 use Symfony\Component\Notifier\Notification\EmailNotificationInterface;
 use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\Recipient\EmailRecipientInterface;
 use Symfony\Component\Notifier\Recipient\RecipientInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class UserInvitationNotification extends Notification implements NotificationInterface, EmailNotificationInterface
 {
     private User $user;
     private Host $host;
     private string $email;
+
+    public function __construct(private readonly UrlGeneratorInterface $urlGenerator, private readonly UriSigner $uriSigner)
+    {
+        parent::__construct();
+    }
 
     public static function getName(): string
     {
@@ -61,6 +68,8 @@ class UserInvitationNotification extends Notification implements NotificationInt
 
     public function asEmailMessage(EmailRecipientInterface $recipient, string $transport = null): ?EmailMessage
     {
+        $actionUrl = $this->uriSigner->sign($this->urlGenerator->generate('admin_invitation', ['email' => $this->email(), 'host' => $this->host->getAlias()], UrlGeneratorInterface::ABSOLUTE_URL));
+
         $email = (new NotificationEmail(self::getName()))
             ->to($recipient->getEmail())
             ->subject($this->getSubject())
@@ -70,6 +79,7 @@ class UserInvitationNotification extends Notification implements NotificationInt
                 'host' => $this->host,
                 'email' => $this->email,
             ])
+            ->action('email.account_created.activate', $actionUrl)
         ;
 
         return new EmailMessage($email);

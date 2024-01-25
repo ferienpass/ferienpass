@@ -14,129 +14,106 @@ declare(strict_types=1);
 namespace Ferienpass\CmsBundle\Controller\Fragment;
 
 use Contao\CoreBundle\Controller\AbstractController;
-use Contao\CoreBundle\OptIn\OptInInterface;
-use Contao\Input;
-use Contao\MemberModel;
-use Ferienpass\CoreBundle\Form\UserLostPasswordType;
-use Ferienpass\CoreBundle\Ux\Flash;
-use NotificationCenter\Model\Notification;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormFactoryInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Ferienpass\CmsBundle\Form\ChangePasswordFormType;
+use Ferienpass\CmsBundle\Form\ResetPasswordRequestFormType;
+use Ferienpass\CmsBundle\Message\UserLostPassword;
+use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Translation\TranslatableMessage;
+use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
+use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
+use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
 class LostPasswordController extends AbstractController
 {
-    public function __construct(private readonly LoggerInterface $logger, private readonly OptInInterface $optIn, private readonly UserPasswordHasherInterface $passwordHasher, private readonly FormFactoryInterface $formFactory)
+    use ResetPasswordControllerTrait;
+
+    public function __construct(private ResetPasswordHelperInterface $resetPasswordHelper, private EntityManagerInterface $entityManager, private readonly MessageBusInterface $messageBus)
     {
     }
 
-    public function __invoke(Request $request): Response
+    public function request(Request $request): Response
     {
-        if ($request->query->has('token') && ($token = (string) $request->query->get('token'))
-            && str_starts_with($token, 'pw-')) {
-            return $this->setNewPassword($request);
-        }
-
-        $form = $this->formFactory->create(UserLostPasswordType::class);
-
+        $form = $this->createForm(ResetPasswordRequestFormType::class);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
 
-            $memberModel = MemberModel::findActiveByEmailAndUsername($data['email'] ?? '');
-            if (null === $memberModel) {
-                sleep(2); // Wait 2 seconds while brute forcing :)
-                $form->addError(new FormError($GLOBALS['TL_LANG']['MSC']['accountNotFound']));
-            } else {
-                return $this->sendPasswordLink($memberModel);
-            }
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->messageBus->dispatch(new UserLostPassword($form->get('email')->getData()));
+
+            return $this->redirectToRoute('lost_password');
         }
 
-        return $this->renderForm('@FerienpassCore/Fragment/lost_password.html.twig', [
-            'form' => $form,
+        return $this->render('@FerienpassCms/fragment/reset_password/request.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 
-    protected function sendPasswordLink(MemberModel $memberModel): Response
+    public function checkEmail(): Response
     {
-        /** @var Notification|null $notification */
-        $notification = Notification::findOneBy('type', 'member_password');
-        if (null === $notification) {
-            throw new \RuntimeException('No notification for password reset found!');
+        // Generate a fake token if the user does not exist or someone hit this page directly.
+        // This prevents exposing whether or not a user was found with the given email address or not
+        if (null === ($resetToken = $this->getTokenObjectFromSession())) {
+            $resetToken = $this->resetPasswordHelper->generateFakeResetToken();
         }
 
-        $optInToken = $this->optIn->create('pw', $memberModel->email, ['tl_member' => [(int) $memberModel->id]]);
-
-        $tokens = [];
-
-        // Add member tokens
-        foreach ($memberModel->row() as $k => $v) {
-            $tokens['member_'.$k] = $v;
-        }
-
-        $tokens['recipient_email'] = $memberModel->email;
-        $tokens['link'] = $this->generateUrl('lost_password', [
-            'token' => $optInToken->getIdentifier(),
-        ], RouterInterface::ABSOLUTE_URL);
-
-        $notification->send($tokens, $GLOBALS['TL_LANGUAGE']);
-
-        $this->logger->info('A new password has been requested for user ID '.$memberModel->id);
-
-        return $this->redirectToRoute('lost_password_confirm');
+        return $this->render('@FerienpassCms/fragment/reset_password/check_email.html.twig', [
+            'resetToken' => $resetToken,
+        ]);
     }
 
-    protected function setNewPassword(Request $request): Response
+    public function reset(Request $request, UserPasswordHasherInterface $passwordHasher, TranslatorInterface $translator, string $token = null): Response
     {
-        // Find an unconfirmed token with only one related record
-        if ((!$optInToken = $this->optIn->find(Input::get('token')))
-            || !$optInToken->isValid()
-            || 1 !== \count($related = $optInToken->getRelatedRecords())
-            || 'tl_member' !== key($related)
-            || 1 !== (is_countable($arrIds = current($related)) ? \count($arrIds = current($related)) : 0)
-            || (!$memberModel = MemberModel::findByPk($arrIds[0]))) {
-            return $this->render('@FerienpassCore/Fragment/message.html.twig', [
-                'error' => new TranslatableMessage('MSC.invalidToken', [], 'contao_default'),
-            ]);
+        $token = $request->query->get('token');
+        if ($token) {
+            // We store the token in session and remove it from the URL, to avoid the URL being
+            // loaded in a browser and potentially leaking the token to 3rd party JavaScript.
+            $this->storeTokenInSession($token);
+
+            return $this->redirectToRoute('lost_password', ['method' => 'reset']);
         }
 
-        if ($optInToken->isConfirmed()) {
-            return $this->render('@FerienpassCore/Fragment/message.html.twig', [
-                'error' => new TranslatableMessage('MSC.tokenConfirmed', [], 'contao_default'),
-            ]);
+        $token = $this->getTokenFromSession();
+
+        if (null === $token) {
+            throw $this->createNotFoundException('No reset password token found in the URL or in the session.');
         }
 
-        if ($optInToken->getEmail() !== $memberModel->email) {
-            return $this->render('@FerienpassCore/Fragment/message.html.twig', [
-                'error' => new TranslatableMessage('MSC.tokenEmailMismatch', [], 'contao_default'),
-            ]);
+        try {
+            /** @var User $user */
+            $user = $this->resetPasswordHelper->validateTokenAndFetchUser($token);
+        } catch (ResetPasswordExceptionInterface $e) {
+            $this->addFlash('reset_password_error', sprintf(
+                '%s - %s',
+                $translator->trans(ResetPasswordExceptionInterface::MESSAGE_PROBLEM_VALIDATE, [], 'ResetPasswordBundle'),
+                $translator->trans($e->getReason(), [], 'ResetPasswordBundle')
+            ));
+
+            return $this->redirectToRoute('lost_password');
         }
 
-        $form = $this->formFactory->create(UserLostPasswordType::class, $memberModel, ['reset_password' => true]);
-
+        // The token is valid; allow the user to change their password.
+        $form = $this->createForm(ChangePasswordFormType::class);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $memberModel->password = $this->passwordHasher->hashPassword($memberModel, $memberModel->password ?? '');
-            $memberModel->tstamp = time();
-            $memberModel->locked = 0;
+            // A password reset token should be used only once, remove it.
+            $this->resetPasswordHelper->removeResetRequest($token);
 
-            $memberModel->save();
-            $optInToken->confirm();
+            $encodedPassword = $passwordHasher->hashPassword($user, $form->get('plainPassword')->getData());
 
-            $this->addFlash(...Flash::confirmationModal()->headline(' Passwort-Reset erfolgreich')->text('Sie können sich nun mit Ihrem neuen Passwort anmelden.')->linkText('Zur Startseite')->create());
+            $user->setPassword($encodedPassword);
+            $this->entityManager->flush();
 
-            return $this->renderForm('@FerienpassCore/Fragment/lost_password.html.twig', [
-                'form' => $form,
-            ]);
+            $this->cleanSessionAfterReset();
+
+            return $this->redirect('/');
         }
 
-        return $this->renderForm('@FerienpassCore/Fragment/lost_password.html.twig', [
-            'form' => $form,
+        return $this->render('@FerienpassCms/fragment/reset_password/reset.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 }

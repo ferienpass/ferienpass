@@ -24,14 +24,12 @@ use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Entity\Payment;
 use Ferienpass\CoreBundle\Entity\PaymentItem;
-use Ferienpass\CoreBundle\Facade\AttendanceFacade;
 use Ferienpass\CoreBundle\Message\PaymentReceiptCreated;
 use Ferienpass\CoreBundle\Payments\ReceiptNumberGenerator;
 use Ferienpass\CoreBundle\Repository\AttendanceRepository;
 use Ferienpass\CoreBundle\Repository\ParticipantRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -73,10 +71,10 @@ final class ParticipantsController extends AbstractController
 
     #[Route('/neu', name: 'admin_participants_create')]
     #[Route('/{id}/bearbeiten', name: 'admin_participants_edit', requirements: ['id' => '\d+'])]
-    public function edit(?Participant $participant, Request $request, FormFactoryInterface $formFactory, Breadcrumb $breadcrumb): Response
+    public function edit(?Participant $participant, Request $request, Breadcrumb $breadcrumb): Response
     {
         $em = $this->doctrine->getManager();
-        $form = $formFactory->create(EditParticipantType::class, $participant ?? new Participant());
+        $form = $this->createForm(EditParticipantType::class, $participant ?? new Participant());
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -93,18 +91,18 @@ final class ParticipantsController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/participants/edit.html.twig', [
             'item' => $participant,
-            'form' => $form,
+            'form' => $form->createView(),
             'breadcrumb' => $breadcrumb->generate(['participants.title', ['route' => 'admin_participants_index']], $breadcrumbTitle),
         ]);
     }
 
     #[Route('/{id}', name: 'admin_participants_attendances', requirements: ['id' => '\d+'])]
-    public function attendances(Participant $participant, Request $request, AttendanceFacade $attendanceFacade, FormFactoryInterface $formFactory, Breadcrumb $breadcrumb): Response
+    public function attendances(Participant $participant, Request $request, Breadcrumb $breadcrumb): Response
     {
         $items = $participant->getAttendances();
 
         /** @var Form $ms */
-        $ms = $formFactory->create(MultiSelectType::class, options: [
+        $ms = $this->createForm(MultiSelectType::class, options: [
             'buttons' => ['settle'],
             'items' => $items->toArray(),
         ]);
@@ -126,7 +124,7 @@ final class ParticipantsController extends AbstractController
     }
 
     #[Route('/abrechnen', name: 'admin_attendances_settle', methods: ['POST'])]
-    public function settle(Request $request, FormFactoryInterface $formFactory, Breadcrumb $breadcrumb, AttendanceRepository $attendanceRepository, MessageBusInterface $messageBus): Response
+    public function settle(Request $request, Breadcrumb $breadcrumb, AttendanceRepository $attendanceRepository, MessageBusInterface $messageBus): Response
     {
         $user = $this->getUser();
         $attendances = $this->getAttendancesFromRequest($attendanceRepository, $request);
@@ -134,7 +132,7 @@ final class ParticipantsController extends AbstractController
 
         $draftPayment = Payment::fromAttendances($attendances);
 
-        $form = $formFactory->create(SettleAttendancesType::class, $dto = BillingAddressDto::fromPayment($draftPayment), ['attendances' => $attendances]);
+        $form = $this->createForm(SettleAttendancesType::class, $dto = BillingAddressDto::fromPayment($draftPayment), ['attendances' => $attendances]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -153,7 +151,7 @@ final class ParticipantsController extends AbstractController
         }
 
         return $this->render('@FerienpassAdmin/page/participants/settle.html.twig', [
-            'form' => $form,
+            'form' => $form->createView(),
             'payment' => $draftPayment,
             'breadcrumb' => $breadcrumb->generate(['participants.title', ['route' => 'admin_participants_index']], 'Anmeldungen abrechnen'),
         ]);

@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Form;
 
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Notification;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -35,6 +37,8 @@ class EditNotificationType extends AbstractType
         ]);
 
         $resolver
+            ->setDefined('notification_type')
+            ->setRequired('notification_type')
             ->setDefined('supports_email')
             ->setDefault('supports_email', true)
             ->setDefined('supports_sms')
@@ -52,6 +56,10 @@ class EditNotificationType extends AbstractType
             $builder
                 ->add('edition', EntityType::class, [
                     'class' => Edition::class,
+                    'query_builder' => fn (EntityRepository $er): QueryBuilder => $er->createQueryBuilder('e')
+                        ->where('e NOT IN (SELECT IDENTITY(n.edition) FROM '.Notification::class.' n WHERE n.type = :type)')
+                        ->setParameter('type', $options['notification_type'])
+                        ->orderBy('e.createdAt', 'DESC'),
                     'choice_label' => 'name',
                     'multiple' => false,
                     'expanded' => false,

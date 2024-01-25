@@ -1,0 +1,24 @@
+
+
+    <p class="mt-2 text-sm leading-5 text-gray-600 _dark:text-gray-200 max-w">Geben Sie Ihre hinterlegte
+        E-Mail-Adresse ein, wenn Sie Ihr Passwort zurücksetzen wollen.</p>
+
+    {% for flash_error in app.flashes('reset_password_error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+    {% endfor %}
+
+    <div class="mt-8">
+
+        {{ form_start(form) }}
+        <div class="space-y-6">
+            {% for widget in form %}
+                {{ form_row(widget) }}
+            {% endfor %}
+        </div>
+        {{ form_end(form) }}
+
+    </div>
+
+    <div class="mt-6">
+        {% include '@FerienpassAdmin/components/back-link.html.twig' with {uri: '/'} %}
+    </div>

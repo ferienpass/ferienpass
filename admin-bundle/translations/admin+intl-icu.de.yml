@@ -382,9 +382,8 @@ notifications:
   help.emailText: Geben Sie den Text ohne Anrede ein.
   help.smsText: Geben Sie den Text für die Kurznachricht ein.
   help.disable: Wenn Sie diese Benachrichtigung deaktivieren, dann wird sie nicht versendet. Wenn zutreffend, wird die Standard-Benachrichtigung weiterhin verwendet.
-  attendance_newly_confirmed:
-    - 'Anmeldung › Nachrücker-Bestätigung'
-    - 'Wird an Teilnehmende geschickt, die nachrücken, bzw. deren Teilnahmestatus sich auf "zugesagt" ändern.'
+  attendance_newly_confirmed.0: Anmeldung › Nachrücker-Bestätigung
+  attendance_newly_confirmed.1: Wird an Teilnehmende geschickt, die nachrücken, bzw. deren Teilnahmestatus sich auf "zugesagt" ändern.
   attendance_confirmed:
     - 'Anmeldung › Teilnahmebestätigung'
     - 'Wenn man sich für ein Angebot angemeldet und sofort die Zusage erhält.'
@@ -397,9 +396,9 @@ notifications:
   user_invitation:
     - 'Account › Einladung (Veranstalter)'
     - 'Wenn Veranstaltende andere Personen zu ihrer Organisation einladen, enthält diese E-Mail den Link zum Annehmen der Einladung.'
-  host_registration:
-    - 'Account › Registrierung (Veranstalter)'
-    - 'Diese Benachrichtigung wird verschickt, wenn Veranstalter:innen sich auf der Seite registrieren.'
+  host_created:
+    - 'Veranstalter › Registrierung'
+    - 'Wird verschickt, wenn Veranstalter:innen sich auf der Seite registrieren.'
   account_activated:
     - 'Account › Aktiviert (Eltern)'
     - 'Eltern-Account wurde aktiviert. Sie können eine Willkommens-E-Mail versenden.'
@@ -416,5 +415,5 @@ notifications:
   offer_relaunched.1: Wenn ein Angebot nach einster Absage wieder stattfindet.
   payment_created.0: Zahlung › Beleg erstellt
   payment_created.1: Beleg wird als PDF an Rechnungsempfänger versendet.
-  user_password.0: Account › Passwort-Link
+  user_password.0: Account › Passwort-Reset
   user_password.1: Enthält den Password-Link zum Zurücksetzen des Passworts.

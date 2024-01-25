@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Dto;
 
-use Contao\MemberModel;
 use Ferienpass\CoreBundle\Entity\Host;
+use Ferienpass\CoreBundle\Entity\User;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -65,24 +65,22 @@ class HostRegistrationDto
     public ?string $postal = null;
     public ?string $city = null;
 
-    public function toMemberModel(): MemberModel
+    public function toUser(): User
     {
-        $memberModel = new MemberModel();
+        $user = new User();
 
-        $memberModel->firstname = $this->firstname ?? '';
-        $memberModel->lastname = $this->lastname ?? '';
-        $memberModel->phone = $this->memberPhone ?? '';
-        $memberModel->email = $this->memberEmail ?? '';
-        $memberModel->plainPassword = $this->memberPassword;
+        $user->setFirstname($this->firstname);
+        $user->setLastname($this->lastname);
+        $user->setPhone($this->memberPhone);
+        $user->setEmail($this->memberEmail);
+        $user->setPlainPassword($this->memberPassword);
 
-        return $memberModel;
+        return $user;
     }
 
-    public function toHostEntity(): Host
+    public function toHost(): Host
     {
         $host = new Host();
-
-        $host->setTimestamp(time());
 
         $host->setName($this->name ?? '');
         $host->setText($this->text);

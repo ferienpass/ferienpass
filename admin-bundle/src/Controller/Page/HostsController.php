@@ -20,7 +20,6 @@ use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Pagination\Paginator;
 use Ferienpass\CoreBundle\Repository\HostRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -50,9 +49,9 @@ final class HostsController extends AbstractController
 
     #[Route('/neu', name: 'admin_hosts_create')]
     #[Route('/{alias}/bearbeiten', name: 'admin_hosts_edit')]
-    public function edit(?Host $host, Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $em, Breadcrumb $breadcrumb, \Ferienpass\CoreBundle\Session\Flash $flash): Response
+    public function edit(?Host $host, Request $request, EntityManagerInterface $em, Breadcrumb $breadcrumb, \Ferienpass\CoreBundle\Session\Flash $flash): Response
     {
-        $form = $formFactory->create(EditHostType::class, $host ?? new Host());
+        $form = $this->createForm(EditHostType::class, $host ?? new Host());
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -71,7 +70,7 @@ final class HostsController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/hosts/edit.html.twig', [
             'item' => $host,
-            'form' => $form,
+            'form' => $form->createView(),
             'breadcrumb' => $breadcrumb->generate(['hosts.title', ['route' => 'admin_hosts_index']], $breadcrumbTitle),
         ]);
     }

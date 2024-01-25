@@ -22,30 +22,29 @@ use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Dto\EditHostDto;
 use Ferienpass\AdminBundle\Form\EditHostType;
 use Ferienpass\AdminBundle\Form\UserInviteType;
+use Ferienpass\AdminBundle\Message\HostInvite;
 use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Repository\HostRepository;
 use Ferienpass\CoreBundle\Ux\Flash;
-use NotificationCenter\Model\Notification;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('/stammdaten')]
 final class OrganizationController extends AbstractController
 {
-    public function __construct(private readonly FormFactoryInterface $formFactory, private readonly Connection $connection, private readonly OptIn $optIn, private readonly HostRepository $hostRepository, private readonly Slug $slug, #[Autowire('%contao.upload_path%/logo')] private readonly string $logosDir, #[Autowire('%kernel.project_dir%')] private readonly string $projectDir, private readonly ManagerRegistry $doctrine)
+    public function __construct(private readonly Connection $connection, private readonly OptIn $optIn, private readonly HostRepository $hostRepository, private readonly Slug $slug, #[Autowire('%contao.upload_path%/logo')] private readonly string $logosDir, #[Autowire('%kernel.project_dir%')] private readonly string $projectDir, private readonly ManagerRegistry $doctrine)
     {
     }
 
     #[Route('', name: 'admin_profile_index')]
-    public function index(Request $request, Breadcrumb $breadcrumb): Response
+    public function index(Request $request, Breadcrumb $breadcrumb, MessageBusInterface $messageBus): Response
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
@@ -55,10 +54,12 @@ final class OrganizationController extends AbstractController
         $organizations = [];
 
         foreach ($this->hostRepository->findByUser($user) as $host) {
-            $form = $this->formFactory->create(UserInviteType::class);
+            $form = $this->createForm(UserInviteType::class);
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
-                $this->invite($email = $form->getData()['email'], $host, $user);
+                $messageBus->dispatch(new HostInvite($form->get('email')->getData(), $host->getId(), $user->getId()));
+
+                $this->addFlash(...Flash::confirmation()->text(sprintf('Die Einladungs-E-Mail wurde an %s verschickt.', $email))->create());
 
                 return $this->redirectToRoute($request->get('_route'));
             }
@@ -77,11 +78,10 @@ final class OrganizationController extends AbstractController
     {
         $this->denyAccessUnlessGranted('edit', $host);
 
-        $form = $this->formFactory->create(EditHostType::class, $hostDto = EditHostDto::fromEntity($host));
+        $form = $this->createForm(EditHostType::class, $hostDto = EditHostDto::fromEntity($host));
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $host = $hostDto->toEntity($host);
-            $host->setTimestamp(time());
 
             /** @var UploadedFile|null $logoFile */
             $logoFile = $form->get('logo')->getData();
@@ -112,37 +112,8 @@ final class OrganizationController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/profile/edit.html.twig', [
             'host' => $host,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
-    }
-
-    private function invite(string $email, Host $host, User $user): void
-    {
-        /** @var Notification $notification */
-        $notification = Notification::findOneBy('type', 'host_invite_member');
-        if (null === $notification) {
-            throw new \LogicException('Notification of type host_invite_member not found');
-        }
-
-        $tokens = [];
-
-        $optInToken = $this->optIn->create('invite', $email, ['Host' => [$host->getId()], 'tl_member' => [$user->getId()]]);
-
-        $tokens['invitee_email'] = $email;
-        $tokens['admin_email'] = $GLOBALS['TL_ADMIN_EMAIL'];
-        $tokens['link'] = $this->generateUrl('host_follow_invitation',
-            ['token' => $optInToken->getIdentifier()],
-            UrlGeneratorInterface::ABSOLUTE_URL
-        );
-
-        $tokens['member_firstname'] = $user->getFirstname();
-        $tokens['member_lastname'] = $user->getLastname();
-
-        $tokens['host_name'] = $host->getName();
-
-        $notification->send($tokens);
-
-        $this->addFlash(...Flash::confirmation()->text(sprintf('Die Einladungs-E-Mail wurde an %s verschickt.', $email))->create());
     }
 
     private function fetchMembers(Host $host): array

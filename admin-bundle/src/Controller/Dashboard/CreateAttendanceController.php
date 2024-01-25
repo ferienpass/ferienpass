@@ -19,13 +19,12 @@ use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Facade\AttendanceFacade;
 use Ferienpass\CoreBundle\Form\BackendApplicationType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class CreateAttendanceController extends AbstractController
 {
-    public function __construct(private readonly AttendanceFacade $attendanceFacade, private readonly ManagerRegistry $doctrine, private readonly FormFactoryInterface $formFactory)
+    public function __construct(private readonly AttendanceFacade $attendanceFacade, private readonly ManagerRegistry $doctrine)
     {
     }
 
@@ -35,7 +34,7 @@ class CreateAttendanceController extends AbstractController
             return new Response('', Response::HTTP_NO_CONTENT);
         }
 
-        $form = $this->formFactory->create(BackendApplicationType::class);
+        $form = $this->createForm(BackendApplicationType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $offer = $form->get('offer')->getData();

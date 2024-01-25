@@ -2,9 +2,12 @@
 
 {% block content %}
 
-
     <p class="mt-2 text-sm leading-5 text-gray-600 _dark:text-gray-200 max-w">Geben Sie Ihre hinterlegte
         E-Mail-Adresse ein, wenn Sie Ihr Passwort zurücksetzen wollen.</p>
+
+    {% for flash_error in app.flashes('reset_password_error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+    {% endfor %}
 
     <div class="mt-8">
 

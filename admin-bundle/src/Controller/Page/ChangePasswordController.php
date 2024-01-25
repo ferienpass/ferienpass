@@ -18,7 +18,6 @@ use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Form\UserChangePasswordType;
 use Ferienpass\CoreBundle\Session\Flash;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -32,14 +31,14 @@ final class ChangePasswordController extends AbstractController
     {
     }
 
-    public function __invoke(EntityManagerInterface $em, Request $request, FormFactoryInterface $formFactory, Flash $flash): Response
+    public function __invoke(EntityManagerInterface $em, Request $request, Flash $flash): Response
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
             return new Response('', Response::HTTP_NO_CONTENT);
         }
 
-        $form = $formFactory->create(UserChangePasswordType::class);
+        $form = $this->createForm(UserChangePasswordType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $hashedPassword = $this->passwordHasher->hashPassword($user, $form->getData()['password'] ?? '');
@@ -53,7 +52,7 @@ final class ChangePasswordController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/user/change_password.html.twig', [
             'headline' => 'user.password.title',
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 }
