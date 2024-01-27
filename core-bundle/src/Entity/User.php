@@ -35,6 +35,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
     private ?int $id = null;
 
+    #[Assert\Email]
+    #[Assert\NotBlank]
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     private ?string $email = null;
 
@@ -74,7 +76,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $password;
 
-    #[Assert\NotBlank]
     #[Assert\Length(max: 4096)]
     private ?string $plainPassword;
 
@@ -84,10 +85,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private bool $superAdmin = false;
 
-    #[ORM\OneToMany(targetEntity: 'Ferienpass\CoreBundle\Entity\HostMemberAssociation', mappedBy: 'user', cascade: ['persist'])]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: HostMemberAssociation::class, cascade: ['persist'])]
     private Collection $hostAssociations;
 
-    #[ORM\OneToMany(targetEntity: 'Ferienpass\CoreBundle\Entity\Participant', mappedBy: 'user', cascade: ['persist'])]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Participant::class, cascade: ['persist'])]
     private Collection $participants;
 
     public function __construct()

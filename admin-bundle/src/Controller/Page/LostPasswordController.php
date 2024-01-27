@@ -41,6 +41,10 @@ final class LostPasswordController extends AbstractController
     #[Route('', name: 'admin_lost_password')]
     public function index(Request $request, MessageBusInterface $messageBus): Response
     {
+        if ($this->isGranted('ROLE_USER')) {
+            return $this->redirectToRoute('admin_index');
+        }
+
         $form = $this->createForm(ResetPasswordRequestFormType::class);
         $form->handleRequest($request);
 
@@ -58,6 +62,10 @@ final class LostPasswordController extends AbstractController
     #[Route('/angefragt', name: 'admin_lost_password_check_email')]
     public function checkEmail(): Response
     {
+        if ($this->isGranted('ROLE_USER')) {
+            return $this->redirectToRoute('admin_index');
+        }
+
         // Generate a fake token if the user does not exist or someone hit this page directly.
         // This prevents exposing whether or not a user was found with the given email address or not
         if (null === ($resetToken = $this->getTokenObjectFromSession())) {
@@ -72,6 +80,10 @@ final class LostPasswordController extends AbstractController
     #[Route('/reset/{token}', name: 'admin_lost_password_reset')]
     public function reset(Request $request, UserPasswordHasherInterface $passwordHasher, TranslatorInterface $translator, string $token = null): Response
     {
+        if ($this->isGranted('ROLE_USER')) {
+            return $this->redirectToRoute('admin_index');
+        }
+
         if ($token) {
             // We store the token in session and remove it from the URL, to avoid the URL being
             // loaded in a browser and potentially leaking the token to 3rd party JavaScript.

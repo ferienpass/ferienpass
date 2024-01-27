@@ -89,7 +89,8 @@ class EditAccountType extends AbstractType
                     },
                     'multiple' => true,
                     'expanded' => true,
-                    'fieldset_group' => 'account', 'label' => 'accounts.label.roles', 'help' => 'accounts.help.roles']);
+                    'fieldset_group' => 'account', 'label' => 'accounts.label.roles', 'help' => 'accounts.help.roles']
+                );
             }
 
             $form->add('disabled', CheckboxType::class, ['fieldset_group' => 'account', 'help' => 'accounts.help.disabled']);

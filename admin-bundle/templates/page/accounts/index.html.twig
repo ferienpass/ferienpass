@@ -18,10 +18,19 @@
             email: '{{ item.email }}',
             participants: '{{ item.participants|map(u => "#{u.name}")|join(", ") }}'
         } %}
-    {% else %}
+    {% elseif 'ROLE_ADMIN' == role %}
         {% set columns = {
             name: '{{ item.name }}',
             email: '{{ item.email }}',
+            roles: '
+            {% if "ROLE_SUPER_ADMIN" in item.roles %}
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">{{ "accounts.td.role.ROLE_SUPER_ADMIN"|trans([], "admin") }}</span>
+            {% else %}
+            {% for role in item.roles|filter((role) => role in ["ROLE_CMS_ADMIN", "ROLE_PAYMENTS_ADMIN", "ROLE_PARTICIPANTS_ADMIN"]) %}
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">{{ ("accounts.td.role."~role)|trans([], "admin") }}</span>
+            {% endfor %}
+            {% endif %}
+'
         } %}
     {% endif %}
 

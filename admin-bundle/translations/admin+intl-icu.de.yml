@@ -20,6 +20,12 @@ accounts:
   th.email: E-Mail-Adresse
   th.hosts: Veranstalter-Profile
   th.participants: Teilnehmende
+  th.roles: Rollen
+  td.role:
+    ROLE_SUPER_ADMIN: Super-Admin
+    ROLE_PARTICIPANTS_ADMIN: Teilnehmende
+    ROLE_PAYMENTS_ADMIN: Zahlungen
+    ROLE_CMS_ADMIN: CMS
   sorting.createdAt: Sortieren nach Datum
   sorting.firstname: Sortieren nach Vorname
   sorting.lastname: Sortieren nach Nachname
