@@ -52,6 +52,9 @@ class Edition
     #[ORM\Column(type: 'integer', options: ['unsigned' => true], nullable: true)]
     private ?int $listPage = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $archived = false;
+
     private ApplicationSystemInterface $applicationSystem;
 
     public function __construct()
@@ -116,6 +119,16 @@ class Edition
     public function removeTask(EditionTask $editionTask): void
     {
         $this->tasks->removeElement($editionTask);
+    }
+
+    public function isArchived(): bool
+    {
+        return $this->archived;
+    }
+
+    public function setArchived(bool $archived = true): void
+    {
+        $this->archived = $archived;
     }
 
     public function getListPage(): ?int

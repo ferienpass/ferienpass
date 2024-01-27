@@ -13,16 +13,14 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Form\Filter;
 
-use Ferienpass\AdminBundle\Form\Filter\Offer\HostsFilter;
-use Ferienpass\AdminBundle\Form\Filter\Offer\OnlineApplicationFilter;
-use Ferienpass\CoreBundle\Entity\Payment;
+use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PaymentsFilter extends AbstractFilter
+class AccountsFilter extends AbstractFilter
 {
     public static function getEntity(): string
     {
-        return Payment::class;
+        return User::class;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -30,15 +28,14 @@ class PaymentsFilter extends AbstractFilter
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'label_format' => 'payments.filter.%name%',
+            'label_format' => 'accounts.filter.%name%',
         ]);
     }
 
     protected static function getFilters(): array
     {
         return [
-            'status' => OnlineApplicationFilter::class,
-            'user' => HostsFilter::class,
+            // disable
         ];
     }
 
@@ -46,7 +43,8 @@ class PaymentsFilter extends AbstractFilter
     {
         return [
             'createdAt' => ['i.createdAt', 'DESC'],
-            'amount' => ['i.totalAmount', 'DESC'],
+            'firstname' => ['i.firstname', 'ASC'],
+            'lastname' => ['i.lastname', 'ASC'],
         ];
     }
 }

@@ -42,7 +42,7 @@ final class EditionsController extends AbstractController
     #[Route('', name: 'admin_editions_index')]
     public function index(Request $request, Breadcrumb $breadcrumb): Response
     {
-        $items = $this->editionRepository->findAll();
+        $items = $this->editionRepository->findBy([], ['archived' => 'ASC', 'name' => 'ASC']);
 
         return $this->render('@FerienpassAdmin/page/edition/index.html.twig', [
             'items' => $items,

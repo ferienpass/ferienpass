@@ -19,7 +19,7 @@ use Symfony\UX\LiveComponent\Hydration\HydrationExtensionInterface;
 
 class QueryBuilderHydrationExtension implements HydrationExtensionInterface
 {
-    public function __construct(private readonly ManagerRegistry $doctrine)
+    public function __construct(private readonly ManagerRegistry $doctrine, private readonly \Symfony\Component\Serializer\SerializerInterface $serializer)
     {
     }
 
@@ -32,9 +32,13 @@ class QueryBuilderHydrationExtension implements HydrationExtensionInterface
     {
         $qb = new QueryBuilder($this->doctrine->getManager());
 
-        foreach ($value as $k => $v) {
+        $value = unserialize($value);
+        [$dql, $parameters] = $value;
+
+        foreach ($dql as $k => $v) {
             $qb->add($k, $v);
         }
+        $qb->setParameters($parameters);
 
         return $qb;
     }
@@ -42,6 +46,23 @@ class QueryBuilderHydrationExtension implements HydrationExtensionInterface
     public function dehydrate(object $object): mixed
     {
         /** @var QueryBuilder $object */
+        $dql = [];
+        $parameters = [];
+
+        foreach ($object->getDQLParts() as $part => $elements) {
+            if (\is_array($elements)) {
+                foreach ($elements as $idx => $element) {
+                    if (\is_object($element)) {
+                        $dql[$part][$idx] = $element;
+                    }
+                }
+            } elseif (\is_object($elements)) {
+                $dql[$part] = $elements;
+            }
+        }
+
+        return serialize([$dql, $object->getParameters()]);
+
         return array_map(fn ($part) => \is_array($part) && !empty($part) ? array_map('strval', $part) : $part, array_filter($object->getDQLParts()));
     }
 }

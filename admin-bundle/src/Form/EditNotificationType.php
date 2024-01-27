@@ -57,7 +57,8 @@ class EditNotificationType extends AbstractType
                 ->add('edition', EntityType::class, [
                     'class' => Edition::class,
                     'query_builder' => fn (EntityRepository $er): QueryBuilder => $er->createQueryBuilder('e')
-                        ->where('e NOT IN (SELECT IDENTITY(n.edition) FROM '.Notification::class.' n WHERE n.type = :type)')
+                        ->where('e NOT IN (SELECT IDENTITY(n.edition) FROM '.Notification::class.' n WHERE IDENTITY(n.edition) IS NOT NULL AND n.type = :type)')
+                        ->andWhere('e.archived = 0')
                         ->setParameter('type', $options['notification_type'])
                         ->orderBy('e.createdAt', 'DESC'),
                     'choice_label' => 'name',

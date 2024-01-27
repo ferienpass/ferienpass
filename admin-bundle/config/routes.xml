@@ -14,4 +14,10 @@
            methods="GET"
     />
 
+    <route id="live_component_admin"
+           path="/admin/_components/{_live_component}/{_live_action}"
+    >
+        <default key="_live_action">get</default>
+    </route>
+
 </routes>

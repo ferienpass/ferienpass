@@ -15,6 +15,7 @@ namespace Ferienpass\AdminBundle\Controller\Page;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
+use Ferienpass\AdminBundle\Export\XlsxExport;
 use Ferienpass\AdminBundle\Form\EditHostType;
 use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Pagination\Paginator;
@@ -30,16 +31,24 @@ use Symfony\Component\Translation\TranslatableMessage;
 #[Route('/veranstaltende')]
 final class HostsController extends AbstractController
 {
-    #[Route('', name: 'admin_hosts_index')]
-    public function index(HostRepository $repository, Request $request, Breadcrumb $breadcrumb): Response
+    #[Route('{_suffix?}', name: 'admin_hosts_index')]
+    public function index(?string $_suffix, HostRepository $repository, Request $request, Breadcrumb $breadcrumb, XlsxExport $xlsxExport): Response
     {
         $qb = $repository->createQueryBuilder('i');
-        $qb->orderBy('i.name');
+
+        $_suffix = ltrim((string) $_suffix, '.');
+        if ('' !== $_suffix) {
+            // TODO service-tagged exporter
+            if ('xlsx' === $_suffix) {
+                return $this->file($xlsxExport->generate($qb), 'zahlungen.xlsx');
+            }
+        }
 
         $paginator = (new Paginator($qb))->paginate($request->query->getInt('page', 1));
 
         return $this->render('@FerienpassAdmin/page/hosts/index.html.twig', [
             'qb' => $qb,
+            'exports' => ['xlsx'],
             'searchable' => ['name'],
             'createUrl' => $this->generateUrl('admin_hosts_create'),
             'pagination' => $paginator,

@@ -2,10 +2,14 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Ferienpass\AdminBundle\Form\Filter\AbstractFilter;
+use Ferienpass\AdminBundle\Form\Filter\AccountsFilter;
+use Ferienpass\AdminBundle\Form\Filter\HostsFilter;
+use Ferienpass\AdminBundle\Form\Filter\OffersFilter;
+use Ferienpass\AdminBundle\Form\Filter\PaymentsFilter;
 use Ferienpass\AdminBundle\Menu\ActionsBuilder;
 use Ferienpass\AdminBundle\Menu\MenuBuilder;
 use Knp\Menu\Twig\Helper;
+use Twig\Extension\StringLoaderExtension;
 
 return function(ContainerConfigurator $container): void {
     $services = $container->services()
@@ -32,7 +36,19 @@ return function(ContainerConfigurator $container): void {
 
     // Tags autoconfigure
     $services
-        ->instanceof(AbstractFilter::class)
+        ->get(OffersFilter::class)
+        ->tag('ferienpass_admin.filter')
+    ;
+    $services
+        ->get(PaymentsFilter::class)
+        ->tag('ferienpass_admin.filter')
+    ;
+    $services
+        ->get(AccountsFilter::class)
+        ->tag('ferienpass_admin.filter')
+    ;
+    $services
+        ->get(HostsFilter::class)
         ->tag('ferienpass_admin.filter')
     ;
 
@@ -51,6 +67,6 @@ return function(ContainerConfigurator $container): void {
         ->tag('knp_menu.menu_builder', ['method' => 'actions', 'alias' => 'admin_list_actions'])
     ;
 
-    $services->set(\Twig\Extension\StringLoaderExtension::class);
+    $services->set(StringLoaderExtension::class);
 
 };

@@ -16,6 +16,7 @@ namespace Ferienpass\AdminBundle\Form;
 use Ferienpass\AdminBundle\Form\CompoundType\EditionTasksType;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -38,6 +39,7 @@ class EditEditionType extends AbstractType
             ->add('name', null, ['fieldset_group' => 'base', 'width' => '1/2'])
             ->add('alias', null, ['fieldset_group' => 'base', 'width' => '1/2', 'help' => 'editions.help.alias'])
             ->add('tasks', EditionTasksType::class, ['fieldset_group' => 'tasks', 'label' => false])
+            ->add('archived', CheckboxType::class, ['fieldset_group' => 'archived', 'help' => 'editions.help.archived'])
             ->add('submit', SubmitType::class, [
                 'label' => 'Daten speichern',
             ])

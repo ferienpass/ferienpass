@@ -17,8 +17,10 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
+use Ferienpass\AdminBundle\Export\XlsxExport;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExports;
 use Ferienpass\CoreBundle\Message\OfferCancelled;
 use Ferienpass\CoreBundle\Message\OfferRelaunched;
@@ -36,11 +38,11 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/angebote/{edition?}')]
 final class OffersController extends AbstractController
 {
-    #[Route('', name: 'admin_offers_index')]
-    public function index(#[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, OfferRepository $repository, HostRepository $hostRepository, Request $request, Breadcrumb $breadcrumb, FactoryInterface $factory, EditionRepository $editionRepository): Response
+    #[Route('{_suffix?}', name: 'admin_offers_index')]
+    public function index(?string $_suffix, #[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, OfferRepository $repository, HostRepository $hostRepository, Request $request, Breadcrumb $breadcrumb, FactoryInterface $factory, EditionRepository $editionRepository, XlsxExport $xlsxExport): Response
     {
         $user = $this->getUser();
-        if (!$user) {
+        if (!$user instanceof User) {
             throw new \RuntimeException('No user');
         }
 
@@ -60,13 +62,22 @@ final class OffersController extends AbstractController
             $qb->andWhere('i.edition = :edition')->setParameter('edition', $edition->getId(), Types::INTEGER);
         }
 
-        // $qb->leftJoin('i.dates', 'd')->orderBy('d.begin');
+        $qb->leftJoin('i.dates', 'd');
+        $qb->leftJoin('i.hosts', 'h');
+
+        $_suffix = ltrim((string) $_suffix, '.');
+        if ('' !== $_suffix) {
+            // TODO service-tagged exporter
+            if ('xlsx' === $_suffix) {
+                return $this->file($xlsxExport->generate($qb), 'angebote.xlsx');
+            }
+        }
 
         $items = $qb->getQuery()->getResult();
 
         $menu = $factory->createItem('offers.editions');
 
-        foreach ($editionRepository->findAll() as $e) {
+        foreach ($editionRepository->findBy(['archived' => false], ['createdAt' => 'DESC']) as $e) {
             $menu->addChild($e->getName(), [
                 'route' => 'admin_offers_index',
                 'routeParameters' => ['edition' => $e->getAlias()],
@@ -76,6 +87,7 @@ final class OffersController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/offers/index.html.twig', [
             'qb' => $qb,
+            'createUrl' => $this->generateUrl('admin_offers_new', ['edition' => $edition?->getAlias()]),
             'exports' => ['xlsx'],
             'searchable' => ['name'],
             'edition' => $edition,

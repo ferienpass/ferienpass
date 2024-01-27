@@ -276,7 +276,7 @@ class ActionsBuilder
         $root->addChild('edit', [
             'label' => 'accounts.action.edit',
             'route' => 'admin_accounts_edit',
-            'routeParameters' => ['id' => $item->getId(), 'role' => array_search($item->getRoles()[0], AccountsController::ROLES, true)],
+            'routeParameters' => ['id' => $item->getId(), 'role' => array_search($item->getRoles()[0], AccountsController::ROLES, true) ?: 'eltern'],
             // 'display' => $this->isGranted('edit', $item),
             'extras' => ['icon' => 'pencil-solid'],
         ]);

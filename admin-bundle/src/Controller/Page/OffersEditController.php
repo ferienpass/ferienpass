@@ -39,7 +39,7 @@ use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\LiveCollectionTrait;
 
 #[Route('/{edition}/angebote')]
-#[AsLiveComponent(name: 'OffersEdit', template: '@FerienpassAdmin/components/EditOffer.html.twig')]
+#[AsLiveComponent(name: 'OffersEdit', route: 'live_component_admin', template: '@FerienpassAdmin/components/EditOffer.html.twig')]
 final class OffersEditController extends AbstractController
 {
     use DefaultActionTrait;

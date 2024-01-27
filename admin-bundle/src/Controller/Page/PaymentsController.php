@@ -44,13 +44,13 @@ final class PaymentsController extends AbstractController
     {
     }
 
-    #[Route('{_suffix}', name: 'admin_payments_index', defaults: ['_suffix' => ''])]
-    public function index(PaymentRepository $repository, Breadcrumb $breadcrumb, string $_suffix, XlsxExport $xlsxExport): Response
+    #[Route('{_suffix?}', name: 'admin_payments_index')]
+    public function index(PaymentRepository $repository, Breadcrumb $breadcrumb, ?string $_suffix, XlsxExport $xlsxExport): Response
     {
         $qb = $repository->createQueryBuilder('i');
         $qb->orderBy('i.createdAt', 'DESC');
 
-        $_suffix = ltrim($_suffix, '.');
+        $_suffix = ltrim((string) $_suffix, '.');
         if ('' !== $_suffix) {
             // TODO service-tagged exporter
             if ('xlsx' === $_suffix) {

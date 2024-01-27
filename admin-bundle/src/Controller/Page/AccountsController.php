@@ -61,9 +61,11 @@ final class AccountsController extends AbstractController
         }
 
         return $this->render('@FerienpassAdmin/page/accounts/index.html.twig', [
+            'qb' => $qb,
+            'role' => $actualRole,
+            'searchable' => ['name', 'email'],
             'createUrl' => $this->generateUrl('admin_accounts_create', ['role' => $role]),
             'headline' => 'accounts.'.$actualRole,
-            'items' => $qb->getQuery()->execute(),
             'aside_nav' => $nav,
             'breadcrumb' => $breadcrumb->generate('accounts.title', 'accounts.'.self::ROLES[$role]),
         ]);

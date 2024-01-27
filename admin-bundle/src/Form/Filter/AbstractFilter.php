@@ -34,6 +34,11 @@ abstract class AbstractFilter extends AbstractType
         return static::getSorting()[$field] ?? null;
     }
 
+    public function getSortable(): array
+    {
+        return array_keys(static::getSorting());
+    }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

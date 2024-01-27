@@ -12,6 +12,13 @@ accounts:
   ROLE_MEMBER: Eltern
   ROLE_HOST: Veranstaltende
   ROLE_ADMIN: Admins
+  th.name: Name
+  th.email: E-Mail-Adresse
+  th.hosts: Veranstalter-Profile
+  th.participants: Teilnehmende
+  sorting.createdAt: Sortieren nach Datum
+  sorting.firstname: Sortieren nach Vorname
+  sorting.lastname: Sortieren nach Nachname
   label:
     firstname: Vorname
     lastname: Nachname
@@ -126,6 +133,8 @@ hosts:
     phone: Telefon
     website: Webseite
     accounts: Accounts mit Zugriff
+  sorting.createdAt: Sortieren nach Datum
+  sorting.name: Sortieren nach Name
   help:
     alias: Der Alias wird automatisch generiert.
 
@@ -142,6 +151,9 @@ editions:
     tasks:
       - Zeiträume und Einstellungen
       - Die Konfiguration des Ferienpasses funktioniert zeitgesteuert. Erstellen Sie einen Zeitraum, in dem die Bearbeitung möglich ist, einen Zeitraum, in dem Anmeldungen möglich sind, usw. usf.
+    archived:
+      - Archivieren
+      - Wenn Sie für etwas Ordnung schaffen wollen, können Sie die Saison archivieren.
   task:
     holiday: Ferien
     host_editing_stage: Bearbeitungsphase für Veranstaltende
@@ -166,6 +178,7 @@ editions:
     allow_anonymous: Anmeldungen ohne Benutzerkonto
     allow_anonymous_fee: Anmeldungen ohne Benutzerkonto auch für kostenpflichtige Angebote
     hide_status: Aktuellen Status verbergen
+    archived: Saison archivieren
   help:
     alias: Der Alias wird automatisch generiert.
     max_applications: Zu wie vielen Angeboten darf ein Kind sich in dieser Phase anmelden?
@@ -174,6 +187,7 @@ editions:
     allow_anonymous: Erlauben Sie Anmeldungen ohne Benutzerkonto.
     allow_anonymous_fee: Erlauben Sie Anmeldungen ohne Benutzerkonto auch für kostenpflichtige Angebote
     hide_status: Den Eltern den aktuellen Status nicht anzeigen. Dies sollte aktiviert werden für das Losverfahren, damit die Eltern den Status erst nach dem Losen einsehen können.
+    archived: Die Saison wird nicht mehr angezeigt in Eingabemasken, bleibt aber erhalten.
   edit_edition_tasks_entry_delete: Phase löschen
   edit_edition_tasks_add: Neue Phase definieren
 

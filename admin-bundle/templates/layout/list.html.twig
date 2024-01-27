@@ -23,33 +23,33 @@
             {% block headline_actions %}
 
                 {% if exports is defined %}
-                {% embed '@FerienpassAdmin/components/dropdown.html.twig' %}
-                    {% block toggle %}
-                        <button type="button"
-                                class="inline-flex items-center gap-x-0.5 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                                id="options-menu-0-button" aria-expanded="false"
-                                aria-haspopup="true">
-                            <span class="flex items-center space-x-1">
-                                <span>Exportieren</span>
-                                <span class="h-5 w-5 text-gray-500">{{ source('@FerienpassAdmin/icons/chevron-down-solid.svg') }}</span>
-                            </span>
-                        </button>
-                    {% endblock %}
+                    {% embed '@FerienpassAdmin/components/dropdown.html.twig' %}
+                        {% block toggle %}
+                            <button type="button"
+                                    class="inline-flex items-center gap-x-0.5 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                    id="options-menu-0-button" aria-expanded="false"
+                                    aria-haspopup="true">
+                                <span class="flex items-center space-x-1">
+                                    <span>Exportieren</span>
+                                    <span class="h-5 w-5 text-gray-500">{{ source('@FerienpassAdmin/icons/chevron-down-solid.svg') }}</span>
+                                </span>
+                            </button>
+                        {% endblock %}
 
-                    {% block dropdown %}
+                        {% block dropdown %}
 
-                        {% for format in exports %}
-                            {% embed '@FerienpassAdmin/components/dropdown-a.html.twig' with {'uri': path(app.request.attributes.get('_route'), app.request.query.all|merge({ '_suffix': ".#{format}" }))} %}
-                                {% block link %}
-                                    <span class="mr-3 h-5 w-5 text-gray-400 flex-shrink-0">{{ source('@FerienpassAdmin/icons/'~format~'.svg', ignore_missing = true) }}</span>
-                                    <span class="text-left leading-tight">{{ format|upper }}</span>
-                                {% endblock %}
-                            {% endembed %}
-                        {% endfor %}
+                            {% for format in exports %}
+                                {% embed '@FerienpassAdmin/components/dropdown-a.html.twig' with {'uri': path(app.request.attributes.get('_route'), app.request.query.all|merge(app.request.get('_route_params'))|merge({ '_suffix': ".#{format}" }))} %}
+                                    {% block link %}
+                                        <span class="mr-1.5 h-5 w-5 text-gray-400 flex-shrink-0">{{ source('@FerienpassAdmin/icons/filetype/'~format~'.svg', ignore_missing = true) }}</span>
+                                        <span class="text-left leading-tight">{{ format|upper }}</span>
+                                    {% endblock %}
+                                {% endembed %}
+                            {% endfor %}
 
-                    {% endblock %}
+                        {% endblock %}
 
-                {% endembed %}
+                    {% endembed %}
                 {% endif %}
 
                 {% if createUrl is defined %}
@@ -67,6 +67,26 @@
         </div>
 
     </div>
+
+
+    {% block nav %}
+        {% if aside_nav is defined and aside_nav.hasChildren %}
+            <div class="-ml-3 mt-3">
+                <nav class="flex space-x-4" aria-label="{{ aside_nav.name|trans }}">
+
+                    {% for item in aside_nav.children %}
+                        <a href="{{ item.uri }}"
+                           class="{{ item.current ? 'ml-3 bg-gray-100 text-gray-700' : 'text-gray-500 hover:text-gray-700' }} rounded-md px-3 py-2 whitespace-nowrap text-sm font-medium"
+                           {% if item.current %}aria-current="page"{% endif %}>
+                            <span>{{ item.label|trans }}</span>
+                        </a>
+                    {% endfor %}
+
+                </nav>
+            </div>
+        {% endif %}
+    {% endblock %}
+
 
     {% block list %}
         {% include '@FerienpassAdmin/components/list.html.twig' %}

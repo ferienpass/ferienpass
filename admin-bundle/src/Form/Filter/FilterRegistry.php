@@ -19,7 +19,7 @@ class FilterRegistry
 {
     private array $filters;
 
-    public function __construct(#[TaggedIterator('ferienpass_admin.filter')] iterable $filters)
+    public function __construct(#[TaggedIterator('ferienpass_admin.filter', defaultIndexMethod: 'getEntity')] iterable $filters)
     {
         $this->filters = $filters instanceof \Traversable ? iterator_to_array($filters) : $filters;
     }

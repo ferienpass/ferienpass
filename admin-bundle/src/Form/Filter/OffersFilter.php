@@ -53,8 +53,8 @@ class OffersFilter extends AbstractFilter
     protected static function getSorting(): array
     {
         return [
-            'name' => 'name',
             'date' => 'd.begin',
+            'name' => 'i.name',
             'host' => 'h.name',
         ];
     }

@@ -29,7 +29,7 @@ use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\ValidatableComponentTrait;
 
-#[AsLiveComponent(name: 'SlideOver', template: '@FerienpassAdmin/components/SlideOver.html.twig')]
+#[AsLiveComponent(name: 'SlideOver', route: 'live_component_admin', template: '@FerienpassAdmin/components/SlideOver.html.twig')]
 class SlideOver extends AbstractController
 {
     use ComponentToolsTrait;
