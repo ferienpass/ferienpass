@@ -52,16 +52,23 @@ class MenuBuilder
             ]);
         }
 
-        if ($this->isGranted('ROLE_ADMIN')) {
+        if ($this->isGranted('ROLE_PARTICIPANTS_ADMIN')) {
             $menu->addChild('participants.title', [
                 'route' => 'admin_participants_index',
             ]);
+        }
+
+        if ($this->isGranted('ROLE_ADMIN')) {
             $menu->addChild('hosts.title', [
                 'route' => 'admin_hosts_index',
             ]);
+        }
+        if ($this->isGranted('ROLE_PAYMENTS_ADMIN')) {
             $menu->addChild('payments.title', [
                 'route' => 'admin_payments_index',
             ]);
+        }
+        if ($this->isGranted('ROLE_ADMIN')) {
             $menu->addChild('Accounts', [
                 'route' => 'admin_accounts_index',
             ]);

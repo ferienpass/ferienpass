@@ -2,14 +2,14 @@
 
 {% block content %}
 
-    <p class="mt-2">
-        If an account matching your email exists, then an email was just sent that contains a link that you can use to reset your password.
-        This link will expire in {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+    <p class="mt-2 text-gray-500">
+        Wenn es ein Benutzerkonto gibt, das mit Ihrer E-Mail-Adresse übereinstimmt, wurde Ihnen soeben eine E-Mail mit einem Link geschickt, mit dem Sie Ihr Passwort zurücksetzen können.
+        Dieser Link läuft ab in {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
     </p>
-    <p>If you don't receive an email please check your spam folder or <a href="{{ path('admin_lost_password') }}">try again</a>.</p>
+    <p class="text-gray-500 text-sm">Wenn Sie keine E-Mail erhalten, überprüfen Sie bitte Ihren Spam-Ordner oder <a class="underline hover:no-underline" href="{{ path('admin_lost_password') }}">versuchen Sie es erneut</a>.</p>
 
     <div class="mt-6">
-        {% include '@FerienpassAdmin/components/back-link.html.twig' with {uri: '/'} %}
+        {% include '@FerienpassAdmin/components/back-link.html.twig' with {uri: path('admin_index')} %}
     </div>
 
 {% endblock %}

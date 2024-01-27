@@ -23,6 +23,8 @@ use Symfony\Component\Notifier\Recipient\RecipientInterface;
 
 class UserPasswordNotification extends Notification implements NotificationInterface, EmailNotificationInterface
 {
+    use ActionUrlTrait;
+
     private string $token;
     private User $user;
 
@@ -38,7 +40,7 @@ class UserPasswordNotification extends Notification implements NotificationInter
 
     public function token(string $token): static
     {
-        $this->token = $this->token;
+        $this->token = $token;
 
         return $this;
     }
@@ -59,8 +61,11 @@ class UserPasswordNotification extends Notification implements NotificationInter
             ->context([
                 'token' => $this->token,
                 'user' => $this->user,
-            ])
-        ;
+            ]);
+
+        if (null !== $this->actionUrl) {
+            $email->action('email.user_password.reset', $this->actionUrl);
+        }
 
         return new EmailMessage($email);
     }

@@ -38,13 +38,8 @@ final class ToolsController extends AbstractController
     }
 
     #[Route('/betroffenenrechte', name: 'admin_tools_subjectrights')]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
     public function subjectRights(Request $request, Breadcrumb $breadcrumb): Response
-    {
-        return $this->render('@FerienpassAdmin/page/tools/noop.html.twig');
-    }
-
-    #[Route('/einstellungen', name: 'admin_tools_settings')]
-    public function settings(Request $request, Breadcrumb $breadcrumb): Response
     {
         return $this->render('@FerienpassAdmin/page/tools/noop.html.twig');
     }

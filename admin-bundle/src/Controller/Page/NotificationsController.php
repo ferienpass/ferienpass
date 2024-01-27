@@ -20,6 +20,7 @@ use Ferienpass\CoreBundle\Applications\UnconfirmedApplications;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Notification;
 use Ferienpass\CoreBundle\Message\ConfirmApplications;
+use Ferienpass\CoreBundle\Notification\EditionAwareNotificationInterface;
 use Ferienpass\CoreBundle\Notifier;
 use Ferienpass\CoreBundle\Repository\NotificationRepository;
 use Ferienpass\CoreBundle\Session\Flash;
@@ -28,7 +29,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -50,11 +50,11 @@ final class NotificationsController extends AbstractController
         }
 
         if (!\in_array($type, $notifier->types(), true)) {
-            throw new NotFoundHttpException();
+            throw $this->createNotFoundException();
         }
 
         if ($request->get('edition') && null === $edition) {
-            throw new NotFoundHttpException();
+            throw $this->createNotFoundException();
         }
 
         $editions = $em->createQuery('SELECT e FROM '.Edition::class.' e WHERE e IN (SELECT IDENTITY(n.edition) FROM '.Notification::class.' n WHERE n.type = :type)')->setParameter('type', $type)->getResult();
@@ -87,6 +87,7 @@ final class NotificationsController extends AbstractController
             'form' => $form->createView(),
             'edition' => $edition,
             'editions' => $editions,
+            'canEditEditions' => is_subclass_of($notifier->getClass($type), EditionAwareNotificationInterface::class),
             'types' => $notifier->types(),
             'notifier' => $notifier,
             'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], ['notifications.title', ['route' => 'admin_notifications']], 'notifications.'.$type.'.0', $edition?->getName()),

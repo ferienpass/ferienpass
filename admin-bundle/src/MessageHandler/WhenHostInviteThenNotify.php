@@ -19,13 +19,15 @@ use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Notifier;
 use Ferienpass\CoreBundle\Repository\HostRepository;
 use Ferienpass\CoreBundle\Repository\UserRepository;
+use Symfony\Component\HttpKernel\UriSigner;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Notifier\Recipient\Recipient;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsMessageHandler]
 class WhenHostInviteThenNotify
 {
-    public function __construct(private readonly Notifier $notifier, private readonly HostRepository $hostRepository, private readonly UserRepository $userRepository)
+    public function __construct(private readonly Notifier $notifier, private readonly HostRepository $hostRepository, private readonly UserRepository $userRepository, private readonly UrlGeneratorInterface $urlGenerator, private readonly UriSigner $uriSigner)
     {
     }
 
@@ -44,6 +46,9 @@ class WhenHostInviteThenNotify
             return;
         }
 
-        $this->notifier->send($notification, new Recipient($message->getEmail()));
+        $this->notifier->send(
+            $notification->actionUrl($this->uriSigner->sign($this->urlGenerator->generate('admin_invitation', ['email' => $message->getEmail(), 'host' => $host->getAlias()], UrlGeneratorInterface::ABSOLUTE_URL))),
+            new Recipient($message->getEmail())
+        );
     }
 }

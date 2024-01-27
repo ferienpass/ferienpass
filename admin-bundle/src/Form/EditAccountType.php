@@ -16,8 +16,10 @@ namespace Ferienpass\AdminBundle\Form;
 use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -27,6 +29,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EditAccountType extends AbstractType
 {
+    public function __construct(private readonly Security $security)
+    {
+    }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -48,7 +54,6 @@ class EditAccountType extends AbstractType
             ->add('street', null, ['fieldset_group' => 'address'])
             ->add('postal', null, ['fieldset_group' => 'address', 'width' => '1/3'])
             ->add('city', null, ['fieldset_group' => 'address', 'width' => '2/3'])
-            ->add('disabled', CheckboxType::class, ['fieldset_group' => 'disable'])
             ->add('submit', SubmitType::class, [
                 'label' => 'Daten speichern',
             ])
@@ -71,6 +76,23 @@ class EditAccountType extends AbstractType
                     'help' => 'accounts.help.hosts',
                 ]);
             }
+
+            if (\in_array('ROLE_ADMIN', $account->getRoles(), true)) {
+                $form->add('superAdmin', CheckboxType::class, ['fieldset_group' => 'account', 'help' => 'accounts.help.superAdmin']);
+            }
+
+            if (\in_array('ROLE_ADMIN', $account->getRoles(), true) && !$account->isSuperAdmin()) {
+                $form->add('editableRoles', ChoiceType::class, [
+                    'choices' => User::EDITABLE_ROLES,
+                    'choice_label' => function (string $role): string {
+                        return "accounts.role.$role";
+                    },
+                    'multiple' => true,
+                    'expanded' => true,
+                    'fieldset_group' => 'account', 'label' => 'accounts.label.roles', 'help' => 'accounts.help.roles']);
+            }
+
+            $form->add('disabled', CheckboxType::class, ['fieldset_group' => 'account', 'help' => 'accounts.help.disabled']);
         });
 
         //        foreach (['phone'] as $field) {

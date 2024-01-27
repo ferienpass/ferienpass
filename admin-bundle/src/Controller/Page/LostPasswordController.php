@@ -55,7 +55,7 @@ final class LostPasswordController extends AbstractController
         ]);
     }
 
-    #[Route('/email', name: 'admin_lost_password_check_email')]
+    #[Route('/angefragt', name: 'admin_lost_password_check_email')]
     public function checkEmail(): Response
     {
         // Generate a fake token if the user does not exist or someone hit this page directly.

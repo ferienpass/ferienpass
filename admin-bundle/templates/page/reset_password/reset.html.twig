@@ -5,8 +5,10 @@
     <p class="mt-2 text-sm leading-5 text-gray-600 _dark:text-gray-200 max-w">Wählen Sie ein neues Passwort.</p>
 
     {{ form_start(form) }}
-    {{ form_row(form.plainPassword) }}
-    <button class="btn btn-primary">Reset password</button>
+    <div class="space-y-6">
+        {{ form_row(form.plainPassword) }}
+        {{ form_row(form.submit) }}
+    </div>
     {{ form_end(form) }}
 
 {% endblock %}

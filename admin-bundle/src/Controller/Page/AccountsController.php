@@ -44,6 +44,11 @@ final class AccountsController extends AbstractController
             throw $this->createNotFoundException('The role does not exist');
         }
 
+        // Only super admins can edit admins
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && 'ROLE_ADMIN' === self::ROLES[$role]) {
+            throw $this->createAccessDeniedException();
+        }
+
         $actualRole = self::ROLES[$role];
 
         $qb = $repository->createQueryBuilder('i')
@@ -53,6 +58,10 @@ final class AccountsController extends AbstractController
 
         $nav = $menuFactory->createItem('accounts.roles');
         foreach (self::ROLES as $slug => $r) {
+            if ('ROLE_ADMIN' === $r && !$this->isGranted('ROLE_SUPER_ADMIN')) {
+                continue;
+            }
+
             $nav->addChild('accounts.'.$r, [
                 'route' => 'admin_accounts_index',
                 'routeParameters' => ['role' => $slug],
@@ -77,6 +86,11 @@ final class AccountsController extends AbstractController
     {
         if (!\in_array($role, array_keys(self::ROLES), true)) {
             throw $this->createNotFoundException('The role does not exist');
+        }
+
+        // Only super admins can edit/create admins
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && 'ROLE_ADMIN' === self::ROLES[$role]) {
+            throw $this->createAccessDeniedException();
         }
 
         if (null === $user) {

@@ -16,6 +16,7 @@ namespace Ferienpass\AdminBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
@@ -45,21 +46,23 @@ class ChangePasswordFormType extends AbstractType
                             'max' => 4096,
                         ]),
                     ],
-                    'label' => 'New password',
+                    'label' => 'passwordReset.newPassword',
                 ],
                 'second_options' => [
-                    'label' => 'Repeat Password',
+                    'label' => 'passwordReset.repeatPassword',
                 ],
-                'invalid_message' => 'The password fields must match.',
-                // Instead of being set onto the object directly,
-                // this is read and encoded in the controller
+                'invalid_message' => 'passwordReset.passwordsDoNotMatch',
                 'mapped' => false,
             ])
+            ->add('submit', SubmitType::class)
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([]);
+        $resolver->setDefaults([
+            'label_format' => 'passwordReset.%name%',
+            'translation_domain' => 'admin',
+        ]);
     }
 }

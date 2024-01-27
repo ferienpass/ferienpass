@@ -6,7 +6,7 @@
 {% block main %}
 
     <div class="flex flex-1 xl:overflow-hidden">
-        <nav aria-label="Sections" class="w-96 flex-shrink-0 xl:flex xl:flex-col">
+        <nav aria-label="{{ 'notifications.title'|trans }}" class="w-96 flex-shrink-0 xl:flex xl:flex-col">
             <div class="min-h-0 flex-1 overflow-y-auto space-y-2">
                 {% for type in types|sort((a, b) => "notifications.#{a}.0"|trans <=> "notifications.#{b}.0"|trans) %}
                     <a href="{{ path('admin_notifications', { type: type }) }}"
@@ -59,6 +59,7 @@
 
                 {% if form is defined %}
 
+                    {% if canEditEditions %}
                     <div>
                         <nav class="-ml-3 flex space-x-4" aria-label="{{ 'editions.title'|trans }}">
                             {% if editions is not empty %}
@@ -86,6 +87,7 @@
                                 Für eine Saison anpassen</a>
                         </nav>
                     </div>
+                        {% endif %}
 
                     {% include '@FerienpassAdmin/layout/_edit.html.twig' %}
 

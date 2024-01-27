@@ -198,6 +198,15 @@ class Notifier implements NotifierInterface
         return null !== $this->get($key, $edition, $strict);
     }
 
+    public function getClass(string $key): ?string
+    {
+        if (!\array_key_exists($key, $this->notifications)) {
+            return null;
+        }
+
+        return $this->notifications[$key]::class;
+    }
+
     private function get(string $key, Edition $edition = null, bool $strict = false): ?Notification
     {
         if (!\array_key_exists($key, $this->notifications)) {

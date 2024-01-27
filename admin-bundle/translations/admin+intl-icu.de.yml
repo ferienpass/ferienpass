@@ -8,10 +8,14 @@ accounts:
     base.0: Name
     contact.0: Kontaktdaten
     address.0: Postanschrift
-    disable.0: Account-Status
+    account.0: Account-Status
   ROLE_MEMBER: Eltern
   ROLE_HOST: Veranstaltende
   ROLE_ADMIN: Admins
+  role:
+    ROLE_PARTICIPANTS_ADMIN: Teilnehmende einsehen und erstellen
+    ROLE_PAYMENTS_ADMIN: Zahlungen einsehen und erstellen
+    ROLE_CMS_ADMIN: Zugriff auf CMS
   th.name: Name
   th.email: E-Mail-Adresse
   th.hosts: Veranstalter-Profile
@@ -30,8 +34,13 @@ accounts:
     street: Straße
     postal: PLZ
     city: Ort
+    roles: Rollen
+    disable: Account deaktivieren
   help:
     hosts: Dieser Account erhält Zugriff auf alle Daten (also Angebote, Teilnehmerlisten) dieses Veranstalters.
+    superAdmin: Der Account hat Zugriff auf alle Funktionen.
+    roles: Die Rollen definieren, auf wie welche Funktionen dieser Account Zugriff hat.
+    disabled: Der Account darf sich nicht mehr anmelden.
 
 offer.tab.web: Webansicht
 offer.tab.pdf: Druckansicht
@@ -438,3 +447,10 @@ exports:
 
 tools:
   title: Werkzeuge & Einstellungen
+
+passwordReset:
+  email: E-Mail-Adresse
+  submit: Passwort zurücksetzen
+  newPassword: Neues Passwort
+  repeatPassword: Passwort wiederholen
+  passwordsDoNotMatch: Die Passwörter müssen übereinstimmen.

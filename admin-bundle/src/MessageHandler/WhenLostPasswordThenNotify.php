@@ -19,13 +19,14 @@ use Ferienpass\CoreBundle\Notifier;
 use Ferienpass\CoreBundle\Repository\UserRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Notifier\Recipient\Recipient;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
 #[AsMessageHandler]
 class WhenLostPasswordThenNotify
 {
-    public function __construct(private readonly Notifier $notifier, private readonly UserRepository $repository, private readonly ResetPasswordHelperInterface $resetPasswordHelper)
+    public function __construct(private readonly Notifier $notifier, private readonly UserRepository $repository, private readonly ResetPasswordHelperInterface $resetPasswordHelper, private readonly UrlGeneratorInterface $urlGenerator)
     {
     }
 
@@ -51,6 +52,9 @@ class WhenLostPasswordThenNotify
             return;
         }
 
-        $this->notifier->send($notification, new Recipient($user->getEmail()));
+        $this->notifier->send(
+            $notification->actionUrl($this->urlGenerator->generate('admin_lost_password_reset', ['token' => $resetToken->getToken()], UrlGeneratorInterface::ABSOLUTE_URL)),
+            new Recipient($user->getEmail())
+        );
     }
 }
