@@ -21,6 +21,7 @@
 
         {{ component('SearchableQueryableList', { qb: qb, originalRoute: app.request.get('_route'), originalQuery: app.request.query.all,
             searchable: searchable,
+            initialFilterData: initialFilterData|default([]),
             config: {
                 columns: {
                     name: '{{ item.name }}',

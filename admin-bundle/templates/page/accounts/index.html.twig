@@ -8,19 +8,40 @@
 
     {% if 'ROLE_HOST' == role %}
         {% set columns = {
-            name: '{{ item.name }}',
+            name: '
+            <span class="flex items-center">
+              <span>{{ item.name }}</span>
+              {% if item.disabled %}
+                <span class="ml-1 w-2.5 h-2.5 inline-block bg-red-600 rounded-full" aria-hidden="true"></span>
+              {% endif %}
+            </span>
+',
             email: '{{ item.email }}',
             hosts: '{{ item.hosts|map(u => "#{u.name}")|join(", ") }}'
         } %}
     {% elseif 'ROLE_MEMBER' == role %}
         {% set columns = {
-            name: '{{ item.name }}',
+            name: '
+            <span class="flex items-center">
+              <span>{{ item.name }}</span>
+              {% if item.disabled %}
+                <span class="ml-1 w-2.5 h-2.5 inline-block bg-red-600 rounded-full" aria-hidden="true"></span>
+              {% endif %}
+            </span>
+',
             email: '{{ item.email }}',
             participants: '{{ item.participants|map(u => "#{u.name}")|join(", ") }}'
         } %}
     {% elseif 'ROLE_ADMIN' == role %}
         {% set columns = {
-            name: '{{ item.name }}',
+            name: '
+            <span class="flex items-center">
+              <span>{{ item.name }}</span>
+              {% if item.disabled %}
+                <span class="ml-1 w-2.5 h-2.5 inline-block bg-red-600 rounded-full" aria-hidden="true"></span>
+              {% endif %}
+            </span>
+',
             email: '{{ item.email }}',
             roles: '
             {% if "ROLE_SUPER_ADMIN" in item.roles %}

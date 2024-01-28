@@ -37,6 +37,10 @@ class GanttController extends AbstractController
         foreach ($this->editionRepository->findAll() as $edition) {
             $tasks = [];
             foreach ($edition->getTasks() as $task) {
+                if (null === $task->getPeriodEnd() || null === $task->getPeriodBegin()) {
+                    continue;
+                }
+
                 // Do not show tasks that are past 30 days
                 if ($task->getPeriodEnd() < $now && $task->getPeriodEnd()->diff($now)->days > 30) {
                     continue;

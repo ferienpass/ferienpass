@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Form\Filter;
 
+use Doctrine\ORM\QueryBuilder;
 use Ferienpass\CoreBundle\Entity\Host;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -42,8 +43,9 @@ class HostsFilter extends AbstractFilter
     protected static function getSorting(): array
     {
         return [
-            'createdAt' => ['i.createdAt', 'DESC'],
-            'name' => ['i.name', 'ASC'],
+            'createdAt' => fn (QueryBuilder $qb) => $qb->addOrderBy('i.createdAt', 'DESC'),
+            'name' => fn (QueryBuilder $qb) => $qb->addOrderBy('i.name', 'ASC'),
+            'numberOffers' => fn (QueryBuilder $qb) => $qb->addSelect('COUNT(o) AS HIDDEN countOffers')->leftJoin('i.offers', 'o')->addGroupBy('i')->addOrderBy('countOffers', 'DESC'),
         ];
     }
 }

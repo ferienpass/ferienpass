@@ -9,7 +9,8 @@
                 name: '{{ item.name }}',
                 email: '{{ item.email }}',
                 phone: '{{ item.phone }}',
-                accounts: '{{ item.users|map(u => "#{u.firstname} #{u.lastname}")|join(", ") }}'
+                accounts: '{{ item.users|map(u => "#{u.firstname} #{u.lastname}")|join(", ") }}',
+                numberOffers: '{{ item.offers|length }}',
             }
         }}) }}
 {% endblock %}

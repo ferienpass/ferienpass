@@ -21,6 +21,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
+use Symfony\UX\Dropzone\Form\DropzoneType;
 
 class EditHostType extends AbstractType
 {
@@ -48,6 +50,21 @@ class EditHostType extends AbstractType
             ->add('postal', null, ['fieldset_group' => 'address', 'width' => '1/3'])
             ->add('city', null, ['fieldset_group' => 'address', 'width' => '2/3'])
             ->add('text', TextareaType::class, ['attr' => ['rows' => 4], 'fieldset_group' => 'base'])
+            ->add('logo', DropzoneType::class, [
+                'fieldset_group' => 'media',
+                'attr' => ['placeholder' => 'offers.dropzonePlaceholder'],
+                'mapped' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'application/pdf',
+                            'application/x-pdf',
+                        ],
+                        'mimeTypesMessage' => 'Please upload a valid PDF document',
+                    ]),
+                ],
+            ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Daten speichern',
             ])

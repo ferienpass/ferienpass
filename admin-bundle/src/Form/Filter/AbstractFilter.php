@@ -29,9 +29,14 @@ abstract class AbstractFilter extends AbstractType
         return array_keys(static::getSorting());
     }
 
-    public function getOrderByFor(string $field): string|array|null
+    public function applySortingFor(string $field, QueryBuilder $qb): void
     {
-        return static::getSorting()[$field] ?? null;
+        $callable = static::getSorting()[$field] ?? null;
+        if (!\is_callable($callable)) {
+            return;
+        }
+
+        $callable($qb);
     }
 
     public function getSortable(): array

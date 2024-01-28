@@ -80,7 +80,8 @@
     "twig/inky-extra": "^3.6",
     "knplabs/knp-menu-bundle": "^3.0",
     "zenstruck/foundry": "^1.10",
-    "symfony/stimulus-bundle": "^2.9"
+    "symfony/stimulus-bundle": "^2.9",
+    "symfony/ux-dropzone": "^2.13"
   },
   "suggest": {
     "spatie/pdf-to-image": "To generate images from PDF Print Sheets"

@@ -91,9 +91,10 @@ final class OffersController extends AbstractController
             'exports' => ['xlsx'],
             'searchable' => ['name'],
             'edition' => $edition,
+            // 'initialFilterData' => ['editions' => $edition],
             'items' => $items,
             'aside_nav' => $menu,
-            'breadcrumb' => $breadcrumb->generate('Angebote', $edition->getName()),
+            'breadcrumb' => $breadcrumb->generate('offers.title', $edition->getName()),
         ]);
     }
 
@@ -162,7 +163,7 @@ final class OffersController extends AbstractController
         return $this->render('@FerienpassAdmin/page/offers/proof.html.twig', [
             'offer' => $offer,
             'hasPdf' => $pdfExports->has(),
-            'breadcrumb' => $breadcrumb->generate([$offer->getEdition()->getName(), ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], $offer->getName()),
+            'breadcrumb' => $breadcrumb->generate(['offers.title', ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], [$offer->getEdition()->getName(), ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], $offer->getName()),
         ]);
     }
 }

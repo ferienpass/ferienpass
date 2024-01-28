@@ -17,10 +17,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Export\XlsxExport;
 use Ferienpass\AdminBundle\Form\EditHostType;
+use Ferienpass\AdminBundle\Service\FileUploader;
 use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Pagination\Paginator;
 use Ferienpass\CoreBundle\Repository\HostRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -31,6 +33,10 @@ use Symfony\Component\Translation\TranslatableMessage;
 #[Route('/veranstaltende')]
 final class HostsController extends AbstractController
 {
+    public function __construct(#[Autowire(service: 'ferienpass.file_uploader.host')] private readonly FileUploader $fileUploader)
+    {
+    }
+
     #[Route('{_suffix?}', name: 'admin_hosts_index')]
     public function index(?string $_suffix, HostRepository $repository, Request $request, Breadcrumb $breadcrumb, XlsxExport $xlsxExport): Response
     {
@@ -40,7 +46,7 @@ final class HostsController extends AbstractController
         if ('' !== $_suffix) {
             // TODO service-tagged exporter
             if ('xlsx' === $_suffix) {
-                return $this->file($xlsxExport->generate($qb), 'zahlungen.xlsx');
+                return $this->file($xlsxExport->generate($qb), 'veranstaltende.xlsx');
             }
         }
 
@@ -66,6 +72,12 @@ final class HostsController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             if (!$em->contains($host = $form->getData())) {
                 $em->persist($host);
+            }
+
+            $imageFile = $form->get('logo')->getData();
+            if ($imageFile) {
+                $imageFileName = $this->fileUploader->upload($imageFile);
+                $host->setLogo($imageFileName);
             }
 
             $em->flush();

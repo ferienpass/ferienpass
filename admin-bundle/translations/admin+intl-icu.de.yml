@@ -111,8 +111,11 @@ offers:
     requiresApplication: Eine vorherige Anmeldung ist erforderlich, um am Angebot teilnehmen zu können.
     onlineApplication: Die Anmeldungen über das Online-System laufen lassen.
     applicationDeadline: Ab folgendem Tag sind Anmeldungen zum Angebot nicht mehr möglich.
+  filter.editions: Saisons
+  filter.hosts: Veranstaltende
   edit_offer_dates_add: Zusätzliche Zeit zu diesem Termin
   edit_offer_dates_entry_delete: Zeitraum löschen
+  dropzonePlaceholder: Wählen Sie ein Bild aus oder platzieren Sie es hier mittels Drag'n'Drop
 
 hosts:
   title: Veranstaltende
@@ -120,16 +123,10 @@ hosts:
   action:
     show: Anzeigen
     edit: Bearbeiten
-  legend:
-    base:
-      - 'Basisdaten'
-      - 'test'
-    contact:
-      - 'Kontaktdaten'
-      - 'test'
-    address:
-      - 'Postanschrift'
-      - 'test'
+  legend.base.0: Basisdaten
+  legend.contact.0: Kontaktdaten
+  legend.address.0: Postanschrift
+  legend.media.0: Logo
   label:
     name: Name
     alias: Alias
@@ -142,14 +139,17 @@ hosts:
     street: Straße
     postal: PLZ
     city: Ort
+    logo: Logo
   th:
     name: Name
     email: E-Mail-Adresse
     phone: Telefon
     website: Webseite
     accounts: Accounts mit Zugriff
+    numberOffers: Angebote
   sorting.createdAt: Sortieren nach Datum
   sorting.name: Sortieren nach Name
+  sorting.numberOffers: Sortieren nach Anzahl Angeboten
   help:
     alias: Der Alias wird automatisch generiert.
 

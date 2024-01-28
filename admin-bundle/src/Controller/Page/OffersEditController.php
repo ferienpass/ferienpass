@@ -14,13 +14,12 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Controller\Page;
 
 use Contao\CoreBundle\Exception\PageNotFoundException;
-use Contao\CoreBundle\Slug\Slug;
-use Contao\Dbafs;
 use Contao\FilesModel;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Form\EditOfferType;
+use Ferienpass\AdminBundle\Service\FileUploader;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Ux\Flash;
@@ -28,8 +27,6 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -39,7 +36,7 @@ use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\LiveCollectionTrait;
 
 #[Route('/{edition}/angebote')]
-#[AsLiveComponent(name: 'OffersEdit', route: 'live_component_admin', template: '@FerienpassAdmin/components/EditOffer.html.twig')]
+#[AsLiveComponent(name: 'OffersEdit', template: '@FerienpassAdmin/components/EditOffer.html.twig', route: 'live_component_admin')]
 final class OffersEditController extends AbstractController
 {
     use DefaultActionTrait;
@@ -48,7 +45,7 @@ final class OffersEditController extends AbstractController
     #[LiveProp]
     public Offer $initialFormData;
 
-    public function __construct(private readonly Slug $slug, #[Autowire('%contao.upload_path%/img')] private readonly string $imagesDir, #[Autowire('%kernel.project_dir%')] private readonly string $projectDir, private readonly ManagerRegistry $doctrine)
+    public function __construct(#[Autowire(service: 'ferienpass.file_uploader.offer')] private readonly FileUploader $fileUploader, private readonly ManagerRegistry $doctrine)
     {
     }
 
@@ -64,28 +61,13 @@ final class OffersEditController extends AbstractController
             // Add alias to the change-set, later the {@see AliasListener.php} kicks in
             $offer->setAlias(uniqid());
 
-            /** @var UploadedFile|null $imageFile */
             $imageFile = $form->get('image')->getData();
             if ($imageFile) {
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), \PATHINFO_FILENAME);
+                $imageFileName = $this->fileUploader->upload($imageFile);
+                $offer->setImage($imageFileName);
+            }
 
-                $fileExists = fn (string $filename): bool => file_exists(sprintf('%s/%s.%s', $this->imagesDir, $filename, (string) $imageFile->guessExtension()));
-                $safeFilename = $this->slug->generate($originalFilename, [], $fileExists);
-                $newFilename = $safeFilename.'.'.(string) $imageFile->guessExtension();
-
-                try {
-                    $imageFile->move($this->imagesDir, $newFilename);
-
-                    $relativeFileName = ltrim(str_replace($this->projectDir, '', $this->imagesDir), '/').'/'.$newFilename;
-                    $fileModel = Dbafs::addResource($relativeFileName);
-                    /** @psalm-suppress UndefinedMagicPropertyAssignment */
-                    $fileModel->imgCopyright = $form->get('imgCopyright')->getData() ?? '';
-                    $fileModel->save();
-
-                    $offer->setImage($fileModel->uuid);
-                } catch (FileException) {
-                }
-            } elseif ($imgCopyright = $form->get('imgCopyright')->getData()) {
+            if ($imgCopyright = $form->get('imgCopyright')->getData()) {
                 $fileModel = FilesModel::findByPk($offer->getImage());
                 if (null !== $fileModel) {
                     /** @psalm-suppress UndefinedMagicPropertyAssignment */
@@ -104,7 +86,7 @@ final class OffersEditController extends AbstractController
         return $this->render('@FerienpassAdmin/page/offers/edit.html.twig', [
             'item' => $offer,
             'form' => $form->createView(),
-            'breadcrumb' => $breadcrumb->generate([$offer->getEdition()->getName(), ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], $offer->getName().' (bearbeiten)'),
+            'breadcrumb' => $breadcrumb->generate(['offers.title', ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], [$offer->getEdition()->getName(), ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], $offer->getName().' (bearbeiten)'),
         ]);
     }
 

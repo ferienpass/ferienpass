@@ -8,6 +8,7 @@ use Ferienpass\AdminBundle\Form\Filter\OffersFilter;
 use Ferienpass\AdminBundle\Form\Filter\PaymentsFilter;
 use Ferienpass\AdminBundle\Menu\ActionsBuilder;
 use Ferienpass\AdminBundle\Menu\MenuBuilder;
+use Ferienpass\AdminBundle\Service\FileUploader;
 use Knp\Menu\Twig\Helper;
 use Twig\Extension\StringLoaderExtension;
 
@@ -67,6 +68,15 @@ return function(ContainerConfigurator $container): void {
         ->tag('knp_menu.menu_builder', ['method' => 'actions', 'alias' => 'admin_list_actions'])
     ;
 
-    $services->set(StringLoaderExtension::class);
+    $services->set(FileUploader::class)->abstract();
+    $services->set('ferienpass.file_uploader.offer')
+        ->parent(FileUploader::class)
+        ->arg(0, '%contao.upload_path%/img')
+    ;
+    $services->set('ferienpass.file_uploader.host')
+        ->parent(FileUploader::class)
+        ->arg(0, '%contao.upload_path%/img')
+    ;
 
+    $services->set(StringLoaderExtension::class);
 };

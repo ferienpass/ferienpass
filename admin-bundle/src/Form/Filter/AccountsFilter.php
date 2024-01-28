@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Form\Filter;
 
+use Doctrine\ORM\QueryBuilder;
 use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -42,9 +43,9 @@ class AccountsFilter extends AbstractFilter
     protected static function getSorting(): array
     {
         return [
-            'createdAt' => ['i.createdAt', 'DESC'],
-            'firstname' => ['i.firstname', 'ASC'],
-            'lastname' => ['i.lastname', 'ASC'],
+            'createdAt' => fn (QueryBuilder $qb) => $qb->addOrderBy('i.createdAt', 'DESC'),
+            'firstname' => fn (QueryBuilder $qb) => $qb->addOrderBy('i.firstname', 'ASC'),
+            'lastname' => fn (QueryBuilder $qb) => $qb->addOrderBy('i.lastname', 'ASC'),
         ];
     }
 }

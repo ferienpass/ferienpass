@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Form\Filter;
 
+use Doctrine\ORM\QueryBuilder;
 use Ferienpass\AdminBundle\Form\Filter\Offer\CancelledFilter;
 use Ferienpass\AdminBundle\Form\Filter\Offer\EditionFilter;
 use Ferienpass\AdminBundle\Form\Filter\Offer\HostsFilter;
@@ -53,9 +54,9 @@ class OffersFilter extends AbstractFilter
     protected static function getSorting(): array
     {
         return [
-            'date' => 'd.begin',
-            'name' => 'i.name',
-            'host' => 'h.name',
+            'date' => fn (QueryBuilder $qb) => $qb->addOrderBy('d.begin', 'ASC'),
+            'name' => fn (QueryBuilder $qb) => $qb->addOrderBy('i.name', 'ASC'),
+            'host' => fn (QueryBuilder $qb) => $qb->addOrderBy('h.name', 'ASC'),
         ];
     }
 }

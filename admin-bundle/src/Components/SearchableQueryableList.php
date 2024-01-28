@@ -27,7 +27,7 @@ use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
-#[AsLiveComponent(name: 'SearchableQueryableList', route: 'live_component_admin', template: '@FerienpassAdmin/components/SearchableQueryableList.html.twig')]
+#[AsLiveComponent(name: 'SearchableQueryableList', template: '@FerienpassAdmin/components/SearchableQueryableList.html.twig', route: 'live_component_admin')]
 class SearchableQueryableList extends AbstractController
 {
     use ComponentWithFormTrait;
@@ -43,7 +43,7 @@ class SearchableQueryableList extends AbstractController
     public string $query = '';
 
     #[LiveProp]
-    public array $initialFormData = [];
+    public array $initialFilterData = [];
 
     #[LiveProp]
     public QueryBuilder $qb;
@@ -97,7 +97,7 @@ class SearchableQueryableList extends AbstractController
             return $this->formFactory->create();
         }
 
-        return $this->formFactory->create($filter::class, $this->initialFormData);
+        return $this->formFactory->create($filter::class, $this->initialFilterData);
     }
 
     private function addQueryBuilderSearch(): void
@@ -125,10 +125,7 @@ class SearchableQueryableList extends AbstractController
             $this->sorting = $this->getFilter()?->getSortable()[0] ?? '';
         }
 
-        $sorting = $this->getFilter()?->getOrderByFor($this->sorting);
-        if ($sorting) {
-            $this->qb->addOrderBy(...(array) $sorting);
-        }
+        $this->getFilter()?->applySortingFor($this->sorting, $this->qb);
     }
 
     private function getFilter(): ?AbstractFilter

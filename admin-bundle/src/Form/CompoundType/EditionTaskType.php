@@ -74,6 +74,7 @@ class EditionTaskType extends AbstractType
                     'choice_label' => function ($choice): TranslatableMessage|string {
                         return new TranslatableMessage('MSC.application_system.'.$choice, [], 'contao_default');
                     },
+                    'placeholder' => '-',
                 ]);
             }
 
