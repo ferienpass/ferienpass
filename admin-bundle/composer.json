@@ -51,7 +51,8 @@
     "phpoffice/phpspreadsheet": "^1.29",
     "twig/twig": "^2.12 || ^3.0",
     "twig/intl-extra": "^2.14 || ^3.0",
-    "symfony/ux-dropzone": "^2.13"
+    "symfony/ux-dropzone": "^2.13",
+    "symfony/ux-twig-component": "^2.13"
   },
   "require-dev": {
     "contao/manager-plugin": "^2.7"

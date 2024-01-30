@@ -48,7 +48,6 @@ class ChartUtilizationController extends AbstractController
             ->leftJoin('o.dates', 'd')
             ->where('o.edition = :edition')
             ->setParameter('edition', $passEdition)
-            ->andWhere("o.cancelled <> '1'")
             ->groupBy('o.id', 'a.status')
             ->getQuery()
             ->getScalarResult()

@@ -93,7 +93,7 @@ class ActionsBuilder
         $root->addChild('edit', [
             'label' => 'offers.action.edit',
             'route' => 'admin_offers_edit',
-            'routeParameters' => ['id' => $item->getId(), 'edition' => $item->getEdition()->getAlias()],
+            'routeParameters' => array_filter(['id' => $item->getId(), 'edition' => $item->getEdition()?->getAlias()]),
             'display' => $this->isGranted('edit', $item),
             'extras' => ['icon' => 'pencil-solid'],
         ]);
@@ -101,7 +101,7 @@ class ActionsBuilder
         $root->addChild('proof', [
             'label' => 'offers.action.proof',
             'route' => 'admin_offer_proof',
-            'routeParameters' => ['id' => $item->getId(), 'edition' => $item->getEdition()->getAlias()],
+            'routeParameters' => array_filter(['id' => $item->getId(), 'edition' => $item->getEdition()?->getAlias()]),
             'display' => $this->isGranted('view', $item),
             'extras' => ['icon' => 'pencil-solid'],
         ]);
@@ -109,7 +109,7 @@ class ActionsBuilder
         $root->addChild('newVariant', [
             'label' => 'offers.action.newVariant',
             'route' => 'admin_offers_new',
-            'routeParameters' => ['source' => null === $item->getVariantBase() ? $item->getId() : $item->getVariantBase()?->getId(), 'act' => 'newVariant', 'edition' => $item->getEdition()->getAlias()],
+            'routeParameters' => array_filter(['source' => null === $item->getVariantBase() ? $item->getId() : $item->getVariantBase()?->getId(), 'act' => 'newVariant', 'edition' => $item->getEdition()?->getAlias()]),
             'display' => $this->isGranted('create', $item) && $this->isGranted('edit', $item),
             'extras' => ['icon' => 'calendar-solid'],
         ]);
@@ -118,7 +118,7 @@ class ActionsBuilder
             $root->addChild('copy'.$edition->getId(), [
                 'label' => 'offers.action.copy',
                 'route' => 'admin_offers_new',
-                'routeParameters' => ['source' => $item->getId(), 'act' => 'copy', 'edition' => $edition->getAlias()],
+                'routeParameters' => array_filter(['source' => $item->getId(), 'act' => 'copy', 'edition' => $edition->getAlias()]),
                 'display' => $this->isGranted('view', $item),
                 'extras' => ['icon' => 'duplicate-solid', 'translation_params' => ['edition' => $edition->getName()]],
             ]);
@@ -127,7 +127,7 @@ class ActionsBuilder
         //        $root->addChild('delete', [
         //            'label' => 'offers.action.delete',
         //            'route' => 'admin_offer_show',
-        //            'routeParameters' => ['id' => $item->getId(), 'edition' => $item->getEdition()->getAlias()],
+        //            'routeParameters' => array_filter(['id' => $item->getId(), 'edition' => $item->getEdition()?->getAlias()],
         //            'display' => $this->isGranted('delete', $item),
         //            'extras' => [
         //                'method' => 'delete',
@@ -140,7 +140,7 @@ class ActionsBuilder
         //            $root->addChild('cancel', [
         //                'label' => 'offers.action.cancel',
         //                'route' => 'admin_offer_show',
-        //                'routeParameters' => ['id' => $item->getId(), 'act' => 'cancel', 'edition' => $item->getEdition()->getAlias()],
+        //                'routeParameters' => array_filter(['id' => $item->getId(), 'act' => 'cancel', 'edition' => $item->getEdition()?->getAlias()],
         //                'display' => $this->isGranted('cancel', $item),
         //                'extras' => [
         //                    'method' => 'post',
@@ -153,7 +153,7 @@ class ActionsBuilder
         //            $root->addChild('reactivate', [
         //                'label' => 'offers.action.reactivate',
         //                'route' => 'admin_offer_show',
-        //                'routeParameters' => ['id' => $item->getId(), 'act' => 'relaunch', 'edition' => $item->getEdition()->getAlias()],
+        //                'routeParameters' => array_filter(['id' => $item->getId(), 'act' => 'relaunch', 'edition' => $item->getEdition()?->getAlias()],
         //                'display' => $this->isGranted('reactivate', $item),
         //                'extras' => [
         //                    'method' => 'post',
@@ -166,14 +166,14 @@ class ActionsBuilder
             $root->addChild('participantList', [
                 'label' => 'offers.action.participantList',
                 'route' => 'admin_offer_attendances',
-                'routeParameters' => ['id' => $item->getId(), 'edition' => $item->getEdition()->getAlias()],
+                'routeParameters' => array_filter(['id' => $item->getId(), 'edition' => $item->getEdition()?->getAlias()]),
                 'display' => $this->isGranted('participants.view', $item),
                 'extras' => ['icon' => 'user-group-solid'],
             ]);
             $root->addChild('participantList2', [
                 'label' => 'offers.action.participantList',
                 'route' => 'admin_offer_applications',
-                'routeParameters' => ['id' => $item->getId(), 'edition' => $item->getEdition()->getAlias()],
+                'routeParameters' => array_filter(['id' => $item->getId(), 'edition' => $item->getEdition()?->getAlias()]),
                 'display' => $this->isGranted('participants.view', $item),
                 'extras' => ['icon' => 'user-group-solid'],
             ]);

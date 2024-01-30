@@ -39,6 +39,11 @@ abstract class AbstractFilter extends AbstractType
         $callable($qb);
     }
 
+    public function getFilterable(): array
+    {
+        return array_keys(static::getFilters());
+    }
+
     public function getSortable(): array
     {
         return array_keys(static::getSorting());
@@ -71,18 +76,17 @@ abstract class AbstractFilter extends AbstractType
 
     public function apply(QueryBuilder $qb, FormInterface $form): void
     {
-        foreach (static::getFilters() as $k => $v) {
-            $f = $form->get($k);
-            if ($f->isEmpty()) {
+        foreach (static::getFilters() as $k => $filter) {
+            $filterForm = $form->get($k);
+            if ($filterForm->isEmpty()) {
                 continue;
             }
 
-            $filter = static::getFilters()[$k];
             if (!is_a($filter, AbstractFilterType::class, true)) {
                 continue;
             }
 
-            $filter::apply($qb, $f);
+            $filter::apply($qb, $filterForm);
 
             // $this->filtersViewData[$name] = $this->getFilterType($name)?->getViewData($form);
         }

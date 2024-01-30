@@ -54,13 +54,20 @@ offers:
   title: Angebote
   editions: Saisons
   index.empty: Es sind hier noch keine Angebote erstellt worden.
+  th.status: ''
   th.name: Titel
   th.hosts: Veranstalter
   th.date: Datum
   th.attendances: Anmeldungen
+  status.draft: Entwurf
+  status.completed: Vom Veranstalter freigegeben
+  status.reviewed: Vom Admin freigegeben
+  status.published: Auf Webseite veröffentlicht
+  status.cancelled: Angebot abgesagt
   sorting.name: Sortieren nach Titel
   sorting.date: Sortieren nach Datum
   sorting.host: Sortieren nach Veranstalter
+  sorting.status: Sortieren nach Status
   action:
     edit: Angebot bearbeiten
     proof: Korrekturabzug
@@ -116,6 +123,7 @@ offers:
   edit_offer_dates_add: Zusätzliche Zeit zu diesem Termin
   edit_offer_dates_entry_delete: Zeitraum löschen
   dropzonePlaceholder: Wählen Sie ein Bild aus oder platzieren Sie es hier mittels Drag'n'Drop
+  uncompletedOffers: Sie haben Angebote im Entwurfsmodus. Bitte markieren Sie alle Angebote als vollständig, damit sie im Ferienpass berücksichtigt werden können.
 
 hosts:
   title: Veranstaltende

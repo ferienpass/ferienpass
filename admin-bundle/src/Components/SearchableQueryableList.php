@@ -24,12 +24,14 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
+use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 #[AsLiveComponent(name: 'SearchableQueryableList', template: '@FerienpassAdmin/components/SearchableQueryableList.html.twig', route: 'live_component_admin')]
 class SearchableQueryableList extends AbstractController
 {
+    use ComponentToolsTrait;
     use ComponentWithFormTrait;
     use DefaultActionTrait;
 
@@ -43,15 +45,12 @@ class SearchableQueryableList extends AbstractController
     public string $query = '';
 
     #[LiveProp]
-    public array $initialFilterData = [];
-
-    #[LiveProp]
     public QueryBuilder $qb;
 
     #[LiveProp]
-    public ?string $originalRoute = null;
+    public ?string $routeName = null;
     #[LiveProp]
-    public ?array $originalQuery = null;
+    public ?array $routeParameters = null;
 
     #[LiveProp(writable: true)]
     public string $sorting = '';
@@ -65,11 +64,15 @@ class SearchableQueryableList extends AbstractController
         $this->addQueryBuilderSearch();
         $this->addQueryBuilderSorting();
 
-        if ('' !== $this->query) {
-            unset($this->originalQuery['page']);
+        if (null !== $filter = $this->getFilter()) {
+            $filter->apply($this->qb, $this->getForm());
         }
 
-        return (new Paginator($this->qb, 50))->paginate((int) ($this->originalQuery['page'] ?? 1));
+        if ('' !== $this->query) {
+            unset($this->routeParameters['page']);
+        }
+
+        return (new Paginator($this->qb, 50))->paginate((int) ($this->routeParameters['page'] ?? 1));
     }
 
     public function getSortingFields(): array
@@ -81,15 +84,41 @@ class SearchableQueryableList extends AbstractController
     public function filter()
     {
         if (null === $filter = $this->getFilter()) {
-            return $this->redirectToRoute($this->originalRoute);
+            return $this->redirectToRoute($this->routeName, $this->routeParameters);
         }
 
         $this->submitForm();
 
-        $filter->apply($this->qb, $this->getForm());
+        $filterData = [];
 
-        return $this->redirectToRoute($this->originalRoute);
+        foreach (array_keys((array) $this->getForm()->getViewData()) as $attr) {
+            if (!$this->getForm()->has($attr)) {
+                continue;
+            }
+
+            $f = $this->getForm()->get($attr);
+            $v = $f->getViewData();
+            if ($f->isEmpty() && !($this->routeParameters[$attr] ?? null)) {
+                continue;
+            }
+
+            $filterData[$attr] = $v;
+        }
+
+        $this->routeParameters = array_merge($this->routeParameters, $filterData);
+
+        // $filter->apply($this->qb, $this->getForm());
+
+        return $this->redirectToRoute($this->routeName, array_filter($this->routeParameters));
     }
+
+    //    #[LiveAction]
+    //    public function view(#[LiveArg] Participant $participant)
+    //    {
+    //        $this->emit('view', [
+    //            'participant' => $participant,
+    //        ]);
+    //    }
 
     protected function instantiateForm(): FormInterface
     {
@@ -97,7 +126,16 @@ class SearchableQueryableList extends AbstractController
             return $this->formFactory->create();
         }
 
-        return $this->formFactory->create($filter::class, $this->initialFilterData);
+        $filterDataFromUrl = array_filter($this->routeParameters, fn (string $key) => \in_array($key, $this->getFilter()->getFilterable(), true), \ARRAY_FILTER_USE_KEY);
+
+        $filterForm = $this->formFactory->create($filter::class);
+        $filterForm->submit($filterDataFromUrl);
+
+        return $this->formFactory->create($filter::class, $filterForm->getData());
+    }
+
+    private function doFilter($filter)
+    {
     }
 
     private function addQueryBuilderSearch(): void

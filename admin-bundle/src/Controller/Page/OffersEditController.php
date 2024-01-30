@@ -35,7 +35,7 @@ use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\LiveCollectionTrait;
 
-#[Route('/{edition}/angebote')]
+#[Route('/angebote/{edition?null}')]
 #[AsLiveComponent(name: 'OffersEdit', template: '@FerienpassAdmin/components/EditOffer.html.twig', route: 'live_component_admin')]
 final class OffersEditController extends AbstractController
 {
@@ -80,7 +80,7 @@ final class OffersEditController extends AbstractController
 
             $this->addFlash(...Flash::confirmation()->text('Die Daten wurden erfolgreich gespeichert.')->create());
 
-            return $this->redirectToRoute($request->attributes->get('_route'), ['id' => $offer->getId()]);
+            return $this->redirectToRoute('admin_offers_edit', ['id' => $offer->getId()]);
         }
 
         return $this->render('@FerienpassAdmin/page/offers/edit.html.twig', [

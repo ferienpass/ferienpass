@@ -3,28 +3,40 @@
 {% trans_default_domain 'admin' %}
 
 
+{% block main %}
+    {% if not is_granted('ROLE_ADMIN') and uncompletedOffers %}
+        <twig:Admin:Alert type="info" message="offers.uncompletedOffers" class="mb-4"/>
+    {% endif %}
+
+    {{ parent() }}
+{% endblock %}
+
+
 {% block list %}
 
     {% set disabled = edition and not is_granted('offer.create', edition) %}
 
-{#    <div class="text-right">#}
-{#        {% embed '@FerienpassAdmin/components/button-primary.html.twig' with { 'uri': path('admin_offers_new', { edition: edition ? edition.alias : null })} %}#}
-{#            {% block link %}#}
-{#                <span class="block h-5 w-5 mr-1">{{ source('@FerienpassAdmin/icons/plus-solid.svg') }}</span>#}
-{#                <span>Neues Angebot</span>#}
-{#            {% endblock %}#}
-{#        {% endembed %}#}
-{#    </div>#}
+    {#    <div class="text-right"> #}
+    {#        {% embed '@FerienpassAdmin/components/button-primary.html.twig' with { 'uri': path('admin_offers_new', { edition: edition ? edition.alias : null })} %} #}
+    {#            {% block link %} #}
+    {#                <span class="block h-5 w-5 mr-1">{{ source('@FerienpassAdmin/icons/plus-solid.svg') }}</span> #}
+    {#                <span>Neues Angebot</span> #}
+    {#            {% endblock %} #}
+    {#        {% endembed %} #}
+    {#    </div> #}
 
 
     {% if is_granted('ROLE_ADMIN') %}
 
-        {{ component('SearchableQueryableList', { qb: qb, originalRoute: app.request.get('_route'), originalQuery: app.request.query.all,
+        {{ component('SearchableQueryableList', {
+            qb: qb,
+            routeName: app.request.get('_route'),
+            routeParameters: app.request.query.all|merge(app.request.get('_route_params')),
             searchable: searchable,
-            initialFilterData: initialFilterData|default([]),
             config: {
                 columns: {
-                    name: '{{ item.name }}',
+                    status: '{{ component("Admin:OfferWorkflowButton", { offer: item }) }}',
+                    name: '<span class="{{ item.cancelled ? "line-through" : "" }}">{{ item.name }}</span>',
                     hosts: '{{ item.hosts|map(h => h.name)|join(", ") }}',
                     date: '
 {% if item.dates is not empty %}
@@ -55,7 +67,8 @@
 
         {% if disabled %}
             <div class="mt-1 flex justify-end">
-                <p class="max-w-xs text-xs text-gray-500 text-right">Das Erstellen von Angeboten in „{{ edition.name }}“ ist aktuell
+                <p class="max-w-xs text-xs text-gray-500 text-right">Das Erstellen von Angeboten in „{{ edition.name }}“
+                    ist aktuell
                     nicht möglich.
                 </p></div>
         {% endif %}

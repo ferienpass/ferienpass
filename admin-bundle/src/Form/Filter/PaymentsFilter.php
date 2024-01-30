@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Form\Filter;
 
 use Doctrine\ORM\QueryBuilder;
-use Ferienpass\AdminBundle\Form\Filter\Offer\HostsFilter;
+use Ferienpass\AdminBundle\Form\Filter\Offer\HostFilter;
 use Ferienpass\AdminBundle\Form\Filter\Offer\OnlineApplicationFilter;
 use Ferienpass\CoreBundle\Entity\Payment;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -39,7 +39,7 @@ class PaymentsFilter extends AbstractFilter
     {
         return [
             'status' => OnlineApplicationFilter::class,
-            'user' => HostsFilter::class,
+            'user' => HostFilter::class,
         ];
     }
 

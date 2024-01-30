@@ -22,8 +22,6 @@ use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExports;
-use Ferienpass\CoreBundle\Message\OfferCancelled;
-use Ferienpass\CoreBundle\Message\OfferRelaunched;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Ferienpass\CoreBundle\Repository\HostRepository;
 use Ferienpass\CoreBundle\Repository\OfferRepository;
@@ -34,8 +32,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Workflow\WorkflowInterface;
 
-#[Route('/angebote/{edition?}')]
+#[Route('/angebote/{edition?null}')]
 final class OffersController extends AbstractController
 {
     #[Route('{_suffix?}', name: 'admin_offers_index')]
@@ -62,9 +61,6 @@ final class OffersController extends AbstractController
             $qb->andWhere('i.edition = :edition')->setParameter('edition', $edition->getId(), Types::INTEGER);
         }
 
-        $qb->leftJoin('i.dates', 'd');
-        $qb->leftJoin('i.hosts', 'h');
-
         $_suffix = ltrim((string) $_suffix, '.');
         if ('' !== $_suffix) {
             // TODO service-tagged exporter
@@ -81,25 +77,25 @@ final class OffersController extends AbstractController
             $menu->addChild($e->getName(), [
                 'route' => 'admin_offers_index',
                 'routeParameters' => ['edition' => $e->getAlias()],
-                'current' => $e->getAlias() === $edition->getAlias(),
+                'current' => null !== $edition && $e->getAlias() === $edition->getAlias(),
             ]);
         }
 
         return $this->render('@FerienpassAdmin/page/offers/index.html.twig', [
             'qb' => $qb,
-            'createUrl' => $this->generateUrl('admin_offers_new', ['edition' => $edition?->getAlias()]),
+            'createUrl' => $this->generateUrl('admin_offers_new', array_filter(['edition' => $edition?->getAlias()])),
             'exports' => ['xlsx'],
             'searchable' => ['name'],
             'edition' => $edition,
-            // 'initialFilterData' => ['editions' => $edition],
+            'uncompletedOffers' => (clone $qb)->select('COUNT(i)')->andWhere('i.state = :status')->setParameter('status', Offer::STATE_DRAFT)->getQuery()->getSingleResult() > 0,
             'items' => $items,
             'aside_nav' => $menu,
-            'breadcrumb' => $breadcrumb->generate('offers.title', $edition->getName()),
+            'breadcrumb' => $breadcrumb->generate('offers.title', $edition?->getName()),
         ]);
     }
 
     #[Route('/{id}', name: 'admin_offer_proof', requirements: ['id' => '\d+'])]
-    public function show(Offer $offer, Request $request, PdfExports $pdfExports, EntityManagerInterface $em, \Ferienpass\CoreBundle\Session\Flash $flash, MessageBusInterface $messageBus, Breadcrumb $breadcrumb): Response
+    public function show(Offer $offer, Request $request, PdfExports $pdfExports, EntityManagerInterface $em, \Ferienpass\CoreBundle\Session\Flash $flash, MessageBusInterface $messageBus, Breadcrumb $breadcrumb, WorkflowInterface $offerStateMachine): Response
     {
         if ($request->isMethod('delete')) {
             $this->denyAccessUnlessGranted('delete', $offer);
@@ -132,10 +128,7 @@ final class OffersController extends AbstractController
         if ($request->isMethod('post') && 'cancel' === $request->get('act')) {
             $this->denyAccessUnlessGranted('cancel', $offer);
 
-            $offer->setCancelled(true);
-            $em->flush();
-
-            $messageBus->dispatch(new OfferCancelled($offer->getId()));
+            $offerStateMachine->apply($offer, Offer::TRANSITION_CANCEL);
 
             $flash->addConfirmation(text: 'Das Angebot wurde abgesagt.');
 
@@ -145,13 +138,7 @@ final class OffersController extends AbstractController
         if ($request->isMethod('post') && 'relaunch' === $request->get('act')) {
             $this->denyAccessUnlessGranted('relaunch', $offer);
 
-            $offer->setCancelled(false);
-            $em->flush();
-
-            // Whether the original participants should be reactivated or whether the participant list should be discarded
-            $restoreParticipants = $request->request->getBoolean('participants_restore');
-
-            $messageBus->dispatch(new OfferRelaunched($offer->getId()));
+            $offerStateMachine->apply($offer, Offer::TRANSITION_RELAUNCH);
 
             $flash->addConfirmation(text: 'Das Angebot wurde wiederhergestellt.');
 

@@ -153,7 +153,7 @@
                             </div>
                         {% endif %}
 
-                        {% if offer.cancelled %}
+                        {% if "cancelled" == offer.state %}
                             {{ partials.badge_red('abgesagt', 'base') }}
                         {% endif %}
 

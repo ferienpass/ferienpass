@@ -46,8 +46,10 @@ class EditionFilter extends AbstractFilterType
                     ->orderBy('e.name')
                 ;
             },
+            'choice_value' => fn (?Edition $entity) => $entity?->getAlias(),
             'choice_label' => 'name',
             'placeholder' => '-',
+            'multiple' => false,
         ]);
     }
 

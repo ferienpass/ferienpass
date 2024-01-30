@@ -25,12 +25,19 @@ use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\UX\Dropzone\Form\DropzoneType;
 
 class EditOfferType extends AbstractType
 {
+    public function __construct(private readonly WorkflowInterface $offerStateMachine)
+    {
+    }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -83,6 +90,19 @@ class EditOfferType extends AbstractType
                 'label' => 'Daten speichern',
             ])
         ;
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
+            $form = $event->getForm();
+            if (!($offer = $event->getData()) instanceof Offer) {
+                return;
+            }
+
+            foreach ($this->offerStateMachine->getEnabledTransitions($offer) as $enabledTransition) {
+                $form->add($label = 'submitAnd'.ucfirst($enabledTransition->getName()), SubmitType::class, [
+                    'label' => $label,
+                ]);
+            }
+        });
 
         $properties = (new \ReflectionClass($options['data_class']))->getProperties(\ReflectionProperty::IS_PUBLIC);
 

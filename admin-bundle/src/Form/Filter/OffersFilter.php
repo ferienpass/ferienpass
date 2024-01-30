@@ -14,12 +14,12 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Form\Filter;
 
 use Doctrine\ORM\QueryBuilder;
-use Ferienpass\AdminBundle\Form\Filter\Offer\CancelledFilter;
 use Ferienpass\AdminBundle\Form\Filter\Offer\EditionFilter;
-use Ferienpass\AdminBundle\Form\Filter\Offer\HostsFilter;
+use Ferienpass\AdminBundle\Form\Filter\Offer\HostFilter;
 use Ferienpass\AdminBundle\Form\Filter\Offer\OnlineApplicationFilter;
 use Ferienpass\AdminBundle\Form\Filter\Offer\PublishedFilter;
 use Ferienpass\AdminBundle\Form\Filter\Offer\RequiresApplicationFilter;
+use Ferienpass\AdminBundle\Form\Filter\Offer\StatusFilter;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -42,11 +42,11 @@ class OffersFilter extends AbstractFilter
     protected static function getFilters(): array
     {
         return [
-            'editions' => EditionFilter::class,
-            'hosts' => HostsFilter::class,
-            'requires_application' => RequiresApplicationFilter::class,
-            'online_application' => OnlineApplicationFilter::class,
-            'cancelled' => CancelledFilter::class,
+            'edition' => EditionFilter::class,
+            'host' => HostFilter::class,
+            'requiresApplication' => RequiresApplicationFilter::class,
+            'onlineApplication' => OnlineApplicationFilter::class,
+            'status' => StatusFilter::class,
             'published' => PublishedFilter::class,
         ];
     }
@@ -54,9 +54,10 @@ class OffersFilter extends AbstractFilter
     protected static function getSorting(): array
     {
         return [
-            'date' => fn (QueryBuilder $qb) => $qb->addOrderBy('d.begin', 'ASC'),
+            'date' => fn (QueryBuilder $qb) => $qb->leftJoin('i.dates', 'd')->addOrderBy('d.begin', 'ASC'),
             'name' => fn (QueryBuilder $qb) => $qb->addOrderBy('i.name', 'ASC'),
-            'host' => fn (QueryBuilder $qb) => $qb->addOrderBy('h.name', 'ASC'),
+            'host' => fn (QueryBuilder $qb) => $qb->leftJoin('i.hosts', 'h')->addOrderBy('h.name', 'ASC'),
+            'status' => fn (QueryBuilder $qb) => $qb->addOrderBy('i.state', 'ASC')->addOrderBy('i.name', 'ASC'),
         ];
     }
 }

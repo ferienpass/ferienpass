@@ -58,7 +58,6 @@ final class OfferListController extends AbstractController
                 ->setParameter('status_confirmed', 'confirmed')
 
                 ->andWhere($qb->expr()->orX()->add('dates IS NULL')->add('dates.begin >= CURRENT_TIMESTAMP()'))
-                ->andWhere('o.cancelled <> 1')
             ;
         }
 

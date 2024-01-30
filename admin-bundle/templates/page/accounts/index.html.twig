@@ -55,7 +55,7 @@
         } %}
     {% endif %}
 
-    {{ component('SearchableQueryableList', { qb: qb, originalRoute: app.request.get('_route'), originalQuery: app.request.query.all,
+    {{ component('SearchableQueryableList', { qb: qb, routeName: app.request.get('_route'), routeParameters: app.request.query.all,
         searchable: searchable,
         config: {
             columns: columns
