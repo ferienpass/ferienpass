@@ -14,8 +14,6 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Form\Filter;
 
 use Doctrine\ORM\QueryBuilder;
-use Ferienpass\AdminBundle\Form\Filter\Offer\HostFilter;
-use Ferienpass\AdminBundle\Form\Filter\Offer\OnlineApplicationFilter;
 use Ferienpass\CoreBundle\Entity\Payment;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -33,14 +31,6 @@ class PaymentsFilter extends AbstractFilter
         $resolver->setDefaults([
             'label_format' => 'payments.filter.%name%',
         ]);
-    }
-
-    protected static function getFilters(): array
-    {
-        return [
-            'status' => OnlineApplicationFilter::class,
-            'user' => HostFilter::class,
-        ];
     }
 
     protected static function getSorting(): array

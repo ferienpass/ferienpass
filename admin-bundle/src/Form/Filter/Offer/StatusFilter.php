@@ -20,14 +20,10 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatableInterface;
 
 class StatusFilter extends AbstractFilterType
 {
-    //    public static function getName(): string
-    //    {
-    //        return 'age';
-    //    }
-
     public function getParent(): string
     {
         return ChoiceType::class;
@@ -35,8 +31,6 @@ class StatusFilter extends AbstractFilterType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        //        parent::configureOptions($resolver);
-
         $resolver->setDefaults([
             'choices' => [Offer::STATE_DRAFT, Offer::STATE_COMPLETED, Offer::STATE_REVIEWED, Offer::STATE_PUBLISHED],
             'choice_label' => function (string $choice): TranslatableMessage {
@@ -48,8 +42,12 @@ class StatusFilter extends AbstractFilterType
         ]);
     }
 
-    public static function apply(QueryBuilder $qb, FormInterface $form): void
+    public function apply(QueryBuilder $qb, FormInterface $form): void
     {
+        if ($form->isEmpty()) {
+            return;
+        }
+
         $k = $form->getName();
         $v = $form->getData();
 
@@ -59,13 +57,8 @@ class StatusFilter extends AbstractFilterType
         ;
     }
 
-    //    public function getViewData(FormInterface $form): ?TranslatableInterface
-    //    {
-    //        return new TranslatableMessage('offerList.filter.age', ['value' => $form->getViewData()]);
-    //    }
-
-    //    public function getBlockPrefix(): string
-    //    {
-    //        return 'filter_age';
-    //    }
+    protected function getHumanReadableValue(FormInterface $form): null|string|TranslatableInterface
+    {
+        return $form->getData();
+    }
 }

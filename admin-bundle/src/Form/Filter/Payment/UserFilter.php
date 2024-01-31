@@ -20,14 +20,10 @@ use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatableInterface;
 
 class UserFilter extends AbstractFilterType
 {
-    //    public static function getName(): string
-    //    {
-    //        return 'age';
-    //    }
-
     public function getParent(): string
     {
         return EntityType::class;
@@ -35,8 +31,6 @@ class UserFilter extends AbstractFilterType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        //        parent::configureOptions($resolver);
-
         $resolver->setDefaults([
             'class' => User::class,
             'query_builder' => function (EntityRepository $er): QueryBuilder {
@@ -51,8 +45,12 @@ class UserFilter extends AbstractFilterType
         ]);
     }
 
-    public static function apply(QueryBuilder $qb, FormInterface $form): void
+    public function apply(QueryBuilder $qb, FormInterface $form): void
     {
+        if ($form->isEmpty()) {
+            return;
+        }
+
         $k = $form->getName();
         $v = $form->getData();
 
@@ -62,13 +60,8 @@ class UserFilter extends AbstractFilterType
         ;
     }
 
-    //    public function getViewData(FormInterface $form): ?TranslatableInterface
-    //    {
-    //        return new TranslatableMessage('offerList.filter.age', ['value' => $form->getViewData()]);
-    //    }
-
-    //    public function getBlockPrefix(): string
-    //    {
-    //        return 'filter_age';
-    //    }
+    protected function getHumanReadableValue(FormInterface $form): null|string|TranslatableInterface
+    {
+        return $form->getData();
+    }
 }

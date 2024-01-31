@@ -14,17 +14,17 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Form\Filter;
 
 use Doctrine\ORM\QueryBuilder;
-use Ferienpass\AdminBundle\Form\Filter\Offer\EditionFilter;
-use Ferienpass\AdminBundle\Form\Filter\Offer\HostFilter;
-use Ferienpass\AdminBundle\Form\Filter\Offer\OnlineApplicationFilter;
-use Ferienpass\AdminBundle\Form\Filter\Offer\PublishedFilter;
-use Ferienpass\AdminBundle\Form\Filter\Offer\RequiresApplicationFilter;
-use Ferienpass\AdminBundle\Form\Filter\Offer\StatusFilter;
 use Ferienpass\CoreBundle\Entity\Offer;
+use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OffersFilter extends AbstractFilter
 {
+    public function __construct(#[TaggedIterator('ferienpass_admin.filter.offer', indexAttribute: 'key')] iterable $filterTypes)
+    {
+        $this->filterTypes = $filterTypes instanceof \Traversable ? iterator_to_array($filterTypes) : $filterTypes;
+    }
+
     public static function getEntity(): string
     {
         return Offer::class;
@@ -37,18 +37,6 @@ class OffersFilter extends AbstractFilter
         $resolver->setDefaults([
             'label_format' => 'offers.filter.%name%',
         ]);
-    }
-
-    protected static function getFilters(): array
-    {
-        return [
-            'edition' => EditionFilter::class,
-            'host' => HostFilter::class,
-            'requiresApplication' => RequiresApplicationFilter::class,
-            'onlineApplication' => OnlineApplicationFilter::class,
-            'status' => StatusFilter::class,
-            'published' => PublishedFilter::class,
-        ];
     }
 
     protected static function getSorting(): array

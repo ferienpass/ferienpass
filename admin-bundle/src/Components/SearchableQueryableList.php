@@ -23,6 +23,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
@@ -80,6 +81,11 @@ class SearchableQueryableList extends AbstractController
         return $this->getFilter()?->getSearchable() ?? [];
     }
 
+    public function getFilters(): array
+    {
+        return $this->getFilter()?->getFilterable() ?? [];
+    }
+
     #[LiveAction]
     public function filter()
     {
@@ -112,6 +118,16 @@ class SearchableQueryableList extends AbstractController
         return $this->redirectToRoute($this->routeName, array_filter($this->routeParameters));
     }
 
+    #[LiveAction]
+    public function unsetFilter(#[LiveArg] string $filterName)
+    {
+        unset($this->routeParameters[$filterName]);
+
+        // $filter->apply($this->qb, $this->getForm());
+
+        return $this->redirectToRoute($this->routeName, array_filter($this->routeParameters));
+    }
+
     //    #[LiveAction]
     //    public function view(#[LiveArg] Participant $participant)
     //    {
@@ -126,16 +142,12 @@ class SearchableQueryableList extends AbstractController
             return $this->formFactory->create();
         }
 
-        $filterDataFromUrl = array_filter($this->routeParameters, fn (string $key) => \in_array($key, $this->getFilter()->getFilterable(), true), \ARRAY_FILTER_USE_KEY);
+        $filterDataFromUrl = array_filter($this->routeParameters, fn (string $key) => \in_array($key, $this->getFilters(), true), \ARRAY_FILTER_USE_KEY);
 
         $filterForm = $this->formFactory->create($filter::class);
         $filterForm->submit($filterDataFromUrl);
 
         return $this->formFactory->create($filter::class, $filterForm->getData());
-    }
-
-    private function doFilter($filter)
-    {
     }
 
     private function addQueryBuilderSearch(): void

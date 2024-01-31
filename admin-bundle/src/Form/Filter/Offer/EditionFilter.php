@@ -18,15 +18,16 @@ use Doctrine\ORM\QueryBuilder;
 use Ferienpass\AdminBundle\Form\Filter\AbstractFilterType;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatableInterface;
 
 class EditionFilter extends AbstractFilterType
 {
-    //    public static function getName(): string
-    //    {
-    //        return 'age';
-    //    }
+    public function __construct(private readonly Security $security)
+    {
+    }
 
     public function getParent(): string
     {
@@ -35,16 +36,16 @@ class EditionFilter extends AbstractFilterType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        //        parent::configureOptions($resolver);
-
         $resolver->setDefaults([
             'class' => Edition::class,
             'query_builder' => function (EntityRepository $er): QueryBuilder {
-                return $er->createQueryBuilder('e')
-                    // ->where("JSON_SEARCH(u.roles, 'one', :role) IS NOT NULL")
-                    // ->setParameter('role', 'ROLE_ADMIN')
-                    ->orderBy('e.name')
-                ;
+                $qb = $er->createQueryBuilder('e');
+
+                if (!$this->security->isGranted('ROLE_ADMIN')) {
+                }
+                $qb->where('e.archived <> 1');
+
+                return $qb->orderBy('e.name');
             },
             'choice_value' => fn (?Edition $entity) => $entity?->getAlias(),
             'choice_label' => 'name',
@@ -53,21 +54,20 @@ class EditionFilter extends AbstractFilterType
         ]);
     }
 
-    public static function apply(QueryBuilder $qb, FormInterface $form): void
+    public function apply(QueryBuilder $qb, FormInterface $form): void
     {
+        if ($form->isEmpty()) {
+            return;
+        }
+
         $k = $form->getName();
         $v = $form->getData();
 
         $qb->andWhere('i.edition = :q_'.$k)->setParameter('q_'.$k, $v);
     }
 
-    //    public function getViewData(FormInterface $form): ?TranslatableInterface
-    //    {
-    //        return new TranslatableMessage('offerList.filter.age', ['value' => $form->getViewData()]);
-    //    }
-
-    //    public function getBlockPrefix(): string
-    //    {
-    //        return 'filter_age';
-    //    }
+    protected function getHumanReadableValue(FormInterface $form): null|string|TranslatableInterface
+    {
+        return $form->getData()?->getName();
+    }
 }

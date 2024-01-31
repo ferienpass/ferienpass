@@ -13,9 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query\Expr\Join;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Export\XlsxExport;
 use Ferienpass\CoreBundle\Entity\Edition;
@@ -47,20 +45,6 @@ final class OffersController extends AbstractController
 
         $qb = $repository->createQueryBuilder('i');
 
-        if ($request->query->has('host')) {
-            $host = $hostRepository->find($request->query->get('host'));
-            $this->denyAccessUnlessGranted('view', $host);
-
-            $qb->andWhere(':host MEMBER OF i.hosts')->setParameter('host', $host);
-        } elseif (!$this->isGranted('ROLE_ADMIN')) {
-            $hosts = $hostRepository->findByUser($user);
-            $qb->innerJoin('i.hosts', 'h', Join::WITH, 'h IN (:hosts)')->setParameter('hosts', $hosts);
-        }
-
-        if (null !== $edition) {
-            $qb->andWhere('i.edition = :edition')->setParameter('edition', $edition->getId(), Types::INTEGER);
-        }
-
         $_suffix = ltrim((string) $_suffix, '.');
         if ('' !== $_suffix) {
             // TODO service-tagged exporter
@@ -68,8 +52,6 @@ final class OffersController extends AbstractController
                 return $this->file($xlsxExport->generate($qb), 'angebote.xlsx');
             }
         }
-
-        $items = $qb->getQuery()->getResult();
 
         $menu = $factory->createItem('offers.editions');
 
@@ -88,7 +70,6 @@ final class OffersController extends AbstractController
             'searchable' => ['name'],
             'edition' => $edition,
             'uncompletedOffers' => (clone $qb)->select('COUNT(i)')->andWhere('i.state = :status')->setParameter('status', Offer::STATE_DRAFT)->getQuery()->getSingleResult() > 0,
-            'items' => $items,
             'aside_nav' => $menu,
             'breadcrumb' => $breadcrumb->generate('offers.title', $edition?->getName()),
         ]);

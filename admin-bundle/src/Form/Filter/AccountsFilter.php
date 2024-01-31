@@ -33,13 +33,6 @@ class AccountsFilter extends AbstractFilter
         ]);
     }
 
-    protected static function getFilters(): array
-    {
-        return [
-            // disable
-        ];
-    }
-
     protected static function getSorting(): array
     {
         return [

@@ -18,14 +18,10 @@ use Ferienpass\AdminBundle\Form\Filter\AbstractFilterType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatableInterface;
 
 class OnlineApplicationFilter extends AbstractFilterType
 {
-    //    public static function getName(): string
-    //    {
-    //        return 'age';
-    //    }
-
     public function getParent(): string
     {
         return CheckboxType::class;
@@ -33,14 +29,16 @@ class OnlineApplicationFilter extends AbstractFilterType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        //        parent::configureOptions($resolver);
-
         $resolver->setDefaults([
         ]);
     }
 
-    public static function apply(QueryBuilder $qb, FormInterface $form): void
+    public function apply(QueryBuilder $qb, FormInterface $form): void
     {
+        if ($form->isEmpty()) {
+            return;
+        }
+
         $k = $form->getName();
         $v = $form->getData();
 
@@ -50,13 +48,8 @@ class OnlineApplicationFilter extends AbstractFilterType
         ;
     }
 
-    //    public function getViewData(FormInterface $form): ?TranslatableInterface
-    //    {
-    //        return new TranslatableMessage('offerList.filter.age', ['value' => $form->getViewData()]);
-    //    }
-
-    //    public function getBlockPrefix(): string
-    //    {
-    //        return 'filter_age';
-    //    }
+    protected function getHumanReadableValue(FormInterface $form): null|string|TranslatableInterface
+    {
+        return $form->getData() ? 'y' : 'n';
+    }
 }

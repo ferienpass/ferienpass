@@ -18,16 +18,19 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Ferienpass\AdminBundle\Form\Filter\AbstractFilterType;
 use Ferienpass\CoreBundle\Entity\Host;
+use Ferienpass\CoreBundle\Entity\User;
+use Ferienpass\CoreBundle\Repository\HostRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatableInterface;
 
 class HostFilter extends AbstractFilterType
 {
-    //    public static function getName(): string
-    //    {
-    //        return 'age';
-    //    }
+    public function __construct(private readonly Security $security, private readonly HostRepository $hostRepository)
+    {
+    }
 
     public function getParent(): string
     {
@@ -36,16 +39,16 @@ class HostFilter extends AbstractFilterType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        //        parent::configureOptions($resolver);
-
         $resolver->setDefaults([
             'class' => Host::class,
             'query_builder' => function (EntityRepository $er): QueryBuilder {
-                return $er->createQueryBuilder('h')
-                    // ->where("JSON_SEARCH(u.roles, 'one', :role) IS NOT NULL")
-                    // ->setParameter('role', 'ROLE_ADMIN')
-                    ->orderBy('h.name')
-                ;
+                $qb = $er->createQueryBuilder('h');
+
+                if (!$this->security->isGranted('ROLE_ADMIN')) {
+                    $qb->innerJoin('h.memberAssociations', 'm', Join::WITH, 'm.user = :user')->setParameter('user', $this->security->getUser());
+                }
+
+                return $qb->orderBy('h.name');
             },
             'choice_value' => fn (?Host $entity) => $entity?->getAlias(),
             'choice_label' => 'name',
@@ -54,21 +57,33 @@ class HostFilter extends AbstractFilterType
         ]);
     }
 
-    public static function apply(QueryBuilder $qb, FormInterface $form): void
+    public function apply(QueryBuilder $qb, FormInterface $form): void
     {
+        if ($form->isEmpty() && $this->security->isGranted('ROLE_ADMIN')) {
+            return;
+        }
+
+        if ($form->isEmpty() && !$this->security->isGranted('ROLE_ADMIN')) {
+            if (!($user = $this->security->getUser()) instanceof User) {
+                $qb->where('i.id = 0');
+
+                return;
+            }
+
+            $hosts = $this->hostRepository->findByUser($user);
+            $qb->innerJoin('i.hosts', 'h', Join::WITH, 'h IN (:hosts)')->setParameter('hosts', $hosts);
+
+            return;
+        }
+
         $k = $form->getName();
         $v = $form->getData();
 
         $qb->innerJoin('i.hosts', 'h', Join::WITH, 'h IN (:q_'.$k.')')->setParameter('q_'.$k, $v);
     }
 
-    //    public function getViewData(FormInterface $form): ?TranslatableInterface
-    //    {
-    //        return new TranslatableMessage('offerList.filter.age', ['value' => $form->getViewData()]);
-    //    }
-
-    //    public function getBlockPrefix(): string
-    //    {
-    //        return 'filter_age';
-    //    }
+    protected function getHumanReadableValue(FormInterface $form): null|string|TranslatableInterface
+    {
+        return $form->getData()?->getName();
+    }
 }

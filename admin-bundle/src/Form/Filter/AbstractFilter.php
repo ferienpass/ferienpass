@@ -22,6 +22,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractFilter extends AbstractType
 {
+    protected array $filterTypes = [];
+
     abstract public static function getEntity(): string;
 
     public function getSearchable(): array
@@ -59,12 +61,12 @@ abstract class AbstractFilter extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        foreach (static::getFilters() as $k => $v) {
-            if ($builder->has($k)) {
+        foreach ($this->getFilters() as $filterName => $filterType) {
+            if ($builder->has($filterName)) {
                 continue;
             }
 
-            $builder->add($k, $v);
+            $builder->add($filterName, $filterType::class);
         }
 
         $builder
@@ -76,23 +78,20 @@ abstract class AbstractFilter extends AbstractType
 
     public function apply(QueryBuilder $qb, FormInterface $form): void
     {
-        foreach (static::getFilters() as $k => $filter) {
+        foreach ($this->getFilters() as $k => $filter) {
             $filterForm = $form->get($k);
-            if ($filterForm->isEmpty()) {
-                continue;
-            }
-
             if (!is_a($filter, AbstractFilterType::class, true)) {
                 continue;
             }
 
-            $filter::apply($qb, $filterForm);
-
-            // $this->filtersViewData[$name] = $this->getFilterType($name)?->getViewData($form);
+            $filter->apply($qb, $filterForm);
         }
     }
 
-    abstract protected static function getFilters(): array;
+    protected function getFilters(): array
+    {
+        return $this->filterTypes;
+    }
 
     abstract protected static function getSorting(): array;
 }

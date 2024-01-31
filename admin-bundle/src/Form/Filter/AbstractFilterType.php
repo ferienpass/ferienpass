@@ -16,8 +16,20 @@ namespace Ferienpass\AdminBundle\Form\Filter;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Contracts\Translation\TranslatableInterface;
 
 abstract class AbstractFilterType extends AbstractType
 {
-    abstract public static function apply(QueryBuilder $qb, FormInterface $form): void;
+    abstract public function apply(QueryBuilder $qb, FormInterface $form): void;
+
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        parent::buildView($view, $form, $options);
+
+        $view->vars['isEmpty'] = $form->isEmpty();
+        $view->vars['humanReadable'] = $this->getHumanReadableValue($form);
+    }
+
+    abstract protected function getHumanReadableValue(FormInterface $form): null|string|TranslatableInterface;
 }

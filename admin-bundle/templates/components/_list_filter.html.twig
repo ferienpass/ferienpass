@@ -19,21 +19,28 @@
     {% if filter.children|length > 1 %}
 
         <div>
+            {% for filterName, active in filter.children|filter((v, k) => k in this.filters and not v.vars.isEmpty and k not in app.request.get('_route_params')|keys) %}
 
-            <span class="group inline-flex items-center gap-x-1 rounded-md bg-white px-2.5 py-1.5 text-sm font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                <span>
-                    AMC e.V.
+                <span class="group inline-flex items-center gap-x-1 rounded-md bg-white px-2.5 py-1.5 text-sm font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                    <span>
+                        {{ active.vars.humanReadable|trans }}
+                    </span>
+
+                    <button type="button"
+                            data-action="live#action"
+                            data-action-name="unsetFilter(filterName={{ filterName }})"
+                            class="relative -mr-1 h-3.5 w-3.5 rounded-sm group-hover:bg-gray-500/20">
+                        <span class="sr-only">Filter löschen</span>
+                        <svg viewBox="0 0 14 14" class="h-3.5 w-3.5 stroke-gray-500 group-hover:stroke-gray-700">
+                            <path d="M4 4l6 6m0-6l-6 6"/>
+                        </svg>
+                        <span class="absolute -inset-1"></span>
+                    </button>
+
                 </span>
 
-                <button type="button" class="relative -mr-1 h-3.5 w-3.5 rounded-sm group-hover:bg-gray-500/20">
-                    <span class="sr-only">Filter löschen</span>
-                    <svg viewBox="0 0 14 14" class="h-3.5 w-3.5 stroke-gray-500 group-hover:stroke-gray-700">
-                        <path d="M4 4l6 6m0-6l-6 6"/>
-                    </svg>
-                    <span class="absolute -inset-1"></span>
-                </button>
+            {% endfor %}
 
-            </span>
         </div>
 
         {% if filter.count > 2 %}

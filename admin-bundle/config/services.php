@@ -4,7 +4,14 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Ferienpass\AdminBundle\Form\Filter\AccountsFilter;
 use Ferienpass\AdminBundle\Form\Filter\HostsFilter;
+use Ferienpass\AdminBundle\Form\Filter\Offer\EditionFilter;
+use Ferienpass\AdminBundle\Form\Filter\Offer\HostFilter;
+use Ferienpass\AdminBundle\Form\Filter\Offer\OnlineApplicationFilter;
+use Ferienpass\AdminBundle\Form\Filter\Offer\PublishedFilter;
+use Ferienpass\AdminBundle\Form\Filter\Offer\RequiresApplicationFilter;
+use Ferienpass\AdminBundle\Form\Filter\Offer\StatusFilter;
 use Ferienpass\AdminBundle\Form\Filter\OffersFilter;
+use Ferienpass\AdminBundle\Form\Filter\Payment\UserFilter;
 use Ferienpass\AdminBundle\Form\Filter\PaymentsFilter;
 use Ferienpass\AdminBundle\Menu\ActionsBuilder;
 use Ferienpass\AdminBundle\Menu\MenuBuilder;
@@ -51,6 +58,36 @@ return function(ContainerConfigurator $container): void {
     $services
         ->get(HostsFilter::class)
         ->tag('ferienpass_admin.filter')
+    ;
+
+    $services
+        ->get(EditionFilter::class)
+        ->tag('ferienpass_admin.filter.offer', ['key' => 'edition'])
+    ;
+    $services
+        ->get(HostFilter::class)
+        ->tag('ferienpass_admin.filter.offer', ['key' => 'host'])
+    ;
+    $services
+        ->get(OnlineApplicationFilter::class)
+        ->tag('ferienpass_admin.filter.offer', ['key' => 'onlineApplication'])
+    ;
+    $services
+        ->get(RequiresApplicationFilter::class)
+        ->tag('ferienpass_admin.filter.offer', ['key' => 'requiresApplication'])
+    ;
+    $services
+        ->get(StatusFilter::class)
+        ->tag('ferienpass_admin.filter.offer', ['key' => 'status'])
+    ;
+
+    $services
+        ->get(\Ferienpass\AdminBundle\Form\Filter\Payment\StatusFilter::class)
+        ->tag('ferienpass_admin.filter.payment', ['key' => 'status'])
+    ;
+    $services
+        ->get(UserFilter::class)
+        ->tag('ferienpass_admin.filter.payment', ['key' => 'user'])
     ;
 
     // Aliases for autowiring
