@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Controller\Page;
 
 use Contao\CoreBundle\Exception\PageNotFoundException;
-use Contao\FilesModel;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
@@ -69,14 +68,14 @@ final class OffersEditController extends AbstractController
                 $offer->setImage($imageFileName);
             }
 
-            if ($imgCopyright = $form->get('imgCopyright')->getData()) {
-                $fileModel = FilesModel::findByPk($offer->getImage());
-                if (null !== $fileModel) {
-                    /** @psalm-suppress UndefinedMagicPropertyAssignment */
-                    $fileModel->imgCopyright = $imgCopyright;
-                    $fileModel->save();
-                }
-            }
+//            if ($imgCopyright = $form->get('imgCopyright')->getData()) {
+//                $fileModel = FilesModel::findByPk($offer->getImage());
+//                if (null !== $fileModel) {
+//                    /** @psalm-suppress UndefinedMagicPropertyAssignment */
+//                    $fileModel->imgCopyright = $imgCopyright;
+//                    $fileModel->save();
+//                }
+//            }
 
             $this->addFlash(...Flash::confirmation()->text('Die Daten wurden erfolgreich gespeichert.')->create());
 
