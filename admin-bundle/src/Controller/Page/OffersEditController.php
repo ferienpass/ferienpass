@@ -78,8 +78,6 @@ final class OffersEditController extends AbstractController
                 }
             }
 
-            $em->flush();
-
             $this->addFlash(...Flash::confirmation()->text('Die Daten wurden erfolgreich gespeichert.')->create());
 
             foreach ($this->offerStateMachine->getEnabledTransitions($offer) as $enabledTransition) {
@@ -93,7 +91,9 @@ final class OffersEditController extends AbstractController
                 }
             }
 
-            return $this->redirectToRoute('admin_offers_edit', ['id' => $offer->getId()]);
+            $em->flush();
+
+            return $this->redirectToRoute('admin_offers_edit', array_filter(['id' => $offer->getId(), 'edition' => $offer->getEdition()?->getAlias()]));
         }
 
         return $this->render('@FerienpassAdmin/page/offers/edit.html.twig', [
