@@ -28,12 +28,12 @@ abstract class AbstractFilter extends AbstractType
 
     public function getSearchable(): array
     {
-        return array_keys(static::getSorting());
+        return array_keys($this->getSorting());
     }
 
     public function applySortingFor(string $field, QueryBuilder $qb): void
     {
-        $callable = static::getSorting()[$field] ?? null;
+        $callable = $this->getSorting()[$field] ?? null;
         if (!\is_callable($callable)) {
             return;
         }
@@ -48,7 +48,7 @@ abstract class AbstractFilter extends AbstractType
 
     public function getSortable(): array
     {
-        return array_keys(static::getSorting());
+        return array_keys($this->getSorting());
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -62,7 +62,7 @@ abstract class AbstractFilter extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         foreach ($this->getFilters() as $filterName => $filterType) {
-            if ($builder->has($filterName)) {
+            if ($builder->has($filterName) || !$filterType->shallDisplay()) {
                 continue;
             }
 
@@ -79,19 +79,22 @@ abstract class AbstractFilter extends AbstractType
     public function apply(QueryBuilder $qb, FormInterface $form): void
     {
         foreach ($this->getFilters() as $k => $filter) {
-            $filterForm = $form->get($k);
             if (!is_a($filter, AbstractFilterType::class, true)) {
                 continue;
             }
 
+            $filterForm = $form->has($k) ? $form->get($k) : null;
             $filter->apply($qb, $filterForm);
         }
     }
 
+    /**
+     * @return AbstractFilterType[]
+     */
     protected function getFilters(): array
     {
         return $this->filterTypes;
     }
 
-    abstract protected static function getSorting(): array;
+    abstract protected function getSorting(): array;
 }

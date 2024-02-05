@@ -33,7 +33,7 @@ class PaymentsFilter extends AbstractFilter
         ]);
     }
 
-    protected static function getSorting(): array
+    protected function getSorting(): array
     {
         return [
             'createdAt' => fn (QueryBuilder $qb) => $qb->addOrderBy('i.createdAt', 'DESC'),

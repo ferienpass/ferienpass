@@ -37,6 +37,11 @@ class HostFilter extends AbstractFilterType
         return EntityType::class;
     }
 
+    public function shallDisplay(): bool
+    {
+        return $this->security->isGranted('ROLE_ADMIN');
+    }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -58,13 +63,13 @@ class HostFilter extends AbstractFilterType
         ]);
     }
 
-    public function apply(QueryBuilder $qb, FormInterface $form): void
+    public function apply(QueryBuilder $qb, FormInterface $form = null): void
     {
-        if ($form->isEmpty() && $this->security->isGranted('ROLE_ADMIN')) {
+        if ((null === $form || $form->isEmpty()) && $this->security->isGranted('ROLE_ADMIN')) {
             return;
         }
 
-        if ($form->isEmpty() && !$this->security->isGranted('ROLE_ADMIN')) {
+        if ((null === $form || $form->isEmpty()) && !$this->security->isGranted('ROLE_ADMIN')) {
             if (!($user = $this->security->getUser()) instanceof User) {
                 $qb->where('i.id = 0');
 

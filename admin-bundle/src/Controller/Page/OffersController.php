@@ -65,9 +65,10 @@ final class OffersController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/offers/index.html.twig', [
             'qb' => $qb,
-            'createUrl' => $this->generateUrl('admin_offers_new', array_filter(['edition' => $edition?->getAlias()])),
+            'createUrl' => null === $edition || $this->isGranted('offer.create', $edition) ? $this->generateUrl('admin_offers_new', array_filter(['edition' => $edition?->getAlias()])) : null,
             'exports' => ['xlsx'],
             'searchable' => ['name'],
+            'items' => $qb->getQuery()->getResult(),
             'edition' => $edition,
             'uncompletedOffers' => (clone $qb)->select('COUNT(i)')->andWhere('i.state = :status')->setParameter('status', Offer::STATE_DRAFT)->getQuery()->getSingleResult() > 0,
             'aside_nav' => $menu,

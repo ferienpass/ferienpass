@@ -33,7 +33,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_ADMIN')]
-#[Route('/angebote/{edition}/{id}/anmeldungen', requirements: ['id' => '\d+'])]
+#[Route('/angebote/{edition?null}/{id}/anmeldungen', requirements: ['id' => '\d+'])]
 class OfferApplicationsController extends AbstractController
 {
     public function __construct(private readonly AttendanceRepository $attendanceRepository, private readonly PdfExport $pdfExport, private readonly WordExport $wordExport)

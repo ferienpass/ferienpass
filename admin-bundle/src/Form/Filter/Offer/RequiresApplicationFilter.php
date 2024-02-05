@@ -15,6 +15,7 @@ namespace Ferienpass\AdminBundle\Form\Filter\Offer;
 
 use Doctrine\ORM\QueryBuilder;
 use Ferienpass\AdminBundle\Form\Filter\AbstractFilterType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -22,9 +23,18 @@ use Symfony\Contracts\Translation\TranslatableInterface;
 
 class RequiresApplicationFilter extends AbstractFilterType
 {
+    public function __construct(private readonly Security $security)
+    {
+    }
+
     public function getParent(): string
     {
         return ChoiceType::class;
+    }
+
+    public function shallDisplay(): bool
+    {
+        return $this->security->isGranted('ROLE_ADMIN');
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -38,9 +48,9 @@ class RequiresApplicationFilter extends AbstractFilterType
         ]);
     }
 
-    public function apply(QueryBuilder $qb, FormInterface $form): void
+    public function apply(QueryBuilder $qb, FormInterface $form = null): void
     {
-        if ($form->isEmpty()) {
+        if (null === $form || $form->isEmpty()) {
             return;
         }
 

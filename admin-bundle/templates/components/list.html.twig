@@ -11,7 +11,7 @@
         {% endif %}
     </div>
 
-    {% if config.columns is defined %}
+    {% if config.layout|default('table') == 'table' and config.columns is defined %}
         {% include '@FerienpassAdmin/components/_list.table.html.twig' with config %}
     {% else %}
         {% include '@FerienpassAdmin/components/_list.html.twig' with config|default([]) %}

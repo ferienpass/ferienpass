@@ -30,15 +30,17 @@
             <div class="hidden lg:relative lg:z-10 lg:ml-4 lg:flex lg:items-center lg:space-x-4">
 
                 <div class="flex items-center">
-                    <a href="/"
-                       target="_blank"
-                       class="rounded-md py-2 px-3 inline-flex items-center text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-900/80 hover:text-gray-900 dark:hover:text-gray-50">
-                        Frontend
-                    </a>
-                    <a href="{{ path('contao_backend') }}"
-                       class="rounded-md py-2 px-3 inline-flex items-center text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-900/80 hover:text-gray-900 dark:hover:text-gray-50">
-                        CMS
-                    </a>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="/"
+                           target="_blank"
+                           class="rounded-md py-2 px-3 inline-flex items-center text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-900/80 hover:text-gray-900 dark:hover:text-gray-50">
+                            Frontend
+                        </a>
+                        <a href="{{ path('contao_backend') }}"
+                           class="rounded-md py-2 px-3 inline-flex items-center text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-900/80 hover:text-gray-900 dark:hover:text-gray-50">
+                            CMS
+                        </a>
+                    {% endif %}
                 </div>
 
                 {% include '@FerienpassAdmin/layout/_profile_dropdown.html.twig' %}

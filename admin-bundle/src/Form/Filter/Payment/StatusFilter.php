@@ -43,9 +43,9 @@ class StatusFilter extends AbstractFilterType
         ]);
     }
 
-    public function apply(QueryBuilder $qb, FormInterface $form): void
+    public function apply(QueryBuilder $qb, FormInterface $form = null): void
     {
-        if ($form->isEmpty()) {
+        if (null === $form || $form->isEmpty()) {
             return;
         }
 

@@ -35,6 +35,11 @@ class EditionFilter extends AbstractFilterType
         return EntityType::class;
     }
 
+    public function shallDisplay(): bool
+    {
+        return $this->security->isGranted('ROLE_ADMIN');
+    }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -55,9 +60,9 @@ class EditionFilter extends AbstractFilterType
         ]);
     }
 
-    public function apply(QueryBuilder $qb, FormInterface $form): void
+    public function apply(QueryBuilder $qb, FormInterface $form = null): void
     {
-        if ($form->isEmpty()) {
+        if (null === $form || $form->isEmpty()) {
             if (!$this->security->isGranted('ROLE_ADMIN')) {
                 $qb->innerJoin('i.edition', 'e', Join::WITH, 'e IN (SELECT edition FROM '.Edition::class.' edition WHERE edition.archived <> 1)');
             }

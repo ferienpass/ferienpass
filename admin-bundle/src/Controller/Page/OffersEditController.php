@@ -68,14 +68,14 @@ final class OffersEditController extends AbstractController
                 $offer->setImage($imageFileName);
             }
 
-//            if ($imgCopyright = $form->get('imgCopyright')->getData()) {
-//                $fileModel = FilesModel::findByPk($offer->getImage());
-//                if (null !== $fileModel) {
-//                    /** @psalm-suppress UndefinedMagicPropertyAssignment */
-//                    $fileModel->imgCopyright = $imgCopyright;
-//                    $fileModel->save();
-//                }
-//            }
+            //            if ($imgCopyright = $form->get('imgCopyright')->getData()) {
+            //                $fileModel = FilesModel::findByPk($offer->getImage());
+            //                if (null !== $fileModel) {
+            //                    /** @psalm-suppress UndefinedMagicPropertyAssignment */
+            //                    $fileModel->imgCopyright = $imgCopyright;
+            //                    $fileModel->save();
+            //                }
+            //            }
 
             $this->addFlash(...Flash::confirmation()->text('Die Daten wurden erfolgreich gespeichert.')->create());
 
