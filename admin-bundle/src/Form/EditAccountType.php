@@ -79,19 +79,37 @@ class EditAccountType extends AbstractType
                 ]);
             }
 
+            $form->add('accountRoles', ChoiceType::class, [
+                'choices' => User::ACCOUNT_ROLES,
+                'choice_label' => function (string $role): string {
+                    return "accounts.role.$role";
+                },
+                'multiple' => true,
+                'expanded' => true,
+                'by_reference' => false,
+                'fieldset_group' => 'account',
+                'label' => 'accounts.label.accountRoles',
+                'help' => 'accounts.help.accountRoles',
+            ]
+            );
+
             if (\in_array('ROLE_ADMIN', $account->getRoles(), true)) {
                 $form->add('superAdmin', CheckboxType::class, ['fieldset_group' => 'account', 'help' => 'accounts.help.superAdmin']);
             }
 
             if (\in_array('ROLE_ADMIN', $account->getRoles(), true) && !$account->isSuperAdmin()) {
-                $form->add('editableRoles', ChoiceType::class, [
-                    'choices' => User::EDITABLE_ROLES,
+                $form->add('adminRoles', ChoiceType::class, [
+                    'choices' => User::ADMIN_ROLES,
                     'choice_label' => function (string $role): string {
                         return "accounts.role.$role";
                     },
                     'multiple' => true,
                     'expanded' => true,
-                    'fieldset_group' => 'account', 'label' => 'accounts.label.roles', 'help' => 'accounts.help.roles']
+                    'by_reference' => false,
+                    'fieldset_group' => 'account',
+                    'label' => 'accounts.label.adminRoles',
+                    'help' => 'accounts.help.adminRoles',
+                ]
                 );
             }
 

@@ -17,7 +17,6 @@ use Contao\BackendTemplate;
 use Contao\ContentModel;
 use Contao\CoreBundle\Controller\ContentElement\AbstractContentElementController;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsContentElement;
-use Contao\InsertTags;
 use Contao\StringUtil;
 use Contao\Template;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,7 +48,7 @@ class HyperlinkController extends AbstractContentElementController
             $template = new BackendTemplate('be_wildcard');
 
             $template->title = $this->container->get('translator')->trans('CTE.'.$this->getType().'.0', [], 'contao_modules');
-            $template->wildcard = $model->linkTitle.' ⇒ '.InsertTags::replaceInsertTags($model->url);
+            $template->wildcard = $model->linkTitle.' ⇒ '.$model->url;
 
             return new Response($template->parse());
         }

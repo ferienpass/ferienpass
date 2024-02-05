@@ -9,10 +9,14 @@ accounts:
     contact.0: Kontaktdaten
     address.0: Postanschrift
     account.0: Account-Status
+  action.impersonate: Anmelden als
   ROLE_MEMBER: Eltern
   ROLE_HOST: Veranstaltende
   ROLE_ADMIN: Admins
   role:
+    ROLE_MEMBER: Eltern
+    ROLE_HOST: Veranstalter
+    ROLE_ADMIN: Admin
     ROLE_PARTICIPANTS_ADMIN: Teilnehmende einsehen und erstellen
     ROLE_PAYMENTS_ADMIN: Zahlungen einsehen und erstellen
     ROLE_CMS_ADMIN: Zugriff auf CMS
@@ -40,12 +44,14 @@ accounts:
     street: Straße
     postal: PLZ
     city: Ort
-    roles: Rollen
+    accountRoles: Account
+    adminRoles: Rollen
     disable: Account deaktivieren
   help:
     hosts: Dieser Account erhält Zugriff auf alle Daten (also Angebote, Teilnehmerlisten) dieses Veranstalters.
     superAdmin: Der Account hat Zugriff auf alle Funktionen.
-    roles: Die Rollen definieren, auf wie welche Funktionen dieser Account Zugriff hat.
+    accountRoles: Ein Account kann als Veranstalter, Admin, und/oder Eltern gelistet werden.
+    adminRoles: Die Rollen definieren, auf wie welche Funktionen dieser Account Zugriff hat.
     disabled: Der Account darf sich nicht mehr anmelden.
 
 offer.tab.web: Webansicht
@@ -313,6 +319,7 @@ profile:
 user:
   title: Persönliche Daten
   logout: Abmelden
+  impersonation_exit: Zurück zu %impersonator%
   password.title: Passwort ändern
   label.firstname: Vorname
   label.lastname: Nachname

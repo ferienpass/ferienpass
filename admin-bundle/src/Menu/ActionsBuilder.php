@@ -280,9 +280,19 @@ class ActionsBuilder
             // 'display' => $this->isGranted('edit', $item),
             'extras' => ['icon' => 'pencil-solid'],
         ]);
+
+        // if ($this->isGranted('ROLE_HOST', $item)) {
+        $root->addChild('impersonate', [
+            'label' => 'accounts.action.impersonate',
+            'route' => 'admin_index',
+            'routeParameters' => ['_switch_user' => $item->getUserIdentifier()],
+            'display' => $this->isGranted('ROLE_ALLOWED_TO_SWITCH'),
+            'extras' => ['icon' => 'logout-filled'],
+        ]);
+        // }
     }
 
-    private function isGranted(string $attribute, object $item): bool
+    private function isGranted(string $attribute, object $item = null): bool
     {
         return $this->authorizationChecker->isGranted($attribute, $item);
     }

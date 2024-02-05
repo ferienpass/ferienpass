@@ -22,9 +22,11 @@ use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\SwitchUserToken;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Http\Logout\LogoutUrlGenerator;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class MenuBuilder
 {
@@ -96,6 +98,18 @@ class MenuBuilder
             'current' => null !== $request && 'admin_password' === $request->attributes->get('_route'),
             'extras' => ['icon' => 'lock-closed-filled'],
         ]);
+
+        $token = $this->security->getToken();
+
+        if ($token instanceof SwitchUserToken) {
+            $impersonatorUser = $token->getOriginalToken()->getUser();
+            $menu->addChild('user.impersonation_exit', [
+                'label' => new TranslatableMessage('user.impersonation_exit', ['%impersonator%' => $impersonatorUser->getUserIdentifier()], 'admin'),
+                'route' => 'admin_accounts_index',
+                'routeParameters' => ['_switch_user' => '_exit'],
+                'extras' => ['icon' => 'logout-filled'],
+            ]);
+        }
 
         $menu->addChild('user.logout', [
             'uri' => $this->logoutUrlGenerator->getLogoutUrl('ferienpass_admin'),

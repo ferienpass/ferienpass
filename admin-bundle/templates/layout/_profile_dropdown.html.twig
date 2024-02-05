@@ -26,7 +26,7 @@
                             {% trans_default_domain 'admin' %}
                             {% block link %}
                                 <span class="mr-3 h-5 w-5 text-gray-400">{{ source('@FerienpassAdmin/icons/'~item.extra('icon')~'.svg', ignore_missing = true) }}</span>
-                                <span>{{ item.name|trans }}</span>
+                                <span>{{ item.label|trans }}</span>
                             {% endblock %}
                         {% endembed %}
                     {% else %}
@@ -34,7 +34,7 @@
                             {% trans_default_domain 'admin' %}
                             {% block link %}
                                 <span class="mr-3 h-5 w-5 text-gray-400">{{ source('@FerienpassAdmin/icons/'~item.extra('icon')~'.svg', ignore_missing = true) }}</span>
-                                <span>{{ item.name|trans }}</span>
+                                <span>{{ item.label|trans }}</span>
                             {% endblock %}
                         {% endembed %}
                     {% endif %}
