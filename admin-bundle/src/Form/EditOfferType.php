@@ -16,6 +16,7 @@ namespace Ferienpass\AdminBundle\Form;
 use Ferienpass\AdminBundle\Dto\Annotation\FormType as FormTypeAnnotation;
 use Ferienpass\AdminBundle\Form\CompoundType\OfferDatesType;
 use Ferienpass\CoreBundle\Entity\Offer;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -34,7 +35,7 @@ use Symfony\UX\Dropzone\Form\DropzoneType;
 
 class EditOfferType extends AbstractType
 {
-    public function __construct(private readonly WorkflowInterface $offerStateMachine)
+    public function __construct(private readonly WorkflowInterface $offerStateMachine, private readonly Security $security)
     {
     }
 
@@ -86,9 +87,7 @@ class EditOfferType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'Daten speichern',
-            ])
+            ->add('submit', SubmitType::class)
         ;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
@@ -98,9 +97,11 @@ class EditOfferType extends AbstractType
             }
 
             foreach ($this->offerStateMachine->getEnabledTransitions($offer) as $enabledTransition) {
-                $form->add($label = 'submitAnd'.ucfirst($enabledTransition->getName()), SubmitType::class, [
-                    'label' => $label,
-                ]);
+                if (!$this->security->isGranted($enabledTransition->getName(), $offer)) {
+                    continue;
+                }
+
+                $form->add('submitAnd'.ucfirst($enabledTransition->getName()), SubmitType::class);
             }
         });
 

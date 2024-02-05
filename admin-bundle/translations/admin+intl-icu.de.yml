@@ -112,6 +112,13 @@ offers:
     maxParticipants: max. Teilnehmer
     applyText: Anmeldungen unter (wenn nicht online)
     contact: Auskunft unter
+    submit: Daten speichern
+    submitAndComplete: Speichern und finalisieren
+    submitAndApprove: Speichern und freigeben
+    submitAndPublish: Speichern und veröffentlichen
+    submitAndUnpublish: Speichern und un-veröffentlichen
+    submitAndCancel: Speichern und absagen
+    submitAndRelaunch: Speichern und wiederherstellen
   help:
     applyText: Wie kann sich zu dem Angebot angemeldet werden (wenn Online-System nicht genutzt)?
     contact: Wer gibt Auskunft (z.B. Name + TelNr)? Leer lassen, falls die Info schon in "Anmeldung unter" steht.

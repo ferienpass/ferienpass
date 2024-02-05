@@ -27,9 +27,11 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -45,7 +47,7 @@ final class OffersEditController extends AbstractController
     #[LiveProp]
     public Offer $initialFormData;
 
-    public function __construct(#[Autowire(service: 'ferienpass.file_uploader.offer')] private readonly FileUploader $fileUploader, private readonly ManagerRegistry $doctrine)
+    public function __construct(#[Autowire(service: 'ferienpass.file_uploader.offer')] private readonly FileUploader $fileUploader, private readonly ManagerRegistry $doctrine, private readonly WorkflowInterface $offerStateMachine)
     {
     }
 
@@ -80,13 +82,24 @@ final class OffersEditController extends AbstractController
 
             $this->addFlash(...Flash::confirmation()->text('Die Daten wurden erfolgreich gespeichert.')->create());
 
+            foreach ($this->offerStateMachine->getEnabledTransitions($offer) as $enabledTransition) {
+                if (!$this->isGranted($enabledTransition->getName(), $offer)) {
+                    continue;
+                }
+
+                $transitionButton = 'submitAnd'.ucfirst($enabledTransition->getName());
+                if ($form->has($transitionButton) && ($button = $form->get($transitionButton)) && $button instanceof SubmitButton && $button->isClicked()) {
+                    $this->offerStateMachine->apply($offer, $enabledTransition->getName());
+                }
+            }
+
             return $this->redirectToRoute('admin_offers_edit', ['id' => $offer->getId()]);
         }
 
         return $this->render('@FerienpassAdmin/page/offers/edit.html.twig', [
             'item' => $offer,
             'form' => $form->createView(),
-            'breadcrumb' => $breadcrumb->generate(['offers.title', ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], [$offer->getEdition()->getName(), ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], $offer->getName().' (bearbeiten)'),
+            'breadcrumb' => $breadcrumb->generate(['offers.title', ['route' => 'admin_offers_index', 'routeParameters' => array_filter(['edition' => $offer->getEdition()?->getAlias()])]], $offer->getEdition() ? [$offer->getEdition()->getName(), ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]] : [], $offer->getName().' (bearbeiten)'),
         ]);
     }
 
