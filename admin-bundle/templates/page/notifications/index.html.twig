@@ -64,7 +64,7 @@
                         <nav class="-ml-3 flex space-x-4" aria-label="{{ 'editions.title'|trans }}">
                             {% if editions is not empty %}
                                 <a href="{{ path('admin_notifications', { type: app.request.get('type') }) }}"
-                                   class="{{ 'admin_notifications' == app.request.get('_route') and edition is empty ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:text-gray-700' }} rounded-md px-3 py-2 whitespace-nowrap text-sm font-medium"
+                                   class="{{ 'admin_notifications' == app.request.get('_route') and edition is empty ? 'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100/80' : 'text-gray-500 dark:text-gray-100/50 hover:text-gray-700 dark:hover:text-gray-100/80' }} rounded-md px-3 py-2 whitespace-nowrap text-sm font-medium"
                                    {% if 'admin_notifications' == app.request.get('_route') and edition is empty %}aria-current="page"{% endif %}>
                                     <span>Standard</span>
                                     <span class="ml-1 w-2.5 h-2.5 inline-block {{ notifier.isActive(app.request.get('type'), null, true) ? 'bg-green-600' : 'bg-red-600' }} rounded-full"
@@ -74,7 +74,7 @@
 
                             {% for edition in editions %}
                                 <a href="{{ path('admin_notifications', { type: app.request.get('type'), edition: edition.alias }) }}"
-                                   class="{{ edition.alias == app.request.get('edition') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:text-gray-700' }} rounded-md px-3 py-2 whitespace-nowrap text-sm font-medium"
+                                   class="{{ edition.alias == app.request.get('edition') ? 'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100/80' : 'text-gray-500 dark:text-gray-100/50 hover:text-gray-700 dark:hover:text-gray-100/80' }} rounded-md px-3 py-2 whitespace-nowrap text-sm font-medium"
                                    {% if edition.alias == app.request.get('edition') %}aria-current="page"{% endif %}>
                                     <span>{{ edition.name }}</span>
                                     <span class="ml-1 w-2.5 h-2.5 inline-block {{ notifier.isActive(app.request.get('type'), edition, true) ? 'bg-green-600' : 'bg-red-600' }} rounded-full"
@@ -82,7 +82,7 @@
                                 </a>
                             {% endfor %}
                             <a href="{{ path('admin_notifications_new', { type: app.request.get('type') }) }}"
-                               class="{{ app.request.get('_route') == 'admin_notifications_new' ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:text-gray-700' }} rounded-md px-3 py-2 whitespace-nowrap text-sm font-medium"
+                               class="{{ app.request.get('_route') == 'admin_notifications_new' ? 'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100/80' : 'text-gray-500 dark:text-gray-100/50 hover:text-gray-700 dark:hover:text-gray-100/80' }} rounded-md px-3 py-2 whitespace-nowrap text-sm font-medium"
                                {% if app.request.get('_route') == 'admin_notifications_new' %}aria-current="page"{% endif %}>+
                                 Für eine Saison anpassen</a>
                         </nav>

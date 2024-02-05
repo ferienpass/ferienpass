@@ -26,6 +26,6 @@ class SignInController extends AbstractController
             return new Response('', Response::HTTP_NO_CONTENT);
         }
 
-        return $this->render('@FerienpassCore/Fragment/login.html.twig');
+        return $this->render('@FerienpassCms/fragment/login.html.twig');
     }
 }

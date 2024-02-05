@@ -4,7 +4,7 @@
 
     {{ form_start(form) }}
 
-    <div class="sticky z-10 top-0 bg-white _dark:bg-gray-900 border-b border-gray-300 shadow-sm py-4 px-4 sm:px-6 md:px-8 lg:px-16">
+    <div class="sticky z-10 top-0 bg-white dark:bg-gray-900 border-b border-gray-300 shadow-sm py-4 px-4 sm:px-6 md:px-8 lg:px-16">
 
         <div>
             <a class="flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 focus:outline-none focus:underline transition duration-150 ease-in-out"
@@ -15,7 +15,7 @@
         </div>
         <div class="mt-2 md:flex md:items-center md:justify-between">
             <div class="flex-1 min-w-0">
-                <h2 class="text-2xl font-bold leading-7 text-gray-900 _dark:text-gray-50 sm:text-3xl sm:leading-9 sm:truncate">
+                <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-gray-50 sm:text-3xl sm:leading-9 sm:truncate">
                     {{ form.vars.value.name }}
                 </h2>
             </div>
@@ -40,15 +40,15 @@
                     <div class="md:grid md:grid-cols-3 md:gap-6">
                         <div class="md:col-span-1">
                             <div class="px-4 sm:px-0">
-                                <h3 class="text-lg font-medium leading-6 text-gray-900 _dark:text-gray-50">{{ "Host.#{fieldset}_legend"|trans }}</h3>
-                                <div class="mt-1 text-sm leading-5 text-gray-500 _dark:text-gray-300">
+                                <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-50">{{ "Host.#{fieldset}_legend"|trans }}</h3>
+                                <div class="mt-1 text-sm leading-5 text-gray-500 dark:text-gray-300">
                                     <p>{{ "Host.#{fieldset}_help"|trans }}</p>
                                 </div>
                             </div>
                         </div>
                         <div class="mt-5 md:mt-0 md:col-span-2">
                             <div class="shadow overflow-hidden sm:rounded-md">
-                                <div class="px-4 py-5 bg-white _dark:bg-gray-900 sm:p-6">
+                                <div class="px-4 py-5 bg-white dark:bg-gray-900 sm:p-6">
                                     <div class="space-y-6">
                                         {% for field in form.children|filter(f => f.vars['fieldset_group'] is defined and fieldset == f.vars['fieldset_group']) %}
                                             {{ form_row(field) }}

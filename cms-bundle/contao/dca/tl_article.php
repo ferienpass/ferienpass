@@ -11,6 +11,8 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
+use Contao\CoreBundle\DataContainer\PaletteManipulator;
+
 $GLOBALS['TL_DCA']['tl_article']['palettes']['default'] = str_replace(
     ',stop',
     ',stop,ferienpass_task_condition,ferienpass_task_condition_inverted',
@@ -47,3 +49,26 @@ $GLOBALS['TL_DCA']['tl_article']['fields']['ferienpass_task_condition_inverted']
     ],
     'sql' => "char(1) NOT NULL default ''",
 ];
+
+
+(new PaletteManipulator())
+    ->removeField('alias')
+    ->removeField('author')
+    ->removeField('inColumn')
+    ->removeField('teaserCssID')
+    ->removeField('showTeaser')
+    ->removeField('teaser')
+    ->removeField('printable')
+    ->removeField('customTpl')
+    ->removeField('protected')
+    ->removeField('cssID')
+    ->applyToPalette('default', 'tl_article')
+;
+
+unset(
+    $GLOBALS['TL_DCA']['tl_article']['fields']['author']['filter'],
+    $GLOBALS['TL_DCA']['tl_article']['fields']['inColumn']['filter'],
+    $GLOBALS['TL_DCA']['tl_article']['fields']['protected']['filter'],
+    $GLOBALS['TL_DCA']['tl_article']['fields']['groups']['filter'],
+);
+

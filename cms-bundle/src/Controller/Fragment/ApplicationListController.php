@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace Ferienpass\CmsBundle\Controller\Fragment;
 
-use Contao\FrontendUser;
 use Doctrine\Common\Collections\Collection;
+use Ferienpass\CmsBundle\Form\SimpleType\ContaoRequestTokenType;
 use Ferienpass\CoreBundle\ApplicationSystem\ApplicationSystems;
 use Ferienpass\CoreBundle\Entity\Attendance;
+use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Facade\AttendanceFacade;
-use Ferienpass\CoreBundle\Form\SimpleType\ContaoRequestTokenType;
 use Ferienpass\CoreBundle\Repository\AttendanceRepository;
 use Ferienpass\CoreBundle\Ux\Flash;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,15 +37,15 @@ class ApplicationListController extends AbstractController
     public function __invoke(Request $request): Response
     {
         $user = $this->getUser();
-        if (!$user instanceof FrontendUser) {
+        if (!$user instanceof User) {
             return new Response('', Response::HTTP_NO_CONTENT);
         }
 
         /** @var Collection<int, Attendance> $attendances */
         $attendances = $this->attendanceRepository->createQueryBuilder('a')
             ->innerJoin('a.participant', 'p')
-            ->where('p.member = :member')
-            ->setParameter('member', $user->id)
+            ->where('p.user = :member')
+            ->setParameter('member', $user->getId())
             ->getQuery()
             ->getResult()
         ;
@@ -69,7 +69,7 @@ class ApplicationListController extends AbstractController
             $applicationSystems[$attendance->getId() ?? 0] = $this->applicationSystems->findApplicationSystem($attendance->getOffer());
         }
 
-        return $this->render('@FerienpassCore/Fragment/application_list.html.twig', [
+        return $this->render('@FerienpassCms/fragment/application_list.html.twig', [
             'attendances' => $attendances,
             'withdraw' => array_map(fn (FormInterface $form) => $form->createView(), $forms),
             'prioritize' => array_map(fn (FormInterface $form) => $form->createView(), $prioritizeForms),

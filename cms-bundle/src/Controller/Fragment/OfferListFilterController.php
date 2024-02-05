@@ -66,7 +66,7 @@ final class OfferListFilterController extends AbstractController
             throw new RedirectResponseException($this->getFilterUrl($form, $request));
         }
 
-        return $this->renderForm('@FerienpassCore/Fragment/offer_list_filter.html.twig', [
+        return $this->renderForm('@FerienpassCms/fragment/offer_list_filter.html.twig', [
             'shortForm' => $shortForm,
             'fullForm' => $form,
         ]);

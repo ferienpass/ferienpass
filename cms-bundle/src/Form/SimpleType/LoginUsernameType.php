@@ -11,28 +11,38 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CoreBundle\Form\SimpleType;
+namespace Ferienpass\CmsBundle\Form\SimpleType;
 
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-final class ContaoLoginFormSubmitType extends HiddenType
+final class LoginUsernameType extends AbstractType
 {
+    public function __construct(private readonly AuthenticationUtils $authenticationUtils)
+    {
+    }
+
+    public function getParent()
+    {
+        return EmailType::class;
+    }
+
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         parent::buildView($view, $form, $options);
 
-        $view->vars['full_name'] = 'FORM_SUBMIT';
+        $view->vars['full_name'] = 'username';
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        parent::configureOptions(
             $resolver
-                ->setDefault('data', 'tl_login')
-                ->setDefault('mapped', false)
-        );
+                ->setDefaults([
+                    'data' => $this->authenticationUtils->getLastUsername(),
+                ]);
     }
 }

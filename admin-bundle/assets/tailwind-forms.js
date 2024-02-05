@@ -18,6 +18,11 @@ module.exports = plugin(function ({addBase, theme}) {
             '&:disabled': {
                 'opacity': '.5',
             },
+            '@media (prefers-color-scheme: dark)': {
+                backgroundColor: 'rgba(255, 255, 255, .05)',
+                borderColor: 'rgba(255, 255, 255, .1)',
+                color: 'rgb(255, 255, 255)'
+            }
         },
         "[type='checkbox'], [type='radio']": {
             borderColor: theme('colors.gray.400'),

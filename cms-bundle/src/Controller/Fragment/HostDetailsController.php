@@ -29,7 +29,7 @@ final class HostDetailsController extends AbstractController
 
     public function __invoke(Host $host, Request $request): Response
     {
-        return $this->render('@FerienpassCore/Fragment/host_details.html.twig', [
+        return $this->render('@FerienpassCms/fragment/host_details.html.twig', [
             'host' => $host,
             'offers' => $this->fetchOffers($host),
         ]);

@@ -40,9 +40,9 @@ return function(ContainerConfigurator $container): void {
     ;
 
     $services->get(LostPasswordController::class)
-        ->tag('ferienpass.fragment', ['type' => 'lost_password','method' => 'request'])
-        ->tag('ferienpass.fragment', ['type' => 'lost_password_requested','method' => 'requested'])
-        ->tag('ferienpass.fragment', ['type' => 'lost_password_reset','method' => 'reset'])
+        ->tag('ferienpass.fragment', ['type' => 'lost_password', 'method' => 'request'])
+        ->tag('ferienpass.fragment', ['type' => 'lost_password_requested', 'method' => 'requested'])
+        ->tag('ferienpass.fragment', ['type' => 'lost_password_reset', 'method' => 'reset'])
     ;
 
     // Aliases for autowiring
@@ -52,32 +52,30 @@ return function(ContainerConfigurator $container): void {
     $services->alias(FragmentHandler::class, 'contao.fragment.handler');
 
     // Tagged user account fragments
-    $services->set(ParticipantsController::class)
-        ->tag('ferienpass.user_account', ['key'=>'participants', 'alias'=>'teilnehmer', 'icon'=>'user-group'])
+    $services->get(ParticipantsController::class)
+        ->tag('ferienpass.user_account', ['key' => 'participants', 'alias' => 'teilnehmer', 'icon' => 'user-group'])
     ;
 
-    $services->set(PersonalDataController::class)
-        ->tag('ferienpass.user_account', ['key'=>'personal_data', 'alias'=>'persönliche-daten', 'icon'=>'user-circle'])
+    $services->get(PersonalDataController::class)
+        ->tag('ferienpass.user_account', ['key' => 'personal_data', 'alias' => 'persönliche-daten', 'icon' => 'user-circle'])
     ;
 
-    $services->set(ChangePasswordController::class)
-        ->tag('ferienpass.user_account', ['key'=>'change_password', 'alias'=>'passwort-ändern', 'icon'=>'lock-closed'])
+    $services->get(ChangePasswordController::class)
+        ->tag('ferienpass.user_account', ['key' => 'change_password', 'alias' => 'passwort-ändern', 'icon' => 'lock-closed'])
     ;
 
-    $services->set(CloseAccount::class)
-        ->tag('ferienpass.user_account', ['key'=>'close_account', 'alias'=>'account-löschen', 'icon'=>'trash'])
+    $services->get(CloseAccount::class)
+        ->tag('ferienpass.user_account', ['key' => 'close_account', 'alias' => 'account-löschen', 'icon' => 'trash'])
     ;
 
     // Tagged menu builders
     $services->set(MenuBuilder::class)
-        ->tag('knp_menu.menu_builder', ['method'=>'userNavigation', 'alias'=>'user_navigation'])
-        ->tag('knp_menu.menu_builder', ['method'=>'userAccountNavigation', 'alias'=>'user_account_navigation'])
+        ->tag('knp_menu.menu_builder', ['method' => 'userNavigation', 'alias' => 'user_navigation'])
+        ->tag('knp_menu.menu_builder', ['method' => 'userAccountNavigation', 'alias' => 'user_account_navigation'])
     ;
 
     // Public services
     $services->set(PageBuilderFactory::class)
         ->public()
     ;
-
-
 };

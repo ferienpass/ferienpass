@@ -1,8 +1,6 @@
 {% trans_default_domain 'admin' %}
 
-<div class="divide-y divide-gray-300">
-
-    {#        {{ render(controller('Ferienpass\\AdminBundle\\Controller\\Fragment\\ListFilterController', {  })) }} #}
+<div class="divide-y divide-gray-300 dark:divide-gray-700">
 
     <div class="flex justify-between py-4">
         <div>
@@ -23,6 +21,6 @@
 
 {% if pagination is defined %}
     <div class="py-10">
-        {% include '@FerienpassCore/Partial/pagination.html.twig' %}
+        {% include '@FerienpassAdmin/components/_pagination.html.twig' %}
     </div>
 {% endif %}

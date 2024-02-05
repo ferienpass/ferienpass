@@ -14,33 +14,24 @@ declare(strict_types=1);
 namespace Ferienpass\CmsBundle\Controller\Fragment;
 
 use Contao\CoreBundle\Controller\AbstractController;
-use Contao\FrontendUser;
-use Contao\MemberModel;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\CoreBundle\Entity\Participant;
+use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Form\UserParticipantsType;
 use Ferienpass\CoreBundle\Ux\Flash;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class RegistrationWelcomeController extends AbstractController
 {
-    public function __construct(private readonly ManagerRegistry $doctrine, private readonly FormFactoryInterface $formFactory)
-    {
-    }
-
-    public function __invoke(Request $request): Response
+    public function __invoke(Request $request, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
-        if (!$user instanceof FrontendUser) {
+        if (!$user instanceof User) {
             return new Response('', Response::HTTP_NO_CONTENT);
         }
 
-        $em = $this->doctrine->getManager();
-        $member = MemberModel::findByPk($user->id);
-
-        $form = $this->formFactory->create(UserParticipantsType::class, null, ['member' => $member]);
+        $form = $this->createForm(UserParticipantsType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -64,7 +55,7 @@ class RegistrationWelcomeController extends AbstractController
             return $this->redirectToRoute($request->attributes->get('_route') ?: 'personal_data');
         }
 
-        return $this->render('@FerienpassCore/Fragment/registration_welcome.html.twig', [
+        return $this->render('@FerienpassCms/fragment/registration_welcome.html.twig', [
             'form' => $form,
         ]);
     }

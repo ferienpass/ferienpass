@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\CmsBundle\Form;
 
+use Ferienpass\CmsBundle\Form\SimpleType\ContaoRequestTokenType;
 use Ferienpass\CmsBundle\Form\SimpleType\LoginPasswordType;
 use Ferienpass\CmsBundle\Form\SimpleType\LoginUsernameType;
 use Symfony\Component\Form\AbstractType;
@@ -28,15 +29,11 @@ class UserLoginType extends AbstractType
         $builder
             ->add('username', LoginUsernameType::class)
             ->add('password', LoginPasswordType::class)
+            ->add('requestToken', ContaoRequestTokenType::class)
             ->add('autologin', CheckboxType::class, [
                 'required' => false,
-                // 'label' => 'MSC.autologin',
-                // 'translation_domain' => 'contao_default',
             ])
-            ->add('submit', SubmitType::class, [
-                // 'label' => 'MSC.login',
-                // 'translation_domain' => 'contao_default',
-            ])
+            ->add('submit', SubmitType::class)
         ;
     }
 

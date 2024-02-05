@@ -19,7 +19,6 @@ use Ferienpass\CmsBundle\DependencyInjection\FerienpassCmsExtension;
 use Ferienpass\CmsBundle\Fragment\FragmentReference;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
 class FerienpassCmsBundle extends AbstractBundle
@@ -40,10 +39,5 @@ class FerienpassCmsBundle extends AbstractBundle
 
         $container->addCompilerPass(new RegisterFragmentsPass(FragmentReference::TAG_NAME));
         $container->addCompilerPass(new UserAccountFragmentsPass());
-    }
-
-    public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
-    {
-        $container->import(__DIR__.'/../config/packages/contao.php');
     }
 }

@@ -1,4 +1,4 @@
-<div {{ attributes }}>
+<div {{ attributes.defaults(stimulus_controller('ferienpass/cms-signin-login', { requestToken: contao_request_token() })) }}>
 
     <div class="mx-auto w-full max-w-sm">
         <div>
@@ -6,11 +6,10 @@
                 Benutzerkennung und Ihrem Passwort an.</p>
         </div>
 
-        <div class="mt-8"
-             x-data="{ validEmail: null, message: null, isLoading: false }">
+        <div class="mt-8">
 
             {{ form_start(form, {
-
+                attr: stimulus_action('ferienpass/cms-signin-login', 'submit:prevent').toArray()
             }) }}
 
             {% if error %}
@@ -31,25 +30,21 @@
             </div>
             {% endif %}
 
-            </template>
-            <template x-if="message">
-                <div class="mt-6 mb-6">
-                    {% embed '@FerienpassCore/Alert/error.html.twig' %}
-                        {% block content %}<p x-text="message"></p>{% endblock %}
-                    {% endembed %}
-                </div>
-
-            </template>
+            <div class="mt-6 mb-6">
+                {% embed '@FerienpassCore/Alert/error.html.twig' %}
+                    {% block content %}<p></p>{% endblock %}
+                {% endembed %}
+            </div>
 
                 <div class="grid gap-4">
-                    {{ form_row(form.username) }}
-                    {{ form_row(form.password) }}
+                    {{ form_row(form.username, { attr: stimulus_target('ferienpass/cms-signin-login', 'username').toArray() }) }}
+                    {{ form_row(form.password, { attr: stimulus_target('ferienpass/cms-signin-login', 'password').toArray() }) }}
                 </div>
 
                 <div class="mt-6 flex items-center justify-between">
 
                     <div class="flex items-center">
-                        {{ form_row(form.autologin) }}
+                        {{ form_row(form.autologin, { attr: stimulus_target('ferienpass/cms-signin-login', 'remember_me').toArray() }) }}
                     </div>
 
                     <div class="text-sm leading-5">

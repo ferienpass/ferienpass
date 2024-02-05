@@ -13,22 +13,19 @@ declare(strict_types=1);
 
 namespace Ferienpass\CmsBundle\Components\SignIn;
 
-use Contao\MemberModel;
 use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Form\UserRegistrationType;
 use Ferienpass\CoreBundle\Message\AccountCreated;
+use Ferienpass\CoreBundle\Message\AccountRegistrationHelp;
 use Ferienpass\CoreBundle\Message\AccountResendActivation;
 use Ferienpass\CoreBundle\Repository\ParticipantRepository;
-use Ferienpass\CoreBundle\Ux\Flash;
+use Ferienpass\CoreBundle\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -50,31 +47,24 @@ class Registration extends AbstractController
     }
 
     #[LiveAction]
-    public function submit(Session $session, EntityManagerInterface $em, MessageBusInterface $messageBus, UserPasswordHasherInterface $passwordHasher)
+    public function submit(Session $session, EntityManagerInterface $em, MessageBusInterface $messageBus, UserRepository $repository)
     {
         $this->submitForm();
 
         /** @var User $user */
         $user = $this->getForm()->getData();
 
-        $user->setRoles(['ROLE_MEMBER']);
-
-        dd($user);
-
-        if (false) {
-            $this->resendActivationMail($unactivated);
+        if (null !== ($existing = $repository->findOneBy(['email' => $user->getEmail()]))) {
+            if ($existing->isDisabled()) {
+                $messageBus->dispatch(new AccountResendActivation($existing->getId()));
+            } else {
+                $messageBus->dispatch(new AccountRegistrationHelp($existing->getId()));
+            }
 
             return $this->redirectToRoute('registration_confirm');
         }
 
-        if (false) {
-            $form->addError(
-                new FormError('Ein Konto mit dieser E-Mail-Adresse besteht bereits. Versuchen Sie sich, anzumelden oder Ihr Passwort zurückzusetzen.')
-            );
-        }
-
-        $user->setPassword($passwordHasher->hashPassword($user, $user->getPlainPassword()));
-
+        $user->setRoles(['ROLE_MEMBER']);
         $user->setDisabled();
 
         $session->set('registration.email', $user->getEmail());
@@ -92,17 +82,6 @@ class Registration extends AbstractController
     protected function instantiateForm(): FormInterface
     {
         return $this->createForm(UserRegistrationType::class, $this->initialFormData);
-    }
-
-    private function resendActivationMail(MemberModel $member): void
-    {
-        if (!$member->disable) {
-            return;
-        }
-
-        $this->messageBus->dispatch(new AccountResendActivation((int) $member->id));
-
-        $this->addFlash(...Flash::confirmation()->text(new TranslatableMessage('MSC.resendActivation', [], 'contao_default'))->create());
     }
 
     private function migrateSessionParticipants(Session $session, User $user)

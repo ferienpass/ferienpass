@@ -26,8 +26,14 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AbstractContentPage extends AbstractController
 {
+    protected $protected = false;
+
     public function __invoke(Request $request): Response
     {
+        if ($this->protected) {
+            $this->denyAccessUnlessGranted('ROLE_MEMBER');
+        }
+
         $this->initializeContaoFramework();
 
         $pageModel = $request->attributes->get('pageModel');

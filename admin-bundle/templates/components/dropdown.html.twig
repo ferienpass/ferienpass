@@ -21,14 +21,14 @@
 
     <div x-show="dropdownOpen"
          x-cloak
-         class="absolute mt-2 {{ dropdownClass }} rounded shadow py-1 bg-white _dark:bg-gray-900 ring-1 ring-black ring-opacity-5 divide-y divide-gray-100"
+         class="absolute mt-2 {{ dropdownClass }} rounded shadow py-1 bg-white z-10 dark:bg-gray-950 ring-1 ring-black ring-opacity-5 divide-y divide-gray-100"
          x-transition:enter="transition ease-out duration-100"
          x-transition:enter-start="transform opacity-0 scale-95"
          x-transition:enter-end="transform opacity-100 scale-100"
          x-transition:leave="transition ease-in duration-75"
          x-transition:leave-start="transform opacity-100 scale-100"
          x-transition:leave-end="transform opacity-0 scale-95">
-        <div class="py-1 rounded-md bg-white shadow-xs z-10 relative">
+        <div class="py-1 rounded-md bg-white dark:bg-gray-950 shadow-xs relative">
 
             {% block dropdown %}{% endblock %}
 

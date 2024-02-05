@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Form\Filter\Offer;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Ferienpass\AdminBundle\Form\Filter\AbstractFilterType;
 use Ferienpass\CoreBundle\Entity\Edition;
@@ -42,8 +43,8 @@ class EditionFilter extends AbstractFilterType
                 $qb = $er->createQueryBuilder('e');
 
                 if (!$this->security->isGranted('ROLE_ADMIN')) {
+                    $qb->where('e.archived <> 1');
                 }
-                $qb->where('e.archived <> 1');
 
                 return $qb->orderBy('e.name');
             },
@@ -57,6 +58,10 @@ class EditionFilter extends AbstractFilterType
     public function apply(QueryBuilder $qb, FormInterface $form): void
     {
         if ($form->isEmpty()) {
+            if (!$this->security->isGranted('ROLE_ADMIN')) {
+                $qb->innerJoin('i.edition', 'e', Join::WITH, 'e IN (SELECT edition FROM '.Edition::class.' edition WHERE edition.archived <> 1)');
+            }
+
             return;
         }
 

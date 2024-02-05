@@ -11,6 +11,8 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
+use Contao\CoreBundle\DataContainer\PaletteManipulator;
+
 $GLOBALS['TL_DCA']['tl_page']['palettes']['offer_list'] = '{title_legend},title,type;{routing_legend},alias,routePath;{expert_legend:hide},hide;{publish_legend},published';
 $GLOBALS['TL_DCA']['tl_page']['palettes']['offer_details'] = '{title_legend},title,type;{routing_legend},alias,routePath;{expert_legend:hide},hide;{publish_legend},published';
 $GLOBALS['TL_DCA']['tl_page']['palettes']['host_details'] = '{title_legend},title,type;{routing_legend},alias,routePath;{expert_legend:hide},hide;{publish_legend},published';
@@ -24,3 +26,29 @@ $GLOBALS['TL_DCA']['tl_page']['palettes']['lost_password_confirm'] = '{title_leg
 $GLOBALS['TL_DCA']['tl_page']['palettes']['registration_activate'] = '{title_legend},title,type;{routing_legend},alias,routePath;{expert_legend:hide},hide;{publish_legend},published';
 $GLOBALS['TL_DCA']['tl_page']['palettes']['registration_confirm'] = '{title_legend},title,type;{routing_legend},alias,routePath;{expert_legend:hide},hide;{publish_legend},published';
 $GLOBALS['TL_DCA']['tl_page']['palettes']['registration_welcome'] = '{title_legend},title,type;{routing_legend},alias,routePath;{expert_legend:hide},hide;{publish_legend},published';
+
+
+(new PaletteManipulator())
+    ->removeField('requireItem')
+    ->removeField('routePath')
+    ->removeField('routePriority')
+    ->removeField('routeConflicts')
+    ->removeField('canonicalLink')
+    ->removeField('canonicalKeepParams')
+    ->removeField('protected')
+    ->removeField('includeCache')
+    ->removeField('includeChmod')
+    ->removeField('cssClass')
+    ->removeField('sitemap')
+    ->removeField('noSearch')
+    ->removeField('accesskey')
+    ->applyToPalette('regular', 'tl_page')
+;
+
+unset(
+    $GLOBALS['TL_DCA']['tl_page']['fields']['type']['filter'],
+    $GLOBALS['TL_DCA']['tl_page']['fields']['protected']['filter'],
+    $GLOBALS['TL_DCA']['tl_page']['fields']['groups']['filter'],
+    $GLOBALS['TL_DCA']['tl_page']['fields']['noSearch']['filter'],
+);
+

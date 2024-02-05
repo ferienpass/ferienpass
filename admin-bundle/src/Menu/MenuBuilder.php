@@ -87,18 +87,18 @@ class MenuBuilder
 
         $menu->addChild('user.title', [
             'route' => 'admin_user_index',
-            'current' => null !== $request && 'host_change-host_personal_data' === $request->attributes->get('_route'),
+            'current' => null !== $request && 'admin_user_index' === $request->attributes->get('_route'),
             'extras' => ['icon' => 'user-circle-filled'],
         ]);
 
         $menu->addChild('user.password.title', [
             'route' => 'admin_password',
-            'current' => null !== $request && 'host_change-password' === $request->attributes->get('_route'),
+            'current' => null !== $request && 'admin_password' === $request->attributes->get('_route'),
             'extras' => ['icon' => 'lock-closed-filled'],
         ]);
 
-        $menu->addChild('Abmelden', [
-            'uri' => $this->logoutUrlGenerator->getLogoutUrl('contao_frontend'),
+        $menu->addChild('user.logout', [
+            'uri' => $this->logoutUrlGenerator->getLogoutUrl('ferienpass_admin'),
             'extras' => ['icon' => 'logout-filled'],
         ]);
 

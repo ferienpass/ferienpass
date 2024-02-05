@@ -14,30 +14,23 @@ declare(strict_types=1);
 namespace Ferienpass\CmsBundle\Controller\Frontend;
 
 use Contao\CoreBundle\Controller\AbstractController as ContaoAbstractController;
-use Contao\CoreBundle\Exception\AccessDeniedException;
-use Contao\CoreBundle\Security\ContaoCorePermissions;
 use Contao\PageModel;
 use Ferienpass\CmsBundle\Page\PageBuilder;
 use Ferienpass\CmsBundle\Page\PageBuilderFactory;
-use Symfony\Component\Security\Core\Security;
 
 class AbstractController extends ContaoAbstractController
 {
     public static function getSubscribedServices(): array
     {
         $services = parent::getSubscribedServices();
-
         $services[PageBuilderFactory::class] = PageBuilderFactory::class;
-        $services['security.helper'] = Security::class;
 
         return $services;
     }
 
     protected function checkToken(): void
     {
-        if (!$this->container->get('security.helper')->isGranted(ContaoCorePermissions::MEMBER_IN_GROUPS, 2)) {
-            throw new AccessDeniedException('Access denied');
-        }
+        $this->denyAccessUnlessGranted('ROLE_MEMBER');
     }
 
     protected function createPageBuilder(PageModel $pageModel): PageBuilder

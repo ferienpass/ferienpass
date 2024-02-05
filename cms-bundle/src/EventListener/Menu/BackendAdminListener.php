@@ -19,7 +19,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-#[AsEventListener]
+#[AsEventListener(priority: -90)]
 class BackendAdminListener
 {
     public function __construct(private readonly Security $security, private readonly UrlGeneratorInterface $urlGenerator)
@@ -37,6 +37,12 @@ class BackendAdminListener
         if ('headerMenu' !== $tree->getName()) {
             return;
         }
+
+        $tree->removeChild('manual');
+        $tree->removeChild('favorite');
+        $tree->removeChild('alerts');
+
+        $tree->getChild('preview')?->setLabel('Frontend');
 
         $admin = $event->getFactory()
             ->createItem('admin')

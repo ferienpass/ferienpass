@@ -1,7 +1,10 @@
 {% extends "@FerienpassAdmin/layout/list.html.twig" %}
 
 {% block list %}
-    {{ component('SearchableQueryableList', { qb: qb, routeName: app.request.get('_route'), routeParameters: app.request.query.all,
+    {{ component('Admin:SearchableQueryableList', {
+        qb: qb,
+        routeName: app.request.get('_route'),
+        routeParameters: app.request.query.all,
         searchable: searchable,
         config: {
             columns: {
@@ -23,12 +26,12 @@
 {% else %}
 <span class="text-gray-500 font-medium text-xs">0</span>
 {% endif %}
-<div class="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden flex">
+<div class="w-full bg-gray-200 dark:bg-gray-200/50 rounded-full h-1.5 overflow-hidden flex">
 {% if item.attendancesNotWithdrawn|length %}
-  <div class="bg-green-600 h-1.5" title="zugelassen: {{ item.attendancesConfirmed|length }}" style="width: {{ (item.attendancesConfirmed|length)/item.attendancesNotWithdrawn|length*100 }}%"></div>
-  <div class="bg-yellow-500 h-1.5" title="Warteliste: {{ item.attendancesWaitlisted|length }}" style="width: {{ (item.attendancesWaitlisted|length)/item.attendancesNotWithdrawn|length*100 }}%"></div>
-  <div class="bg-red-600 h-1.5" title="fehlerhaft: {{ item.attendancesErrored|length }}" style="width: {{ (item.attendancesErrored|length)/item.attendancesNotWithdrawn|length*100 }}%"></div>
-  <div class="bg-gray-600 h-1.5" title="wartend: {{ item.attendancesWaiting|length }}" style="width: {{ (item.attendancesWaiting|length)/item.attendancesNotWithdrawn|length*100 }}%"></div>
+  <div class="bg-green-600 dark:bg-green-600/70 h-1.5" title="zugelassen: {{ item.attendancesConfirmed|length }}" style="width: {{ (item.attendancesConfirmed|length)/item.attendancesNotWithdrawn|length*100 }}%"></div>
+  <div class="bg-yellow-500 dark:bg-yellow-500/70 h-1.5" title="Warteliste: {{ item.attendancesWaitlisted|length }}" style="width: {{ (item.attendancesWaitlisted|length)/item.attendancesNotWithdrawn|length*100 }}%"></div>
+  <div class="bg-red-600 dark:bg-red-600/70 h-1.5" title="fehlerhaft: {{ item.attendancesErrored|length }}" style="width: {{ (item.attendancesErrored|length)/item.attendancesNotWithdrawn|length*100 }}%"></div>
+  <div class="bg-gray-600 dark:bg-gray-100/70 h-1.5" title="wartend: {{ item.attendancesWaiting|length }}" style="width: {{ (item.attendancesWaiting|length)/item.attendancesNotWithdrawn|length*100 }}%"></div>
 {% endif %}
 </div>
 <span class="text-gray-500 font-medium text-xs">{{ item.attendancesNotWithdrawn|length }}</span>
@@ -41,9 +44,9 @@
 {% else %}
 <span class="text-gray-500 font-medium text-xs">0</span>
 {% endif %}
-<div class="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden flex">
+<div class="w-full bg-gray-200 dark:bg-gray-200/50 rounded-full h-1.5 overflow-hidden flex">
 {% if item.attendancesConfirmed|length %}
-  <div class="bg-green-600 h-1.5" title="bezahlt: {{ item.attendancesPaid|length }}" style="width: {{ (item.attendancesPaid|length/item.attendancesConfirmed|length)*100 }}%"></div>
+  <div class="bg-green-600 dark:bg-green-600/70 h-1.5" title="bezahlt: {{ item.attendancesPaid|length }}" style="width: {{ (item.attendancesPaid|length/item.attendancesConfirmed|length)*100 }}%"></div>
 {% endif %}
 </div>
 <span class="{{ item.attendancesConfirmed|length > 0 and item.attendancesConfirmed|length == item.attendancesPaid|length ? "text-green-600" : "text-gray-500" }} font-medium text-xs">{{ item.attendancesConfirmed|length }}</span>

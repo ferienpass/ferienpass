@@ -122,6 +122,7 @@ final class LostPasswordController extends AbstractController
             $encodedPassword = $passwordHasher->hashPassword($user, $form->get('plainPassword')->getData());
 
             $user->setPassword($encodedPassword);
+            $user->setModifiedAt();
             $this->entityManager->flush();
 
             $this->cleanSessionAfterReset();

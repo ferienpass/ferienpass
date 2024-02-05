@@ -4,7 +4,9 @@
     "license": "proprietary",
     "version": "1.0.0",
     "scripts": {
-        "build:js": "tsc"
+        "build:css": "npx tailwindcss -i ./styles/tom-select.css -o ./dist/tom-select.css",
+        "build:js": "tsc",
+        "build": "npm run build:css && npm run build:js"
     },
     "main": "dist/index.js",
     "symfony": {

@@ -10,11 +10,11 @@
                         {{ contao_figure(host.logo, '_host_details_logo') }}
                     </div>
                 {% endif %}
-                <h3 class="text-gray-900 _dark:text-gray-50">{{ host.name }}</h3>
+                <h3 class="text-gray-900 dark:text-gray-50">{{ host.name }}</h3>
             </div>
         </div>
 
-        <div class="space-y-4 text-gray-700 _dark:text-gray-300 leading-5">
+        <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-5">
             <div>
                 <p>{{ host.street }}</p>
                 <p>
@@ -28,7 +28,7 @@
                 <p>{{ host.website }}</p>
             </div>
             {% if host.text %}
-                <p class="text-sm text-gray-500 _dark:text-gray-400">{{ host.text|nl2br }}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{{ host.text|nl2br }}</p>
             {% endif %}
         </div>
     </div>

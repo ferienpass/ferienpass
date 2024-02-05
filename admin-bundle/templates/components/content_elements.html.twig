@@ -1,7 +1,7 @@
 {% trans_default_domain "admin" %}
 
 {% macro h1(headline, class='') %}
-    <h1 class="text-gray-900 tracking-tight text-3xl font-extrabold{{ '' != class ? (' '~class) : class }}">{{ headline }}</h1>
+    <h1 class="text-gray-900 dark:text-gray-100 tracking-tight text-3xl font-extrabold{{ '' != class ? (' '~class) : class }}">{{ headline }}</h1>
 {% endmacro %}
 
 {% macro h2(headline, class='') %}

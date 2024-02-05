@@ -21,6 +21,6 @@ class Error403 extends AbstractController
 {
     public function __invoke(Request $request): Response
     {
-        return $this->render('@FerienpassCore/Fragment/error403.html.twig');
+        return $this->render('@FerienpassCms/fragment/error403.html.twig');
     }
 }

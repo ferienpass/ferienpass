@@ -38,6 +38,18 @@ final class FerienpassCmsExtension extends Extension implements PrependExtension
         $this->prependTwigBundle($container);
         $this->prependDoctrineBundle($container);
 
+        $container->prependExtensionConfig('contao', [
+            'localconfig' => [
+                'licenseAccepted' => true,
+                'enableSearch' => false,
+                'disableCron' => true,
+                'adminEmail' => '%env(ADMIN_EMAIL)%',
+                'dateFormat' => 'd.m.Y',
+                'datimFormat' => 'd.m.Y H:i',
+                'timeZone' => 'Europe/Berlin',
+            ],
+        ]);
+
         $container->prependExtensionConfig('twig_component', [
             'defaults' => [
                 'Ferienpass\CmsBundle\Components\\' => [

@@ -13,36 +13,33 @@ declare(strict_types=1);
 
 namespace Ferienpass\CmsBundle\Controller\Fragment;
 
-use Contao\FrontendUser;
-use Contao\MemberModel;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\CmsBundle\Controller\Frontend\AbstractController;
 use Ferienpass\CoreBundle\Entity\Participant;
+use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Form\UserParticipantsType;
 use Ferienpass\CoreBundle\Repository\ParticipantRepository;
 use Ferienpass\CoreBundle\Ux\Flash;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 final class ParticipantsController extends AbstractController
 {
-    public function __construct(private readonly ParticipantRepository $participantRepository, private readonly ManagerRegistry $doctrine, private readonly FormFactoryInterface $formFactory)
+
+    public function __construct(private readonly ParticipantRepository $repository, private readonly EntityManagerInterface $entityManager)
     {
     }
 
     public function __invoke(Request $request): Response
     {
         $user = $this->getUser();
-        if (!$user instanceof FrontendUser) {
+        if (!$user instanceof User) {
             return new Response('', Response::HTTP_NO_CONTENT);
         }
 
-        $em = $this->doctrine->getManager();
-
         // TODO if originalParticipants.length eq 0 then add constraint {MinLength=1}
-        $originalParticipants = $this->participantRepository->findBy(['member' => $user->id]);
-        $form = $this->formFactory->create(UserParticipantsType::class, null, ['member' => MemberModel::findByPk($user->id)]);
+        $originalParticipants = $this->repository->findBy(['user' => $user]);
+        $form = $this->createForm(UserParticipantsType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -50,17 +47,17 @@ final class ParticipantsController extends AbstractController
             $participants = $form->get('participants')->getData();
 
             foreach ($participants as $participant) {
-                $em->persist($participant);
+                $this->entityManager->persist($participant);
             }
 
-            $em->flush();
+            $this->entityManager->flush();
 
             $this->addFlash(...Flash::confirmation()->text('Die Daten wurden erfolgreich gespeichert.')->create());
 
             return $this->redirectToRoute($request->attributes->get('_route'));
         }
 
-        return $this->renderForm('@FerienpassCore/Fragment/user_account/participants.html.twig', [
+        return $this->render('@FerienpassCms/fragment/user_account/participants.html.twig', [
             'participants' => $originalParticipants,
             'form' => $form,
         ]);

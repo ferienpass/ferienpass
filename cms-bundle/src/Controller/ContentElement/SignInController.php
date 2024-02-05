@@ -17,7 +17,7 @@ use Contao\BackendTemplate;
 use Contao\ContentModel;
 use Contao\CoreBundle\Controller\ContentElement\AbstractContentElementController;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsContentElement;
-use Contao\Template;
+use Contao\CoreBundle\Twig\FragmentTemplate;
 use Ferienpass\CmsBundle\Controller\Fragment\SignInController as SignInFragmentController;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +40,7 @@ class SignInController extends AbstractContentElementController
         return $services;
     }
 
-    protected function getResponse(Template $template, ContentModel $model, Request $request): Response
+    protected function getResponse(FragmentTemplate $template, ContentModel $model, Request $request): Response
     {
         if ($this->container->get('contao.routing.scope_matcher')->isBackendRequest($request)) {
             $template = new BackendTemplate('be_wildcard');
@@ -53,7 +53,7 @@ class SignInController extends AbstractContentElementController
 
         // Hide if no edition "to show".
         if ($this->editionRepository->count([]) > 0 && null === $this->editionRepository->findOneToShow()) {
-            return new Response('', Response::HTTP_NO_CONTENT);
+            //return new Response('', Response::HTTP_NO_CONTENT);
         }
 
         return $this->forward(SignInFragmentController::class);

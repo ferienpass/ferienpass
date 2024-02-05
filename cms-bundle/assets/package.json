@@ -9,6 +9,13 @@
     "main": "dist/index.js",
     "symfony": {
         "controllers": {
+            "signin_login": {
+                "main": "dist/controllers/signin_login.js",
+                "name": "ferienpass/cms-signin-login",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true
+            }
         },
         "importmap": {
             "@hotwired/stimulus": "^3.0.0"

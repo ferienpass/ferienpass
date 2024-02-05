@@ -74,7 +74,7 @@ class TextBlockController extends AbstractContentElementController
                 break;
         }
 
-        return $this->render('@FerienpassCore/Fragment/text-block.html.twig', [
+        return $this->render('@FerienpassCms/fragment/text-block.html.twig', [
             'headline' => \is_array($headline) ? $headline['value'] : $headline,
             'hl' => \is_array($headline) ? $headline['unit'] : 'h1',
             'text' => $text,

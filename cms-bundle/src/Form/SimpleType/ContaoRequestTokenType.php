@@ -11,19 +11,25 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CoreBundle\Form\SimpleType;
+namespace Ferienpass\CmsBundle\Form\SimpleType;
 
+use Contao\CoreBundle\Csrf\ContaoCsrfTokenManager;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
-final class ContaoRequestTokenType extends HiddenType
+final class ContaoRequestTokenType extends AbstractType
 {
-    public function __construct(private readonly CsrfTokenManagerInterface $tokenManager, #[Autowire(param: 'contao.csrf_token_name')] private readonly string $tokenName)
+    public function __construct(private readonly ContaoCsrfTokenManager $tokenManager, #[Autowire(param: 'contao.csrf_token_name')] private readonly string $tokenName)
     {
+    }
+
+    public function getParent()
+    {
+        return HiddenType::class;
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
@@ -36,9 +42,6 @@ final class ContaoRequestTokenType extends HiddenType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        parent::configureOptions(
-            $resolver
-                ->setDefault('mapped', false)
-        );
+        $resolver->setDefault('mapped', false);
     }
 }

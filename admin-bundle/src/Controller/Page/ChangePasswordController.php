@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Controller\Page;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Ferienpass\AdminBundle\Form\UserChangePasswordType;
 use Ferienpass\CoreBundle\Entity\User;
-use Ferienpass\CoreBundle\Form\UserChangePasswordType;
 use Ferienpass\CoreBundle\Session\Flash;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,7 +41,7 @@ final class ChangePasswordController extends AbstractController
         $form = $this->createForm(UserChangePasswordType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $hashedPassword = $this->passwordHasher->hashPassword($user, $form->getData()['password'] ?? '');
+            $hashedPassword = $this->passwordHasher->hashPassword($user, $form->get('plainPassword')->getData());
             $user->setPassword($hashedPassword);
             $user->setModifiedAt();
 

@@ -14,13 +14,8 @@ declare(strict_types=1);
 namespace Ferienpass\CmsBundle\Controller\Fragment;
 
 use Contao\CoreBundle\Controller\AbstractController;
-use Contao\CoreBundle\Exception\ResponseException;
-use Contao\FormTextField;
 use Ferienpass\CoreBundle\Entity\User;
-use Ferienpass\CoreBundle\Message\AccountDelete;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -29,47 +24,46 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 final class CloseAccount extends AbstractController
 {
-    public function __construct(private readonly UserPasswordHasherInterface $passwordHasher, private readonly LoggerInterface $logger, private readonly MessageBusInterface $messageBus)
+    public function __construct(private readonly UserPasswordHasherInterface $passwordHasher, private readonly MessageBusInterface $messageBus, private readonly Security $security)
     {
     }
 
-    public function __invoke(Request $request, Session $session, Security $security): Response
+    public function __invoke(Request $request, Session $session): Response
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
             return new Response('', Response::HTTP_NO_CONTENT);
         }
 
-        $passwordField = [
-            'name' => 'password',
-            'inputType' => 'text',
-            'label' => $GLOBALS['TL_LANG']['MSC']['password'][0],
-            'eval' => ['hideInput' => true, 'preserveTags' => true, 'mandatory' => true, 'required' => true],
-        ];
+        //        $passwordField = [
+        //            'name' => 'password',
+        //            'inputType' => 'text',
+        //            'label' => $GLOBALS['TL_LANG']['MSC']['password'][0],
+        //            'eval' => ['hideInput' => true, 'preserveTags' => true, 'mandatory' => true, 'required' => true],
+        //        ];
+        //
+        //        $passwordWidget = new FormTextField(FormTextField::getAttributesFromDca($passwordField, $passwordField['name']));
+        //
+        //        if ('close_account' === $request->request->get('FORM_SUBMIT')) {
+        //            $passwordWidget->validate();
+        //
+        //            if (!$passwordWidget->hasErrors()
+        //                && !$this->passwordHasher->isPasswordValid($user, $passwordWidget->value)) {
+        //                $passwordWidget->value = '';
+        //                $passwordWidget->addError($GLOBALS['TL_LANG']['ERR']['invalidPass']);
+        //            }
+        //
+        //            if (!$passwordWidget->hasErrors()) {
+        //                $this->messageBus->dispatch(new AccountDelete($user->getId()));
+        //
+        //                $this->security->logout();
+        //
+        //                return $this->redirectToRoute('account_deleted');
+        //            }
+        //
+        //            throw new ResponseException(new JsonResponse(['error' => $passwordWidget->getErrorAsString()], Response::HTTP_BAD_REQUEST));
+        //        }
 
-        $passwordWidget =
-            new FormTextField(FormTextField::getAttributesFromDca($passwordField, $passwordField['name']));
-
-        if ('close_account' === $request->request->get('FORM_SUBMIT')) {
-            $passwordWidget->validate();
-
-            if (!$passwordWidget->hasErrors()
-                && !$this->passwordHasher->isPasswordValid($user, $passwordWidget->value)) {
-                $passwordWidget->value = '';
-                $passwordWidget->addError($GLOBALS['TL_LANG']['ERR']['invalidPass']);
-            }
-
-            if (!$passwordWidget->hasErrors()) {
-                $this->messageBus->dispatch(new AccountDelete($user->getId()));
-
-                $security->logout();
-
-                return $this->redirectToRoute('account_deleted');
-            }
-
-            throw new ResponseException(new JsonResponse(['error' => $passwordWidget->getErrorAsString()], Response::HTTP_BAD_REQUEST));
-        }
-
-        return $this->render('@FerienpassCore/Fragment/user_account/close_account.html.twig', []);
+        return $this->render('@FerienpassCms/fragment/user_account/close_account.html.twig', []);
     }
 }

@@ -41,7 +41,7 @@ final class OfferListController extends AbstractController
         }
 
         if ($hasEditions && null === $edition) {
-            return $this->render('@FerienpassCore/Fragment/offer_list.html.twig');
+            return $this->render('@FerienpassCms/fragment/offer_list.html.twig');
         }
 
         $qb->leftJoin('o.dates', 'dates');
@@ -67,7 +67,7 @@ final class OfferListController extends AbstractController
 
         $paginator = (new Paginator($qb))->paginate($request->query->getInt('page', 1));
 
-        return $this->render('@FerienpassCore/Fragment/offer_list.html.twig', [
+        return $this->render('@FerienpassCms/fragment/offer_list.html.twig', [
             'edition' => $edition ?? null,
             'filter' => $filter,
             'pagination' => $paginator,

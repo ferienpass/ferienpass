@@ -76,7 +76,7 @@
 
                     {% for item in aside_nav.children %}
                         <a href="{{ item.uri }}"
-                           class="{{ item.current ? 'ml-3 bg-gray-100 text-gray-700' : 'text-gray-500 hover:text-gray-700' }} rounded-md px-3 py-2 whitespace-nowrap text-sm font-medium"
+                           class="{{ item.current ? 'ml-3 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100/80' : 'text-gray-500 dark:text-gray-100/50 hover:text-gray-700 dark:hover:text-gray-100/80' }} rounded-md px-3 py-2 whitespace-nowrap text-sm font-medium"
                            {% if item.current %}aria-current="page"{% endif %}>
                             <span>{{ item.label|trans }}</span>
                         </a>

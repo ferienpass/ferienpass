@@ -21,6 +21,6 @@ class RegistrationConfirm extends AbstractController
 {
     public function __invoke(Request $request): Response
     {
-        return $this->render('@FerienpassCore/Fragment/registration-confirm.html.twig');
+        return $this->render('@FerienpassCms/fragment/registration-confirm.html.twig');
     }
 }

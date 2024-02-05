@@ -38,7 +38,7 @@ final class OfferDetailsController extends AbstractController
             $this->handleDownload($request, $offer);
         }
 
-        return $this->render('@FerienpassCore/Fragment/offer_details.html.twig', [
+        return $this->render('@FerienpassCms/fragment/offer_details.html.twig', [
             'offer' => $offer,
             'members' => $members,
         ]);

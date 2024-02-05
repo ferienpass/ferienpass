@@ -62,23 +62,23 @@ return function(ContainerConfigurator $container): void {
 
     $services
         ->get(EditionFilter::class)
-        ->tag('ferienpass_admin.filter.offer', ['key' => 'edition'])
+        ->tag('ferienpass_admin.filter.offer', ['key' => 'edition', 'priority' => 90])
     ;
     $services
         ->get(HostFilter::class)
-        ->tag('ferienpass_admin.filter.offer', ['key' => 'host'])
+        ->tag('ferienpass_admin.filter.offer', ['key' => 'host', 'priority' => 90])
     ;
     $services
         ->get(OnlineApplicationFilter::class)
-        ->tag('ferienpass_admin.filter.offer', ['key' => 'onlineApplication'])
+        ->tag('ferienpass_admin.filter.offer', ['key' => 'onlineApplication', 'priority' => 70])
     ;
     $services
         ->get(RequiresApplicationFilter::class)
-        ->tag('ferienpass_admin.filter.offer', ['key' => 'requiresApplication'])
+        ->tag('ferienpass_admin.filter.offer', ['key' => 'requiresApplication', 'priority' => 80])
     ;
     $services
         ->get(StatusFilter::class)
-        ->tag('ferienpass_admin.filter.offer', ['key' => 'status'])
+        ->tag('ferienpass_admin.filter.offer', ['key' => 'status', 'priority' => 60])
     ;
 
     $services

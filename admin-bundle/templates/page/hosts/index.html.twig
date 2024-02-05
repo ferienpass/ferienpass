@@ -2,7 +2,7 @@
 
 
 {% block list %}
-    {{ component('SearchableQueryableList', { qb: qb, routeName: app.request.get('_route'), routeParameters: app.request.query.all,
+    {{ component('Admin:SearchableQueryableList', { qb: qb, routeName: app.request.get('_route'), routeParameters: app.request.query.all,
         searchable: searchable,
         config: {
             columns: {

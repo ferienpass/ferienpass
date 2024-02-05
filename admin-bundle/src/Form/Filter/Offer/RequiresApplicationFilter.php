@@ -15,7 +15,7 @@ namespace Ferienpass\AdminBundle\Form\Filter\Offer;
 
 use Doctrine\ORM\QueryBuilder;
 use Ferienpass\AdminBundle\Form\Filter\AbstractFilterType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatableInterface;
@@ -24,12 +24,17 @@ class RequiresApplicationFilter extends AbstractFilterType
 {
     public function getParent(): string
     {
-        return CheckboxType::class;
+        return ChoiceType::class;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
+            'choices' => [
+                'nein' => false,
+                'ja' => true,
+            ],
+            'placeholder' => '-'
         ]);
     }
 
@@ -50,6 +55,6 @@ class RequiresApplicationFilter extends AbstractFilterType
 
     protected function getHumanReadableValue(FormInterface $form): null|string|TranslatableInterface
     {
-        return $form->getData() ? 'y' : 'n';
+        return $form->getData() ? 'mit Anmeldung' : 'ohne Anmeldung';
     }
 }

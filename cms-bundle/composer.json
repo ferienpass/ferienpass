@@ -25,13 +25,12 @@
     "ext-json": "*",
     "ext-pdo": "*",
 
-    "contao/core-bundle": "^5.1",
+    "contao/core-bundle": "^5.3@rc",
+    "contao/faq-bundle": "^5.3@rc",
     "richardhj/contao-knp-menu": "^1.0",
+    "richardhj/contao-theme-framework": "3.x-dev@dev",
     "symfony/ux-live-component": "^2.0",
     "symfony/stimulus-bundle": "^2.9"
-  },
-  "require-dev": {
-    "contao/manager-plugin": "^2.7"
   },
   "autoload": {
     "psr-4": {
@@ -41,6 +40,13 @@
   "extra": {
     "branch-alias": {
       "dev-4.x": "4.x-dev"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "contao-components/installer": false,
+      "php-http/discovery": true,
+      "contao/manager-plugin": false
     }
   }
 }

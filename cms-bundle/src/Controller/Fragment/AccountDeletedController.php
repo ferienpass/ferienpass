@@ -21,6 +21,6 @@ class AccountDeletedController extends AbstractController
 {
     public function __invoke(Request $request): Response
     {
-        return $this->render('@FerienpassCore/Fragment/account-deleted.html.twig');
+        return $this->render('@FerienpassCms/fragment/account-deleted.html.twig');
     }
 }

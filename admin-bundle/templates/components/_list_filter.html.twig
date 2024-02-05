@@ -1,5 +1,5 @@
 {% trans_default_domain 'admin' %}
-{% set translationPrefix = app.request.get('_route')|split('_')[1] %}
+{% set translationPrefix = (routeName ?? app.request.get('_route'))|split('_')[1] %}
 
 <div class="flex space-x-3">
     {% if this.sortingFields %}
@@ -7,7 +7,7 @@
             <div>
                 <label for="sorting" class="sr-only">Sortierung</label>
                 <select data-model="sorting" id="sorting" name="sorting"
-                        class="py-1.5 text-sm font-medium hover:bg-gray-50">
+                        class="pt-1 pb-1.5 text-sm font-medium hover:bg-gray-50 dark:hover:bg-white/10">
                     {% for field in this.sortingFields %}
                         <option value="{{ field }}">{{ "#{translationPrefix}.sorting.#{field}"|trans }}</option>
                     {% endfor %}
@@ -21,7 +21,7 @@
         <div>
             {% for filterName, active in filter.children|filter((v, k) => k in this.filters and not v.vars.isEmpty and k not in app.request.get('_route_params')|keys) %}
 
-                <span class="group inline-flex items-center gap-x-1 rounded-md bg-white px-2.5 py-1.5 text-sm font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                <span class="group inline-flex items-center gap-x-1 rounded-md bg-white dark:bg-white/5 px-2.5 py-1.5 text-sm font-medium text-gray-900 dark:text-white/95 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-white/10 hover:bg-gray-50 dark:hover:bg-white/10">
                     <span>
                         {{ active.vars.humanReadable|trans }}
                     </span>
@@ -31,7 +31,7 @@
                             data-action-name="unsetFilter(filterName={{ filterName }})"
                             class="relative -mr-1 h-3.5 w-3.5 rounded-sm group-hover:bg-gray-500/20">
                         <span class="sr-only">Filter löschen</span>
-                        <svg viewBox="0 0 14 14" class="h-3.5 w-3.5 stroke-gray-500 group-hover:stroke-gray-700">
+                        <svg viewBox="0 0 14 14" class="h-3.5 w-3.5 stroke-gray-500 dark:stroke-white/30 group-hover:stroke-gray-700 dark:group-hover:stroke-white">
                             <path d="M4 4l6 6m0-6l-6 6"/>
                         </svg>
                         <span class="absolute -inset-1"></span>
@@ -47,7 +47,7 @@
             {% embed '@FerienpassAdmin/components/dropdown.html.twig' with { dropdownClass: 'w-96'} %}
                 {% block toggle %}
                     <button type="button"
-                            class="inline-flex items-center gap-x-0.5 rounded-md bg-white px-2.5 py-1.5 text-sm font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                            class="inline-flex items-center gap-x-0.5 rounded-md bg-white dark:bg-white/5 px-2.5 py-1.5 text-sm font-medium text-gray-900 dark:text-white/95 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-white/10 hover:bg-gray-50 dark:hover:bg-white/10"
                             id="options-menu-0-button" aria-expanded="false"
                             aria-haspopup="true">
                         <span class="flex items-center space-x-1">
@@ -60,12 +60,20 @@
                 {% block dropdown %}
 
                     <div class="px-4 py-2">
-                        {{ form(filter, {
+                        {{ form_start(filter, {
                             attr: {
                                 'data-action': 'live#action',
                                 'data-action-name': 'prevent|filter'
                             }
                         }) }}
+
+                        <div class="space-y-4">
+                        {% for widget in filter.children %}
+                            {{ form_row(widget) }}
+                        {% endfor %}
+                        </div>
+
+                        {{ form_end(filter) }}
                     </div>
 
                 {% endblock %}

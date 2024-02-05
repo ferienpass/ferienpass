@@ -11,9 +11,8 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CoreBundle\Form;
+namespace Ferienpass\CmsBundle\Form;
 
-use Contao\Config;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -29,8 +28,8 @@ class UserChangePasswordType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'label_format' => 'participants.label.%name%',
-            'translation_domain' => 'contao_default',
+            'label_format' => 'changePassword.%name%',
+            'translation_domain' => 'cms',
         ]);
     }
 
@@ -38,8 +37,6 @@ class UserChangePasswordType extends AbstractType
     {
         $builder
             ->add('oldPassword', PasswordType::class, [
-                'label' => 'MSC.oldPassword',
-                'required' => true,
                 'width' => '2/3',
                 'attr' => ['autocomplete' => 'current-password'],
                 'constraints' => [
@@ -47,19 +44,36 @@ class UserChangePasswordType extends AbstractType
                     new UserPassword(['message' => 'Das alte Passwort ist nicht korrekt']),
                 ],
             ])
-            ->add('password', RepeatedType::class, [
+            ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
-                'invalid_message' => 'ERR.passwordMatch',
-                'required' => true,
-                'first_options' => ['label' => 'MSC.newPassword',                'width' => '1/2'],
-                'second_options' => ['label' => 'MSC.confirmation',                'width' => '1/2'],
-                'constraints' => [
-                    new Length(['min' => Config::get('minPasswordLength'), 'minMessage' => str_replace('%d', '{{ limit }}', 'Ein Passwort muss mindestens %d Zeichen lang sein!')]),
+                'options' => [
+                    'attr' => [
+                        'autocomplete' => 'new-password',
+                    ],
                 ],
+                'first_options' => [
+                    'constraints' => [
+                        new NotBlank([
+                            'message' => 'Please enter a password',
+                        ]),
+                        new Length([
+                            'min' => 6,
+                            'minMessage' => 'Your password should be at least {{ limit }} characters',
+                            // max length allowed by Symfony for security reasons
+                            'max' => 4096,
+                        ]),
+                    ],
+                    'label' => 'changePassword.newPassword',
+                    'width' => '1/2'
+                ],
+                'second_options' => [
+                    'label' => 'changePassword.repeatPassword',
+                    'width' => '1/2'
+                ],
+                'invalid_message' => 'changePassword.passwordsDoNotMatch',
+                'mapped' => false,
             ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'MSC.changePassword',
-            ])
+            ->add('submit', SubmitType::class)
         ;
     }
 }

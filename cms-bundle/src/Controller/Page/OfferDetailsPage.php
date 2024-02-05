@@ -16,12 +16,12 @@ namespace Ferienpass\CmsBundle\Controller\Page;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsPage;
 use Contao\CoreBundle\Exception\InsufficientAuthenticationException;
 use Contao\CoreBundle\Exception\PageNotFoundException;
-use Contao\FrontendUser;
 use Contao\PageModel;
 use Ferienpass\CmsBundle\Controller\Frontend\AbstractController;
 use Ferienpass\CmsBundle\Fragment\FragmentReference;
 use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -54,7 +54,7 @@ class OfferDetailsPage extends AbstractController
 
         if ($request->query->has('login')) {
             $user = $this->getUser();
-            if (!$user instanceof FrontendUser) {
+            if (!$user instanceof User) {
                 throw new InsufficientAuthenticationException();
             }
 

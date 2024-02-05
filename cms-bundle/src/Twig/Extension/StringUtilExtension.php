@@ -11,7 +11,7 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CoreBundle\Twig\Extension;
+namespace Ferienpass\CmsBundle\Twig\Extension;
 
 use Contao\FilesModel;
 use Contao\StringUtil;

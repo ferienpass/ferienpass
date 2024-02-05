@@ -83,7 +83,8 @@
     "symfony/stimulus-bundle": "^2.9",
     "symfony/ux-dropzone": "^2.13",
     "symfony/workflow": "^7.0",
-    "symfony/ux-twig-component": "^2.13"
+    "symfony/ux-twig-component": "^2.13",
+    "symfony/ux-autocomplete": "^2.14"
   },
   "suggest": {
     "spatie/pdf-to-image": "To generate images from PDF Print Sheets"

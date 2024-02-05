@@ -17,11 +17,8 @@ use Ferienpass\CmsBundle\Form\UserLoginType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
-use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -35,19 +32,8 @@ class Login extends AbstractController
     #[LiveProp]
     public ?AuthenticationException $error = null;
 
-    #[LiveAction]
-    public function submit(AuthenticationUtils $authenticationUtils)
-    {
-        if ($this->error = $authenticationUtils->getLastAuthenticationError()) {
-            dd($this->error);
-            throw new UnprocessableEntityHttpException('Form validation failed in component');
-        }
-    }
-
     protected function instantiateForm(): FormInterface
     {
-        // $targetPath = $this->findTargetPath($request);
-
         return $this->createForm(UserLoginType::class);
     }
 

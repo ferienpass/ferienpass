@@ -118,8 +118,11 @@ offers:
     requiresApplication: Eine vorherige Anmeldung ist erforderlich, um am Angebot teilnehmen zu können.
     onlineApplication: Die Anmeldungen über das Online-System laufen lassen.
     applicationDeadline: Ab folgendem Tag sind Anmeldungen zum Angebot nicht mehr möglich.
-  filter.editions: Saisons
-  filter.hosts: Veranstaltende
+  filter.edition: Saisons
+  filter.host: Veranstaltende
+  filter.requiresApplication: Anmeldung erforderlich
+  filter.onlineApplication: Online-Anmeldesystem
+  filter.status: Status
   edit_offer_dates_add: Zusätzliche Zeit zu diesem Termin
   edit_offer_dates_entry_delete: Zeitraum löschen
   dropzonePlaceholder: Wählen Sie ein Bild aus oder platzieren Sie es hier mittels Drag'n'Drop
@@ -302,7 +305,13 @@ profile:
 
 user:
   title: Persönliche Daten
+  logout: Abmelden
   password.title: Passwort ändern
+  label.firstname: Vorname
+  label.lastname: Nachname
+  label.email: E-Mail-Adresse
+  label.phone: Telefonnummer
+  label.mobile: Handynummer
 
 editConfirm: Die Daten wurden erfolgreich gespeichert.
 
@@ -461,6 +470,18 @@ exports:
 
 tools:
   title: Werkzeuge & Einstellungen
+
+login:
+  username: E-Mail-Adresse
+  password: Passwort
+  submit: Anmelden
+
+changePassword:
+  submit: Passwort ändern
+  oldPassword: Altes Passwort
+  newPassword: Neues Passwort
+  repeatPassword: Passwort wiederholen
+  passwordsDoNotMatch: Die Passwörter müssen übereinstimmen.
 
 passwordReset:
   email: E-Mail-Adresse

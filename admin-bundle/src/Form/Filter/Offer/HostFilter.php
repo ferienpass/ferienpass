@@ -54,6 +54,7 @@ class HostFilter extends AbstractFilterType
             'choice_label' => 'name',
             'placeholder' => '-',
             'multiple' => false,
+            'autocomplete' => true,
         ]);
     }
 

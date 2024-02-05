@@ -1,10 +1,10 @@
 {% trans_default_domain 'admin' %}
 
-<div{{ attributes.defaults({ class: 'rounded-md _dark:bg-opacity-50 p-4 ' ~ (type == "confirm" ? "bg-green-50 _dark:bg-green-900" : (type == "error" ? "bg-red-50 _dark:bg-red-900" : "bg-blue-50 _dark:bg-blue-900")) }) }}>
+<div{{ attributes.defaults({ class: 'rounded-md dark:bg-opacity-50 p-4 ' ~ (type == "confirm" ? "bg-green-50 dark:bg-green-900" : (type == "error" ? "bg-red-50 dark:bg-red-900" : "bg-blue-50 dark:bg-blue-900")) }) }}>
     <div class="flex">
         <div class="flex-shrink-0">
-            <span class="block h-5 w-5 {{ type == "confirm" ? "text-green-500 _dark:text-green-300" : (type == "error" ? "text-red-400 _dark:text-red-300" : "text-blue-400 _dark:text-blue-300") }}">{{ source(type == "confirm" ? '@FerienpassAdmin/icons/check-circle.solid.svg' : (type == "error" ? '@FerienpassAdmin/icons/x-circle.solid.svg' : '@FerienpassAdmin/icons/information-circle.solid.svg')) }}</span>
+            <span class="block h-5 w-5 {{ type == "confirm" ? "text-green-500 dark:text-green-300" : (type == "error" ? "text-red-400 dark:text-red-300" : "text-blue-400 dark:text-blue-300") }}">{{ source(type == "confirm" ? '@FerienpassAdmin/icons/check-circle.solid.svg' : (type == "error" ? '@FerienpassAdmin/icons/x-circle.solid.svg' : '@FerienpassAdmin/icons/information-circle.solid.svg')) }}</span>
         </div>
-        <p class="ml-2 text-sm leading-5 {{ type == "confirm" ? "text-green-700 _dark:text-green-200" : (type == "error" ? "text-red-700 _dark:text-red-200" : "text-blue-700 _dark:text-blue-200") }}">{% block content %}{{ message|trans }}{% endblock %}</p>
+        <p class="ml-2 text-sm leading-5 {{ type == "confirm" ? "text-green-700 dark:text-green-200" : (type == "error" ? "text-red-700 dark:text-red-200" : "text-blue-700 dark:text-blue-200") }}">{% block content %}{{ message|trans }}{% endblock %}</p>
     </div>
 </div>

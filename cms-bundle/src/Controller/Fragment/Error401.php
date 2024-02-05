@@ -28,7 +28,7 @@ class Error401 extends AbstractController
     {
         // If no Ferienpass active, show error message, otherwise forward to sign-in fragment
         if ($this->ferienpassRepository->count([]) && null === $this->ferienpassRepository->findOneToShow()) {
-            return $this->render('@FerienpassCore/Fragment/error401.html.twig');
+            return $this->render('@FerienpassCms/fragment/error401.html.twig');
         }
 
         return $this->forward(SignInController::class);

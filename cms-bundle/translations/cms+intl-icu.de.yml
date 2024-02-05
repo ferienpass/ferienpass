@@ -1,0 +1,13 @@
+changePassword:
+  submit: Passwort ändern
+  oldPassword: Altes Passwort
+  newPassword: Neues Passwort
+  repeatPassword: Passwort wiederholen
+  passwordsDoNotMatch: Die Passwörter müssen übereinstimmen.
+
+passwordReset:
+  email: E-Mail-Adresse
+  submit: Passwort zurücksetzen
+  newPassword: Neues Passwort
+  repeatPassword: Passwort wiederholen
+  passwordsDoNotMatch: Die Passwörter müssen übereinstimmen.

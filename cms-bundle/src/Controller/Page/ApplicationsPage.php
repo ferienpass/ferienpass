@@ -20,6 +20,8 @@ use Ferienpass\CmsBundle\Page\PageBuilder;
 #[AsPage('applications')]
 class ApplicationsPage extends AbstractContentPage
 {
+    protected $protected = true;
+
     protected function modifyPage(PageBuilder $pageBuilder): void
     {
         $pageBuilder->addFragment('main', new FragmentReference('ferienpass.fragment.application_list'));

@@ -29,7 +29,7 @@ use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
-#[AsLiveComponent(name: 'SearchableQueryableList', template: '@FerienpassAdmin/components/SearchableQueryableList.html.twig', route: 'live_component_admin')]
+#[AsLiveComponent(route: 'live_component_admin')]
 class SearchableQueryableList extends AbstractController
 {
     use ComponentToolsTrait;
@@ -127,6 +127,12 @@ class SearchableQueryableList extends AbstractController
 
         return $this->redirectToRoute($this->routeName, array_filter($this->routeParameters));
     }
+        #[LiveAction]
+        public function paginate(#[LiveArg] int $page)
+        {
+            $this->routeParameters['page'] = $page;
+        }
+
 
     //    #[LiveAction]
     //    public function view(#[LiveArg] Participant $participant)

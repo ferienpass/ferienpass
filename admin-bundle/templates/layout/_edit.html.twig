@@ -31,7 +31,7 @@
             (unique, item) => not item or item in unique ? unique : unique|merge([item]), []
             ) %}
 
-<div class="space-y-6 divide-y divide-gray-200">
+<div class="space-y-6 divide-y divide-gray-200 dark:divide-gray-800">
 
     {% for fieldset in fieldsets %}
 
@@ -39,10 +39,10 @@
         <div>
 
             <div class="mt-6 mb-6">
-                <h2 class="text-xl font-medium text-gray-900">{{ form.vars.label_format|replace({'label.': '', '%name%': "legend.#{fieldset}.0"})|trans({}, 'admin') }}</h2>
+                <h2 class="text-xl font-medium text-gray-900 dark:text-gray-100/90">{{ form.vars.label_format|replace({'label.': '', '%name%': "legend.#{fieldset}.0"})|trans({}, 'admin') }}</h2>
 
                 {% if form.vars.label_format|replace({'label.': '', '%name%': "legend.#{fieldset}.1"})|trans({}, 'admin') != form.vars.label_format|replace({'label.': '', '%name%': "legend.#{fieldset}.1"}) %}
-                    <p class="mt-1 text-sm text-gray-500">{{ form.vars.label_format|replace({'label.': '', '%name%': "legend.#{fieldset}.1"})|trans({}, 'admin') }}</p>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-100/50">{{ form.vars.label_format|replace({'label.': '', '%name%': "legend.#{fieldset}.1"})|trans({}, 'admin') }}</p>
                 {% endif %}
             </div>
 

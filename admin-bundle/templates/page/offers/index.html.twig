@@ -28,7 +28,7 @@
 
     {% if is_granted('ROLE_ADMIN') %}
 
-        {{ component('SearchableQueryableList', {
+        {{ component('Admin:SearchableQueryableList', {
             qb: qb,
             routeName: app.request.get('_route'),
             routeParameters: app.request.query.all|merge(app.request.get('_route_params')),

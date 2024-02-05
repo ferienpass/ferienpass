@@ -39,7 +39,7 @@ class Contact extends AbstractContentElementController
 
         $headline = StringUtil::deserialize($model->headline, true);
 
-        return $this->render('@FerienpassCore/Fragment/contact.html.twig', [
+        return $this->render('@FerienpassCms/fragment/contact.html.twig', [
             'text' => $model->text,
             'address' => $model->address,
             'phone' => $model->phone,
