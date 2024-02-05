@@ -127,12 +127,12 @@ class SearchableQueryableList extends AbstractController
 
         return $this->redirectToRoute($this->routeName, array_filter($this->routeParameters));
     }
-        #[LiveAction]
-        public function paginate(#[LiveArg] int $page)
-        {
-            $this->routeParameters['page'] = $page;
-        }
 
+    #[LiveAction]
+    public function paginate(#[LiveArg] int $page)
+    {
+        $this->routeParameters['page'] = $page;
+    }
 
     //    #[LiveAction]
     //    public function view(#[LiveArg] Participant $participant)

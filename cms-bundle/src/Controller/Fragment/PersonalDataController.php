@@ -23,7 +23,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class PersonalDataController extends AbstractFragmentController
 {
-
     public function __construct(private readonly EntityManagerInterface $entityManager)
     {
     }

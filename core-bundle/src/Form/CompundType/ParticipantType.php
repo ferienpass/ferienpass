@@ -29,7 +29,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ParticipantType extends AbstractType
 {
-
     public function __construct(private readonly Security $security)
     {
     }
@@ -94,7 +93,7 @@ class ParticipantType extends AbstractType
 
         $resolver->setDefaults([
             'data_class' => Participant::class,
-            'empty_data' => fn(FormInterface $form) => new Participant($user ?? null),
+            'empty_data' => fn (FormInterface $form) => new Participant($user ?? null),
         ]);
     }
 }

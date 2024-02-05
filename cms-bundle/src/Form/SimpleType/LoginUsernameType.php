@@ -40,9 +40,9 @@ final class LoginUsernameType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-            $resolver
-                ->setDefaults([
-                    'data' => $this->authenticationUtils->getLastUsername(),
-                ]);
+        $resolver
+            ->setDefaults([
+                'data' => $this->authenticationUtils->getLastUsername(),
+            ]);
     }
 }

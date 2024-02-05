@@ -25,7 +25,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ParticipantsController extends AbstractController
 {
-
     public function __construct(private readonly ParticipantRepository $repository, private readonly EntityManagerInterface $entityManager)
     {
     }

@@ -50,7 +50,6 @@ $GLOBALS['TL_DCA']['tl_article']['fields']['ferienpass_task_condition_inverted']
     'sql' => "char(1) NOT NULL default ''",
 ];
 
-
 (new PaletteManipulator())
     ->removeField('alias')
     ->removeField('author')
@@ -71,4 +70,3 @@ unset(
     $GLOBALS['TL_DCA']['tl_article']['fields']['protected']['filter'],
     $GLOBALS['TL_DCA']['tl_article']['fields']['groups']['filter'],
 );
-

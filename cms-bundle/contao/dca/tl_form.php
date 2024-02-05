@@ -11,7 +11,6 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
 
 (new PaletteManipulator())
@@ -27,7 +26,6 @@ use Contao\CoreBundle\DataContainer\PaletteManipulator;
     ->applyToPalette('default', 'tl_form')
 ;
 
-
 unset(
     $GLOBALS['TL_DCA']['tl_form']['fields']['sendViaEmail']['filter'],
     $GLOBALS['TL_DCA']['tl_form']['fields']['skipEmpty']['filter'],
@@ -36,4 +34,3 @@ unset(
     $GLOBALS['TL_DCA']['tl_form']['fields']['ajax']['filter'],
     $GLOBALS['TL_DCA']['tl_form']['fields']['allowTags']['filter'],
 );
-

@@ -27,7 +27,6 @@ $GLOBALS['TL_DCA']['tl_page']['palettes']['registration_activate'] = '{title_leg
 $GLOBALS['TL_DCA']['tl_page']['palettes']['registration_confirm'] = '{title_legend},title,type;{routing_legend},alias,routePath;{expert_legend:hide},hide;{publish_legend},published';
 $GLOBALS['TL_DCA']['tl_page']['palettes']['registration_welcome'] = '{title_legend},title,type;{routing_legend},alias,routePath;{expert_legend:hide},hide;{publish_legend},published';
 
-
 (new PaletteManipulator())
     ->removeField('requireItem')
     ->removeField('routePath')
@@ -51,4 +50,3 @@ unset(
     $GLOBALS['TL_DCA']['tl_page']['fields']['groups']['filter'],
     $GLOBALS['TL_DCA']['tl_page']['fields']['noSearch']['filter'],
 );
-

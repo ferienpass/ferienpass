@@ -34,7 +34,7 @@ class RequiresApplicationFilter extends AbstractFilterType
                 'nein' => false,
                 'ja' => true,
             ],
-            'placeholder' => '-'
+            'placeholder' => '-',
         ]);
     }
 

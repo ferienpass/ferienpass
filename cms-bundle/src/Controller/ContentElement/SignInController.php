@@ -53,7 +53,7 @@ class SignInController extends AbstractContentElementController
 
         // Hide if no edition "to show".
         if ($this->editionRepository->count([]) > 0 && null === $this->editionRepository->findOneToShow()) {
-            //return new Response('', Response::HTTP_NO_CONTENT);
+            // return new Response('', Response::HTTP_NO_CONTENT);
         }
 
         return $this->forward(SignInFragmentController::class);

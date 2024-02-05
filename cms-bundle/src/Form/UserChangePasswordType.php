@@ -64,11 +64,11 @@ class UserChangePasswordType extends AbstractType
                         ]),
                     ],
                     'label' => 'changePassword.newPassword',
-                    'width' => '1/2'
+                    'width' => '1/2',
                 ],
                 'second_options' => [
                     'label' => 'changePassword.repeatPassword',
-                    'width' => '1/2'
+                    'width' => '1/2',
                 ],
                 'invalid_message' => 'changePassword.passwordsDoNotMatch',
                 'mapped' => false,

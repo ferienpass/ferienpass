@@ -34,7 +34,7 @@ class OnlineApplicationFilter extends AbstractFilterType
                 'nein' => false,
                 'ja' => true,
             ],
-            'placeholder' => '-'
+            'placeholder' => '-',
         ]);
     }
 
