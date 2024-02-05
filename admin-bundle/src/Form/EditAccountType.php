@@ -75,6 +75,7 @@ class EditAccountType extends AbstractType
                     'expanded' => false,
                     'help' => 'accounts.help.hosts',
                     'autocomplete' => true,
+                    'by_reference' => false,
                 ]);
             }
 
