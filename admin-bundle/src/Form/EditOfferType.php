@@ -43,7 +43,8 @@ class EditOfferType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Offer::class,
-            'is_variant' => true,
+            'is_variant' => false,
+            'required' => false,
             'label_format' => 'offers.label.%name%',
             'translation_domain' => 'admin',
         ]);
@@ -54,7 +55,7 @@ class EditOfferType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name', null, ['fieldset_group' => 'base', 'width' => '2/3'])
+            ->add('name', null, ['fieldset_group' => 'base', 'width' => '2/3', 'required' => true])
             ->add('description', TextareaType::class, ['fieldset_group' => 'base'])
 //            ->add('parent', EntityType::class, [ 'class' => User::class ])
             // ->add('categories', EntityType::class, ['class' => OfferCategory::class, 'choice_label' => 'name', 'fieldset_group' => 'base'])
