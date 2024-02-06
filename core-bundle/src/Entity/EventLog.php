@@ -42,7 +42,7 @@ class EventLog
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
     private User|null $user;
 
-    #[ORM\OneToOne(targetEntity: Offer::class)]
+    #[ORM\OneToOne(targetEntity: OfferEntityInterface::class)]
     #[ORM\JoinColumn(name: 'offer_id', referencedColumnName: 'id')]
     private Offer|null $offer;
 

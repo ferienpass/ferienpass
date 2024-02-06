@@ -18,6 +18,7 @@ use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Export\XlsxExport;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\OfferEntityInterface;
 use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExports;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
@@ -36,14 +37,14 @@ use Symfony\Component\Workflow\WorkflowInterface;
 final class OffersController extends AbstractController
 {
     #[Route('{_suffix?}', name: 'admin_offers_index')]
-    public function index(?string $_suffix, #[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, OfferRepository $repository, HostRepository $hostRepository, Request $request, Breadcrumb $breadcrumb, FactoryInterface $factory, EditionRepository $editionRepository, XlsxExport $xlsxExport): Response
+    public function index(?string $_suffix, #[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, OfferRepository $repository, HostRepository $hostRepository, Request $request, Breadcrumb $breadcrumb, FactoryInterface $factory, EditionRepository $editionRepository, XlsxExport $xlsxExport, EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
             throw new \RuntimeException('No user');
         }
 
-        $qb = $repository->createQueryBuilder('i');
+        $qb = $entityManager->getRepository(OfferEntityInterface::class)->createQueryBuilder('i');
 
         $_suffix = ltrim((string) $_suffix, '.');
         if ('' !== $_suffix) {

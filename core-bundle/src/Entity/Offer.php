@@ -21,7 +21,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity]
+#[ORM\MappedSuperclass]
 class Offer
 {
     final public const STATE_DRAFT = 'draft';
@@ -36,14 +36,6 @@ class Offer
     final public const TRANSITION_UNPUBLISH = 'unpublish';
     final public const TRANSITION_CANCEL = 'cancel';
     final public const TRANSITION_RELAUNCH = 'relaunch';
-
-    /**
-     * @Groups("docx_export")
-     */
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
-    private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: 'Edition', inversedBy: 'offers')]
     #[ORM\JoinColumn(name: 'edition', referencedColumnName: 'id')]
@@ -239,7 +231,7 @@ class Offer
     #[ORM\OrderBy(['status' => 'ASC', 'sorting' => 'ASC'])]
     private Collection $attendances;
 
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'variants')]
+    #[ORM\ManyToOne(targetEntity: OfferEntityInterface::class, inversedBy: 'variants')]
     #[ORM\JoinColumn(name: 'varbase', referencedColumnName: 'id')]
     private ?Offer $variantBase = null;
 
@@ -324,12 +316,7 @@ class Offer
             return $variants;
         }
 
-        return $variants->filter(fn (Offer $v) => $v->getId() !== $this->getId());
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
+        return $variants->filter(fn (OfferEntityInterface $v) => $v->getId() !== $this->getId());
     }
 
     public function getEdition(): ?Edition

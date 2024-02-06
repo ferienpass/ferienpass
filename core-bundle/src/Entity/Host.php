@@ -95,7 +95,7 @@ class Host
     #[ORM\OneToMany(mappedBy: 'host', targetEntity: HostMemberAssociation::class, cascade: ['persist'])]
     private Collection $memberAssociations;
 
-    #[ORM\ManyToMany(targetEntity: Offer::class, mappedBy: 'hosts')]
+    #[ORM\ManyToMany(targetEntity: OfferEntityInterface::class, mappedBy: 'hosts')]
     private Collection $offers;
 
     public function __construct()

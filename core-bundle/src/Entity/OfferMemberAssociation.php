@@ -26,7 +26,7 @@ class OfferMemberAssociation
     #[ORM\Column(name: 'member_id', type: 'integer', options: ['unsigned' => true])]
     private int $member;
 
-    #[ORM\ManyToOne(targetEntity: 'Ferienpass\CoreBundle\Entity\Offer', inversedBy: 'memberAssociations')]
+    #[ORM\ManyToOne(targetEntity: OfferEntityInterface::class, inversedBy: 'memberAssociations')]
     #[ORM\JoinColumn(name: 'offer_id', referencedColumnName: 'id')]
     private Offer $offer;
 

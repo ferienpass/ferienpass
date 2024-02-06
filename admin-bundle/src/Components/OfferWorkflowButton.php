@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Components;
 
-use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\OfferEntityInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -26,7 +26,7 @@ class OfferWorkflowButton extends AbstractController
     use DefaultActionTrait;
 
     #[LiveProp]
-    public Offer $offer;
+    public OfferEntityInterface $offer;
 
     public function __construct(private readonly WorkflowInterface $offerStateMachine)
     {

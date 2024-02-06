@@ -46,7 +46,6 @@
 ',
                 ],
                 columns: {
-                    status: '{{ component("Admin:OfferWorkflowButton", { offer: item }) }}',
                     name: '<span class="{{ item.cancelled ? "line-through" : "" }}">{{ item.name }}</span>',
                     hosts: '{{ item.hosts|map(h => h.name)|join(", ") }}',
                     date: '

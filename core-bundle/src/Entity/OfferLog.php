@@ -23,7 +23,7 @@ class OfferLog
     #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Offer::class, inversedBy: 'activity')]
+    #[ORM\ManyToOne(targetEntity: OfferEntityInterface::class, inversedBy: 'activity')]
     #[ORM\JoinColumn(name: 'participant_id', referencedColumnName: 'id')]
     private Offer $offer;
 

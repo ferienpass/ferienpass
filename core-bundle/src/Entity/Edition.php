@@ -45,7 +45,7 @@ class Edition
     /**
      * @psalm-var Collection<int, Offer>
      */
-    #[ORM\OneToMany(mappedBy: 'edition', targetEntity: Offer::class)]
+    #[ORM\OneToMany(mappedBy: 'edition', targetEntity: OfferEntityInterface::class)]
     private Collection $offers;
 
     #[ORM\Column(type: 'integer', nullable: true, options: ['unsigned' => true])]

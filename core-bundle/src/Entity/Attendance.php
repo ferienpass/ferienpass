@@ -48,7 +48,7 @@ class Attendance
     #[ORM\Column(type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
     private \DateTimeInterface $modifiedAt;
 
-    #[ORM\ManyToOne(targetEntity: 'Ferienpass\CoreBundle\Entity\Offer', inversedBy: 'attendances')]
+    #[ORM\ManyToOne(targetEntity: OfferEntityInterface::class, inversedBy: 'attendances')]
     #[ORM\JoinColumn(name: 'offer_id', referencedColumnName: 'id')]
     private Offer $offer;
 

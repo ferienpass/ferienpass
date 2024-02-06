@@ -28,7 +28,7 @@ class OfferCategory
     #[ORM\Column(name: 'tstamp', type: 'integer', options: ['unsigned' => true])]
     private int $timestamp;
 
-    #[ORM\ManyToMany(targetEntity: Offer::class, mappedBy: 'categories')]
+    #[ORM\ManyToMany(targetEntity: OfferEntityInterface::class, mappedBy: 'categories')]
     private Collection $offers;
 
     #[ORM\Column(type: 'string', length: 255)]
