@@ -229,7 +229,7 @@ class Offer
     /**
      * @psalm-var Collection<int, Offer>
      */
-    #[ORM\OneToMany(mappedBy: 'variantBase', targetEntity: OfferEntityInterface::class)]
+    #[ORM\OneToMany(mappedBy: 'variantBase', targetEntity: Offer::class)]
     private Collection $variants;
 
     /**

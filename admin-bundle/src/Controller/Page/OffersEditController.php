@@ -54,7 +54,7 @@ final class OffersEditController extends AbstractController
     #[Route('/neu', name: 'admin_offers_new')]
     #[Route('/kopieren/{id}', name: 'admin_offers_copy')]
     #[Route('/variante/{id}', name: 'admin_offers_new_variant')]
-    public function __invoke(#[MapEntity(id: 'id')] ?OfferEntityInterface $offer, #[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, EntityManagerInterface $em, Request $request, Breadcrumb $breadcrumb): Response
+    public function __invoke(#[MapEntity(id: 'id')] ?Offer $offer, #[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, EntityManagerInterface $em, Request $request, Breadcrumb $breadcrumb): Response
     {
         $offer = $this->initialFormData = $this->getOffer($offer, $edition, $request);
 
@@ -109,7 +109,7 @@ final class OffersEditController extends AbstractController
         return $this->createForm(EditOfferType::class, $this->initialFormData, ['is_variant' => !$this->initialFormData->isVariantBase()]);
     }
 
-    private function getOffer(?OfferEntityInterface $offer, ?Edition $edition, Request $request): Offer
+    private function getOffer(?Offer $offer, ?Edition $edition, Request $request): Offer
     {
         if ('admin_offers_edit' === $request->get('_route') && null === $offer) {
             throw new PageNotFoundException('Item not found');
