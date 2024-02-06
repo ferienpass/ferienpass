@@ -124,7 +124,7 @@ class ActionsBuilder
 
         if (!$this->isGranted('ROLE_ADMIN')) {
             foreach ($this->editionRepository->findWithActiveTask('host_editing_stage') as $edition) {
-                $root->addChild('copy' . $edition->getId(), [
+                $root->addChild('copy'.$edition->getId(), [
                     'label' => 'offers.action.copyTo',
                     'route' => 'admin_offers_copy',
                     'routeParameters' => ['id' => $item->getId(), 'edition' => $edition->getAlias()],
@@ -270,7 +270,7 @@ class ActionsBuilder
             'route' => true ? 'user_account' : 'admin_index',
             'routeParameters' => ['_switch_user' => $item->getUserIdentifier()],
             'display' => $this->isGranted('ROLE_ALLOWED_TO_SWITCH'),
-            'extras' => ['icon' => 'logout-filled', 'translation_params' => ['user'=>$item->getUserIdentifier()]],
+            'extras' => ['icon' => 'logout-filled', 'translation_params' => ['user' => $item->getUserIdentifier()]],
         ]);
         // }
     }
