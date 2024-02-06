@@ -117,20 +117,20 @@ final class OffersEditController extends AbstractController
             $this->denyAccessUnlessGranted('create', $copy);
 
             // TODO these properties should be read from the DTO of the current form
-            $offer->setName($offer->getName());
-            $offer->setDescription($offer->getDescription());
-            $offer->setMeetingPoint($offer->getMeetingPoint());
-            $offer->setBring($offer->getBring());
-            $offer->setMinParticipants($offer->getMinParticipants());
-            $offer->setMaxParticipants($offer->getMaxParticipants());
-            $offer->setMinAge($offer->getMinAge());
-            $offer->setMaxAge($offer->getMaxAge());
-            $offer->setRequiresApplication($offer->requiresApplication());
-            $offer->setOnlineApplication($offer->isOnlineApplication());
-            $offer->setApplyText($offer->getApplyText());
-            $offer->setContact($offer->getContact());
-            $offer->setFee($offer->getFee());
-            $offer->setImage($offer->getImage());
+            $copy->setName($offer->getName().' (Kopie)');
+            $copy->setDescription($offer->getDescription());
+            $copy->setMeetingPoint($offer->getMeetingPoint());
+            $copy->setBring($offer->getBring());
+            $copy->setMinParticipants($offer->getMinParticipants());
+            $copy->setMaxParticipants($offer->getMaxParticipants());
+            $copy->setMinAge($offer->getMinAge());
+            $copy->setMaxAge($offer->getMaxAge());
+            $copy->setRequiresApplication($offer->requiresApplication());
+            $copy->setOnlineApplication($offer->isOnlineApplication());
+            $copy->setApplyText($offer->getApplyText());
+            $copy->setContact($offer->getContact());
+            $copy->setFee($offer->getFee());
+            $copy->setImage($offer->getImage());
 
             $this->doctrine->getManager()->persist($copy);
 
@@ -145,22 +145,22 @@ final class OffersEditController extends AbstractController
             $this->denyAccessUnlessGranted('create', $copy);
 
             // TODO these properties should be read from the DTO of the current form
-            $offer->setName($offer->getName());
-            $offer->setDescription($offer->getDescription());
-            $offer->setMeetingPoint($offer->getMeetingPoint());
-            $offer->setBring($offer->getBring());
-            $offer->setMinParticipants($offer->getMinParticipants());
-            $offer->setMaxParticipants($offer->getMaxParticipants());
-            $offer->setMinAge($offer->getMinAge());
-            $offer->setMaxAge($offer->getMaxAge());
-            $offer->setRequiresApplication($offer->requiresApplication());
-            $offer->setOnlineApplication($offer->isOnlineApplication());
-            $offer->setApplyText($offer->getApplyText());
-            $offer->setContact($offer->getContact());
-            $offer->setFee($offer->getFee());
-            $offer->setImage($offer->getImage());
+            $copy->setName($offer->getName().' (Kopie)');
+            $copy->setDescription($offer->getDescription());
+            $copy->setMeetingPoint($offer->getMeetingPoint());
+            $copy->setBring($offer->getBring());
+            $copy->setMinParticipants($offer->getMinParticipants());
+            $copy->setMaxParticipants($offer->getMaxParticipants());
+            $copy->setMinAge($offer->getMinAge());
+            $copy->setMaxAge($offer->getMaxAge());
+            $copy->setRequiresApplication($offer->requiresApplication());
+            $copy->setOnlineApplication($offer->isOnlineApplication());
+            $copy->setApplyText($offer->getApplyText());
+            $copy->setContact($offer->getContact());
+            $copy->setFee($offer->getFee());
+            $copy->setImage($offer->getImage());
 
-            $offer->setVariantBase($offer);
+            $copy->setVariantBase($offer);
 
             $this->doctrine->getManager()->persist($copy);
 
