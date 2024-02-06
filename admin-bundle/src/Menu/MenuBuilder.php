@@ -74,7 +74,7 @@ class MenuBuilder
             $menu->addChild('Accounts', [
                 'route' => 'admin_accounts_index',
             ]);
-            $menu->addChild('Werkzeuge & Einstellungen', [
+            $menu->addChild('tools.title', [
                 'route' => 'admin_tools',
             ]);
         }

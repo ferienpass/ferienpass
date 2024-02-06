@@ -41,7 +41,7 @@ final class EraseDataController extends AbstractController
         return $this->render('@FerienpassAdmin/page/tools/erase_data.html.twig', [
             'form' => $form,
             'participants' => $participants,
-            'breadcrumb' => $breadcrumb->generate('Tools & Werkzeuge', 'Daten löschen'),
+            'breadcrumb' => $breadcrumb->generate('tools.title', 'Daten löschen'),
         ]);
     }
 }

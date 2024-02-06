@@ -10,7 +10,7 @@
 
         {{ partials.h1(headline|default(item.name|default("#{translationPrefix}.new"))|trans) }}
 
-        {{ component('OffersEdit', {
+        {{ component('Admin:EditOfferForm', {
             initialFormData: item,
             form: form
         }) }}

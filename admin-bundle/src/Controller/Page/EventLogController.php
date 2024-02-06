@@ -39,7 +39,7 @@ final class EventLogController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/tools/event_log.html.twig', [
             'events' => $events,
-            'breadcrumb' => $breadcrumb->generate('Tools & Werkzeuge', 'Ereignisse'),
+            'breadcrumb' => $breadcrumb->generate('tools.title', 'Ereignisse'),
         ]);
     }
 }

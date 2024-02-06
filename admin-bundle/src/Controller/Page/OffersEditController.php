@@ -25,27 +25,15 @@ use Ferienpass\CoreBundle\Ux\Flash;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
-use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
-use Symfony\UX\LiveComponent\Attribute\LiveProp;
-use Symfony\UX\LiveComponent\DefaultActionTrait;
-use Symfony\UX\LiveComponent\LiveCollectionTrait;
 
 #[Route('/angebote/{edition?null}')]
-#[AsLiveComponent(name: 'OffersEdit', template: '@FerienpassAdmin/components/EditOffer.html.twig', route: 'live_component_admin')]
 final class OffersEditController extends AbstractController
 {
-    use DefaultActionTrait;
-    use LiveCollectionTrait;
-
-    #[LiveProp]
-    public Offer $initialFormData;
-
     public function __construct(#[Autowire(service: 'ferienpass.file_uploader.offer')] private readonly FileUploader $fileUploader, private readonly ManagerRegistry $doctrine, private readonly WorkflowInterface $offerStateMachine)
     {
     }
@@ -56,9 +44,9 @@ final class OffersEditController extends AbstractController
     #[Route('/variante/{id}', name: 'admin_offers_new_variant')]
     public function __invoke(#[MapEntity(id: 'id')] ?Offer $offer, #[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, EntityManagerInterface $em, Request $request, Breadcrumb $breadcrumb): Response
     {
-        $offer = $this->initialFormData = $this->getOffer($offer, $edition, $request);
+        $offer = $this->getOffer($offer, $edition, $request);
 
-        $form = $this->instantiateForm();
+        $form = $this->createForm(EditOfferType::class, $offer, ['is_variant' => !$offer->isVariantBase()]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             // Add alias to the change-set, later the {@see AliasListener.php} kicks in
@@ -102,11 +90,6 @@ final class OffersEditController extends AbstractController
             'form' => $form->createView(),
             'breadcrumb' => $breadcrumb->generate(['offers.title', ['route' => 'admin_offers_index', 'routeParameters' => array_filter(['edition' => $offer->getEdition()?->getAlias()])]], $offer->getEdition() ? [$offer->getEdition()->getName(), ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]] : [], $offer->getName().' (bearbeiten)'),
         ]);
-    }
-
-    protected function instantiateForm(): FormInterface
-    {
-        return $this->createForm(EditOfferType::class, $this->initialFormData, ['is_variant' => !$this->initialFormData->isVariantBase()]);
     }
 
     private function getOffer(?Offer $offer, ?Edition $edition, Request $request): Offer

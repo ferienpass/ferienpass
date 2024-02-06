@@ -114,15 +114,15 @@ class ActionsBuilder
             'extras' => ['icon' => 'calendar-solid'],
         ]);
 
-        $root->addChild('copy', [
-            'label' => 'offers.action.copy',
-            'route' => 'admin_offers_copy',
-            'routeParameters' => array_filter(['id' => $item->getId(), 'edition' => $item->getEdition()?->getAlias()]),
-            'display' => $this->isGranted('view', $item),
-            'extras' => ['icon' => 'duplicate-solid'],
-        ]);
-
-        if (!$this->isGranted('ROLE_ADMIN')) {
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $root->addChild('copy', [
+                'label' => 'offers.action.copy',
+                'route' => 'admin_offers_copy',
+                'routeParameters' => array_filter(['id' => $item->getId(), 'edition' => $item->getEdition()?->getAlias()]),
+                'display' => $this->isGranted('view', $item),
+                'extras' => ['icon' => 'duplicate-solid'],
+            ]);
+        } else {
             foreach ($this->editionRepository->findWithActiveTask('host_editing_stage') as $edition) {
                 $root->addChild('copy'.$edition->getId(), [
                     'label' => 'offers.action.copyTo',
