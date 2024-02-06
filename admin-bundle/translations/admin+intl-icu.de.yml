@@ -9,7 +9,7 @@ accounts:
     contact.0: Kontaktdaten
     address.0: Postanschrift
     account.0: Account-Status
-  action.impersonate: Anmelden als
+  action.impersonate: Anmelden als {user}
   ROLE_MEMBER: Eltern
   ROLE_HOST: Veranstaltende
   ROLE_ADMIN: Admins
@@ -77,7 +77,8 @@ offers:
   action:
     edit: Angebot bearbeiten
     proof: Korrekturabzug
-    copy: Angebot kopieren nach „{edition}“
+    copy: Angebot kopieren
+    copyTo: Angebot kopieren nach „{edition}“
     delete: Angebot löschen
     newVariant: Neuen Termin erstellen
     freeze: Angebot einfrieren
@@ -102,6 +103,7 @@ offers:
     - Laden Sie ein Foto zur Veröffentlichung hoch. Nutzen Sie nur gemeinfreie Fotos und geben Sie in jedem Fall den/die Fotografin an.
   label:
     name: Name
+    edition: Saison
     description: Beschreibung
     categories: Kategorien
     applicationDeadline: Nachmeldungen bis
@@ -126,6 +128,7 @@ offers:
     submitAndCancel: Speichern und absagen
     submitAndRelaunch: Speichern und wiederherstellen
   help:
+    edition: Sie können das Angebot in eine andere Saison verschieben.
     applyText: Wie kann sich zu dem Angebot angemeldet werden (wenn Online-System nicht genutzt)?
     contact: Wer gibt Auskunft (z.B. Name + TelNr)? Leer lassen, falls die Info schon in "Anmeldung unter" steht.
     requiresApplication: Eine vorherige Anmeldung ist erforderlich, um am Angebot teilnehmen zu können.
@@ -319,7 +322,7 @@ profile:
 user:
   title: Persönliche Daten
   logout: Abmelden
-  impersonation_exit: Zurück zu %impersonator%
+  impersonation_exit: Zurück zu {impersonator}
   password.title: Passwort ändern
   label.firstname: Vorname
   label.lastname: Nachname

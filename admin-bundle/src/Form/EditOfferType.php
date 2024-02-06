@@ -15,6 +15,7 @@ namespace Ferienpass\AdminBundle\Form;
 
 use Ferienpass\AdminBundle\Dto\Annotation\FormType as FormTypeAnnotation;
 use Ferienpass\AdminBundle\Form\CompoundType\OfferDatesType;
+use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
@@ -95,6 +96,20 @@ class EditOfferType extends AbstractType
             $form = $event->getForm();
             if (!($offer = $event->getData()) instanceof Offer) {
                 return;
+            }
+
+            if ($this->security->isGranted('ROLE_ADMIN')) {
+                $form->add('edition', null, [
+                    'fieldset_group' => 'base',
+                    'width' => '2/3',
+                    'required' => true,
+                    'class' => Edition::class,
+                    'choice_label' => 'name',
+                    'multiple' => false,
+                    'expanded' => false,
+                    'placeholder' => '-',
+                    'help' => 'offers.help.edition',
+                ]);
             }
 
             foreach ($this->offerStateMachine->getEnabledTransitions($offer) as $enabledTransition) {

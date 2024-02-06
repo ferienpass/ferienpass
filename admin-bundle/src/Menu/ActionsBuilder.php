@@ -108,20 +108,30 @@ class ActionsBuilder
 
         $root->addChild('newVariant', [
             'label' => 'offers.action.newVariant',
-            'route' => 'admin_offers_new',
-            'routeParameters' => array_filter(['source' => null === $item->getVariantBase() ? $item->getId() : $item->getVariantBase()?->getId(), 'act' => 'newVariant', 'edition' => $item->getEdition()?->getAlias()]),
+            'route' => 'admin_offers_new_variant',
+            'routeParameters' => array_filter(['id' => null === $item->getVariantBase() ? $item->getId() : $item->getVariantBase()?->getId(), 'edition' => $item->getEdition()?->getAlias()]),
             'display' => $this->isGranted('create', $item) && $this->isGranted('edit', $item),
             'extras' => ['icon' => 'calendar-solid'],
         ]);
 
-        foreach ($this->editionRepository->findWithActiveTask('host_editing_stage') as $edition) {
-            $root->addChild('copy'.$edition->getId(), [
-                'label' => 'offers.action.copy',
-                'route' => 'admin_offers_new',
-                'routeParameters' => array_filter(['source' => $item->getId(), 'act' => 'copy', 'edition' => $edition->getAlias()]),
-                'display' => $this->isGranted('view', $item),
-                'extras' => ['icon' => 'duplicate-solid', 'translation_params' => ['edition' => $edition->getName()]],
-            ]);
+        $root->addChild('copy', [
+            'label' => 'offers.action.copy',
+            'route' => 'admin_offers_copy',
+            'routeParameters' => array_filter(['id' => $item->getId(), 'edition' => $item->getEdition()?->getAlias()]),
+            'display' => $this->isGranted('view', $item),
+            'extras' => ['icon' => 'duplicate-solid'],
+        ]);
+
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            foreach ($this->editionRepository->findWithActiveTask('host_editing_stage') as $edition) {
+                $root->addChild('copy' . $edition->getId(), [
+                    'label' => 'offers.action.copyTo',
+                    'route' => 'admin_offers_copy',
+                    'routeParameters' => ['id' => $item->getId(), 'edition' => $edition->getAlias()],
+                    'display' => $this->isGranted('view', $item),
+                    'extras' => ['icon' => 'duplicate-solid', 'translation_params' => ['edition' => $edition->getName()]],
+                ]);
+            }
         }
 
         //        $root->addChild('delete', [
@@ -134,33 +144,6 @@ class ActionsBuilder
         //                'icon' => 'trash-solid',
         //            ],
         //        ]);
-        //
-        //        if (!$item->isCancelled()
-        //            && ((null === $edition = $item->getEdition()) || !$edition->getActiveTasks('show_offers')->isEmpty())) {
-        //            $root->addChild('cancel', [
-        //                'label' => 'offers.action.cancel',
-        //                'route' => 'admin_offer_show',
-        //                'routeParameters' => array_filter(['id' => $item->getId(), 'act' => 'cancel', 'edition' => $item->getEdition()?->getAlias()],
-        //                'display' => $this->isGranted('cancel', $item),
-        //                'extras' => [
-        //                    'method' => 'post',
-        //                    'icon' => 'ban-solid',
-        //                ],
-        //            ]);
-        //        }
-
-        //        if ($item->isCancelled()) {
-        //            $root->addChild('reactivate', [
-        //                'label' => 'offers.action.reactivate',
-        //                'route' => 'admin_offer_show',
-        //                'routeParameters' => array_filter(['id' => $item->getId(), 'act' => 'relaunch', 'edition' => $item->getEdition()?->getAlias()],
-        //                'display' => $this->isGranted('reactivate', $item),
-        //                'extras' => [
-        //                    'method' => 'post',
-        //                    'icon' => 'trash-solid',
-        //                ],
-        //            ]);
-        //        }
 
         if ($item->isOnlineApplication()) {
             $root->addChild('participantList', [
@@ -284,10 +267,10 @@ class ActionsBuilder
         // if ($this->isGranted('ROLE_HOST', $item)) {
         $root->addChild('impersonate', [
             'label' => 'accounts.action.impersonate',
-            'route' => 'admin_index',
+            'route' => true ? 'user_account' : 'admin_index',
             'routeParameters' => ['_switch_user' => $item->getUserIdentifier()],
             'display' => $this->isGranted('ROLE_ALLOWED_TO_SWITCH'),
-            'extras' => ['icon' => 'logout-filled'],
+            'extras' => ['icon' => 'logout-filled', 'translation_params' => ['user'=>$item->getUserIdentifier()]],
         ]);
         // }
     }

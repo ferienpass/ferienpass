@@ -44,6 +44,11 @@ class BackendAdminListener
 
         $tree->getChild('preview')?->setLabel('Frontend');
 
+        $submenu = $tree->getChild('submenu');
+        $submenu->removeChild('login');
+        $submenu->removeChild('security');
+        $submenu->removeChild('favorites');
+
         $admin = $event->getFactory()
             ->createItem('admin')
             ->setLabel('Ferienpass-Admin')

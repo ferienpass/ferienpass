@@ -52,9 +52,11 @@ final class OffersEditController extends AbstractController
 
     #[Route('/{id}/bearbeiten', name: 'admin_offers_edit', requirements: ['id' => '\d+'])]
     #[Route('/neu', name: 'admin_offers_new')]
-    public function __invoke(#[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, EntityManagerInterface $em, Request $request, Breadcrumb $breadcrumb): Response
+    #[Route('/kopieren/{id}', name: 'admin_offers_copy')]
+    #[Route('/variante/{id}', name: 'admin_offers_new_variant')]
+    public function __invoke(#[MapEntity(id: 'id')] ?OfferEntityInterface $offer, #[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, EntityManagerInterface $em, Request $request, Breadcrumb $breadcrumb): Response
     {
-        $offer = $this->initialFormData = $this->getOffer($request, $edition);
+        $offer = $this->initialFormData = $this->getOffer($offer, $edition, $request);
 
         $form = $this->instantiateForm();
         $form->handleRequest($request);
@@ -107,49 +109,79 @@ final class OffersEditController extends AbstractController
         return $this->createForm(EditOfferType::class, $this->initialFormData, ['is_variant' => !$this->initialFormData->isVariantBase()]);
     }
 
-    private function getOffer(Request $request, ?Edition $edition): Offer
+    private function getOffer(?OfferEntityInterface $offer, ?Edition $edition, Request $request): Offer
     {
-        if (0 === $offerId = $request->attributes->getInt('id')) {
+        if ('admin_offers_edit' === $request->get('_route') && null === $offer) {
+            throw new PageNotFoundException('Item not found');
+        }
+
+        if (null === $offer) {
             $offer = new Offer();
             $offer->setEdition($edition);
 
             $this->denyAccessUnlessGranted('create', $offer);
-
-            if ($request->query->has('act') && $request->query->has('source')) {
-                $source = $this->doctrine->getRepository(Offer::class)->find($request->query->getInt('source'));
-                if (null !== $source) {
-                    $this->denyAccessUnlessGranted('view', $source);
-
-                    // TODO these properties should be read from the DTO of the current form
-                    $offer->setName($source->getName());
-                    $offer->setDescription($source->getDescription());
-                    $offer->setMeetingPoint($source->getMeetingPoint());
-                    $offer->setBring($source->getBring());
-                    $offer->setMinParticipants($source->getMinParticipants());
-                    $offer->setMaxParticipants($source->getMaxParticipants());
-                    $offer->setMinAge($source->getMinAge());
-                    $offer->setMaxAge($source->getMaxAge());
-                    $offer->setRequiresApplication($source->requiresApplication());
-                    $offer->setOnlineApplication($source->isOnlineApplication());
-                    $offer->setApplyText($source->getApplyText());
-                    $offer->setContact($source->getContact());
-                    $offer->setFee($source->getFee());
-                    $offer->setImage($source->getImage());
-                }
-
-                if ('newVariant' === $request->query->get('act')) {
-                    $offer->setVariantBase($source);
-                }
-            }
 
             $this->doctrine->getManager()->persist($offer);
 
             return $offer;
         }
 
-        $offer = $this->doctrine->getRepository(Offer::class)->find($offerId);
-        if (null === $offer) {
-            throw new PageNotFoundException('Item not found');
+        if ('admin_offers_copy' === $request->get('_route')) {
+            $copy = new Offer();
+            $copy->setEdition($edition);
+
+            $this->denyAccessUnlessGranted('view', $offer);
+            $this->denyAccessUnlessGranted('create', $copy);
+
+            // TODO these properties should be read from the DTO of the current form
+            $offer->setName($offer->getName());
+            $offer->setDescription($offer->getDescription());
+            $offer->setMeetingPoint($offer->getMeetingPoint());
+            $offer->setBring($offer->getBring());
+            $offer->setMinParticipants($offer->getMinParticipants());
+            $offer->setMaxParticipants($offer->getMaxParticipants());
+            $offer->setMinAge($offer->getMinAge());
+            $offer->setMaxAge($offer->getMaxAge());
+            $offer->setRequiresApplication($offer->requiresApplication());
+            $offer->setOnlineApplication($offer->isOnlineApplication());
+            $offer->setApplyText($offer->getApplyText());
+            $offer->setContact($offer->getContact());
+            $offer->setFee($offer->getFee());
+            $offer->setImage($offer->getImage());
+
+            $this->doctrine->getManager()->persist($copy);
+
+            return $copy;
+        }
+
+        if ('admin_offers_new_variant' === $request->get('_route')) {
+            $copy = new Offer();
+            $copy->setEdition($edition);
+
+            $this->denyAccessUnlessGranted('view', $offer);
+            $this->denyAccessUnlessGranted('create', $copy);
+
+            // TODO these properties should be read from the DTO of the current form
+            $offer->setName($offer->getName());
+            $offer->setDescription($offer->getDescription());
+            $offer->setMeetingPoint($offer->getMeetingPoint());
+            $offer->setBring($offer->getBring());
+            $offer->setMinParticipants($offer->getMinParticipants());
+            $offer->setMaxParticipants($offer->getMaxParticipants());
+            $offer->setMinAge($offer->getMinAge());
+            $offer->setMaxAge($offer->getMaxAge());
+            $offer->setRequiresApplication($offer->requiresApplication());
+            $offer->setOnlineApplication($offer->isOnlineApplication());
+            $offer->setApplyText($offer->getApplyText());
+            $offer->setContact($offer->getContact());
+            $offer->setFee($offer->getFee());
+            $offer->setImage($offer->getImage());
+
+            $offer->setVariantBase($offer);
+
+            $this->doctrine->getManager()->persist($copy);
+
+            return $copy;
         }
 
         $this->denyAccessUnlessGranted('edit', $offer);
