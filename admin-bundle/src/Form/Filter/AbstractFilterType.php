@@ -21,7 +21,7 @@ use Symfony\Contracts\Translation\TranslatableInterface;
 
 abstract class AbstractFilterType extends AbstractType
 {
-    abstract public function apply(QueryBuilder $qb, FormInterface $form = null): void;
+    abstract public function apply(QueryBuilder $qb, FormInterface $form): void;
 
     /**
      * Allows you to modify whether the filter shall be displayed in the form, regardless of whether the filter is applied.
@@ -37,6 +37,7 @@ abstract class AbstractFilterType extends AbstractType
 
         $view->vars['isEmpty'] = $form->isEmpty();
         $view->vars['humanReadable'] = $this->getHumanReadableValue($form);
+        $view->vars['display'] = $this->shallDisplay();
     }
 
     abstract protected function getHumanReadableValue(FormInterface $form): null|string|TranslatableInterface;

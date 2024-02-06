@@ -43,7 +43,8 @@
 
         </div>
 
-        {% if filter.count > 2 %}
+        {% set activeFilters = filter.children|filter((filter) => filter.vars.display|default(false)) %}
+        {% if activeFilters is not empty %}
             {% embed '@FerienpassAdmin/components/dropdown.html.twig' with { dropdownClass: 'w-96'} %}
                 {% block toggle %}
                     <button type="button"
@@ -68,12 +69,12 @@
                         }) }}
 
                         <div class="space-y-4">
-                        {% for widget in filter.children %}
+                        {% for widget in activeFilters %}
                             {{ form_row(widget) }}
                         {% endfor %}
                         </div>
 
-                        {{ form_end(filter) }}
+                        {{ form_end(filter, { render_rest: false }) }}
                     </div>
 
                 {% endblock %}

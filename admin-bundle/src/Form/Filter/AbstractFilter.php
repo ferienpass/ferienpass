@@ -62,7 +62,7 @@ abstract class AbstractFilter extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         foreach ($this->getFilters() as $filterName => $filterType) {
-            if ($builder->has($filterName) || !$filterType->shallDisplay()) {
+            if ($builder->has($filterName)) {
                 continue;
             }
 
@@ -83,8 +83,7 @@ abstract class AbstractFilter extends AbstractType
                 continue;
             }
 
-            $filterForm = $form->has($k) ? $form->get($k) : null;
-            $filter->apply($qb, $filterForm);
+            $filter->apply($qb, $form->get($k));
         }
     }
 
