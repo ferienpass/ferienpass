@@ -39,6 +39,7 @@ final class EditionsController extends AbstractController
         $items = $this->editionRepository->findBy([], ['archived' => 'ASC', 'name' => 'ASC']);
 
         return $this->render('@FerienpassAdmin/page/edition/index.html.twig', [
+            'createUrl' => $this->generateUrl('admin_editions_create'),
             'items' => $items,
             'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'editions.title'),
         ]);

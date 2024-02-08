@@ -5,6 +5,8 @@
         <div class="flex-shrink-0">
             <span class="block h-5 w-5 {{ type == "confirm" ? "text-green-500 dark:text-green-300" : (type == "error" ? "text-red-400 dark:text-red-300" : "text-blue-400 dark:text-blue-300") }}">{{ source(type == "confirm" ? '@FerienpassAdmin/icons/check-circle.solid.svg' : (type == "error" ? '@FerienpassAdmin/icons/x-circle.solid.svg' : '@FerienpassAdmin/icons/information-circle.solid.svg')) }}</span>
         </div>
-        <p class="ml-2 text-sm leading-5 {{ type == "confirm" ? "text-green-700 dark:text-green-200" : (type == "error" ? "text-red-700 dark:text-red-200" : "text-blue-700 dark:text-blue-200") }}">{% block content %}{{ message|trans }}{% endblock %}</p>
+        <p class="ml-2 text-sm leading-5 {{ type == "confirm" ? "text-green-700 dark:text-green-200" : (type == "error" ? "text-red-700 dark:text-red-200" : "text-blue-700 dark:text-blue-200") }}">
+            {% block content %}{{ message|trans }}{% endblock %}
+        </p>
     </div>
 </div>

@@ -48,6 +48,9 @@ final class FerienpassCmsExtension extends Extension implements PrependExtension
                 'datimFormat' => 'd.m.Y H:i',
                 'timeZone' => 'Europe/Berlin',
             ],
+            'cron' => [
+                'web_listener' => false,
+            ],
         ]);
 
         $container->prependExtensionConfig('twig_component', [

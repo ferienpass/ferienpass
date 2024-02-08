@@ -10,8 +10,10 @@
 
                 <p class="text-sm font-medium leading-5 text-gray-700 dark:text-gray-50">Termin</p>
                 <div class="mt-1">
-                    {{ form_widget(form.begin.date, {'attr': {'data-ferienpass--admin-form-date-period-target': 'begin'}}) }}
-                    {{ form_widget(form.end.date, {'attr': {'data-ferienpass--admin-form-date-period-target': 'end'}}) }}
+                    <div class="flex items-center space-x-2">
+                        {{ form_widget(form.begin.date, {'attr': {'data-ferienpass--admin-form-date-period-target': 'begin'}}) }}
+                        {{ form_widget(form.end.date, {'attr': {'data-ferienpass--admin-form-date-period-target': 'end'}}) }}
+                    </div>
                 </div>
 
             </div>
@@ -23,9 +25,9 @@
 
                 <div class="mt-1 flex">
 
-                    <div class="rounded-md shadow-sm border border-gray-200 flex">
+                    <div class="rounded-md shadow-sm border border-gray-200 dark:border-white/95 flex">
                         {{ form_widget(form.begin.time.hour, {'attr': {'class': 'w-16 pl-2 pr-6 border-none rounded-r-none focus:z-10'}}) }}
-                        <div class="flex items-center bg-gray-100 px-1">
+                        <div class="flex items-center bg-gray-100 dark:bg-white/95 px-1">
                             <span class="block leading-none font-semibold text-gray-700">:</span>
                         </div>
                         {{ form_widget(form.begin.time.minute, {'attr': {'class': 'w-16 pl-2 pr-6 border-none rounded-l-none focus:z-10'}}) }}
@@ -35,9 +37,9 @@
                         <span class="block leading-none font-semibold text-gray-700">—</span>
                     </div>
 
-                    <div class="rounded-md shadow-sm border border-gray-200 flex">
+                    <div class="rounded-md shadow-sm border border-gray-200 dark:border-white/95 flex">
                         {{ form_widget(form.end.time.hour, {'attr': {'class': 'w-16 pl-2 pr-6 border-none rounded-r-none focus:z-10'}}) }}
-                        <div class="flex items-center bg-gray-100 px-1">
+                        <div class="flex items-center bg-gray-100 dark:bg-white/95 px-1">
                             <span class="block leading-none font-semibold text-gray-700">:</span>
                         </div>
                         {{ form_widget(form.end.time.minute, {'attr': {'class': 'w-16 pl-2 pr-6 border-none rounded-l-none focus:z-10'}}) }}

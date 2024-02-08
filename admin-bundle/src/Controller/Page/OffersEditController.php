@@ -21,6 +21,7 @@ use Ferienpass\AdminBundle\Form\EditOfferType;
 use Ferienpass\AdminBundle\Service\FileUploader;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\OfferDate;
 use Ferienpass\CoreBundle\Ux\Flash;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -101,6 +102,7 @@ final class OffersEditController extends AbstractController
         if (null === $offer) {
             $offer = new Offer();
             $offer->setEdition($edition);
+            $offer->addDate(new OfferDate($offer));
 
             $this->denyAccessUnlessGranted('create', $offer);
 

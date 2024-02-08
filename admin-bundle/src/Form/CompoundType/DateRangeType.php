@@ -50,9 +50,10 @@ class DateRangeType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'inherit_data' => true,
+            'error_bubbling' => true,
+            'inherit_data' => false,
+            'field_begin' => 'begin',
+            'field_end' => 'end',
         ]);
-        $resolver->setDefault('field_begin', '[begin]');
-        $resolver->setDefault('field_end', '[end]');
     }
 }

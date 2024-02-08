@@ -22,11 +22,12 @@ export default class extends Controller {
         const end = this.endTarget
 
         new easepick.create({
-            plugins: [RangePlugin, /*TimePlugin*/],
+            plugins: [RangePlugin],
             element: begin,
             css: [
                 "https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.css"
-            ], RangePlugin: {
+            ],
+            RangePlugin: {
                 elementEnd: end,
                 tooltip: true,
                 locale: {
@@ -36,15 +37,15 @@ export default class extends Controller {
                 //startDate: '' !== this.minDateValue ? this.minDateValue : '',
                 //endDate: '' !== this.maxDateValue ? this.maxDateValue : '',
             },
-            inline: true,
             format: 'DD.MM.YYYY',
             lang: 'de',
             grid: 2,
+            zIndex:20,
             calendars: 2,
             setup(picker) {
                 picker.on('render', (e) => {
-                    begin.style.display = 'none'
-                    end.style.display = 'none'
+                    //begin.style.display = 'none'
+                    //end.style.display = 'none'
                 });
             },
         });

@@ -245,11 +245,10 @@ class ActionsBuilder
 
     private function payments(ItemInterface $root, Payment $item)
     {
-        $root->addChild('offer', [
+        $root->addChild('receipt', [
             'label' => 'payments.action.receipt',
             'route' => 'admin_payments_receipt',
             'routeParameters' => ['id' => $item->getId()],
-            //   'display' => $this->isGranted('view', $item->getOffer()),
             'extras' => ['icon' => 'pencil-solid'],
         ]);
     }
@@ -260,19 +259,17 @@ class ActionsBuilder
             'label' => 'accounts.action.edit',
             'route' => 'admin_accounts_edit',
             'routeParameters' => ['id' => $item->getId(), 'role' => array_search($item->getRoles()[0], AccountsController::ROLES, true) ?: 'eltern'],
-            // 'display' => $this->isGranted('edit', $item),
+            'display' => $this->isGranted('edit', $item),
             'extras' => ['icon' => 'pencil-solid'],
         ]);
 
-        // if ($this->isGranted('ROLE_HOST', $item)) {
         $root->addChild('impersonate', [
             'label' => 'accounts.action.impersonate',
-            'route' => true ? 'user_account' : 'admin_index',
+            'route' => false ? 'user_account' : 'admin_index',
             'routeParameters' => ['_switch_user' => $item->getUserIdentifier()],
             'display' => $this->isGranted('ROLE_ALLOWED_TO_SWITCH'),
             'extras' => ['icon' => 'logout-filled', 'translation_params' => ['user' => $item->getUserIdentifier()]],
         ]);
-        // }
     }
 
     private function isGranted(string $attribute, object $item = null): bool

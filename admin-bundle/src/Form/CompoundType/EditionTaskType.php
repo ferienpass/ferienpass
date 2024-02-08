@@ -33,6 +33,7 @@ class EditionTaskType extends AbstractType
             ->add('period', DateRangeType::class, [
                 'field_begin' => 'periodBegin',
                 'field_end' => 'periodEnd',
+                'inherit_data' => true,
                 'label' => false,
             ])
             ->add('type', ChoiceType::class, [

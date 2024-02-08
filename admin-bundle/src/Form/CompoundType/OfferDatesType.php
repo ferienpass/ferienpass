@@ -28,12 +28,11 @@ class OfferDatesType extends AbstractType
             'entry_options' => [
                 'label' => false,
                 'data_class' => OfferDate::class,
-                'empty_data' => fn (FormInterface $form) => new OfferDate($form->getParent()->getParent()->getData(), $form->get('begin')->getData(), $form->get('end')->getData()),
+                'empty_data' => function (FormInterface $form): OfferDate {
+                    return new OfferDate($form->getParent()->getParent()->getData());
+                },
             ],
-            // 'allow_add' => 'true',
-            // 'allow_delete' => 'true',
-            // 'delete_empty' => fn (OfferDate $date = null) => null === $date || (null === $date->getBegin() && null === $date->getEnd()),
-            // 'by_reference' => false,
+            'error_bubbling' => true,
         ]);
     }
 

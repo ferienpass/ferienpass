@@ -26,6 +26,8 @@
 
 {{ form_start(form) }}
 
+        {{ form_errors(form) }}
+
         {% set fieldsets = form.children|map(
             f => f.vars['fieldset_group'] is defined ? "#{f.vars['fieldset_group']}" : null)|reduce(
             (unique, item) => not item or item in unique ? unique : unique|merge([item]), []

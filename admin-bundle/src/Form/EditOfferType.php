@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Form;
 
-use Ferienpass\AdminBundle\Dto\Annotation\FormType as FormTypeAnnotation;
 use Ferienpass\AdminBundle\Form\CompoundType\OfferDatesType;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Offer;
@@ -121,28 +120,28 @@ class EditOfferType extends AbstractType
             }
         });
 
-        $properties = (new \ReflectionClass($options['data_class']))->getProperties(\ReflectionProperty::IS_PUBLIC);
-
-        foreach ($properties as $property) {
-            $annotations = array_merge(...array_map(fn (\ReflectionAttribute $attribute) => $attribute->getArguments(), $property->getAttributes(FormTypeAnnotation::class)));
-
-            $fieldOptions = [
-                'disabled' => $options['is_variant'],
-                'label' => sprintf('Offer.%s.0', $property->getName()),
-                'required' => 'name' === $property->getName(),
-                'translation_domain' => 'contao_Offer',
-            ];
-
-            if (!isset($fieldOptions['help']) && ($annotations['showHelp'] ?? false)) {
-                $fieldOptions['help'] = sprintf('Offer.%s.1', $property->getName());
-            }
-
-            if ($placeholder = $annotations['placeholder'] ?? null) {
-                $fieldOptions['attr']['placeholder'] = $placeholder;
-            }
-
-            $builder->add($property->getName(), null, $fieldOptions);
-        }
+        //        $properties = (new \ReflectionClass($options['data_class']))->getProperties(\ReflectionProperty::IS_PUBLIC);
+        //
+        //        foreach ($properties as $property) {
+        //            $annotations = array_merge(...array_map(fn (\ReflectionAttribute $attribute) => $attribute->getArguments(), $property->getAttributes(FormTypeAnnotation::class)));
+        //
+        //            $fieldOptions = [
+        //                'disabled' => $options['is_variant'],
+        //                'label' => sprintf('Offer.%s.0', $property->getName()),
+        //                'required' => 'name' === $property->getName(),
+        //                'translation_domain' => 'contao_Offer',
+        //            ];
+        //
+        //            if (!isset($fieldOptions['help']) && ($annotations['showHelp'] ?? false)) {
+        //                $fieldOptions['help'] = sprintf('Offer.%s.1', $property->getName());
+        //            }
+        //
+        //            if ($placeholder = $annotations['placeholder'] ?? null) {
+        //                $fieldOptions['attr']['placeholder'] = $placeholder;
+        //            }
+        //
+        //            $builder->add($property->getName(), null, $fieldOptions);
+        //        }
 
         //        $builder
         //            ->add('image', FileType::class, [
