@@ -13,9 +13,15 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Form;
 
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Ferienpass\AdminBundle\Form\CompoundType\OfferDatesType;
 use Ferienpass\CoreBundle\Entity\Edition;
+use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\User;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -108,6 +114,31 @@ class EditOfferType extends AbstractType
                     'expanded' => false,
                     'placeholder' => '-',
                     'help' => 'offers.help.edition',
+                ]);
+            }
+
+            /** @var User $user */
+            $user = $this->security->getUser();
+            if ($this->security->isGranted('ROLE_ADMIN') || $user->getHosts()->count() > 1) {
+                $form->add('hosts', EntityType::class, [
+                    'fieldset_group' => 'base',
+                    'width' => '2/3',
+                    'required' => true,
+                    'class' => Host::class,
+                    'query_builder' => function (EntityRepository $er) use ($user): QueryBuilder {
+                        $qb = $er->createQueryBuilder('h');
+
+                        if (!$this->security->isGranted('ROLE_ADMIN')) {
+                            $qb->innerJoin('h.memberAssociations', 'm', Join::WITH, 'm.user = :user')->setParameter('user', $user);
+                        }
+
+                        return $qb->orderBy('h.name');
+                    },
+                    'choice_label' => 'name',
+                    'multiple' => true,
+                    'expanded' => false,
+                    'help' => 'offers.help.hosts',
+                    'autocomplete' => true,
                 ]);
             }
 

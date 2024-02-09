@@ -46,7 +46,8 @@ accounts:
     city: Ort
     accountRoles: Account
     adminRoles: Rollen
-    disable: Account deaktivieren
+    superAdmin: Super-Admin
+    disabled: Account deaktivieren
   help:
     hosts: Dieser Account erhält Zugriff auf alle Daten (also Angebote, Teilnehmerlisten) dieses Veranstalters.
     superAdmin: Der Account hat Zugriff auf alle Funktionen.
@@ -103,6 +104,7 @@ offers:
     - Laden Sie ein Foto zur Veröffentlichung hoch. Nutzen Sie nur gemeinfreie Fotos und geben Sie in jedem Fall den/die Fotografin an.
   label:
     name: Name
+    hosts: Veranstaltende
     edition: Saison
     description: Beschreibung
     categories: Kategorien
@@ -129,6 +131,7 @@ offers:
     submitAndRelaunch: Speichern und wiederherstellen
   help:
     edition: Sie können das Angebot in eine andere Saison verschieben.
+    hosts: Das Angebot muss von mindestens einem Veranstalter ausgeführt werden. Sie können aber auch mehrere auswählen.
     applyText: Wie kann sich zu dem Angebot angemeldet werden (wenn Online-System nicht genutzt)?
     contact: Wer gibt Auskunft (z.B. Name + TelNr)? Leer lassen, falls die Info schon in "Anmeldung unter" steht.
     requiresApplication: Eine vorherige Anmeldung ist erforderlich, um am Angebot teilnehmen zu können.
@@ -441,7 +444,7 @@ notifications:
   label.emailSubject: Betreff
   label.emailText: Text
   label.smsText: Textnachricht
-  label.disable: Benachrichtigung deaktivieren
+  label.disabled: Benachrichtigung deaktivieren
   label.submit: Speichern
   help.emailText: Geben Sie den Text ohne Anrede ein.
   help.smsText: Geben Sie den Text für die Kurznachricht ein.
@@ -472,6 +475,8 @@ notifications:
   attendance_withdrawn:
     - 'Anmeldung › Abgesagt'
     - 'Wenn einem Teilnehmenden abgesagt wurde.'
+  account_registration_help.0: Account › Bereits registriert (Eltern)
+  account_registration_help.1: Informiert den/die Nutzer:in, dass ein Account zu der E-Mail-Adresse bereits besteht.
   proofs.0: Korrekturabzüge
   offer_cancelled.0: Anmeldung › Angebot abgesagt
   offer_cancelled.1: Wenn ein Angebot abgesagt wurde.

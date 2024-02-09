@@ -74,26 +74,24 @@ class EditNotificationType extends AbstractType
         if ($options['supports_email']) {
             $builder
                 ->add('emailSubject', null, ['fieldset_group' => 'email', 'width' => '2/3'])
-                ->add('emailText', TextareaType::class, ['attr' => ['rows' => 5], 'fieldset_group' => 'email', 'help' => 'notifications.help.emailText'])
+                ->add('emailText', TextareaType::class, [
+                    'attr' => ['rows' => 5],
+                    'fieldset_group' => 'email',
+                    'help' => 'notifications.help.emailText',
+                ])
             ;
         }
 
         if ($options['supports_sms']) {
-            $builder
-                ->add('smsText', TextareaType::class, ['attr' => ['rows' => 2], 'fieldset_group' => 'sms', 'help' => 'notifications.help.smsText'])
-            ;
+            $builder->add('smsText', TextareaType::class, ['attr' => ['rows' => 2], 'fieldset_group' => 'sms', 'help' => 'notifications.help.smsText']);
         }
 
-        $builder
-            ->add('disabled', CheckboxType::class, ['fieldset_group' => 'disable', 'help' => 'notifications.help.disable'])
-        ;
+        $builder->add('disabled', CheckboxType::class, ['fieldset_group' => 'disable', 'help' => 'notifications.help.disable']);
 
         $builder->add('submit', SubmitType::class);
 
         if ($options['can_delete']) {
-            $builder
-                ->add('delete', SubmitType::class)
-            ;
+            $builder->add('delete', SubmitType::class);
         }
     }
 }

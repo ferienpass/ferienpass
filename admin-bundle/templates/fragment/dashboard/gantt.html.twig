@@ -10,7 +10,7 @@
                 <span class="pr-3 bg-gray-100 text-lg font-medium text-gray-900">{{ element.edition.name }}</span>
                 <div class="relative flex justify-center">
                     <span class="relative z-0 inline-flex shadow-sm rounded-md -space-x-px">
-                        <a href="{{ path('contao_backend', {do: 'editions', table: 'EditionTask', id: element.edition.id}) }}"
+                        <a href="{{ path('admin_editions_edit', { alias: element.edition.alias }) }}"
                            title="Ablauf planen"
                            class="relative inline-flex items-center px-3 py-1.5 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-400 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
                             <span class="sr-only">Ablauf planen</span>

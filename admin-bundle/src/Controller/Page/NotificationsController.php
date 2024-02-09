@@ -32,11 +32,16 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[IsGranted('ROLE_ADMIN')]
 #[Route('/benachrichtigungen')]
 final class NotificationsController extends AbstractController
 {
+    public function __construct(private readonly TranslatorInterface $translator)
+    {
+    }
+
     #[Route('/{type?}/{edition?}', name: 'admin_notifications')]
     #[Route('/{type?}/neu', name: 'admin_notifications_new', priority: 2)]
     public function index(?string $type, #[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, Request $request, Notifier $notifier, NotificationRepository $repository, Breadcrumb $breadcrumb, EntityManagerInterface $em, Flash $flash): Response
@@ -58,7 +63,7 @@ final class NotificationsController extends AbstractController
         }
 
         $editions = $em->createQuery('SELECT e FROM '.Edition::class.' e WHERE e IN (SELECT IDENTITY(n.edition) FROM '.Notification::class.' n WHERE n.type = :type)')->setParameter('type', $type)->getResult();
-        $entity = $repository->findOneBy(['type' => $type, 'edition' => $edition]) ?? new Notification($type);
+        $entity = $repository->findOneBy(['type' => $type, 'edition' => $edition]) ?? $this->newNotificationForType($type);
         $form = $this->createForm(EditNotificationType::class, $entity, ['notification_type' => $type, 'supports_sms' => 'attendance_newly_confirmed' === $type, 'new_edition' => 'admin_notifications_new' === $request->get('_route'), 'can_delete' => null !== $edition]);
 
         $form->handleRequest($request);
@@ -106,11 +111,35 @@ final class NotificationsController extends AbstractController
             return $this->redirectToRoute('admin_notifications_send_acceptances');
         }
 
-        return $this->renderForm('@FerienpassAdmin/page/notifications/send_attendances.html.twig', [
+        return $this->render('@FerienpassAdmin/page/notifications/send_attendances.html.twig', [
             'members' => $unconfirmedApplications->getUninformedMembers(),
             'participants' => $unconfirmedApplications->getUninformedParticipants(),
             'form' => $form->createView(),
             'breadcrumb' => $breadcrumb->generate('Benachrichtigungen', 'Zusagen versenden'),
         ]);
+    }
+
+    private function newNotificationForType(string $type): Notification
+    {
+        $notification = new Notification($type);
+
+        $getTransKey = fn (string $transKey): string => sprintf('defaults.%s.%s', $type, $transKey);
+
+        $transKey = $getTransKey('emailText');
+        if ($transKey !== ($emailText = $this->translator->trans($transKey, domain: 'notifications'))) {
+            $notification->setEmailText($emailText);
+        }
+
+        $transKey = $getTransKey('emailSubject');
+        if ($transKey !== ($emailSubject = $this->translator->trans($transKey, domain: 'notifications'))) {
+            $notification->setEmailSubject($emailSubject);
+        }
+
+        $transKey = $getTransKey('smsText');
+        if ($transKey !== ($smsText = $this->translator->trans($transKey, domain: 'notifications'))) {
+            $notification->setSmsText($smsText);
+        }
+
+        return $notification;
     }
 }

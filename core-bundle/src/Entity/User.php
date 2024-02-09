@@ -258,6 +258,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         foreach (array_keys($this->roles, $role, true) as $key) {
             unset($this->roles[$key]);
         }
+
+        $this->roles = array_values($this->roles);
     }
 
     public function getAdminRoles(): array
@@ -283,6 +285,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         foreach (array_keys($this->roles, $role, true) as $key) {
             unset($this->roles[$key]);
         }
+
+        $this->roles = array_values($this->roles);
     }
 
     public function getAccountRoles(): array
@@ -351,6 +355,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if (!\in_array('ROLE_ADMIN', $this->roles, true)) {
             $this->roles[] = 'ROLE_ADMIN';
         }
+
+        $this->roles = array_values($this->roles);
     }
 
     public function getHosts(): Collection
