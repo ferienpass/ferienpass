@@ -44,9 +44,9 @@ class ParticipantList
     }
 
     /**
-     * @param iterable<Attendance> $attendances
+     * @param Attendance[] $attendances
      */
-    public function confirm(iterable $attendances): void
+    public function confirm(array $attendances, bool $reorder = false): void
     {
         foreach ($attendances as $attendance) {
             $oldStatus = $attendance->getStatus();
@@ -61,15 +61,19 @@ class ParticipantList
 
         $this->doctrine->getManager()->flush();
 
-        foreach (array_unique(array_map(fn (Attendance $a) => $a->getOffer()->getId(), iterator_to_array($attendances))) as $offerId) {
+        if (false === $reorder) {
+            return;
+        }
+
+        foreach (array_unique(array_map(fn (Attendance $a) => $a->getOffer()->getId(), $attendances)) as $offerId) {
             $this->dispatchMessage(new ParticipantListChanged($offerId));
         }
     }
 
     /**
-     * @param iterable<Attendance> $attendances
+     * @param Attendance[] $attendances
      */
-    public function reject(iterable $attendances): void
+    public function reject(array $attendances, bool $reorder = false): void
     {
         foreach ($attendances as $attendance) {
             $oldStatus = $attendance->getStatus();
@@ -85,7 +89,11 @@ class ParticipantList
 
         $this->doctrine->getManager()->flush();
 
-        foreach (array_unique(array_map(fn (Attendance $a) => $a->getOffer()->getId(), iterator_to_array($attendances))) as $offerId) {
+        if (false === $reorder) {
+            return;
+        }
+
+        foreach (array_unique(array_map(fn (Attendance $a) => $a->getOffer()->getId(), $attendances)) as $offerId) {
             $this->dispatchMessage(new ParticipantListChanged($offerId));
         }
     }

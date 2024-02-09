@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\ApplicationSystem\ParticipantList;
 use Ferienpass\AdminBundle\Dto\AddParticipantDto;
 use Ferienpass\AdminBundle\Form\AddParticipantType;
 use Ferienpass\AdminBundle\State\PrivacyConsent;
-use Ferienpass\CmsBundle\Form\SimpleType\ContaoRequestTokenType;
 use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\User;
@@ -91,7 +91,6 @@ final class ParticipantListController extends AbstractController
                 'multiple' => true,
                 'expanded' => true,
             ])
-            ->add('request_token', ContaoRequestTokenType::class)
             ->getForm()
         ;
 
@@ -100,16 +99,17 @@ final class ParticipantListController extends AbstractController
             $action = method_exists($statusForm, 'getClickedButton') ? $statusForm->getClickedButton()?->getName() : '';
             $this->denyAccessUnlessGranted('participants.'.$action, $offer);
 
+            /** @var ArrayCollection $attendances */
             $attendances = $statusForm->get('attendances')->getData();
 
             switch ($action) {
                 case 'confirm':
-                    $this->participantList->confirm($attendances);
+                    $this->participantList->confirm($attendances->toArray());
 
                     $this->addFlash(...Flash::confirmation()->text('Den Teilnehmer:innen wurde zugesagt.')->create());
                     break;
                 case 'reject':
-                    $this->participantList->reject($attendances);
+                    $this->participantList->reject($attendances->toArray());
 
                     $this->addFlash(...Flash::confirmation()->text('Den Teilnehmer:innen wurde abgesagt.')->create());
                     break;

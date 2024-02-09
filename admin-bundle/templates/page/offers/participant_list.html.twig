@@ -15,86 +15,84 @@
         {% import "@FerienpassCore/Macro/offer.html.twig" as offer_macro %}
 
         <div>
-            <div class="sticky z-10 top-0 bg-white dark:bg-gray-900 border-b border-gray-300 shadow-sm py-4 px-4 sm:px-6 md:px-8 lg:px-16">
-                <div class="mt-2 md:flex md:items-center md:justify-between">
-                    <div class="flex-1 min-w-0">
-                        <h1 class="text-2xl font-bold leading-7 text-gray-900 dark:text-gray-50 sm:text-3xl sm:leading-9 sm:truncate">
-                            {{ offer.name }}
-                        </h1>
-                        <div class="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap">
-                            <div class="mt-2 flex items-center text-sm leading-5 text-gray-500">
-                                <span class="block flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400">{{ source('@FerienpassAdmin/icons/calendar.svg') }}</span>
-                                {{ offer_macro.date_combined(offer.dates) }}
-                            </div>
+            <div class="md:flex md:items-center md:justify-between">
+                <div class="flex-1 min-w-0">
+                    <h1 class="text-2xl font-bold leading-7 text-gray-900 dark:text-gray-50 sm:text-3xl sm:leading-9 sm:truncate">
+                        {{ offer.name }}
+                    </h1>
+                    <div class="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap">
+                        <div class="mt-2 flex items-center text-sm leading-5 text-gray-500">
+                            <span class="block flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400">{{ source('@FerienpassAdmin/icons/calendar.svg') }}</span>
+                            {{ offer_macro.date_combined(offer.dates) }}
                         </div>
                     </div>
-                    <div class="mt-5 flex md:flex-row-reverse md:mt-0 md:ml-4">
-                        {% set actions = knp_menu_get('host_participant_list_actions', [], {'offer': offer}) %}
+                </div>
+                <div class="mt-5 flex md:flex-row-reverse md:mt-0 md:ml-4">
+                    {% set actions = knp_menu_get('host_participant_list_actions', [], {'offer': offer}) %}
 
-                        <div class="md:ml-3" x-data="{ modal: null }">
-                            <button x-ref="addParticipantLink"
-                                    @click.prevent="modal = 'addParticipant'"
-                                    data-method="post"
-                                    class="relative shadow-sm inline-flex px-4 py-2 items-center border border-transparent text-sm leading-5 font-medium rounded-md focus:outline-none focus:shadow-outline-blue border-transparent text-white bg-primary-600 hover:bg-primary-500 focus:border-primary-700 active:bg-primary-700">
-                                <span class="block h-5 w-5 mr-1">{{ source('@FerienpassAdmin/icons/plus-solid.svg') }}</span>
-                                <span>{{ 'addParticipant'|trans }}</span>
-                            </button>
+                    <div class="md:ml-3" x-data="{ modal: null }">
+                        <button x-ref="addParticipantLink"
+                                @click.prevent="modal = 'addParticipant'"
+                                data-method="post"
+                                class="relative shadow-sm inline-flex px-4 py-2 items-center border border-transparent text-sm leading-5 font-medium rounded-md focus:outline-none focus:shadow-outline-blue border-transparent text-white bg-primary-600 hover:bg-primary-500 focus:border-primary-700 active:bg-primary-700">
+                            <span class="block h-5 w-5 mr-1">{{ source('@FerienpassAdmin/icons/plus-solid.svg') }}</span>
+                            <span>{{ 'addParticipant'|trans }}</span>
+                        </button>
 
-                            {% include '@FerienpassAdmin/components/modal/add_participant.html.twig' with { id: 'addParticipant', offer: offer } %}
-                        </div>
+                        {% include '@FerienpassAdmin/components/modal/add_participant.html.twig' with { id: 'addParticipant', offer: offer } %}
+                    </div>
 
-                        <span class="relative inline-flex shadow-sm">
-                            <a class="relative whitespace-no-wrap inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
-                               href="{{ actions|first.uri }}">
-                                <span class="mr-1 h-5 w-5 text-gray-400">{{ source('@FerienpassAdmin/icons/'~actions|first.extra('icon')~'.svg', ignore_missing = true) }}</span>
-                                {{ actions|first.label|trans }}
-                            </a>
-                            <span class="-ml-px relative block">
-                                {% embed '@FerienpassAdmin/components/dropdown.html.twig' %}
-                                    {% block toggle %}
-                                        <button type="button"
-                                                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150">
-                                            <span class="h-5 w-5">{{ source('@FerienpassAdmin/icons/chevron-down-solid.svg') }}</span>
-                                        </button>
-                                    {% endblock %}
+                    <span class="relative inline-flex shadow-sm">
+                        <a class="relative whitespace-no-wrap inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
+                           href="{{ actions|first.uri }}">
+                            <span class="mr-1 h-5 w-5 text-gray-400">{{ source('@FerienpassAdmin/icons/'~actions|first.extra('icon')~'.svg', ignore_missing = true) }}</span>
+                            {{ actions|first.label|trans }}
+                        </a>
+                        <span class="-ml-px relative block">
+                            {% embed '@FerienpassAdmin/components/dropdown.html.twig' %}
+                                {% block toggle %}
+                                    <button type="button"
+                                            class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150">
+                                        <span class="h-5 w-5">{{ source('@FerienpassAdmin/icons/chevron-down-solid.svg') }}</span>
+                                    </button>
+                                {% endblock %}
 
-                                    {% block dropdown %}
+                                {% block dropdown %}
 
-                                        <div x-data="{ modal: null }">
-                                            {% for action in actions|slice(1) %}
-                                                {% if action.displayed %}
-                                                    <a href="{{ action.uri }}"
-                                                            {% set method = action.extra('method') %}
-                                                            {% if method %}
-                                                                x-ref="{{ action.name ~ 'Link' }}"
-                                                                @click.prevent="modal = '{{ action.name }}'"
-                                                                data-method="{{ method }}"
-                                                            {% endif %}
+                                    <div x-data="{ modal: null }">
+                                        {% for action in actions|slice(1) %}
+                                            {% if action.displayed %}
+                                                <a href="{{ action.uri }}"
+                                                        {% set method = action.extra('method') %}
+                                                        {% if method %}
+                                                            x-ref="{{ action.name ~ 'Link' }}"
+                                                            @click.prevent="modal = '{{ action.name }}'"
+                                                            data-method="{{ method }}"
+                                                        {% endif %}
 
-                                                       class="mt-1 group flex items-center px-5 py-2 text-sm leading-5 font-medium text-gray-600  hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:bg-gray-100 transition ease-in-out duration-150">
-                                                        <span class="flex-shrink-0 -ml-1 mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150">{{ source('@FerienpassAdmin/icons/'~action.extra('icon')~'.svg') }}</span>
-                                                        <span class="truncate">{{ action.label|trans }}</span>
-                                                    </a>
-                                                {% else %}
-                                                    <span class="mt-1 group flex items-center px-5 py-2 text-sm leading-5 font-medium text-gray-400 cursor-not-allowed">
-                                                        <span class="flex-shrink-0 -ml-1 mr-3 h-5 w-5 text-gray-400">{{ source('@FerienpassAdmin/icons/'~action.extra('icon')~'.svg') }}</span>
-                                                        <span class="truncate">{{ action.label|trans }}</span>
-                                                    </span>
-                                                {% endif %}
-                                            {% endfor %}
+                                                   class="mt-1 group flex items-center px-5 py-2 text-sm leading-5 font-medium text-gray-600  hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:bg-gray-100 transition ease-in-out duration-150">
+                                                    <span class="flex-shrink-0 -ml-1 mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150">{{ source('@FerienpassAdmin/icons/'~action.extra('icon')~'.svg') }}</span>
+                                                    <span class="truncate">{{ action.label|trans }}</span>
+                                                </a>
+                                            {% else %}
+                                                <span class="mt-1 group flex items-center px-5 py-2 text-sm leading-5 font-medium text-gray-400 cursor-not-allowed">
+                                                    <span class="flex-shrink-0 -ml-1 mr-3 h-5 w-5 text-gray-400">{{ source('@FerienpassAdmin/icons/'~action.extra('icon')~'.svg') }}</span>
+                                                    <span class="truncate">{{ action.label|trans }}</span>
+                                                </span>
+                                            {% endif %}
+                                        {% endfor %}
 
-                                            {% for modal in actions.children|filter(c => c.displayed and c.extra('method') is not empty) %}
-                                                {% set id = modal.name %}
-                                                {% include '@FerienpassAdmin/components/modal/'~id~'.html.twig' with { id: id, offer: offer } %}
-                                            {% endfor %}
-                                        </div>
+                                        {% for modal in actions.children|filter(c => c.displayed and c.extra('method') is not empty) %}
+                                            {% set id = modal.name %}
+                                            {% include '@FerienpassAdmin/components/modal/'~id~'.html.twig' with { id: id, offer: offer } %}
+                                        {% endfor %}
+                                    </div>
 
-                                    {% endblock %}
-                                {% endembed %}
-                            </span>
+                                {% endblock %}
+                            {% endembed %}
                         </span>
+                    </span>
 
-                    </div>
                 </div>
             </div>
 
