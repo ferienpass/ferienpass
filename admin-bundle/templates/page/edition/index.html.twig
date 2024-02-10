@@ -1,12 +1,22 @@
 {% extends "@FerienpassAdmin/layout/list.html.twig" %}
 
-{% set config = {
-    title: '{{ item.name }}
+{% block list %}
+
+    {{ component('Admin:SearchableQueryableList', {
+        qb: qb,
+        routeName:
+        app.request.get('_route'),
+        routeParameters: app.request.query.all,
+        searchable: searchable,
+        config: {
+            title: '{{ item.name }}
     {% if item.archived %}
     <span class="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">archiviert</span>
     {% endif %}
 ',
-    info: [
-        "{{ item.holiday ? item.holiday.periodBegin|date('d.m.Y') ~ ' - ' ~  item.holiday.periodEnd|date('d.m.Y') : '' }}"
-    ]
-} %}
+            info: [
+                "{{ item.holiday ? item.holiday.periodBegin|date('d.m.Y') ~ ' - ' ~  item.holiday.periodEnd|date('d.m.Y') : '' }}"
+            ]
+        }
+    }) }}
+{% endblock %}

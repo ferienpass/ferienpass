@@ -149,7 +149,7 @@
                                                     {% block dropdown %}
 
                                                         {% for action in actions %}
-                                                            {% embed '@FerienpassAdmin/components/dropdown-a.html.twig' with {'uri': action.uri} %}
+                                                            {% embed '@FerienpassAdmin/components/dropdown-a.html.twig' with { uri: action.uri, attr: action.extra('attr', []) } %}
                                                                 {% block link %}
                                                                     {% trans_default_domain 'admin' %}
 

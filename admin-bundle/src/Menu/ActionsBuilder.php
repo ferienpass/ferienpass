@@ -134,16 +134,12 @@ class ActionsBuilder
             }
         }
 
-        //        $root->addChild('delete', [
-        //            'label' => 'offers.action.delete',
-        //            'route' => 'admin_offer_show',
-        //            'routeParameters' => array_filter(['id' => $item->getId(), 'edition' => $item->getEdition()?->getAlias()],
-        //            'display' => $this->isGranted('delete', $item),
-        //            'extras' => [
-        //                'method' => 'delete',
-        //                'icon' => 'trash-solid',
-        //            ],
-        //        ]);
+        $class = $item::class;
+        $root->addChild('delete', [
+            'label' => 'accounts.action.delete',
+            'display' => $this->isGranted('delete', $item),
+            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
+        ]);
 
         if ($item->isOnlineApplication()) {
             $root->addChild('participantList', [
@@ -191,6 +187,13 @@ class ActionsBuilder
             ->getResult()
         ;
 
+        $class = $item::class;
+        $root->addChild('delete', [
+            'label' => 'participants.action.delete',
+            'display' => $this->isGranted('delete', $item),
+            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
+        ]);
+
         /** @var Payment $payment */
         foreach ($payments as $payment) {
             $root->addChild('show_payment.'.$payment->getId(), [
@@ -231,6 +234,13 @@ class ActionsBuilder
             'display' => $this->isGranted('stats', $item),
             'extras' => ['icon' => 'chart-pie.mini'],
         ]);
+
+        $class = $item::class;
+        $root->addChild('delete', [
+            'label' => 'editions.action.delete',
+            'display' => $this->isGranted('delete', $item),
+            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
+        ]);
     }
 
     private function attendances(ItemInterface $root, Attendance $item)
@@ -269,6 +279,13 @@ class ActionsBuilder
             'routeParameters' => ['_switch_user' => $item->getUserIdentifier()],
             'display' => $this->isGranted('ROLE_ALLOWED_TO_SWITCH'),
             'extras' => ['icon' => 'logout-filled', 'translation_params' => ['user' => $item->getUserIdentifier()]],
+        ]);
+
+        $class = $item::class;
+        $root->addChild('delete', [
+            'label' => 'accounts.action.delete',
+            'display' => $this->isGranted('delete', $item),
+            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
         ]);
     }
 

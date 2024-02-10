@@ -73,6 +73,9 @@ class Attendance
     #[ORM\Column(name: 'participant_id_original', type: 'integer', nullable: true, options: ['unsigned' => true])]
     private ?int $participantId = null;
 
+    #[ORM\OneToMany(mappedBy: 'attendance', targetEntity: PaymentItem::class)]
+    private Collection $paymentItems;
+
     public function __construct(Offer $offer, ?Participant $participant, string $status = null)
     {
         $this->offer = $offer;
@@ -80,6 +83,7 @@ class Attendance
 
         $this->createdAt = new \DateTimeImmutable();
         $this->activity = new ArrayCollection();
+        $this->paymentItems = new ArrayCollection();
 
         $this->setStatus($status);
     }
@@ -246,5 +250,15 @@ class Attendance
         }
 
         return sprintf('%s €', number_format($fee / 100, 2, ',', '.'));
+    }
+
+    /**
+     * @return Collection|PaymentItem[]
+     *
+     * @psalm-return Collection<int, PaymentItem>
+     */
+    public function getPaymentItems(): Collection
+    {
+        return $this->paymentItems;
     }
 }

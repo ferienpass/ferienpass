@@ -91,7 +91,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: HostMemberAssociation::class, cascade: ['persist'])]
     private Collection $hostAssociations;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Participant::class, cascade: ['persist'])]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Participant::class, cascade: ['persist', 'remove'])]
     private Collection $participants;
 
     public function __construct()
@@ -328,7 +328,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function isSuperAdmin(): bool
     {
-        return \in_array('ROLE_SUPER_ADMIN', $this->roles, true);
+        return \in_array('ROLE_SUPER_ADMIN', $this->getRoles(), true);
+    }
+
+    public function isAdmin(): bool
+    {
+        return \in_array('ROLE_ADMIN', $this->getRoles(), true);
+    }
+
+    public function isHost(): bool
+    {
+        return \in_array('ROLE_HOST', $this->getRoles(), true);
+    }
+
+    public function isMember(): bool
+    {
+        return \in_array('ROLE_MEMBER', $this->getRoles(), true);
     }
 
     public function setSuperAdmin(bool $superAdmin): void

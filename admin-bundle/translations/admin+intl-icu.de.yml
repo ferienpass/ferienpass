@@ -10,6 +10,7 @@ accounts:
     address.0: Postanschrift
     account.0: Account-Status
   action.impersonate: Anmelden als {user}
+  action.delete: Löschen
   ROLE_MEMBER: Eltern
   ROLE_HOST: Veranstaltende
   ROLE_ADMIN: Admins
@@ -34,6 +35,7 @@ accounts:
   sorting.firstname: Sortieren nach Vorname
   sorting.lastname: Sortieren nach Nachname
   label:
+    name: Name
     firstname: Vorname
     lastname: Nachname
     hosts: Veranstalter-Profile
@@ -44,16 +46,20 @@ accounts:
     street: Straße
     postal: PLZ
     city: Ort
-    accountRoles: Account
+    accountRoles: Gruppen
     adminRoles: Rollen
     superAdmin: Super-Admin
     disabled: Account deaktivieren
+    participants: Teilnehmende
   help:
     hosts: Dieser Account erhält Zugriff auf alle Daten (also Angebote, Teilnehmerlisten) dieses Veranstalters.
     superAdmin: Der Account hat Zugriff auf alle Funktionen.
     accountRoles: Ein Account kann als Veranstalter, Admin, und/oder Eltern gelistet werden.
     adminRoles: Die Rollen definieren, auf wie welche Funktionen dieser Account Zugriff hat.
     disabled: Der Account darf sich nicht mehr anmelden.
+  deleteModal.headline: Account löschen
+  deleteModal.confirm: Sind Sie sicher, dass Sie folgenden Nutzer-Account löschen möchten?
+
 
 offer.tab.web: Webansicht
 offer.tab.pdf: Druckansicht
@@ -112,6 +118,7 @@ offers:
     minAge: Mindestalter
     maxAge: Maximalalter
     meetingPoint: Treffpunkt
+    date: Datum
     dates: Datum
     bring: Mitzubringen
     fee: Teilnahmegebühr
@@ -129,6 +136,7 @@ offers:
     submitAndUnpublish: Speichern und un-veröffentlichen
     submitAndCancel: Speichern und absagen
     submitAndRelaunch: Speichern und wiederherstellen
+    attendances: Anmeldungen
   help:
     edition: Sie können das Angebot in eine andere Saison verschieben.
     hosts: Das Angebot muss von mindestens einem Veranstalter ausgeführt werden. Sie können aber auch mehrere auswählen.
@@ -146,6 +154,8 @@ offers:
   edit_offer_dates_entry_delete: Zeitraum löschen
   dropzonePlaceholder: Wählen Sie ein Bild aus oder platzieren Sie es hier mittels Drag'n'Drop
   uncompletedOffers: Sie haben Angebote im Entwurfsmodus. Bitte markieren Sie alle Angebote als vollständig, damit sie im Ferienpass berücksichtigt werden können.
+  deleteModal.headline: Angebot löschen
+  deleteModal.confirm: Sind Sie sicher, dass Sie folgendes Angebot löschen möchten?
 
 hosts:
   title: Veranstaltende
@@ -190,6 +200,7 @@ editions:
   action:
     edit: Bearbeiten
     stats: Statistiken
+    delete: Löschen
   legend:
     base:
       - Name der Saison
@@ -224,6 +235,8 @@ editions:
     allow_anonymous_fee: Anmeldungen ohne Benutzerkonto auch für kostenpflichtige Angebote
     hide_status: Aktuellen Status verbergen
     archived: Saison archivieren
+    holiday: Ferien
+    countOffers: Anzahl Angebote
   help:
     alias: Der Alias wird automatisch generiert.
     max_applications: Zu wie vielen Angeboten darf ein Kind sich in dieser Phase anmelden?
@@ -235,6 +248,8 @@ editions:
     archived: Die Saison wird nicht mehr angezeigt in Eingabemasken, bleibt aber erhalten.
   edit_edition_tasks_entry_delete: Phase löschen
   edit_edition_tasks_add: Neue Phase definieren
+  deleteModal.headline: Saison löschen
+  deleteModal.confirm: Sind Sie sicher, dass Sie folgende Saison löschen möchten?
 
 participants:
   title: Teilnehmende
@@ -243,6 +258,7 @@ participants:
   attendances.empty: Es sind keine Anmeldungen vorhanden.
   action.edit: Bearbeiten
   action.attendances: Anmeldungen
+  action.delete: Löschen
   action.show_payment: 'Beleg #{number}'
   new: Neuer Teilnehmer
   legend.base:
@@ -258,6 +274,7 @@ participants:
     - Ermäßigung
     - Bei einer genehmigten Ermäßigung wird die reduzierte Teilnahmegebühr abgerechnet.
   label:
+    name: Name
     firstname: Vorname
     lastname: Nachname
     user: Sorgeberechtigte:r
@@ -279,6 +296,8 @@ participants:
   th.status: Status
   th.attendances: Anmeldungen
   th.paid: Zahlungen
+  deleteModal.headline: Teilnehmer löschen
+  deleteModal.confirm: Sind Sie sicher, dass Sie folgenden Teilnehmer löschen möchten?
 
 payments:
   title: Zahlungen

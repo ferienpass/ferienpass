@@ -28,6 +28,12 @@
         {% endblock %}
     {% endembed %}
 
+    {% component "Admin:Modal" %}
+        {% block content %}
+            <twig:Admin:ListDeleteModal type="{{ (routeName ?? app.request.get('_route'))|split('_')[1] }}" />
+        {% endblock %}
+    {% endcomponent %}
+
     {{ component('Admin:SlideOver') }}
 
 </div>

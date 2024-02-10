@@ -34,13 +34,17 @@ final class EditionsController extends AbstractController
     }
 
     #[Route('', name: 'admin_editions_index')]
-    public function index(Breadcrumb $breadcrumb): Response
+    public function index(Breadcrumb $breadcrumb, EditionRepository $repository): Response
     {
-        $items = $this->editionRepository->findBy([], ['archived' => 'ASC', 'name' => 'ASC']);
+        $qb = $repository->createQueryBuilder('i');
+
+        $qb->addOrderBy('i.archived', 'ASC');
+        $qb->addOrderBy('i.name', 'ASC');
 
         return $this->render('@FerienpassAdmin/page/edition/index.html.twig', [
+            'qb' => $qb,
             'createUrl' => $this->generateUrl('admin_editions_create'),
-            'items' => $items,
+            'searchable' => ['name'],
             'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'editions.title'),
         ]);
     }

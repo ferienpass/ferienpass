@@ -47,6 +47,12 @@ class Offer
     #[ORM\JoinColumn(name: 'edition', referencedColumnName: 'id')]
     private ?Edition $edition = null;
 
+    #[ORM\Column(type: 'datetime_immutable', options: ['default' => 'CURRENT_TIMESTAMP'])]
+    private \DateTimeInterface $createdAt;
+
+    #[ORM\Column(type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
+    private \DateTimeInterface $modifiedAt;
+
     /**
      * @psalm-var Collection<int, Host>
      */
@@ -170,16 +176,10 @@ class Offer
     private Collection $dates;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Ferienpass\CoreBundle\Entity\OfferCategory", inversedBy="offers")
-     *
-     * @ORM\JoinTable(
-     *     name="OfferCategoryAssociation",
-     *     joinColumns={@ORM\JoinColumn(name="offer_id", referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="category_id", referencedColumnName="id")}
-     * )
-     *
      * @psalm-var Collection<int, OfferCategory>
      */
+    #[ORM\ManyToMany(targetEntity: OfferCategory::class, inversedBy: 'offers')]
+    #[ORM\JoinTable(name: 'OfferCategoryAssociation', joinColumns: new ORM\JoinColumn('offer_id', 'id', onDelete: 'CASCADE'), inverseJoinColumns: new ORM\JoinColumn('category_id', 'id'))]
     private Collection $categories;
 
     #[ORM\Column(type: 'json', nullable: true)]
@@ -197,7 +197,7 @@ class Offer
     /**
      * @psalm-var Collection<int, Attendance>
      */
-    #[ORM\OneToMany(mappedBy: 'offer', targetEntity: Attendance::class)]
+    #[ORM\OneToMany(mappedBy: 'offer', targetEntity: Attendance::class, cascade: ['remove'])]
     #[ORM\OrderBy(['status' => 'ASC', 'sorting' => 'ASC'])]
     private Collection $attendances;
 
@@ -210,6 +210,8 @@ class Offer
 
     public function __construct()
     {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->modifiedAt = new \DateTimeImmutable();
         $this->hosts = new ArrayCollection();
         $this->dates = new ArrayCollection();
         $this->variants = new ArrayCollection();
@@ -505,7 +507,7 @@ class Offer
      */
     public function getAttendances(): Collection
     {
-        return $this->attendances->filter(fn (Attendance $attendance) => null !== $attendance->getParticipant());
+        return $this->attendances;
     }
 
     /**
@@ -740,5 +742,20 @@ class Offer
         if (!$this->alias) {
             $this->alias = (string) $slugger->slug("{$this->getId()}-{$this->getName()}")->lower();
         }
+    }
+
+    public function getCreatedAt(): \DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function getModifiedAt(): \DateTimeInterface
+    {
+        return $this->modifiedAt;
+    }
+
+    public function setModifiedAt(\DateTimeInterface $modifiedAt = new \DateTimeImmutable()): void
+    {
+        $this->modifiedAt = $modifiedAt;
     }
 }

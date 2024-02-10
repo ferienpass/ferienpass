@@ -60,7 +60,7 @@
                            class="rounded-md bg-white dark:bg-gray-100/5 px-2.5 py-1.5 text-sm font-semibold text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-0 hover:bg-gray-50 dark:hover:bg-gray-100/10">
                             {{ label }}</a>
 
-                        {% set actions = actions.children|slice(1)|filter(a => a.displayed and not a.extra('method')) %}
+                        {% set actions = actions.children|slice(1)|filter(a => a.displayed) %}
 
                         {% if actions|length %}
                             <div class="flex-none">
@@ -81,7 +81,7 @@
                                     {% block dropdown %}
 
                                         {% for action in actions %}
-                                            {% embed '@FerienpassAdmin/components/dropdown-a.html.twig' with {'uri': action.uri} %}
+                                            {% embed '@FerienpassAdmin/components/dropdown-a.html.twig' with { uri: action.uri, attr: action.extra('attr', []) } %}
                                                 {% trans_default_domain 'admin' %}
                                                 {% block link %}
                                                     <span class="mr-3 h-5 w-5 text-gray-400 flex-shrink-0">{{ source('@FerienpassAdmin/icons/'~action.extra('icon')~'.svg', ignore_missing = true) }}</span>

@@ -24,6 +24,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
+use Symfony\UX\LiveComponent\Attribute\LiveListener;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
@@ -76,6 +77,12 @@ class SearchableQueryableList extends AbstractController
         return (new Paginator($this->qb, 50))->paginate((int) ($this->routeParameters['page'] ?? 1));
     }
 
+    #[LiveListener('admin_list:changed')]
+    public function changed()
+    {
+        // no need to do anything here: the component will re-render
+    }
+
     public function getSortingFields(): array
     {
         return $this->getFilter()?->getSearchable() ?? [];
@@ -113,8 +120,6 @@ class SearchableQueryableList extends AbstractController
 
         $this->routeParameters = array_merge($this->routeParameters, $filterData);
 
-        // $filter->apply($this->qb, $this->getForm());
-
         return $this->redirectToRoute($this->routeName, array_filter($this->routeParameters));
     }
 
@@ -122,8 +127,6 @@ class SearchableQueryableList extends AbstractController
     public function unsetFilter(#[LiveArg] string $filterName)
     {
         unset($this->routeParameters[$filterName]);
-
-        // $filter->apply($this->qb, $this->getForm());
 
         return $this->redirectToRoute($this->routeName, array_filter($this->routeParameters));
     }
@@ -140,6 +143,12 @@ class SearchableQueryableList extends AbstractController
     //        $this->emit('view', [
     //            'participant' => $participant,
     //        ]);
+    //    }
+
+    //    #[LiveAction]
+    //    public function delete(#[LiveArg('id')] int $item)
+    //    {
+    //
     //    }
 
     protected function instantiateForm(): FormInterface
