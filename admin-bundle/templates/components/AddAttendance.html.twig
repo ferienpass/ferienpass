@@ -15,7 +15,13 @@
     {% if dto.participant %}
 
         {{ partials.h2('Neue Anmeldung') }}
-        <p class="text-base leading-6 text-gray-500">{{ dto.participant.name }} ({{ dto.participant.age }} Jahre)</p>
+        {% if dto.participant %}
+            <p class="text-base leading-6 text-gray-500">{{ dto.participant.name }} ({{ dto.participant.age }}
+                Jahre)</p>
+        {% endif %}
+        {% if dto.offer %}
+            <p class="text-base leading-6 text-gray-500">{{ dto.offer.name }} ({{ "##{offer.id}" }})</p>
+        {% endif %}
 
     {% endif %}
 
@@ -62,13 +68,13 @@
             {{ form_row(form.participant) }}
         {% endif %}
 
-        {% if dto.offer and dto.offer.dates is not empty %}
+        {% if dto.participant and dto.offer and dto.offer.dates is not empty %}
             {% set age = dto.participant.age(dto.offer.dates|first.begin) %}
-        {% else %}
+        {% elseif dto.participant %}
             {% set age = dto.participant.age %}
         {% endif %}
 
-        {% if dto.offer and ((dto.offer.minAge and age < dto.offer.minAge) or (dto.offer.maxAge and age > dto.offer.maxAge)) %}
+        {% if dto.participant and dto.offer and ((dto.offer.minAge and age < dto.offer.minAge) or (dto.offer.maxAge and age > dto.offer.maxAge)) %}
             <p class="flex items-center">
                 <span class="h-5 w-5 text-red-700">{{ source('@FerienpassAdmin/icons/exclamation.svg') }}</span>
                 <span class="ml-1 text-sm font-medium leading-5 text-red-700">Alter nicht zulässig!

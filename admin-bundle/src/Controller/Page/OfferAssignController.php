@@ -13,10 +13,8 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
-use Doctrine\DBAL\Types\Types;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
-use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Export\ParticipantList\PdfExport;
 use Ferienpass\CoreBundle\Export\ParticipantList\WordExport;
@@ -30,14 +28,14 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_ADMIN')]
-#[Route('/angebote/{edition?null}/{id}/anmeldungen', requirements: ['id' => '\d+'])]
-class OfferApplicationsController extends AbstractController
+#[Route('/angebote/{edition?null}/{id}/zuordnen', requirements: ['id' => '\d+'])]
+class OfferAssignController extends AbstractController
 {
     public function __construct(private readonly AttendanceRepository $attendanceRepository, private readonly PdfExport $pdfExport, private readonly WordExport $wordExport)
     {
     }
 
-    #[Route('', name: 'admin_offer_applications')]
+    #[Route('', name: 'admin_offer_assign')]
     public function __invoke(Offer $offer, Request $request, Session $session, ManagerRegistry $doctrine, Breadcrumb $breadcrumb): Response
     {
         if ($request->isMethod('POST') && 'confirm_all_waiting' === $request->request->get('FORM_SUBMIT')) {
@@ -70,28 +68,16 @@ class OfferApplicationsController extends AbstractController
             $session->set('admin--auto-assign', $autoAssign);
         }
 
-        $attendances = $this->attendanceRepository->createQueryBuilder('a')
-            ->where('a.offer = :offer')
-            ->orderBy('a.status')
-            ->addOrderBy('a.sorting')
-            ->setParameter('offer', $offer->getId(), Types::INTEGER)
-            ->getQuery()
-            ->getResult()
-        ;
-
-        $emails = array_map(fn (Attendance $a) => $a->getParticipant()?->getEmail(), $attendances);
-
-        return $this->render('@FerienpassAdmin/page/offers/applications.html.twig', [
+        return $this->render('@FerienpassAdmin/page/offers/assign.html.twig', [
             'offer' => $offer,
             'toggleMode' => $toggleMode->createView(),
-            'attendances' => $attendances,
-            'emails' => array_unique(array_filter($emails)),
+            'emails' => array_unique(array_filter([])),
             'hasWordExport' => $this->wordExport->hasTemplate(),
-            'breadcrumb' => $breadcrumb->generate('Angebote', $offer->getEdition()->getName(), $offer->getName(), 'Anmeldungen'),
+            'breadcrumb' => $breadcrumb->generate(['offers.title', ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], [$offer->getEdition()->getName(), ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], $offer->getName(), 'Anmeldungen'),
         ]);
     }
 
-    #[Route('.pdf', name: 'admin_offer_applications_pdf')]
+    #[Route('.pdf', name: 'admin_offer_assign_pdf')]
     public function pdf(Offer $offer): Response
     {
         $path = $this->pdfExport->generate($offer);
@@ -99,7 +85,7 @@ class OfferApplicationsController extends AbstractController
         return $this->file($path, 'teilnahmeliste.pdf');
     }
 
-    #[Route('.docx', name: 'admin_offer_applications_docx')]
+    #[Route('.docx', name: 'admin_offer_assign_docx')]
     public function docx(Offer $offer): Response
     {
         $path = $this->wordExport->generate($offer);

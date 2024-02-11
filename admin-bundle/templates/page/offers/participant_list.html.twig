@@ -1,230 +1,66 @@
-{% extends "@FerienpassAdmin/layout/base.html.twig" %}
+{% extends "@FerienpassAdmin/layout/list.html.twig" %}
 
-{% block main %}
+{% set config = {
+    columns: {
+        name: '{{ item.participant.name }}',
+        email: '{{ item.participant.email }}',
+        mobile: '{{ item.participant.mobile }}',
+        phone: '{{ item.participant.phone }}',
+        status: '
+{% import "@FerienpassAdmin/components/content_elements.html.twig" as partials %}
+{{ partials.status_badge(item.status, "sm", "-ml-2") }}
+',
+    }
+} %}
+
+{% block headline_actions %}
+
+    <div class="flex items-center space-x-3">
+
+        {{ parent() }}
+
+        {% embed '@FerienpassAdmin/components/dropdown.html.twig' with { dropdownClass: 'w-96'} %}
+            {% block toggle %}
+                <button type="button"
+                        class="relative shadow-sm inline-flex px-4 py-2 items-center border border-transparent text-sm leading-5 font-medium rounded-md focus:outline-none focus:shadow-outline-blue border-transparent text-white bg-primary-600 hover:bg-primary-500 focus:border-primary-700 active:bg-primary-700"
+                        id="options-menu-0-button"
+                        aria-expanded="false"
+                        aria-haspopup="true">
+                    <span class="flex items-center space-x-1 -mr-2">
+                        <span class="h-5 w-5">{{ source('@FerienpassAdmin/icons/plus-solid.svg') }}</span>
+                        <span>Neu anlegen…</span>
+                        <span class="h-5 w-5">{{ source('@FerienpassAdmin/icons/chevron-down-solid.svg') }}</span>
+                    </span>
+                </button>
+            {% endblock %}
+
+            {% block dropdown %}
+
+                <div class="px-4 py-2">
+
+                    {{ component('Admin:AddAttendance', { offer: offer }) }}
+
+                </div>
+
+            {% endblock %}
+
+        {% endembed %}
+
+    </div>
+
+{% endblock %}
+
+{% block list %}
 
     {% if missingPrivacyStatement|default %}
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-4 sm:py-6 md:py-12 lg:px-16">
-            {% include '@FerienpassAdmin/components/alert/error.html.twig' with {'message': 'missingPrivacyStatement'|trans} %}
-        </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-4 sm:py-6 md:py-12 lg:px-16">
+        {% include '@FerienpassAdmin/components/alert/error.html.twig' with {'message': 'missingPrivacyStatement'|trans} %}
+    </div>
     {% elseif notReleased|default %}
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-4 sm:py-6 md:py-12 lg:px-16">
-            {% include '@FerienpassAdmin/components/alert/error.html.twig' with {'message': 'participantListNotReleased'|trans} %}
-        </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-4 sm:py-6 md:py-12 lg:px-16">
+        {% include '@FerienpassAdmin/components/alert/error.html.twig' with {'message': 'participantListNotReleased'|trans} %}
+    </div>
     {% else %}
-
-        {% import "@FerienpassCore/Macro/offer.html.twig" as offer_macro %}
-
-        <div>
-            <div class="md:flex md:items-center md:justify-between">
-                <div class="flex-1 min-w-0">
-                    <h1 class="text-2xl font-bold leading-7 text-gray-900 dark:text-gray-50 sm:text-3xl sm:leading-9 sm:truncate">
-                        {{ offer.name }}
-                    </h1>
-                    <div class="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap">
-                        <div class="mt-2 flex items-center text-sm leading-5 text-gray-500">
-                            <span class="block flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400">{{ source('@FerienpassAdmin/icons/calendar.svg') }}</span>
-                            {{ offer_macro.date_combined(offer.dates) }}
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-5 flex md:flex-row-reverse md:mt-0 md:ml-4">
-                    {% set actions = knp_menu_get('host_participant_list_actions', [], {'offer': offer}) %}
-
-                    <div class="md:ml-3" x-data="{ modal: null }">
-                        <button x-ref="addParticipantLink"
-                                @click.prevent="modal = 'addParticipant'"
-                                data-method="post"
-                                class="relative shadow-sm inline-flex px-4 py-2 items-center border border-transparent text-sm leading-5 font-medium rounded-md focus:outline-none focus:shadow-outline-blue border-transparent text-white bg-primary-600 hover:bg-primary-500 focus:border-primary-700 active:bg-primary-700">
-                            <span class="block h-5 w-5 mr-1">{{ source('@FerienpassAdmin/icons/plus-solid.svg') }}</span>
-                            <span>{{ 'addParticipant'|trans }}</span>
-                        </button>
-
-                        {% include '@FerienpassAdmin/components/modal/add_participant.html.twig' with { id: 'addParticipant', offer: offer } %}
-                    </div>
-
-                    <span class="relative inline-flex shadow-sm">
-                        <a class="relative whitespace-no-wrap inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
-                           href="{{ actions|first.uri }}">
-                            <span class="mr-1 h-5 w-5 text-gray-400">{{ source('@FerienpassAdmin/icons/'~actions|first.extra('icon')~'.svg', ignore_missing = true) }}</span>
-                            {{ actions|first.label|trans }}
-                        </a>
-                        <span class="-ml-px relative block">
-                            {% embed '@FerienpassAdmin/components/dropdown.html.twig' %}
-                                {% block toggle %}
-                                    <button type="button"
-                                            class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150">
-                                        <span class="h-5 w-5">{{ source('@FerienpassAdmin/icons/chevron-down-solid.svg') }}</span>
-                                    </button>
-                                {% endblock %}
-
-                                {% block dropdown %}
-
-                                    <div x-data="{ modal: null }">
-                                        {% for action in actions|slice(1) %}
-                                            {% if action.displayed %}
-                                                <a href="{{ action.uri }}"
-                                                        {% set method = action.extra('method') %}
-                                                        {% if method %}
-                                                            x-ref="{{ action.name ~ 'Link' }}"
-                                                            @click.prevent="modal = '{{ action.name }}'"
-                                                            data-method="{{ method }}"
-                                                        {% endif %}
-
-                                                   class="mt-1 group flex items-center px-5 py-2 text-sm leading-5 font-medium text-gray-600  hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:bg-gray-100 transition ease-in-out duration-150">
-                                                    <span class="flex-shrink-0 -ml-1 mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150">{{ source('@FerienpassAdmin/icons/'~action.extra('icon')~'.svg') }}</span>
-                                                    <span class="truncate">{{ action.label|trans }}</span>
-                                                </a>
-                                            {% else %}
-                                                <span class="mt-1 group flex items-center px-5 py-2 text-sm leading-5 font-medium text-gray-400 cursor-not-allowed">
-                                                    <span class="flex-shrink-0 -ml-1 mr-3 h-5 w-5 text-gray-400">{{ source('@FerienpassAdmin/icons/'~action.extra('icon')~'.svg') }}</span>
-                                                    <span class="truncate">{{ action.label|trans }}</span>
-                                                </span>
-                                            {% endif %}
-                                        {% endfor %}
-
-                                        {% for modal in actions.children|filter(c => c.displayed and c.extra('method') is not empty) %}
-                                            {% set id = modal.name %}
-                                            {% include '@FerienpassAdmin/components/modal/'~id~'.html.twig' with { id: id, offer: offer } %}
-                                        {% endfor %}
-                                    </div>
-
-                                {% endblock %}
-                            {% endembed %}
-                        </span>
-                    </span>
-
-                </div>
-            </div>
-
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-4 sm:py-6 md:py-12 lg:px-16">
-                <div class="flex flex-col">
-                    <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 pb-24">
-                        <div class="align-middle inline-block min-w-full shadow sm:rounded-lg border-b border-gray-200">
-                            <div x-data="{ selectedAttendances: [] }">
-                                {{ form_start(changeStatus) }}
-                                <table class="min-w-full">
-                                    <thead>
-                                    <tr>
-                                        <th class="sm:rounded-tl-lg pl-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                            Nr.
-                                        </th>
-                                        <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                            Kind
-                                        </th>
-                                        <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                            Telefon
-                                        </th>
-                                        <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                            E-Mail
-                                        </th>
-                                        <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                            Status
-                                        </th>
-                                        <th class="sm:rounded-tr-lg px-6 py-3 border-b border-gray-200 bg-gray-50">
-                                            {% if attendances is not empty %}
-                                                <div>
-                                                    <label for="cbx_all_participants" class="sr-only">Alle
-                                                        auswählen:</label>
-                                                    <input id="cbx_all_participants"
-                                                           type="checkbox"
-                                                           @change="$el.checked ? selectedAttendances = [{{ attendances|map(a => "#{a.id}")|join(',') }}] : selectedAttendances = []"
-                                                           class="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out">
-                                                </div>
-                                            {% endif %}
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                    <tfoot>
-                                    <tr>
-                                        <td colspan="6"
-                                            class="sm:rounded-b-lg px-6 py-3 border-t border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 text-right">
-                                            <span><span x-text="selectedAttendances.length"></span> ausgewählten:</span><span
-                                                    class="ml-2 relative inline-flex shadow-sm"
-                                                    :class="{ 'pointer-events-none': !selectedAttendances.length }">
-                                                {% do changeStatus.reject.setRendered %}
-                                                <button class="relative whitespace-no-wrap inline-flex items-center px-3 py-1 rounded-md border border-gray-300 bg-white text-sm leading-5 font-medium hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
-                                                        :class="{ 'text-gray-600': selectedAttendances.length, 'text-gray-300': !selectedAttendances.length }"
-                                                        id="{{ changeStatus.reject.vars.id }}"
-                                                        name="{{ changeStatus.reject.vars['full_name'] }}">Kindern
-                                                    absagen
-                                                </button>
-                                            </span><span
-                                                    class="ml-2 relative inline-flex shadow-sm"
-                                                    :class="{ 'pointer-events-none': !selectedAttendances.length }">
-                                                {% do changeStatus.confirm.setRendered %}
-                                                <button class="relative whitespace-no-wrap inline-flex items-center px-3 py-1 rounded-md border border-gray-300 bg-white text-sm leading-5 font-medium hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
-                                                        :class="{ 'text-gray-600': selectedAttendances.length, 'text-gray-300': !selectedAttendances.length }"
-                                                        id="{{ changeStatus.confirm.vars.id }}"
-                                                        name="{{ changeStatus.confirm.vars['full_name'] }}">Kindern
-                                                    zusagen
-                                                </button>
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    </tfoot>
-                                    <tbody class="bg-white">
-                                    {% do changeStatus.attendances.setRendered %}
-                                    {% if attendances is empty %}
-                                        <tr>
-                                            <td colspan="6" class="px-6 py-6">
-                                                {% include '@FerienpassAdmin/components/alert/info.html.twig' with { message: 'noParticipants'|trans} %}
-                                            </td>
-                                        </tr>
-                                    {% endif %}
-                                    {% for attendance in attendances %}
-                                        {% set participant = attendance.participant %}
-                                        {% if attendance.status == 'confirmed' %}
-                                            {% set colorClass = 'bg-green-100 text-green-800' %}
-                                        {% elseif attendance.status == 'waitlisted' %}
-                                            {% set colorClass = 'bg-yellow-100 text-yellow-800' %}
-                                        {% elseif attendance.status == 'error' or attendance.status == 'withdrawn' %}
-                                            {% set colorClass = 'bg-red-100 text-red-800' %}
-                                        {% else %}
-                                            {% set colorClass = 'bg-gray-100 text-gray-800' %}
-                                        {% endif %}
-
-                                        <tr>
-                                            <td class="pl-6 py-4 whitespace-no-wrap border-b border-gray-200 text-lg leading-5 text-gray-500">
-                                                {{ loop.index }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                                <div class="text-sm leading-5 font-medium text-gray-900">{{ participant.firstname ~ ' ' ~ participant.lastname }}
-                                                </div>
-                                                <div class="text-sm leading-5 text-gray-500">{{ participant.age ~ ' Jahre' }}
-                                                </div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-900">
-                                                <span class="text-gray-500">{{ (participant.phone ~ ' / ' ~ participant.mobile)|trim('/ ') }}</span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-900">
-                                                <span class="text-gray-500">{{ participant.email }}</span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ colorClass }}">{{ attendance.status|trans }}</span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-no-wrap text-center border-b border-gray-200 text-sm leading-5 font-medium">
-                                                <label for="{{ 'form_attendances_' ~ attendance.id }}" class="sr-only">Teilnehmer
-                                                    auswählen:</label>
-                                                <input id="{{ 'form_attendances_' ~ attendance.id }}"
-                                                       name="{{ changeStatus.attendances.vars['full_name'] ~ '[]' }}"
-                                                       type="checkbox"
-                                                       x-model="selectedAttendances"
-                                                       value="{{ attendance.id }}"
-                                                       class="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out">
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                                {{ form_end(changeStatus) }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
+        {{ parent() }}
     {% endif %}
-
 {% endblock %}

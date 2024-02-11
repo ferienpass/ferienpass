@@ -202,21 +202,21 @@ class MenuBuilder
         if ($offer->isOnlineApplication()) {
             $menu->addChild('participantList', [
                 'label' => 'offers.action.participantList',
-                'route' => 'admin_offer_attendances',
+                'route' => 'admin_offer_participants',
                 'routeParameters' => ['id' => $offer->getId()],
                 'display' => $this->isGranted('participants.view', $offer),
                 'extras' => ['icon' => 'user-group-solid'],
             ]);
             $menu->addChild('participantList2', [
                 'label' => 'offers.action.participantList',
-                'route' => 'admin_offer_applications',
+                'route' => 'admin_offer_assign',
                 'routeParameters' => ['id' => $offer->getId(), 'edition' => $offer->getEdition()->getAlias()],
                 'display' => $this->isGranted('participants.view', $offer),
                 'extras' => ['icon' => 'user-group-solid'],
             ]);
             $menu->addChild('participantList.pdf', [
                 'label' => 'offers.action.participantListPdf',
-                'route' => 'admin_offer_attendances',
+                'route' => 'admin_offer_participants',
                 'routeParameters' => ['id' => $offer->getId(), '_suffix' => '.pdf'],
                 'display' => $this->isGranted('participants.view', $offer),
                 'extras' => ['icon' => 'user-group-solid'],
@@ -282,7 +282,7 @@ class MenuBuilder
 
         $menu->addChild('pdf', [
             'label' => 'offers.action.participantList',
-            'route' => 'admin_offer_attendances',
+            'route' => 'admin_offer_participants',
             'routeParameters' => ['id' => $offer->getId(), 'edition' => $offer->getEdition()->getAlias(), '_suffix' => '.pdf'],
             'extras' => [
                 'icon' => 'document-download-solid',

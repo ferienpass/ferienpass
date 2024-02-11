@@ -91,7 +91,8 @@ offers:
     freeze: Angebot einfrieren
     cancel: Angebot absagen
     reactivate: Angebot wiederherstellen
-    participantList: Teilnahmeliste
+    participants: Teilnahmeliste
+    assign: Teilnehmer zuordnen
   new: Neues Angebot
   legend.base:
     - Titel und Beschreibung
@@ -359,6 +360,8 @@ user:
 
 editConfirm: Die Daten wurden erfolgreich gespeichert.
 
+ms.confirm: Teilnehmer zusagen
+ms.reject: Teilnehmer absagen
 ms.settle: abrechnen
 ms.reverse: stornieren
 ms.reverse_and_withdraw: stornieren und abmelden

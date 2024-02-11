@@ -27,7 +27,7 @@ use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
-#[AsLiveComponent(name: 'AddAttendance', route: 'live_component_admin', template: '@FerienpassAdmin/components/AddAttendance.html.twig')]
+#[AsLiveComponent(route: 'live_component_admin')]
 class AddAttendance extends AbstractController
 {
     use ComponentWithFormTrait;

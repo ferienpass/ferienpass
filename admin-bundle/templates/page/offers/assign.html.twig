@@ -4,112 +4,6 @@
 {% import "@FerienpassAdmin/components/content_elements.html.twig" as partials %}
 
 
-{% macro participantList(status, attendances, autoAssign = false, max = null) %}
-    <div class="bg-white overflow-hidden shadow rounded-lg"
-         x-data="DragParticipants({{ attendances|length }}, {{ autoAssign ? 'true' : 'false' }})">
-        <div class="border-b border-gray-200 px-4 py-5 sm:px-6">
-            <div class="flex justify-between">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">
-                    {{ partials.status_badge(status, 'base', '-ml-2.5') }}
-                </h3>
-                <div class="flex items-center">
-                    {% if max is null %}
-                        <span class="ml-auto inline-block py-0.5 px-3 font-medium text-gray-600 text-xs leading-4 rounded-full bg-gray-100 font-normal"
-                              x-text="count"></span>
-                    {% endif %}
-                </div>
-            </div>
-            <p class="mt-2 text-xs leading-4 text-gray-500">{{ ('statusDescription.'~status)|trans }}</p>
-        </div>
-        {% if max is not null %}
-            <div class="px-4 border-b border-t -mt-px py-2 sm:px-6"
-                    {% if max is not null %}
-                        :class="{ 'bg-yellow-50 border-orange-200': count > {{ max }}, 'bg-gray-50 border-gray-200': count <= {{ max }} }"
-                    {% else %}
-                        :class="{ 'bg-gray-50 border-gray-200': true }"
-                    {% endif %}
-            >
-                <p class="leading-5"
-                        {% if max is not null %}
-                            :class="{ 'text-orange-700': count > {{ max }}, 'text-gray-700': count <= {{ max }} }"
-                        {% else %}
-                            :class="{ 'text-gray-700': true }"
-                        {% endif %}
-                >
-                    <span class="ml-auto inline-block py-0.5 px-3 mr-1 -ml-2 text-xs leading-4 rounded-full font-medium"
-                          :class="{ 'bg-yellow-200 text-orange-700': count > {{ max }}, 'bg-gray-200 text-gray-600': count <= {{ max }} }"
-                          x-text="count">0</span>von {% if max %}{{ max }} Kindern{% else %}∞{% endif %}
-                </p>
-            </div>
-        {% endif %}
-        <div class="px-4 py-5 sm:py-6">
-            {% if status == 'waiting' and attendances|length > 0 %}
-                <form method="post" class="mb-6 text-center">
-                    <input type="hidden" name="REQUEST_TOKEN" value="{{ contao_request_token() }}">
-                    <span class="inline-flex rounded-md shadow-sm">
-                        <button type="submit" name="FORM_SUBMIT" value="confirm_all_waiting"
-                                class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150">
-                            <span class="-ml-0.5 mr-2 h-4 w-4">{{ source('@FerienpassCore/Icons/check-solid.svg') }}</span>alle
-                            zulassen
-                        </button>
-                    </span>
-                </form>
-            {% endif %}
-            <ul data-attendance-status="{{ status }}" x-ref="list">
-                {% for attendance in attendances %}
-                    <li class="group cursor-move bg-gray-50 px-2 py-2 border border-transparent rounded mb-4 hover:bg-gray-100 hover:border-gray-100 hover:shadow-sm"
-                        data-attendance-id="{{ attendance.id }}">
-                        <div class="flex">
-                            <div class="mr-1">
-                                <span class="h-5 w-5 block -ml-1 text-gray-400 group-hover:text-gray-500">{% include '@FerienpassCore/Icons/dots-vertical.svg.twig' %}</span>
-                            </div>
-
-                            <div class="w-full">
-                                <div class="flex justify-between">
-                                    <a href="{{ path('contao_backend', { do: 'participants', act: 'edit', id: attendance.participant.id, popup: '1', rt: contao_request_token()}) }}"
-                                       @click.prevent="Backend.openModalIframe({'title':'Kind bearbeiten','url':'{{ path('contao_backend', { do: 'participants', act: 'edit', id: attendance.participant.id, popup: '1', rt: contao_request_token()}) }}'})"
-                                       class="font-medium mb-1 block text-gray-700 truncate">{{ attendance.participant.firstname ~ ' ' ~ attendance.participant.lastname }}</a>
-                                    <div>
-                                        {% if attendance.participant.user %}
-                                            <a class="text-gray-400 hover:text-gray-500"
-                                               href="">
-                                                <span class="w-5 h-5 block">{{ source('@FerienpassCore/Icons/user-circle-solid.svg.twig') }}</span>
-                                            </a>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                {% set firstDate = attendance.offer.dates|first %}
-                                <p class="text-gray-500 mb-1">{{ attendance.participant.age(firstDate ? firstDate.begin : null) ~ ' Jahre' }}</p>
-                                <p class="text-gray-500 text-xs flex items-center">
-                                    <span>{{ 'enrolledBefore'|trans({days: date(attendance.createdAt).diff(date()).days}) }}</span>
-                                </p>
-                                <a class="text-gray-500 text-xs"
-                                   href="{{ path('contao_backend', { do: 'participants', table: 'Attendance', id: attendance.participant.id, popup: '1'}) }}"
-                                   @click.prevent="Backend.openModalIframe({'title':'Anmeldungen von {{ attendance.participant.firstname ~ ' ' ~ attendance.participant.lastname }}','url':$event.target.href})">{{ 'countOverallApplications'|trans({count: attendance.participant.attendancesNotWithdrawn(attendance.offer.edition)|length}) }}</a>
-
-                                {% if attendance.task and attendance.task.maxApplications %}
-                                    <p class="mt-0.5">
-                                        <span class="sr-only">Priorität {{ attendance.userPriority }}</span>
-                                        <span aria-hidden="true" class="flex items-center -ml-1">
-                                            {% for i in attendance.task.maxApplications..1 %}
-                                                {% if attendance.userPriority > i %}
-                                                    <span class="block h-4 w-4 text-gray-300">{{ source('@FerienpassCore/Icons/star-solid.svg') }}</span>
-                                                {% else %}
-                                                    <span class="block h-4 w-4 text-yellow-500">{{ source('@FerienpassCore/Icons/star-solid.svg') }}</span>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </span>
-                                    </p>
-                                {% endif %}
-
-                            </div>
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
-{% endmacro participantList %}
 
 {% block main %}
 
@@ -142,7 +36,7 @@
                                     <div class="rounded-md bg-white shadow-xs">
                                         <div class="py-1">
                                             {% for variant in variants %}
-                                                <a href="{{ path('admin_offer_applications', { id: variant.raw.id, edition: variant.edition.id}) }}"
+                                                <a href="{{ path('admin_offer_assign', { id: variant.raw.id, edition: variant.edition.id}) }}"
                                                    class="group flex items-center font-normal px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900">
                                                     <span class="h-5 w-5 mr-2 text-gray-400 group-hover:text-gray-500">{% include '@FerienpassCore/Icons/calendar.svg.twig' %}</span>
                                                     {{ variant.text.date_period }}</a>
@@ -195,7 +89,7 @@
                     <div class="" x-data="{ dropdownOpen: false, modalCancel: false, modalEmailAddresses: false }">
                         {# Dropdown button #}
                         <div class="relative z-0 inline-flex shadow-sm rounded-md">
-                            <a href="{{ path('admin_offer_applications_pdf', {id: offer.id, edition: offer.edition.alias}) }}"
+                            <a href="{{ path('admin_offer_assign_pdf', {id: offer.id, edition: offer.edition.alias}) }}"
                                class="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150">
                                 <span class="-ml-1 mr-2 h-5 w-5 text-gray-500">{% include'@FerienpassCore/Icons/document-download-solid.svg.twig' %}</span>
                                 PDF-Export
@@ -222,24 +116,24 @@
                                     <div class="rounded-md bg-white shadow-xs" role="menu" aria-orientation="vertical"
                                          aria-labelledby="options-menu">
                                         <div class="py-1">
-{#                                            <a href="{{ path('contao_backend_preview', { url: path('offer_details', { alias: offer.alias })|trim('/', 'left')}) }}"#}
-{#                                               target="_blank"#}
-{#                                               class="group flex items-center px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"#}
-{#                                               role="menuitem">#}
-{#                                                <span class="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500">{% include '@FerienpassCore/Icons/external-link-solid.svg.twig' %}</span>#}
-{#                                                Ansehen#}
-{#                                            </a>#}
-{#                                            <a href="{{ path('contao_backend', { do: 'offers', act: 'edit', id: offer.id, rt: contao_request_token() }) }}"#}
-{#                                               target="_blank"#}
-{#                                               class="group flex items-center px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"#}
-{#                                               role="menuitem">#}
-{#                                                <span class="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500">{% include '@FerienpassCore/Icons/pencil-solid.svg.twig' %}</span>#}
-{#                                                Bearbeiten#}
-{#                                            </a>#}
+                                            {#                                            <a href="{{ path('contao_backend_preview', { url: path('offer_details', { alias: offer.alias })|trim('/', 'left')}) }}" #}
+                                            {#                                               target="_blank" #}
+                                            {#                                               class="group flex items-center px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" #}
+                                            {#                                               role="menuitem"> #}
+                                            {#                                                <span class="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500">{% include '@FerienpassCore/Icons/external-link-solid.svg.twig' %}</span> #}
+                                            {#                                                Ansehen #}
+                                            {#                                            </a> #}
+                                            {#                                            <a href="{{ path('contao_backend', { do: 'offers', act: 'edit', id: offer.id, rt: contao_request_token() }) }}" #}
+                                            {#                                               target="_blank" #}
+                                            {#                                               class="group flex items-center px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" #}
+                                            {#                                               role="menuitem"> #}
+                                            {#                                                <span class="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500">{% include '@FerienpassCore/Icons/pencil-solid.svg.twig' %}</span> #}
+                                            {#                                                Bearbeiten #}
+                                            {#                                            </a> #}
                                         </div>
                                         <div class="border-t border-gray-100"></div>
                                         <div class="py-1">
-                                            <a href="{{ path('admin_offer_applications_pdf', {id: offer.id, edition: offer.edition.alias}) }}"
+                                            <a href="{{ path('admin_offer_assign_pdf', {id: offer.id, edition: offer.edition.alias}) }}"
                                                target="_blank"
                                                class="group flex items-center px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
                                                role="menuitem">
@@ -247,7 +141,7 @@
                                                 PDF-Export
                                             </a>
                                             {% if hasWordExport %}
-                                                <a href="{{ path('admin_offer_applications_docx', {id: offer.id, edition: offer.edition.alias}) }}"
+                                                <a href="{{ path('admin_offer_assign_docx', {id: offer.id, edition: offer.edition.alias}) }}"
                                                    target="_blank"
                                                    class="group flex items-center px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
                                                    role="menuitem">
@@ -454,59 +348,10 @@
 
         </div>
 
-        {% if offer.cancelled %}
-            <div class="mb-6 shadow rounded-md overflow-hidden mb-6">
-                {% embed '@FerienpassCore/Alert/error.html.twig' %}
-                    {% block headline %}Angebot abgesagt{% endblock %}
-                    {% block content %}Kinder verbleiben auf der Teilnahmeliste für den Fall, dass das Angebot wiederhergestell wird.{% endblock %}
-                {% endembed %}
-            </div>
-        {% endif %}
+        {{ component('Admin:OfferAssign', {
+            offer: offer
+        }) }}
 
-        {% if not offer.onlineApplication %}
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="px-4 py-5 sm:p-6">
-                    {% embed '@FerienpassCore/Alert/information.html.twig' %}
-                        {% block headline %}Keine Online-Anmeldungen{% endblock %}
-                        {% block content %}Die Anmeldungen laufen über den Veranstalter oder es sind keine Anmeldungen notwendig.{% endblock %}
-                    {% endembed %}
-                </div>
-            </div>
-        {% else %}
-            {% if attendances is empty %}
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                    <div class="px-4 py-5 sm:p-6">
-                        {% embed '@FerienpassCore/Alert/information.html.twig' %}
-                            {% block headline %}Keine Anmeldungen{% endblock %}
-                            {% block content %}Es haben sich noch keine Kinder zum Angebot angemeldet.{% endblock %}
-                        {% endembed %}
-                    </div>
-                </div>
-            {% else %}
-
-                <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
-
-                    {{ _self.participantList('confirmed', attendances|filter(a => a.confirmed), autoAssign, offer.maxParticipants) }}
-
-                    {{ _self.participantList('waitlisted', attendances|filter(a => a.waitlisted), autoAssign) }}
-
-                    {{ _self.participantList('waiting', attendances|filter(a => a.waiting), autoAssign) }}
-
-                    {% if attendances|filter(a => a.errored)|length %}
-                    <div>{% endif %}
-
-                        {{ _self.participantList('withdrawn', attendances|filter(a => a.withdrawn), autoAssign) }}
-
-                        {% if attendances|filter(a => a.errored)|length %}
-                            <div class="mt-6">
-                                {{ _self.participantList('error', attendances|filter(a => a.errored), autoAssign) }}
-                            </div>
-                        {% endif %}
-
-                        {% if attendances|filter(a => a.errored)|length %}</div>{% endif %}
-                </div>
-            {% endif %}
-        {% endif %}
     </div>
 
 {% endblock %}

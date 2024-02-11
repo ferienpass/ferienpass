@@ -143,15 +143,15 @@ class ActionsBuilder
 
         if ($item->isOnlineApplication()) {
             $root->addChild('participantList', [
-                'label' => 'offers.action.participantList',
-                'route' => 'admin_offer_attendances',
+                'label' => 'offers.action.participants',
+                'route' => 'admin_offer_participants',
                 'routeParameters' => array_filter(['id' => $item->getId(), 'edition' => $item->getEdition()?->getAlias()]),
                 'display' => $this->isGranted('participants.view', $item),
                 'extras' => ['icon' => 'user-group-solid'],
             ]);
-            $root->addChild('participantList2', [
-                'label' => 'offers.action.participantList',
-                'route' => 'admin_offer_applications',
+            $root->addChild('participantAssigning', [
+                'label' => 'offers.action.assign',
+                'route' => 'admin_offer_assign',
                 'routeParameters' => array_filter(['id' => $item->getId(), 'edition' => $item->getEdition()?->getAlias()]),
                 'display' => $this->isGranted('participants.view', $item),
                 'extras' => ['icon' => 'user-group-solid'],
@@ -254,7 +254,7 @@ class ActionsBuilder
     {
         $root->addChild('offer', [
             'label' => 'attendance.action.offer',
-            'route' => 'admin_offer_applications',
+            'route' => 'admin_offer_assign',
             'routeParameters' => ['id' => $item->getOffer()->getId(), 'edition' => $item->getOffer()->getEdition()->getAlias()],
             'display' => $this->isGranted('view', $item->getOffer()),
         ]);
