@@ -163,6 +163,7 @@ hosts:
   action:
     show: Anzeigen
     edit: Bearbeiten
+    delete: Löschen
   legend.base.0: Basisdaten
   legend.contact.0: Kontaktdaten
   legend.address.0: Postanschrift
@@ -180,6 +181,8 @@ hosts:
     postal: PLZ
     city: Ort
     logo: Logo
+    accounts: Accounts
+    numberOffers: Anzahl Angebote
   th:
     name: Name
     email: E-Mail-Adresse
@@ -192,6 +195,8 @@ hosts:
   sorting.numberOffers: Sortieren nach Anzahl Angeboten
   help:
     alias: Der Alias wird automatisch generiert.
+  deleteModal.headline: Veranstalter löschen
+  deleteModal.confirm: Sind Sie sicher, dass Sie folgenden Veranstalter löschen möchten?
 
 editions:
   title: Saisons

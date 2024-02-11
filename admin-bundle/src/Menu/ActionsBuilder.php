@@ -215,6 +215,13 @@ class ActionsBuilder
             'display' => $this->isGranted('edit', $item),
             'extras' => ['icon' => 'pencil-solid'],
         ]);
+
+        $class = $item::class;
+        $root->addChild('delete', [
+            'label' => 'hosts.action.delete',
+            'display' => $this->isGranted('delete', $item),
+            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
+        ]);
     }
 
     private function editions(ItemInterface $root, Edition $item)

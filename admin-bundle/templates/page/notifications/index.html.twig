@@ -10,26 +10,26 @@
             <div class="min-h-0 flex-1 overflow-y-auto space-y-2">
                 {% for type in types|sort((a, b) => "notifications.#{a}.0"|trans <=> "notifications.#{b}.0"|trans) %}
                     <a href="{{ path('admin_notifications', { type: type }) }}"
-                       class="{{ app.request.get('type') == type ? 'bg-gray-100' : 'hover:bg-gray-100' }} flex rounded px-6 py-4"
+                       class="{{ app.request.get('type') == type ? 'bg-gray-100 dark:bg-gray-900' : 'hover:bg-gray-100 dark:hover:bg-gray-900' }} flex rounded px-6 py-4"
                        aria-current="page">
 
-                        <span class="-mt-0.5 h-6 w-6 flex-shrink-0 text-gray-400">
+                        <span class="-mt-0.5 h-6 w-6 flex-shrink-0 text-gray-400 dark:text-gray-500">
                             {% if type starts with 'user_' or type starts with 'account_' or type starts with 'host_' %}
-                            {{ source('@FerienpassAdmin/icons/users.outline.svg') }}
-                                {% elseif type starts with 'offer_' or type starts with 'attendance_' or type == 'remind_attendance' %}
-                            {{ source('@FerienpassAdmin/icons/calendar-days.outline.svg') }}
-                                {% elseif type starts with 'payment_' %}
-                            {{ source('@FerienpassAdmin/icons/banknotes.outline.svg') }}
+                                {{ source('@FerienpassAdmin/icons/users.outline.svg') }}
+                            {% elseif type starts with 'offer_' or type starts with 'attendance_' or type == 'remind_attendance' %}
+                                {{ source('@FerienpassAdmin/icons/calendar-days.outline.svg') }}
+                            {% elseif type starts with 'payment_' %}
+                                {{ source('@FerienpassAdmin/icons/banknotes.outline.svg') }}
                             {% endif %}
                         </span>
 
                         <div class="ml-3 text-sm">
-                            <p class="font-medium text-slate-900">
+                            <p class="font-medium text-gray-900 dark:text-gray-100">
                                 <span>{{ "notifications.#{type}.0"|trans }}</span>
                                 <span class="w-2.5 h-2.5 inline-block {{ notifier.isActive(type) ? 'bg-green-600' : 'bg-red-600' }} rounded-full"
                                       aria-hidden="true"></span>
                             </p>
-                            <p class="mt-1 text-slate-500">{{ "notifications.#{type}.1"|trans }}</p>
+                            <p class="mt-1 text-gray-500 dark:text-gray-400">{{ "notifications.#{type}.1"|trans }}</p>
                         </div>
                     </a>
                 {% endfor %}
@@ -59,37 +59,89 @@
 
                 {% if form is defined %}
 
-                    {% if canEditEditions %}
-                    <div>
-                        <nav class="-ml-3 flex space-x-4" aria-label="{{ 'editions.title'|trans }}">
-                            {% if editions is not empty %}
-                                <a href="{{ path('admin_notifications', { type: app.request.get('type') }) }}"
-                                   class="{{ 'admin_notifications' == app.request.get('_route') and edition is empty ? 'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100/80' : 'text-gray-500 dark:text-gray-100/50 hover:text-gray-700 dark:hover:text-gray-100/80' }} rounded-md px-3 py-2 whitespace-nowrap text-sm font-medium"
-                                   {% if 'admin_notifications' == app.request.get('_route') and edition is empty %}aria-current="page"{% endif %}>
-                                    <span>Standard</span>
-                                    <span class="ml-1 w-2.5 h-2.5 inline-block {{ notifier.isActive(app.request.get('type'), null, true) ? 'bg-green-600' : 'bg-red-600' }} rounded-full"
-                                          aria-hidden="true"></span>
-                                </a>
+                    <div class="space-y-12 divide-y divide-gray-300">
+
+                        <div>
+                            {% if canEditEditions %}
+                                <div>
+                                    <nav class="-ml-3 flex space-x-4" aria-label="{{ 'editions.title'|trans }}">
+                                        {% if editions is not empty %}
+                                            <a href="{{ path('admin_notifications', { type: app.request.get('type') }) }}"
+                                               class="{{ 'admin_notifications' == app.request.get('_route') and edition is empty ? 'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100/80' : 'text-gray-500 dark:text-gray-100/50 hover:text-gray-700 dark:hover:text-gray-100/80' }} rounded-md px-3 py-2 whitespace-nowrap text-sm font-medium"
+                                               {% if 'admin_notifications' == app.request.get('_route') and edition is empty %}aria-current="page"{% endif %}>
+                                                <span>Standard</span>
+                                                <span class="ml-1 w-2.5 h-2.5 inline-block {{ notifier.isActive(app.request.get('type'), null, true) ? 'bg-green-600 dark:bg-green-500/80' : 'bg-red-600 dark:bg-red-500/80' }} rounded-full"
+                                                      aria-hidden="true"></span>
+                                            </a>
+                                        {% endif %}
+
+                                        {% for edition in editions %}
+                                            <a href="{{ path('admin_notifications', { type: app.request.get('type'), edition: edition.alias }) }}"
+                                               class="{{ edition.alias == app.request.get('edition') ? 'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100/80' : 'text-gray-500 dark:text-gray-100/50 hover:text-gray-700 dark:hover:text-gray-100/80' }} rounded-md px-3 py-2 whitespace-nowrap text-sm font-medium"
+                                               {% if edition.alias == app.request.get('edition') %}aria-current="page"{% endif %}>
+                                                <span>{{ edition.name }}</span>
+                                                <span class="ml-1 w-2.5 h-2.5 inline-block {{ notifier.isActive(app.request.get('type'), edition, true) ? 'bg-green-600 dark:bg-green-500/80' : 'bg-red-600 dark:bg-red-500/80' }} rounded-full"
+                                                      aria-hidden="true"></span>
+                                            </a>
+                                        {% endfor %}
+                                        <a href="{{ path('admin_notifications_new', { type: app.request.get('type') }) }}"
+                                           class="{{ app.request.get('_route') == 'admin_notifications_new' ? 'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100/80' : 'text-gray-500 dark:text-gray-100/50 hover:text-gray-700 dark:hover:text-gray-100/80' }} rounded-md px-3 py-2 whitespace-nowrap text-sm font-medium"
+                                           {% if app.request.get('_route') == 'admin_notifications_new' %}aria-current="page"{% endif %}>+
+                                            Für eine Saison anpassen</a>
+                                    </nav>
+                                </div>
                             {% endif %}
 
-                            {% for edition in editions %}
-                                <a href="{{ path('admin_notifications', { type: app.request.get('type'), edition: edition.alias }) }}"
-                                   class="{{ edition.alias == app.request.get('edition') ? 'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100/80' : 'text-gray-500 dark:text-gray-100/50 hover:text-gray-700 dark:hover:text-gray-100/80' }} rounded-md px-3 py-2 whitespace-nowrap text-sm font-medium"
-                                   {% if edition.alias == app.request.get('edition') %}aria-current="page"{% endif %}>
-                                    <span>{{ edition.name }}</span>
-                                    <span class="ml-1 w-2.5 h-2.5 inline-block {{ notifier.isActive(app.request.get('type'), edition, true) ? 'bg-green-600' : 'bg-red-600' }} rounded-full"
-                                          aria-hidden="true"></span>
-                                </a>
-                            {% endfor %}
-                            <a href="{{ path('admin_notifications_new', { type: app.request.get('type') }) }}"
-                               class="{{ app.request.get('_route') == 'admin_notifications_new' ? 'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100/80' : 'text-gray-500 dark:text-gray-100/50 hover:text-gray-700 dark:hover:text-gray-100/80' }} rounded-md px-3 py-2 whitespace-nowrap text-sm font-medium"
-                               {% if app.request.get('_route') == 'admin_notifications_new' %}aria-current="page"{% endif %}>+
-                                Für eine Saison anpassen</a>
-                        </nav>
-                    </div>
-                        {% endif %}
+                            {% include '@FerienpassAdmin/layout/_edit.html.twig' %}
+                        </div>
 
-                    {% include '@FerienpassAdmin/layout/_edit.html.twig' %}
+                        <div class="pt-6">
+                            <h3>Vorschau</h3>
+
+                            <p class="text-sm leading-5 text-gray-500 dark:text-gray-300">
+                                So könnte die versendete E-Mail aussehen.
+                            </p>
+
+                            <div class="mt-6 overflow-hidden rounded-lg bg-white shadow border border-white">
+                                <div id="preview">
+                                    <template shadowrootmode="open">
+                                        {% include mockEmail.message.getHtmlTemplate() with mockEmail.message.getContext() %}
+                                    </template>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="pt-6">
+                            <h3>Benachrichtigungs-Tokens</h3>
+
+                            <p class="text-sm leading-5 text-gray-500 dark:text-gray-300">
+                                Sie können folgende Tokens verwenden, die vor dem Versenden mit dem richtigen Inhalt
+                                ersetzt
+                                werden.
+                            </p>
+
+                            <div class="mt-6 border-t border-gray-100 dark:border-gray-700">
+                                <dl class="divide-y divide-gray-100 dark:divide-gray-800">
+                                    <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                        <dt class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100">
+                                            Token
+                                        </dt>
+                                        <dd class="mt-1 text-sm font-semibold leading-6 text-gray-700 dark:text-gray-200 sm:col-span-2 sm:mt-0">
+                                            Beispiel
+                                        </dd>
+                                    </div>
+                                    {% for name, value in availableTokens %}
+                                        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                            <dt class="text-sm font-medium leading-6 text-gray-900 dark:text-gray-100">{{ "{{ #{name} }}" }}</dt>
+                                            <dd class="mt-1 text-sm leading-6 text-gray-700 dark:text-gray-200 sm:col-span-2 sm:mt-0">{{ value }}</dd>
+                                        </div>
+                                    {% endfor %}
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
 
                 {% endif %}
 

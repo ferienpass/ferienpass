@@ -20,6 +20,7 @@ use Ferienpass\CoreBundle\Applications\UnconfirmedApplications;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Notification;
 use Ferienpass\CoreBundle\Message\ConfirmApplications;
+use Ferienpass\CoreBundle\Notification\AbstractNotification;
 use Ferienpass\CoreBundle\Notification\EditionAwareNotificationInterface;
 use Ferienpass\CoreBundle\Notifier;
 use Ferienpass\CoreBundle\Repository\NotificationRepository;
@@ -30,15 +31,18 @@ use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Notifier\Notification\EmailNotificationInterface;
+use Symfony\Component\Notifier\Recipient\Recipient;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[IsGranted('ROLE_ADMIN')]
 #[Route('/benachrichtigungen')]
 final class NotificationsController extends AbstractController
 {
-    public function __construct(private readonly TranslatorInterface $translator)
+    public function __construct(private readonly TranslatorInterface $translator, private readonly NormalizerInterface $normalizer)
     {
     }
 
@@ -88,11 +92,38 @@ final class NotificationsController extends AbstractController
             return $this->redirectToRoute('admin_notifications', ['type' => $type, 'edition' => $edition?->getAlias()]);
         }
 
+        $availableTokens = [];
+        if (is_subclass_of($notificationClass = $notifier->getClass($type), AbstractNotification::class)) {
+            $tokenKeys = $notificationClass::getAvailableTokens();
+        }
+
+        foreach ($tokenKeys ?? [] as $token) {
+            switch ($token) {
+                case 'baseUrl':
+                    $availableTokens[$token] = $request->getSchemeAndHttpHost().$request->getBaseUrl();
+                    break;
+                case 'user':
+                case 'offer':
+                case 'participant':
+                case 'attendance':
+                    $tokens = $this->normalizer->normalize($this->getUser(), context: ['groups' => 'notification']);
+                    foreach (array_keys($tokens) as $property) {
+                        $availableTokens["$token.$property"] = $this->container->get('twig')->createTemplate(sprintf('{{ %s }}', "$token.$property"))->render([$token => $tokens]);
+                    }
+                    break;
+            }
+        }
+
+        $mockNotification = $notifier->createMock($type, $entity->getEmailSubject() ?? '', $entity->getEmailText() ?? '');
+        $mockEmail = $mockNotification instanceof EmailNotificationInterface ? $mockNotification->asEmailMessage(new Recipient('example@example.org')) : null;
+
         return $this->render('@FerienpassAdmin/page/notifications/index.html.twig', [
             'form' => $form->createView(),
             'edition' => $edition,
             'editions' => $editions,
-            'canEditEditions' => is_subclass_of($notifier->getClass($type), EditionAwareNotificationInterface::class),
+            'canEditEditions' => is_subclass_of($notificationClass, EditionAwareNotificationInterface::class),
+            'availableTokens' => $availableTokens,
+            'mockEmail' => $mockEmail,
             'types' => $notifier->types(),
             'notifier' => $notifier,
             'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], ['notifications.title', ['route' => 'admin_notifications']], 'notifications.'.$type.'.0', $edition?->getName()),

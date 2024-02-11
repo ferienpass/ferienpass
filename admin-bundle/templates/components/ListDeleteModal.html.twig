@@ -5,23 +5,24 @@
     {% if item is not null %}
 
         <div class="sm:flex sm:items-start">
-            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                <span class="block h-6 w-6 text-red-600">{{ source('@FerienpassAdmin/icons/exclamation.svg') }}</span>
+            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-600/70 sm:mx-0 sm:h-10 sm:w-10">
+                <span class="block h-6 w-6 text-red-600 dark:text-red-100/90">{{ source('@FerienpassAdmin/icons/exclamation.svg') }}</span>
             </div>
             <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                <h3 class="text-lg leading-6 font-medium text-gray-900"
+                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100"
                     id="modal-headline">{{ "#{type}.deleteModal.headline"|trans }}</h3>
                 <div class="mt-2">
-                    <p class="text-sm leading-5 text-gray-500">
+                    <p class="text-sm leading-5 text-gray-500 dark:text-gray-300">
                         {{ "#{type}.deleteModal.confirm"|trans }}
                     </p>
 
                     {% set metadata = {
                         accounts: {
+                            accountRoles: '{{ item.accountRoles|map(r => "accounts.role.#{r}"|trans([], "admin"))|join(", ") }}',
                             name: '{{ item.name }}',
                             email: '{{ item.email }}',
                             participants: '{{ item.participants|map(u => "#{u.name}")|join(", ") }}',
-                            accountRoles: '{{ item.accountRoles|map(r => "accounts.role.#{r}"|trans([], "admin"))|join(", ") }}'
+                            hosts: '{{ item.hosts|map(u => "#{u.name}")|join(", ") }}'
                         },
                         offers: {
                             name: '{{ item.name }}',
@@ -53,6 +54,11 @@
                             dateOfBirth: '{{ item.dateOfBirth|date("d.m.Y") }}',
                             user: '{{ item.user ? item.user.name : "-" }}'
                         },
+                        hosts: {
+                            name: '{{ item.name }}',
+                            accounts: '{{ item.users|map(u => "#{u.firstname} #{u.lastname}")|join(", ") }}',
+                            numberOffers: '{{ item.offers|length }}'
+                        },
                         editions: {
                             title: '{{ item.name }}',
                             holiday: "{{ item.holiday ? item.holiday.periodBegin|date('d.m.Y') ~ ' - ' ~  item.holiday.periodEnd|date('d.m.Y') : '' }}",
@@ -61,12 +67,12 @@
                         }
                     } %}
 
-                    <div class="mt-6 border-t border-gray-100">
-                        <dl class="divide-y divide-gray-100">
+                    <div class="mt-6 border-t border-gray-100 dark:border-gray-700">
+                        <dl class="divide-y divide-gray-100 dark:divide-gray-800">
                             {% for name, value in attribute(metadata, type) %}
                                 <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                    <dt class="text-sm font-medium leading-6 text-gray-900">{{ "#{type}.label.#{name}"|trans }}</dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ include(template_from_string(value)) }}</dd>
+                                    <dt class="text-sm font-medium leading-6 text-gray-900 dark:text-gray-100">{{ "#{type}.label.#{name}"|trans }}</dt>
+                                    <dd class="mt-1 text-sm leading-6 text-gray-700 dark:text-gray-200 sm:col-span-2 sm:mt-0">{{ include(template_from_string(value)) }}</dd>
                                 </div>
                             {% endfor %}
                         </dl>
@@ -75,17 +81,32 @@
                     {% if 'accounts' == type and item.participants|length %}
                         <div class="mt-2 flex">
                             <div class="flex-shrink-0">
-                                <svg class="h-5 w-5 text-yellow-700" viewBox="0 0 20 20" fill="currentColor"
+                                <svg class="h-5 w-5 text-yellow-700 dark:text-yellow-500" viewBox="0 0 20 20" fill="currentColor"
                                      aria-hidden="true">
                                     <path fill-rule="evenodd"
                                           d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z"
                                           clip-rule="evenodd"/>
                                 </svg>
                             </div>
-                            <div class="ml-3">
-                                <p class="text-sm text-yellow-700">
-                                    <span class="font-semibold">Kinder werden mitgelöscht!</span> Wenn Sie das nicht
+                            <div class="ml-2">
+                                <p class="text-sm text-yellow-700 dark:text-yellow-500">
+                                    <span class="font-semibold">Kinder und Anmeldungen werden mitgelöscht!</span> Wenn Sie das nicht
                                     wollen, bearbeiten Sie die Kinder und entfernen die Eltern-Zuordnung.
+                                </p>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if 'accounts' == type and item.hosts|length %}
+                        <div class="mt-2 flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-blue-600 dark:text-blue-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-2">
+                                <p class="text-sm text-blue-700 dark:text-blue-400">
+                                    Die Veranstalter-Profile bleiben erhalten.
                                 </p>
                             </div>
                         </div>
@@ -93,15 +114,15 @@
                     {% if 'offers' == type and item.attendances|length %}
                         <div class="mt-2 flex">
                             <div class="flex-shrink-0">
-                                <svg class="h-5 w-5 text-yellow-700" viewBox="0 0 20 20" fill="currentColor"
+                                <svg class="h-5 w-5 text-yellow-700 dark:text-yellow-500" viewBox="0 0 20 20" fill="currentColor"
                                      aria-hidden="true">
                                     <path fill-rule="evenodd"
                                           d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z"
                                           clip-rule="evenodd"/>
                                 </svg>
                             </div>
-                            <div class="ml-3">
-                                <p class="text-sm text-yellow-700">
+                            <div class="ml-2">
+                                <p class="text-sm text-yellow-700 dark:text-yellow-500">
                                     <span class="font-semibold">Anmeldungen werden mitgelöscht!</span>
                                 </p>
                             </div>
@@ -110,15 +131,15 @@
                     {% if 'participants' == type and item.attendances|length %}
                         <div class="mt-2 flex">
                             <div class="flex-shrink-0">
-                                <svg class="h-5 w-5 text-yellow-700" viewBox="0 0 20 20" fill="currentColor"
+                                <svg class="h-5 w-5 text-yellow-700 dark:text-yellow-500" viewBox="0 0 20 20" fill="currentColor"
                                      aria-hidden="true">
                                     <path fill-rule="evenodd"
                                           d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z"
                                           clip-rule="evenodd"/>
                                 </svg>
                             </div>
-                            <div class="ml-3">
-                                <p class="text-sm text-yellow-700">
+                            <div class="ml-2">
+                                <p class="text-sm text-yellow-700 dark:text-yellow-500">
                                     <span class="font-semibold">Anmeldungen werden mitgelöscht!</span>
                                 </p>
                             </div>
@@ -128,16 +149,45 @@
                     {% if 'editions' == type and item.offers|length %}
                         <div class="mt-2 flex">
                             <div class="flex-shrink-0">
-                                <svg class="h-5 w-5 text-yellow-700" viewBox="0 0 20 20" fill="currentColor"
+                                <svg class="h-5 w-5 text-yellow-700 dark:text-yellow-500" viewBox="0 0 20 20" fill="currentColor"
                                      aria-hidden="true">
                                     <path fill-rule="evenodd"
                                           d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z"
                                           clip-rule="evenodd"/>
                                 </svg>
                             </div>
-                            <div class="ml-3">
-                                <p class="text-sm text-yellow-700">
+                            <div class="ml-2">
+                                <p class="text-sm text-yellow-700 dark:text-yellow-500">
                                     <span class="font-semibold">Es werden alle {{ item.offers|length }} Angebote mit jeweiligen Anmeldungen mitgelöscht!</span> Wenn Sie das nicht wollen, verschieben Sie die Angebote vorher in eine andere Saison.
+                                </p>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if 'hosts' == type and item.users|length %}
+                        <div class="mt-2 flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-blue-600 dark:text-blue-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-2">
+                                <p class="text-sm text-blue-700 dark:text-blue-400">
+                                    Die {{ item.users|length }} Nutzeraccounts bleiben erhalten.
+                                </p>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if 'hosts' == type and item.offers|length %}
+                        <div class="mt-2 flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-blue-600 dark:text-blue-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-2">
+                                <p class="text-sm text-blue-700 dark:text-blue-400">
+                                    Die {{ item.offers|length }} Angebote bleiben erhalten.
                                 </p>
                             </div>
                         </div>
