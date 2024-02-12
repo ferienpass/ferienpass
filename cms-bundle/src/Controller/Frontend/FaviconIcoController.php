@@ -21,12 +21,12 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route(path: '/favicon.ico')]
 final class FaviconIcoController
 {
-    public function __construct(#[Autowire('%contao.web_dir%')] private readonly string $webDir)
+    public function __construct(#[Autowire('%kernel.project_dir%')] private readonly string $projectDir)
     {
     }
 
     public function __invoke(): Response
     {
-        return new BinaryFileResponse($this->webDir.'/bundles/ferienpasscore/favicon/favicon.ico');
+        return new BinaryFileResponse($this->projectDir.'/public/bundles/ferienpasscore/favicon/favicon.ico');
     }
 }
