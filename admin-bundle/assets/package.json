@@ -63,6 +63,13 @@
                 "fetch": "eager",
                 "enabled": true
             },
+            "dropdown": {
+                "main": "dist/controllers/dropdown.js",
+                "name": "ferienpass/admin-dropdown",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true
+            },
             "modal": {
                 "main": "dist/controllers/modal.js",
                 "name": "ferienpass/admin-modal",

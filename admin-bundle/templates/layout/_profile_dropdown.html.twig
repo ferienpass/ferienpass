@@ -2,9 +2,10 @@
 
 {% if app.user %}
     <div class="flex-shrink-0 relative">
-        {% embed '@FerienpassAdmin/components/dropdown.html.twig' %}
-            {% block toggle %}
-                <button class="group max-w-xs flex items-center px-2 py-1 space-x-3 text-sm rounded-md focus:outline-none focus:shadow-outline bg-gray-100 dark:bg-gray-900/50 hover:bg-gray-200 dark:hover:bg-gray-900/80">
+
+        <twig:Admin:Dropdown>
+            <twig:block name="toggle">
+                <span class="group max-w-xs flex items-center px-2 py-1 space-x-3 text-sm rounded-md focus:outline-none focus:shadow-outline bg-gray-100 dark:bg-gray-900/50 hover:bg-gray-200 dark:hover:bg-gray-900/80">
                     <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-gray-400 dark:bg-gray-600">
                         <span class="text-md font-medium leading-none text-white dark:text-gray-200">{{ app.user.firstname|first|upper ~ app.user.lastname|first|upper }}</span>
                     </span>
@@ -15,10 +16,10 @@
                     <span class="text-gray-400 group-hover:text-gray-500 w-4 h-4">
                         {{ source('@FerienpassAdmin/icons/chevron-down-solid.svg') }}
                     </span>
-                </button>
-            {% endblock %}
+                </span>
+            </twig:block>
 
-            {% block dropdown %}
+            <twig:block name="dropdown">
                 {% set menu = knp_menu_get('host_user_navigation') %}
                 {% for item in menu.children %}
                     {% if item.current %}
@@ -39,7 +40,8 @@
                         {% endembed %}
                     {% endif %}
                 {% endfor %}
-            {% endblock %}
-        {% endembed %}
+            </twig:block>
+        </twig:Admin:Dropdown>
+
     </div>
 {% endif %}

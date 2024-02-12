@@ -2,12 +2,9 @@
 
 <div {{ attributes }}>
 
-    {% embed '@FerienpassAdmin/components/dropdown.html.twig' %}
-        {% block toggle %}
-            <button type="button"
-                    class="-mr-1 rounded p-1 hover:bg-gray-200/50"
-                    id="options-menu-0-button" aria-expanded="false"
-                    aria-haspopup="true">
+    <twig:Admin:Dropdown>
+        <twig:block name="toggle">
+            <span class="-mr-1 rounded p-1 hover:bg-gray-200/50">
                 <span class="sr-only">Open options</span>
 
                 {% if "cancelled" == offer.state %}
@@ -32,12 +29,10 @@
                                 class="text-green-600 w-6 h-6">{{ source("@FerienpassAdmin/icons/check-circle.solid.svg") }}</span></span>
                 {% endif %}
 
+            </span>
+        </twig:block>
 
-            </button>
-        {% endblock %}
-
-        {% block dropdown %}
-
+        <twig:block name="dropdown">
             <div class="px-4 py-3" role="none">
                 <p class="text-sm" role="none">Aktueller Status:</p>
                 <p class="truncate text-sm font-medium text-gray-900">{{ offer.state }}</p>
@@ -47,13 +42,7 @@
                     <a href="#" class="text-gray-700 block px-4 py-2 text-sm" tabindex="-1">{{ transition.name }}</a>
                 {% endfor %}
             </div>
-
-
-
-
-
-        {% endblock %}
-
-    {% endembed %}
+        </twig:block>
+    </twig:Admin:Dropdown>
 
 </div>

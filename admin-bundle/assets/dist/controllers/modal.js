@@ -10,7 +10,6 @@ export default class default_1 extends Controller {
         enter(this.modalTarget);
     }
     hide() {
-        console.log(this.element);
         Promise.all([
             leave(this.backdropTarget),
             leave(this.modalTarget),

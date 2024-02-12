@@ -42,32 +42,23 @@
 
         {{ parent() }}
 
-        {% embed '@FerienpassAdmin/components/dropdown.html.twig' with { dropdownClass: 'w-96'} %}
-            {% block toggle %}
-                <button type="button"
-                        class="relative shadow-sm inline-flex px-4 py-2 items-center border border-transparent text-sm leading-5 font-medium rounded-md focus:outline-none focus:shadow-outline-blue border-transparent text-white bg-primary-600 hover:bg-primary-500 focus:border-primary-700 active:bg-primary-700"
-                        id="options-menu-0-button"
-                        aria-expanded="false"
-                        aria-haspopup="true">
+        <twig:Admin:Dropdown dropdownClass="w-96">
+            <twig:block name="toggle">
+                <span class="relative shadow-sm inline-flex px-4 py-2 items-center border border-transparent text-sm leading-5 font-medium rounded-md focus:outline-none focus:shadow-outline-blue border-transparent text-white bg-primary-600 hover:bg-primary-500 focus:border-primary-700 active:bg-primary-700">
                     <span class="flex items-center space-x-1 -mr-2">
                         <span class="h-5 w-5">{{ source('@FerienpassAdmin/icons/plus-solid.svg') }}</span>
                         <span>Neu anlegen…</span>
                         <span class="h-5 w-5">{{ source('@FerienpassAdmin/icons/chevron-down-solid.svg') }}</span>
                     </span>
-                </button>
-            {% endblock %}
+                </span>
+            </twig:block>
 
-            {% block dropdown %}
-
+            <twig:block name="dropdown">
                 <div class="px-4 py-2">
-
                     {{ component('Admin:AddAttendance', { participant: participant }) }}
-
                 </div>
-
-            {% endblock %}
-
-        {% endembed %}
+            </twig:block>
+        </twig:Admin:Dropdown>
 
     </div>
 
