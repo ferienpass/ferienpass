@@ -72,11 +72,6 @@ offers:
   th.hosts: Veranstalter
   th.date: Datum
   th.attendances: Anmeldungen
-  status.draft: Entwurf
-  status.completed: Vom Veranstalter freigegeben
-  status.reviewed: Vom Admin freigegeben
-  status.published: Auf Webseite veröffentlicht
-  status.cancelled: Angebot abgesagt
   sorting.name: Sortieren nach Titel
   sorting.date: Sortieren nach Datum
   sorting.host: Sortieren nach Veranstalter
@@ -157,6 +152,18 @@ offers:
   uncompletedOffers: Sie haben Angebote im Entwurfsmodus. Bitte markieren Sie alle Angebote als vollständig, damit sie im Ferienpass berücksichtigt werden können.
   deleteModal.headline: Angebot löschen
   deleteModal.confirm: Sind Sie sicher, dass Sie folgendes Angebot löschen möchten?
+  status.draft: Entwurf
+  status.completed: Vom Veranstalter freigegeben
+  status.reviewed: Vom Admin freigegeben
+  status.published: Auf Webseite veröffentlicht
+  status.cancelled: Angebot abgesagt
+  status.unpublished: Unveröffentlicht
+  workflow.complete: Finalisieren
+  workflow.approve: Freigeben
+  workflow.publish: Veröffentlichen
+  workflow.unpublish: Unveröffentlichen
+  workflow.cancel: Absagen
+  workflow.relaunch: Wiederherstellen
 
 hosts:
   title: Veranstaltende

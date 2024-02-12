@@ -17,6 +17,8 @@ use Ferienpass\CoreBundle\Entity\Offer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
@@ -35,5 +37,11 @@ class OfferWorkflowButton extends AbstractController
     public function transitions()
     {
         return $this->offerStateMachine->getEnabledTransitions($this->offer);
+    }
+
+    #[LiveAction]
+    public function apply(#[LiveArg] string $transition)
+    {
+        $this->offerStateMachine->apply($this->offer, $transition);
     }
 }
