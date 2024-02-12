@@ -23,6 +23,6 @@ export default class extends Controller {
     }
 
     toggle() {
-        this.dropdownTarget.classList.contains('hidden') ? open() : close();
+        this.dropdownTarget.classList.contains('hidden') ? this.open() : this.close();
     }
 }

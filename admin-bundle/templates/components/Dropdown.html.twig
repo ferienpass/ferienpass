@@ -2,13 +2,14 @@
 
     <div class="relative">
         <button {{ stimulus_action('ferienpass/admin-dropdown', 'toggle') }}
+                type="button"
                 aria-expanded="false"
                 aria-haspopup="true"
         >
 
             {% block toggle %}
-                {% if toggleLabel is defined %}
-                    <span class="inline-flex items-center gap-x-0.5 rounded-md bg-white dark:bg-white/5 px-2.5 py-1.5 text-sm font-medium text-gray-900 dark:text-white/95 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-white/10 hover:bg-gray-50 dark:hover:bg-white/10">
+                {% if toggleLabel is not null %}
+                    <span class="inline-flex items-center gap-x-0.5 rounded-md bg-white dark:bg-white/5 {{ toggleSize|default('sm') == 'lg' ? 'px-3 py-2' : 'px-2.5 py-1.5' }} text-sm font-medium text-gray-900 dark:text-white/95 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-white/10 hover:bg-gray-50 dark:hover:bg-white/10">
                         <span class="flex items-center space-x-1">
                             <span>{{ toggleLabel }}</span>
                             <span class="h-5 w-5 text-gray-500">{{ source('@FerienpassAdmin/icons/chevron-down-solid.svg') }}</span>
@@ -32,14 +33,14 @@
             {% set dropdownClass = 'w-56' %}
         {% endif %}
 
-        {% if position == 'right' %}
+        {% if position|default('right') == 'right' %}
             {% set dropdownClass = dropdownClass ~' origin-top-right right-0' %}
         {% else %}
             {% set dropdownClass = dropdownClass ~' origin-top-left left-0' %}
         {% endif %}
 
         <div {{ stimulus_target('ferienpass/admin-dropdown', 'dropdown') }}
-             class="{{ dropdownClass }} absolute mt-2 rounded shadow py-1 bg-white z-10 dark:bg-gray-950 ring-1 ring-black ring-opacity-5 divide-y divide-gray-100"
+             class="{{ dropdownClass }} hidden absolute mt-2 rounded shadow py-1 bg-white z-10 dark:bg-gray-950 ring-1 ring-black ring-opacity-5 divide-y divide-gray-100"
              data-transition-enter="transition ease-out duration-100"
              data-transition-enter-start="transform opacity-0 scale-95"
              data-transition-enter-end="transform opacity-100 scale-100"

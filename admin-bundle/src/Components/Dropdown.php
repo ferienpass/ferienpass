@@ -20,6 +20,11 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 class Dropdown
 {
     #[LiveProp]
+    public ?string $toggleLabel = null;
+    #[LiveProp]
+    public ?string $toggleSize = null;
+
+    #[LiveProp]
     public ?string $dropdownClass = null;
 
     #[LiveProp]

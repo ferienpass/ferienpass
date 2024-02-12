@@ -16,7 +16,7 @@ export default class default_1 extends Controller {
         });
     }
     toggle() {
-        this.dropdownTarget.classList.contains('hidden') ? open() : close();
+        this.dropdownTarget.classList.contains('hidden') ? this.open() : this.close();
     }
 }
 default_1.targets = ["dropdown"];
