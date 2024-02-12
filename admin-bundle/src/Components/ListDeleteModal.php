@@ -16,6 +16,7 @@ namespace Ferienpass\AdminBundle\Components;
 use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\Participant;
+use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
@@ -45,7 +46,7 @@ class ListDeleteModal extends AbstractController
     public function open(#[LiveArg] int $id, #[LiveArg] string $class)
     {
         $this->item = $this->entityManager->getRepository($class)->find($id);
-        $this->dispatchBrowserEvent('modalopen');
+        $this->dispatchBrowserEvent('admin:modal:open');
     }
 
     #[LiveAction]
@@ -74,11 +75,23 @@ class ListDeleteModal extends AbstractController
 
             $entityManager->flush();
         }
+        if ($this->item instanceof User) {
+            foreach ($this->item->getParticipants() as $participant) {
+                /** @var $attendance */
+                foreach ($participant->getAttendances() as $attendance) {
+                    foreach ($attendance->getPaymentItems() as $paymentItem) {
+                        $paymentItem->removeAttendanceAssociation();
+                    }
+                }
+            }
+
+            $entityManager->flush();
+        }
 
         $entityManager->remove($this->item);
         $entityManager->flush();
 
-        $this->dispatchBrowserEvent('modalclose');
+        $this->dispatchBrowserEvent('admin:modal:close');
         $this->emit('admin_list:changed');
 
         $this->item = null;

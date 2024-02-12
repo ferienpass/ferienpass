@@ -62,10 +62,18 @@
                 "webpackMode": "eager",
                 "fetch": "eager",
                 "enabled": true
+            },
+            "modal": {
+                "main": "dist/controllers/modal.js",
+                "name": "ferienpass/admin-modal",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true
             }
         },
         "importmap": {
             "@easepick/bundle": "^1.2.1",
+            "el-transition": "^0.0.7",
             "@hotwired/stimulus": "^3.0.0",
             "frappe-charts": "^1.6.0",
             "frappe-gantt": "^0.6.0",
@@ -74,6 +82,7 @@
     },
     "dependencies": {
         "@easepick/bundle": "^1.2.1",
+        "el-transition": "^0.0.7",
         "frappe-charts": "^1.6.0",
         "frappe-gantt": "^0.6.0",
         "sortablejs": "^1.15.2",
