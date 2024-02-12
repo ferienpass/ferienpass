@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Components;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -40,8 +41,9 @@ class OfferWorkflowButton extends AbstractController
     }
 
     #[LiveAction]
-    public function apply(#[LiveArg] string $transition)
+    public function apply(#[LiveArg] string $transition, EntityManagerInterface $entityManager)
     {
         $this->offerStateMachine->apply($this->offer, $transition);
+        $entityManager->flush();
     }
 }

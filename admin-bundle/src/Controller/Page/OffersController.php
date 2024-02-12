@@ -111,6 +111,7 @@ final class OffersController extends AbstractController
             $this->denyAccessUnlessGranted('cancel', $offer);
 
             $offerStateMachine->apply($offer, Offer::TRANSITION_CANCEL);
+            $em->flush();
 
             $flash->addConfirmation(text: 'Das Angebot wurde abgesagt.');
 
@@ -121,6 +122,7 @@ final class OffersController extends AbstractController
             $this->denyAccessUnlessGranted('relaunch', $offer);
 
             $offerStateMachine->apply($offer, Offer::TRANSITION_RELAUNCH);
+            $em->flush();
 
             $flash->addConfirmation(text: 'Das Angebot wurde wiederhergestellt.');
 

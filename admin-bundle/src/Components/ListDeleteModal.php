@@ -73,6 +73,15 @@ class ListDeleteModal extends AbstractController
                 }
             }
 
+            if ($this->item->hasVariants()) {
+                $variants = $this->item->getVariants()->toArray();
+                $variants[0]->setVariantBase(null);
+
+                for ($i = 1; $i < \count($variants); ++$i) {
+                    $variants[$i]->setVariantBase($variants[0]);
+                }
+            }
+
             $entityManager->flush();
         }
         if ($this->item instanceof User) {
