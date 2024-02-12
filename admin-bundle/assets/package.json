@@ -76,6 +76,13 @@
                 "webpackMode": "eager",
                 "fetch": "eager",
                 "enabled": true
+            },
+            "slideover": {
+                "main": "dist/controllers/slideover.js",
+                "name": "ferienpass/admin-slideover",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true
             }
         },
         "importmap": {

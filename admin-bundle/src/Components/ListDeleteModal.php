@@ -97,6 +97,13 @@ class ListDeleteModal extends AbstractController
         $this->item = null;
     }
 
+    #[LiveAction]
+    public function cancel()
+    {
+        $this->dispatchBrowserEvent('admin:modal:close');
+        $this->item = null;
+    }
+
     public function dehydrateItem(?object $item): array|null
     {
         if (null === $item) {

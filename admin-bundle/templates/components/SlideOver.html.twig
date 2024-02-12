@@ -1,30 +1,37 @@
 {% trans_default_domain 'admin' %}
 
-<div {{ attributes }} data-.poll x-data="{ open: false }" @foo.window="open=true">
+<div {{ attributes.defaults(stimulus_controller('ferienpass/admin-slideover')) }}
+        {{ stimulus_action('ferienpass/admin-slideover', 'show', 'admin:slideover:open') }}
+        class="hidden"
+        data-poll>
 
-    <div class="relative z-10" aria-labelledby="slide-over-title" role="dialog" aria-modal="true" x-show="open">
+    <div class="relative z-10"
+         aria-labelledby="slide-over-title"
+         role="dialog"
+         aria-modal="true"
+         x-show="open">
         <div class="fixed inset-0" x-show="open"></div>
 
         <div class="fixed inset-0 overflow-hidden">
             <div class="absolute inset-0 overflow-hidden">
                 <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-                    <div x-show="open"
-                         x-transition:enter="transform transition ease-in-out duration-500 sm:duration-700"
-                         x-transition:enter-start="translate-x-full"
-                         x-transition:enter-end="translate-x-0"
-                         x-transition:leave="transform transition ease-in-out duration-500 sm:duration-700"
-                         x-transition:leave-start="translate-x-0"
-                         x-transition:leave-end="translate-x-full"
-                         @click.outside="open = false"
-                         class="pointer-events-auto w-screen max-w-md">
+                    <div {{ stimulus_target('ferienpass/admin-slideover', 'panel') }}
+                            {{ stimulus_action('ferienpass/admin-slideover', 'hide', 'admin:slideover:close') }}
+                            data-transition-enter="transform transition ease-in-out duration-500 sm:duration-700"
+                            data-transition-enter-start="translate-x-full"
+                            data-transition-enter-end="translate-x-0"
+                            data-transition-leave="transform transition ease-in-out duration-500 sm:duration-700"
+                            data-transition-leave-start="translate-x-0"
+                            data-transition-leave-end="translate-x-full"
+                            class="pointer-events-auto w-screen max-w-md">
                         <div class="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
                             <div class="px-4 sm:px-6">
                                 <div class="flex items-start justify-between">
                                     <h2 class="text-base font-semibold leading-6 text-gray-900" id="slide-over-title">
                                         Panel title</h2>
                                     <div class="ml-3 flex h-7 items-center">
-                                        <button type="button"
-                                                @click="open = false"
+                                        <button {{ stimulus_action('ferienpass/admin-slideover', 'hide') }}
+                                                type="button"
                                                 class="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
                                             <span class="sr-only">Close panel</span>
                                             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -38,113 +45,7 @@
                             </div>
                             <div class="relative mt-6 flex-1 px-4 sm:px-6">
 
-                                {% if participant is not null %}
-
-
-                                    <h1 class="text-xl font-bold text-gray-900 sm:text-2xl">{{ participant.name }}</h1>
-
-                                    <p class="text-gray-500 text-sm">
-                                        <span class="block">{{ participant.dateOfBirth|date('d.m.Y') }}
-                                            ({{ participant.age }}
-                                            Jahre)</span>
-                                        <span class="block">{{ participant.ownPhone }}</span>
-                                        <span class="block">{{ participant.ownMobile }}</span>
-                                        <span class="block">{{ participant.ownEmail }}</span>
-                                    </p>
-
-                                    {% if participant.member is not null %}
-                                        <h2 class="text-base font-bold text-gray-900">{{ participant.member.firstname ~' '~participant.member.lastname }}</h2>
-                                        <p class="text-gray-500 text-sm">
-
-                                            <span class="block">{{ participant.member.email }}</span>
-                                            <span class="block">{{ participant.member.phone }}</span>
-                                            <span class="block">{{ participant.member.mobile }}</span>
-                                        </p>
-                                    {% endif %}
-
-                                    <h2 class="mt-6 text-base font-semibold leading-6 text-gray-900">Activity</h2>
-
-                                    {% if this.activity is empty %}
-
-                                        <p class="text-gray-500 italic text-sm">No activity yet...</p>
-                                    {% else %}
-                                        <ul role="list" class="mt-6 space-y-6">
-
-                                            {% for activity in this.activity %}
-                                                {% if activity.comment is defined %}
-
-                                                    <li class="relative flex gap-x-4">
-                                                        <div class="absolute left-0 top-0 flex w-6 justify-center -bottom-6">
-                                                            <div class="w-px bg-gray-200"></div>
-                                                        </div>
-                                                        <span class="relative mt-3 flex-none inline-flex items-center justify-center h-6 w-6 rounded-full bg-gray-400">
-                                                            <span class="text-xs font-medium leading-none text-white">{{ activity.user.firstname|first|upper ~ activity.user.lastname|first|upper }}</span>
-                                                        </span>
-                                                        <div class="flex-auto rounded-md p-3 ring-1 ring-inset ring-gray-200">
-                                                            <div class="flex justify-between gap-x-4">
-                                                                <div class="py-0.5 text-xs leading-5 text-gray-500">
-                                                                    <span
-                                                                            class="font-medium text-gray-900">{{ activity.user.firstname~' '~activity.user.lastname }}</span>
-                                                                    commented
-                                                                </div>
-                                                                <time datetime="{{ activity.createdAt|date('c') }}"
-                                                                      class="flex-none py-0.5 text-xs leading-5 text-gray-500">{{ activity.createdAt|ago }}
-                                                                </time>
-                                                            </div>
-                                                            <p class="text-sm leading-6 text-gray-500">{{ activity.comment|nl2br }}</p>
-                                                        </div>
-                                                    </li>
-
-                                                {% elseif activity.attendance is defined %}
-
-                                                    <li class="relative flex gap-x-4">
-                                                        <div class="absolute left-0 top-0 flex w-6 justify-center -bottom-6">
-                                                            <div class="w-px bg-gray-200"></div>
-                                                        </div>
-                                                        <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-white">
-                                                            <div class="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300"></div>
-                                                        </div>
-                                                        <p class="flex-auto py-0.5 text-xs leading-5 text-gray-500">
-                                                            <span
-                                                                    class="font-medium text-gray-900">{{ activity.user.firstname ~' '~activity.user.lastname }}</span> {{ ('attendances.activity.'~activity.action)|trans }}
-                                                        </p>
-                                                        <time datetime="{{ activity.createdAt|date('c') }}"
-                                                              class="flex-none py-0.5 text-xs leading-5 text-gray-500">{{ activity.createdAt|ago }}
-                                                        </time>
-                                                    </li>
-
-                                                {% endif %}
-                                            {% endfor %}
-
-                                        </ul>
-                                    {% endif %}
-
-                                    <!-- New comment form -->
-                                    <div class="mt-6 flex gap-x-3">
-                                        <span class="flex-none inline-flex items-center justify-center h-6 w-6 rounded-full bg-gray-400">
-                                            <span class="text-xs font-medium leading-none text-white">{{ app.user.firstname|first|upper ~ app.user.lastname|first|upper }}</span>
-                                        </span>
-                                        <form action="#" class="relative flex-auto">
-                                            <div class="overflow-hidden rounded-lg pb-12 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-primary-600">
-                                                <label for="comment" class="sr-only">Add your comment</label>
-                                                <textarea rows="2" name="comment" id="comment"
-                                                          data-model="newComment"
-                                                          class="block w-full resize-none border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                                                          placeholder="Add your comment..."></textarea>
-                                            </div>
-
-                                            <div class="absolute inset-x-0 bottom-0 flex justify-end py-2 pl-3 pr-2">
-                                                <button type="submit"
-                                                        data-action="live#action"
-                                                        data-action-name="prevent|comment"
-                                                        class="rounded-md bg-white dark:bg-gray-100/5 px-2.5 py-1.5 text-sm font-semibold text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-0 hover:bg-gray-50 dark:hover:bg-gray-100/10">
-                                                    Comment
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-
-                                {% endif %}
+                                {% block content %}{% endblock %}
 
                             </div>
                         </div>

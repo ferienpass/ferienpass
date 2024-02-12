@@ -200,12 +200,14 @@
             <button
                     data-action="live#action"
                     data-action-name="prevent|delete"
-                    class="relative shadow-sm inline-flex px-4 py-2 items-center border border-transparent text-sm leading-5 font-medium text-white rounded-md focus:outline-none focus:shadow-outline-blue bg-white border-gray-300 text-gray-700 hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline mt-3 flex w-full justify-center text-base sm:text-sm sm:mt-0 sm:ml-4 sm:w-auto bg-red-600 text-white hover:bg-red-500 focus:border-red-700 focus:shadow-outline-red"
+                    class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
             >Angebot löschen
             </button>
             <button
-                    class="relative shadow-sm inline-flex px-4 py-2 items-center border border-transparent text-sm leading-5 font-medium rounded-md focus:outline-none focus:shadow-outline-blue bg-white border-gray-300 text-gray-700 hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline mt-3 flex w-full justify-center text-base sm:text-sm sm:mt-0 sm:w-auto"
-                    @click.prevent="open = false">Abbrechen
+                    class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                    data-action="live#action"
+                    data-action-name="prevent|cancel"
+            >Abbrechen
             </button>
         </div>
 

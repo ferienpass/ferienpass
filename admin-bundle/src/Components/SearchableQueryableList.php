@@ -145,12 +145,6 @@ class SearchableQueryableList extends AbstractController
     //        ]);
     //    }
 
-    //    #[LiveAction]
-    //    public function delete(#[LiveArg('id')] int $item)
-    //    {
-    //
-    //    }
-
     protected function instantiateForm(): FormInterface
     {
         if (null === $filter = $this->getFilter()) {

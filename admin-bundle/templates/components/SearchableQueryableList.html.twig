@@ -34,6 +34,10 @@
         {% endblock %}
     {% endcomponent %}
 
-    {{ component('Admin:SlideOver') }}
+    {% component "Admin:SlideOver" %}
+        {% block content %}
+            <twig:Admin:ListActivityPanel />
+        {% endblock %}
+    {% endcomponent %}
 
 </div>
