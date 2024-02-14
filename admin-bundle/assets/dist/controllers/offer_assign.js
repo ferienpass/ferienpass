@@ -9,15 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import {Controller} from '@hotwired/stimulus';
-import Sortable, {MultiDrag} from "sortablejs";
+import Sortable from "sortablejs";
 // @ts-ignore
 import {getComponent} from '@symfony/ux-live-component';
-
+// Multi-drag currently disabled because it complicates handling one or many entities in the event listener
+// Sortable.mount(new MultiDrag());
 export default class default_1 extends Controller {
     initialize() {
         return __awaiter(this, void 0, void 0, function* () {
             this.component = yield getComponent(this.element);
-            Sortable.mount(new MultiDrag());
             [this.confirmedColumnTarget, this.waitlistedColumnTarget, this.waitingColumnTarget, this.withdrawnColumnTarget].forEach((column) => {
                 const list = column.querySelector('ul[data-attendance-status]');
                 if (!(list instanceof HTMLElement)) {
@@ -26,8 +26,8 @@ export default class default_1 extends Controller {
                 Sortable.create(list, {
                     group: 'assign',
                     ghostClass: 'bg-yellow-50',
-                    selectedClass: 'bg-blue-50',
-                    multiDrag: true,
+                    // selectedClass: '!bg-blue-100',
+                    // multiDrag: true,
                     onAdd: (event) => this.component.emit('statusChanged', {
                         attendance: event.item.dataset.attendanceId,
                         newStatus: event.to.dataset.attendanceStatus,

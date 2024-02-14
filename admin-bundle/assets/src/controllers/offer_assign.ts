@@ -1,9 +1,12 @@
 'use strict';
 
 import {Controller} from '@hotwired/stimulus';
-import Sortable, {MultiDrag} from "sortablejs";
+import Sortable from "sortablejs";
 // @ts-ignore
 import {Component, getComponent} from '@symfony/ux-live-component';
+
+// Multi-drag currently disabled because it complicates handling one or many entities in the event listener
+// Sortable.mount(new MultiDrag());
 
 export default class extends Controller {
     static values = {
@@ -22,7 +25,6 @@ export default class extends Controller {
 
     async initialize() {
         this.component = await getComponent(this.element);
-        Sortable.mount(new MultiDrag());
 
         [this.confirmedColumnTarget, this.waitlistedColumnTarget, this.waitingColumnTarget, this.withdrawnColumnTarget].forEach((column) => {
             const list = column.querySelector('ul[data-attendance-status]')
@@ -33,10 +35,10 @@ export default class extends Controller {
             Sortable.create(list, {
                 group: 'assign',
                 ghostClass: 'bg-yellow-50',
-                selectedClass: 'bg-blue-50',
-                multiDrag: true,
+                // selectedClass: '!bg-blue-100',
+                // multiDrag: true,
                 onAdd: (event) => this.component.emit('statusChanged', {
-                    attendance: event.item.dataset.attendanceId,
+                    attendance: event.item.dataset.attendanceId, // event.items for multi-drag plugin (empty array for one item)
                     newStatus: event.to.dataset.attendanceStatus,
                     newIndex: event.newIndex
                 }),

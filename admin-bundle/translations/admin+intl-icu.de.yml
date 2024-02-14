@@ -88,6 +88,7 @@ offers:
     reactivate: Angebot wiederherstellen
     participants: Teilnahmeliste
     assign: Teilnehmer zuordnen
+    mailing: Rundmail
   new: Neues Angebot
   legend.base:
     - Titel und Beschreibung
@@ -545,3 +546,18 @@ passwordReset:
   newPassword: Neues Passwort
   repeatPassword: Passwort wiederholen
   passwordsDoNotMatch: Die Passwörter müssen übereinstimmen.
+
+mailing:
+  title: Rundmail
+  selectGroup: Empfänger-Gruppe auswählen
+  recipients.0: Empfänger-Adressen
+  recipients.1: Die E-Mail wird an folgende E-Mail-Adressen versendet.
+  write.0: E-Mail verfassen
+  write.1: Die E-Mail wird an folgende E-Mail-Adressen versendet.
+  noRecipients: Es wurden keine Empfänger:innen ausgewählt.
+  attendanceStatus:
+    confirmed: zugesagt
+    waitlisted: auf Warteliste
+    waiting: auf Zuteilung wartend
+    withdrawn: abgemeldet
+    error: fehlerhaft

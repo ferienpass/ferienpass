@@ -1,0 +1,320 @@
+{% trans_default_domain 'admin' %}
+
+<div {{ attributes }}>
+
+    <div class="space-y-12 divide-y divide-gray-300">
+
+        <div class="space-y-12">
+            <fieldset>
+                <legend class="text-base font-semibold leading-6 text-gray-900">{{ 'mailing.selectGroup'|trans }}</legend>
+
+                <div class="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-3 sm:gap-x-4">
+                    <button
+                            data-action="live#emit"
+                            data-event="group(group=hosts)"
+                            class="{{ group == 'hosts' ? 'border-indigo-600 ring-2 ring-indigo-600' : 'border-gray-300' }} text-left relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none">
+                        <span class="flex flex-1">
+                            <span class="flex flex-col">
+                                <span id="group-0-label"
+                                      class="block text-sm font-medium text-gray-900">Veranstaltende</span>
+                                <span id="group-0-description-0"
+                                      class="mt-1 flex items-center text-sm text-gray-500">Last message sent an hour
+                                    ago</span>
+                                <span id="group-0-description-1" class="mt-6 text-sm font-medium text-gray-900">
+                                    {{ this.countAllHosts }} E-Mails</span>
+                            </span>
+                        </span>
+                        {% if group == 'hosts' %}
+                            <svg class="h-5 w-5 text-indigo-600" viewBox="0 0 20 20" fill="currentColor"
+                                 aria-hidden="true">
+                                <path fill-rule="evenodd"
+                                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                      clip-rule="evenodd"/>
+                            </svg>
+                        {% endif %}
+                        <span aria-hidden="true"
+                              class="{{ group == 'hosts' ? 'border-indigo-600' : 'border-transparent' }} pointer-events-none absolute -inset-px rounded-lg border-2"></span>
+                    </button>
+                    <button data-action="live#emit"
+                            data-event="group(group=participants)"
+                            class="{{ group == 'participants' ? 'border-indigo-600 ring-2 ring-indigo-600' : 'border-gray-300' }} text-left relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none">
+                        <span class="flex flex-1">
+                            <span class="flex flex-col">
+                                <span id="group-1-label"
+                                      class="block text-sm font-medium text-gray-900">Teilnehmende</span>
+                                <span id="group-1-description-0"
+                                      class="mt-1 flex items-center text-sm text-gray-500">Last message sent 2 weeks
+                                    ago</span>
+                                <span id="group-1-description-1" class="mt-6 text-sm font-medium text-gray-900">
+                                    {{ this.countAllParticipants }} E-Mails</span>
+                            </span>
+                        </span>
+                        {% if group == 'participants' %}
+                            <svg class="h-5 w-5 text-indigo-600" viewBox="0 0 20 20" fill="currentColor"
+                                 aria-hidden="true">
+                                <path fill-rule="evenodd"
+                                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                      clip-rule="evenodd"/>
+                            </svg>
+                        {% endif %}
+                        <span aria-hidden="true"
+                              class="{{ group == 'participants' ? 'border-indigo-600' : 'border-transparent' }} pointer-events-none absolute -inset-px rounded-lg border-2"></span>
+                    </button>
+                </div>
+            </fieldset>
+
+            {% if 'hosts' == group %}
+
+                <fieldset>
+                    <legend class="sr-only">Notifications</legend>
+                    <div class="space-y-5">
+                        <div class="relative flex items-start">
+                            <div class="flex h-6 items-center">
+                                <input id="comments" data-model="hostsNotDisabled"
+                                       aria-describedby="comments-description"
+                                       name="comments" type="checkbox"
+                                       class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                            </div>
+                            <div class="ml-3 text-sm leading-6">
+                                <label for="comments" class="font-medium text-gray-900">Nicht-deaktivierte
+                                    Accounts:</label>
+                                <span id="comments-description" class="text-gray-500">Nur Accounts, die einen aktiven
+                                    Account haben.</span>
+                            </div>
+                        </div>
+
+                        <div class="relative flex items-start">
+                            <div class="flex h-6 items-center">
+                                <input id="candidates"
+                                       data-model="hostsWithOffer"
+                                       aria-describedby="candidates-description"
+                                       name="candidates"
+                                       type="checkbox"
+                                       class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                            </div>
+                            <div class="ml-3 text-sm leading-6">
+                                <label for="candidates" class="font-medium text-gray-900">Mit Angebot:</label>
+                                <span id="candidates-description" class="text-gray-500">Veranstalter bietet oder hat in
+                                    Vergangenheit ein Angebot angeboten.</span>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+            {% endif %}
+
+            {% if ('participants' == group and not offers) or hostsWithOffer %}
+
+                <fieldset>
+                    <legend class="text-sm font-semibold leading-6 text-gray-900">Saisons</legend>
+                    <p class="mt-1 text-sm leading-6 text-gray-600">Nur an Veranstalter mit Angebot in einer dieser
+                        Saisons.</p>
+                    <div class="mt-4 space-y-2">
+                        {% for edition in this.editionOptions %}
+                            <div class="relative flex gap-x-3">
+                                <div class="flex items-center">
+                                    <input id="editions{{ loop.index }}"
+                                           data-model="editions[]"
+                                           type="checkbox"
+                                           value="{{ edition.id }}"
+                                           class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                </div>
+                                <div class="text-sm leading-6">
+                                    <label for="editions{{ loop.index }}"
+                                           class="font-medium text-gray-900">{{ edition.name }}</label>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+
+            {% endif %}
+
+            {% if 'participants' == group and offers is not empty %}
+
+                <fieldset>
+                    <legend class="text-sm font-semibold leading-6 text-gray-900">Angebote</legend>
+                    <p class="mt-1 text-sm leading-6 text-gray-600">Nur an Teilnehmende aus folgenden Angeboten.</p>
+                    <div class="mt-4 space-y-2">
+                        {% for offer in this.offerOptions %}
+                            <div class="relative flex gap-x-3">
+                                <div class="flex items-center">
+                                    <input id="editions{{ loop.index }}"
+                                           data-model="offers[]"
+                                           type="checkbox"
+                                           value="{{ offer.id }}"
+                                           class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                </div>
+                                <div class="text-sm leading-6">
+                                    <label for="editions{{ loop.index }}"
+                                           class="font-medium text-gray-900">{{ offer.name }}</label>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend class="text-sm font-semibold leading-6 text-gray-900">Anmeldestatus</legend>
+                    <p class="mt-1 text-sm leading-6 text-gray-600">Nur an Teilnehmende, die zu dem/den Angeboten ...
+                        sind.</p>
+                    <div class="mt-4 space-y-2">
+                        {% for status in ['confirmed', 'waitlisted',  'waiting', 'withdrawn', 'error'] %}
+                            <div class="relative flex gap-x-3">
+                                <div class="flex items-center">
+                                    <input id="status{{ loop.index }}"
+                                           data-model="attendanceStatus[]"
+                                           type="checkbox"
+                                           value="{{ status }}"
+                                           class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                </div>
+                                <div class="text-sm leading-6">
+                                    <label for="status{{ loop.index }}"
+                                           class="font-medium text-gray-900">{{ "mailing.attendanceStatus.#{status}"|trans }}</label>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+
+            {% endif %}
+
+            {% if hosts is not empty %}
+
+                <fieldset>
+                    <legend class="text-sm font-semibold leading-6 text-gray-900">Veranstalter-Profile</legend>
+                    <p class="mt-1 text-sm leading-6 text-gray-600">Nur an Ansprechpartner von folgenden Veranstaltern
+                        versenden.</p>
+                    <div class="mt-4 space-y-2">
+                        {% for host in this.hostOptions %}
+                            <div class="relative flex gap-x-3">
+                                <div class="flex items-center">
+                                    <input id="editions{{ loop.index }}"
+                                           data-model="offers[]"
+                                           type="checkbox"
+                                           value="{{ host.id }}"
+                                           class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                </div>
+                                <div class="text-sm leading-6">
+                                    <label for="editions{{ loop.index }}"
+                                           class="font-medium text-gray-900">{{ host.name }}</label>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="pt-6">
+
+            <h3>{{ 'mailing.recipients.0'|trans }}</h3>
+
+            <p class="text-sm leading-5 text-gray-500 dark:text-gray-300">{{ 'mailing.recipients.1'|trans }}</p>
+
+            <div class="mt-6">
+
+                {% for email, users in this.recipients %}
+
+                    <span class="inline-flex items-center space-x-2 rounded-full bg-white border border-gray-200 p-1 pr-2 mb-1">
+
+                        <span class="isolate inline-flex -space-x-1 overflow-hidden">
+                            {% for user in users %}
+
+                                <span class="relative z-30 ring-2 ring-white flex-none inline-flex items-center justify-center h-6 w-6 rounded-full bg-gray-400">
+                                    <span class="text-xs font-medium leading-none text-white"
+                                          title="{{ user.name }}">{{ user.firstname|first|upper ~ user.lastname|first|upper }}</span>
+                                </span>
+                            {% endfor %}
+                        </span>
+
+                        <span class="text-sm text-gray-700">{{ email }}</span>
+
+                    </span>
+
+                {% endfor %}
+
+            </div>
+
+            <p class="mt-4 font-medium text-sm text-gray-900">{{ this.recipients|length }} E-Mails</p>
+
+        </div>
+
+
+        <div class="pt-6">
+
+            <h3>{{ 'mailing.write.0'|trans }}</h3>
+
+            <p class="text-sm leading-5 text-gray-500 dark:text-gray-300">{{ 'mailing.write.1'|trans }}</p>
+
+            {% if this.recipients|length %}
+                <form class="mt-6" action="#">
+                    <div x-data="{ preview: false }">
+                        <div class="flex items-center" aria-orientation="horizontal" role="tablist">
+                            <button @click="preview = false"
+                                    id="tabs-1-tab-1"
+                                    :class="{ 'bg-gray-100 text-gray-900 hover:bg-gray-200': !preview, 'bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-900': preview}"
+                                    class="bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-900 rounded-md border border-transparent px-3 py-1.5 text-sm font-medium"
+                                    aria-controls="tabs-1-panel-1"
+                                    role="tab" type="button">Verfassen
+                            </button>
+                            <button @click="preview = true"
+                                    id="tabs-1-tab-2"
+                                    :class="{ 'bg-gray-100 text-gray-900 hover:bg-gray-200': preview, 'bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-900': !preview}"
+                                    class="bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-900 ml-2 rounded-md border border-transparent px-3 py-1.5 text-sm font-medium"
+                                    aria-controls="tabs-1-panel-2"
+                                    role="tab" type="button">Vorschau
+                            </button>
+                        </div>
+                        <div class="mt-2">
+                            <div x-show="!preview"
+                                 id="tabs-1-panel-1"
+                                 class="-m-0.5 rounded-lg p-0.5"
+                                 aria-labelledby="tabs-1-tab-1"
+                                 role="tabpanel"
+                                 tabindex="0">
+                                <label for="emailText" class="sr-only">E-Mail-Text</label>
+                                <div>
+                                <textarea rows="5"
+                                          id="emailText"
+                                          data-model="emailText"
+                                          class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                          placeholder="E-Mail verfassen..."></textarea>
+                                </div>
+                            </div>
+                            <div x-show="preview"
+                                 id="tabs-1-panel-2"
+                                 class="-m-0.5 rounded-lg p-0.5"
+                                 aria-labelledby="tabs-1-tab-2"
+                                 role="tabpanel"
+                                 tabindex="0">
+                                <div class="border-b">
+                                    <div class="mx-px mt-px px-3 pb-12 pt-2 text-sm leading-5 text-gray-800">
+                                        {{ this.preview }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 flex justify-end">
+                        <button type="submit"
+                                class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                            E-Mail versenden
+                        </button>
+                    </div>
+                </form>
+
+            {% else %}
+
+                <twig:Admin:Alert class="mt-6" type="info" message="mailing.noRecipients"/>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>

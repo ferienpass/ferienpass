@@ -34,13 +34,17 @@ final class ToolsController extends AbstractController
     #[Route('/rundmail', name: 'admin_tools_mailing')]
     public function mailing(Request $request, Breadcrumb $breadcrumb): Response
     {
-        return $this->render('@FerienpassAdmin/page/tools/noop.html.twig');
+        return $this->render('@FerienpassAdmin/page/tools/mailing.html.twig', [
+            'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'mailing.title'),
+        ]);
     }
 
     #[Route('/betroffenenrechte', name: 'admin_tools_subjectrights')]
     #[IsGranted('ROLE_SUPER_ADMIN')]
     public function subjectRights(Request $request, Breadcrumb $breadcrumb): Response
     {
-        return $this->render('@FerienpassAdmin/page/tools/noop.html.twig');
+        return $this->render('@FerienpassAdmin/page/tools/noop.html.twig', [
+            'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'subjectrichts.title'),
+        ]);
     }
 }

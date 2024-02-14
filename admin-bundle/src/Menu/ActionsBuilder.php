@@ -134,13 +134,6 @@ class ActionsBuilder
             }
         }
 
-        $class = $item::class;
-        $root->addChild('delete', [
-            'label' => 'accounts.action.delete',
-            'display' => $this->isGranted('delete', $item),
-            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
-        ]);
-
         if ($item->isOnlineApplication()) {
             $root->addChild('participantList', [
                 'label' => 'offers.action.participants',
@@ -157,6 +150,21 @@ class ActionsBuilder
                 'extras' => ['icon' => 'user-group-solid'],
             ]);
         }
+
+        $root->addChild('mailing', [
+            'label' => 'offers.action.mailing',
+            'route' => 'admin_tools_mailing',
+            'routeParameters' => ['group' => 'participants', 'offers' => [$item->getId()]],
+            'display' => $this->isGranted('participants.view', $item),
+            'extras' => ['icon' => 'mail'],
+        ]);
+
+        $class = $item::class;
+        $root->addChild('delete', [
+            'label' => 'accounts.action.delete',
+            'display' => $this->isGranted('delete', $item),
+            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
+        ]);
     }
 
     private function participants(ItemInterface $root, Participant $item)

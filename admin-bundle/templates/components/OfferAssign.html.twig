@@ -1,6 +1,7 @@
 {% trans_default_domain 'admin' %}
 {% import "@FerienpassAdmin/components/content_elements.html.twig" as partials %}
 
+{# tw !bg-blue-100 #}
 
 {% macro column(status, attendances, autoAssign = false, max = null) %}
     <div {{ stimulus_target('ferienpass/admin-offer-assign', status~'Column') }}

@@ -80,6 +80,8 @@ class ListDeleteModal extends AbstractController
                 for ($i = 1; $i < \count($variants); ++$i) {
                     $variants[$i]->setVariantBase($variants[0]);
                 }
+            } elseif (!$this->item->isVariantBase()) {
+                $this->item->setVariantBase(null);
             }
 
             $entityManager->flush();
