@@ -108,11 +108,13 @@ return function(ContainerConfigurator $container): void {
     $services->set(FileUploader::class)->abstract();
     $services->set('ferienpass.file_uploader.offer')
         ->parent(FileUploader::class)
-        ->arg(0, '%contao.upload_path%/img')
+        ->arg(0, '%kernel.project_dir%')
+        ->arg(1, '%contao.upload_path%/img')
     ;
     $services->set('ferienpass.file_uploader.host')
         ->parent(FileUploader::class)
-        ->arg(0, '%contao.upload_path%/img')
+        ->arg(0, '%kernel.project_dir%')
+        ->arg(1, '%contao.upload_path%/img')
     ;
 
     $services->set(StringLoaderExtension::class);

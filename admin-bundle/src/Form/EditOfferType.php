@@ -79,18 +79,19 @@ class EditOfferType extends AbstractType
             ->add('maxParticipants', IntegerType::class, ['attr' => ['placeholder' => 'ohne Begrenzung'], 'fieldset_group' => 'applications', 'width' => '1/3'])
             ->add('applyText', null, ['help' => 'offers.help.applyText', 'fieldset_group' => 'applications', 'width' => '1/2'])
             ->add('contact', null, ['help' => 'offers.help.contact', 'fieldset_group' => 'applications', 'width' => '1/2'])
-            ->add('image', DropzoneType::class, [
+            ->add('existingImage', OfferImageType::class, ['fieldset_group' => 'media'])
+            ->add('uploadImage', DropzoneType::class, [
                 'fieldset_group' => 'media',
                 'attr' => ['placeholder' => 'offers.dropzonePlaceholder'],
                 'mapped' => false,
                 'constraints' => [
                     new File([
-                        'maxSize' => '1024k',
+                        'maxSize' => '6Mi',
                         'mimeTypes' => [
-                            'application/pdf',
-                            'application/x-pdf',
+                            'image/jpeg',
+                            'image/png',
                         ],
-                        'mimeTypesMessage' => 'Please upload a valid PDF document',
+                        'mimeTypesMessage' => 'Folgende Dateiformate sind erlaubt: JPG, PNG',
                     ]),
                 ],
             ])

@@ -134,6 +134,7 @@ offers:
     submitAndCancel: Speichern und absagen
     submitAndRelaunch: Speichern und wiederherstellen
     attendances: Anmeldungen
+    uploadImage: Neues Bild hochladen
   help:
     edition: Sie können das Angebot in eine andere Saison verschieben.
     hosts: Das Angebot muss von mindestens einem Veranstalter ausgeführt werden. Sie können aber auch mehrere auswählen.

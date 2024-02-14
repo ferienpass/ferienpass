@@ -6,7 +6,7 @@
         </div>
         <div class="relative flex items-center justify-between">
             <h2 class="bg-gray-50 dark:bg-gray-950/95 pr-3 text-xl font-medium leading-6 text-gray-900 dark:text-gray-100/90">
-               {{ data.type == 'custom' ? data.title : "editions.task.#{data.type}"|trans([], 'admin') }}
+                {{ data.type == 'custom' ? data.title : "editions.task.#{data.type}"|trans([], 'admin') }}
             </h2>
 
             {%- if button_delete is defined and not button_delete.rendered -%}
@@ -156,27 +156,33 @@
         {%- for child in form %}
             {{- form_widget(child, { attr: { class: 'hidden' } }) -}}
 
-            <label for="{{ child.vars.id }}" class="leading-0 p-.5 bg-gray-50 {{ child.vars.data ? 'ring-2 ring-pink-500 ring-offset-2' : 'ring-2 ring-gray-50 ring-offset-2'}} rounded hover:bg-gray-100 cursor-pointer">
+            <label for="{{ child.vars.id }}"
+                   class="leading-0 p-.5 bg-gray-50 {{ child.vars.data ? 'ring-2 ring-pink-500 ring-offset-2' : 'ring-2 ring-gray-50 ring-offset-2' }} rounded hover:bg-gray-100 cursor-pointer">
 
 
                 {% if "cancelled" == child.vars.value %}
-                    <span class="leading-0" aria-label="{{ ("offers.status."~child.vars.value)|trans([], "admin") }}"><span
+                    <span class="leading-0"
+                          aria-label="{{ ("offers.status."~child.vars.value)|trans([], "admin") }}"><span
                                 title="{{ ("offers.status."~child.vars.value)|trans([], "admin") }}" aria-hidden="true"
                                 class="text-red-600 inline-block w-8 h-8">{{ source("@FerienpassAdmin/icons/x-circle.solid.svg") }}</span></span>
                 {% elseif "draft" == child.vars.value %}
-                    <span class="leading-0" aria-label="{{ ("offers.status."~child.vars.value)|trans([], "admin") }}"><span
+                    <span class="leading-0"
+                          aria-label="{{ ("offers.status."~child.vars.value)|trans([], "admin") }}"><span
                                 title="{{ ("offers.status."~child.vars.value)|trans([], "admin") }}" aria-hidden="true"
                                 class="text-orange-600 inline-block w-8 h-8">{{ source("@FerienpassAdmin/icons/plus-circle.outline.svg") }}</span></span>
                 {% elseif "completed" == child.vars.value %}
-                    <span class="leading-0" aria-label="{{ ("offers.status."~child.vars.value)|trans([], "admin") }}"><span
+                    <span class="leading-0"
+                          aria-label="{{ ("offers.status."~child.vars.value)|trans([], "admin") }}"><span
                                 title="{{ ("offers.status."~child.vars.value)|trans([], "admin") }}" aria-hidden="true"
                                 class="text-green-600 inline-block w-8 h-8">{{ source("@FerienpassAdmin/icons/check-circle.outline.svg") }}</span></span>
                 {% elseif "reviewed" == child.vars.value %}
-                    <span class="leading-0" aria-label="{{ ("offers.status."~child.vars.value)|trans([], "admin") }}"><span
+                    <span class="leading-0"
+                          aria-label="{{ ("offers.status."~child.vars.value)|trans([], "admin") }}"><span
                                 title="{{ ("offers.status."~child.vars.value)|trans([], "admin") }}" aria-hidden="true"
                                 class="text-green-600 inline-block w-8 h-8">{{ source("@FerienpassAdmin/icons/shield-check.outline.svg") }}</span></span>
                 {% elseif "published" == child.vars.value %}
-                    <span class="leading-0" aria-label="{{ ("offers.status."~child.vars.value)|trans([], "admin") }}"><span
+                    <span class="leading-0"
+                          aria-label="{{ ("offers.status."~child.vars.value)|trans([], "admin") }}"><span
                                 title="{{ ("offers.status."~child.vars.value)|trans([], "admin") }}" aria-hidden="true"
                                 class="text-green-600 inline-block w-8 h-8">{{ source("@FerienpassAdmin/icons/check-circle.solid.svg") }}</span></span>
                 {% endif %}
@@ -188,3 +194,13 @@
     </div>
 
 {% endblock %}
+
+
+{% block offer_image_widget %}
+
+    {% if form.vars.image_uuid %}
+        {{ contao_figure(form.vars.image_uuid, [200, 200, 'proportional'], {}) }}
+    {% endif %}
+
+{% endblock %}
+
