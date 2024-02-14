@@ -34,7 +34,11 @@ final class OfferListController extends AbstractController
         $qb = $this->offerRepository->createQueryBuilder('o')->where('o.published = 1');
         $hasEditions = $this->editionRepository->count([]) > 0;
         $pageModel = $request->attributes->get('pageModel');
-        $edition = $this->editionRepository->findOneToShow($pageModel);
+        if ($pageModel->edition) {
+            $edition = $this->editionRepository->find($pageModel->edition);
+        } else {
+            $edition = $this->editionRepository->findOneToShow($pageModel);
+        }
 
         if ($hasEditions && null !== $edition) {
             $qb->andWhere('o.edition = :edition')->setParameter('edition', $edition->getId(), Types::INTEGER);

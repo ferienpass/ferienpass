@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
 
-$GLOBALS['TL_DCA']['tl_page']['palettes']['offer_list'] = '{title_legend},title,type;{routing_legend},alias,routePath;{expert_legend:hide},hide;{publish_legend},published';
+$GLOBALS['TL_DCA']['tl_page']['palettes']['offer_list'] = '{title_legend},title,type,edition;{routing_legend},alias,routePath;{expert_legend:hide},hide;{publish_legend},published';
 $GLOBALS['TL_DCA']['tl_page']['palettes']['offer_details'] = '{title_legend},title,type;{routing_legend},alias,routePath;{expert_legend:hide},hide;{publish_legend},published';
 $GLOBALS['TL_DCA']['tl_page']['palettes']['host_details'] = '{title_legend},title,type;{routing_legend},alias,routePath;{expert_legend:hide},hide;{publish_legend},published';
 $GLOBALS['TL_DCA']['tl_page']['palettes']['applications'] = '{title_legend},title,type;{routing_legend},alias,routePath;{expert_legend:hide},hide;{publish_legend},published';
@@ -50,3 +50,14 @@ unset(
     $GLOBALS['TL_DCA']['tl_page']['fields']['groups']['filter'],
     $GLOBALS['TL_DCA']['tl_page']['fields']['noSearch']['filter'],
 );
+
+$GLOBALS['TL_DCA']['tl_page']['fields']['edition'] = [
+    'exclude' => true,
+    'inputType' => 'select',
+    'foreignKey' => 'Edition.name',
+    'eval' => [
+        'tl_class' => 'w50',
+        'includeBlankOption' => true,
+    ],
+    'sql' => "varchar(64) NOT NULL default ''",
+];
