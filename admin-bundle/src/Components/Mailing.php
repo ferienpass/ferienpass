@@ -169,6 +169,10 @@ class Mailing extends AbstractController
             }
         }
 
+        if ($this->hosts) {
+            $qb->andWhere('host IN (:hosts)')->setParameter('hosts', $this->hosts);
+        }
+
         return $qb->getQuery()->getResult();
     }
 

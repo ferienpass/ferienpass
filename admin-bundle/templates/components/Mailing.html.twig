@@ -189,14 +189,14 @@
                         {% for host in this.hostOptions %}
                             <div class="relative flex gap-x-3">
                                 <div class="flex items-center">
-                                    <input id="editions{{ loop.index }}"
-                                           data-model="offers[]"
+                                    <input id="hosts{{ loop.index }}"
+                                           data-model="hosts[]"
                                            type="checkbox"
                                            value="{{ host.id }}"
                                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
                                 </div>
                                 <div class="text-sm leading-6">
-                                    <label for="editions{{ loop.index }}"
+                                    <label for="hosts{{ loop.index }}"
                                            class="font-medium text-gray-900">{{ host.name }}</label>
                                 </div>
                             </div>

@@ -170,8 +170,8 @@ hosts:
   title: Veranstaltende
   new: Neuer Veranstalter
   action:
-    show: Anzeigen
     edit: Bearbeiten
+    mailing: Rundmail
     delete: Löschen
   legend.base.0: Basisdaten
   legend.contact.0: Kontaktdaten

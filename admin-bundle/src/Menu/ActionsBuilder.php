@@ -224,6 +224,13 @@ class ActionsBuilder
             'extras' => ['icon' => 'pencil-solid'],
         ]);
 
+        $root->addChild('mailing', [
+            'label' => 'hosts.action.mailing',
+            'route' => 'admin_tools_mailing',
+            'routeParameters' => ['group' => 'hosts', 'hosts' => [$item->getId()]],
+            'extras' => ['icon' => 'mail'],
+        ]);
+
         $class = $item::class;
         $root->addChild('delete', [
             'label' => 'hosts.action.delete',
