@@ -21,7 +21,13 @@
             searchable: searchable,
             config: {
                 layout: is_granted('ROLE_ADMIN') ? 'table' : 'list',
-                title: "{{ item.name }}",
+                title: '
+{% import "@FerienpassAdmin/components/content_elements.html.twig" as partials %}
+{% trans_default_domain "admin" %}
+
+{{ item.name }}
+{{ partials.offer_status_badge(item.state, "xs", "ml-2") }}
+',
                 info: [
                     '
 {% if item.dates is not empty %}

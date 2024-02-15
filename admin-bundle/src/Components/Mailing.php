@@ -61,6 +61,9 @@ class Mailing extends AbstractController
 
     public function __construct(private readonly EditionRepository $editionRepository, private readonly ParticipantRepository $participantRepository, private readonly UserRepository $userRepository, private readonly HostRepository $hostRepository, private readonly OfferRepository $offerRepository, private readonly Environment $twig)
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->group = 'participants';
+        }
     }
 
     #[LiveListener('group')]

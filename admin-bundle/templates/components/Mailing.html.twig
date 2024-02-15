@@ -5,63 +5,66 @@
     <div class="space-y-12 divide-y divide-gray-300">
 
         <div class="space-y-12">
-            <fieldset>
-                <legend class="text-base font-semibold leading-6 text-gray-900">{{ 'mailing.selectGroup'|trans }}</legend>
 
-                <div class="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-3 sm:gap-x-4">
-                    <button
-                            data-action="live#emit"
-                            data-event="group(group=hosts)"
-                            class="{{ group == 'hosts' ? 'border-indigo-600 ring-2 ring-indigo-600' : 'border-gray-300' }} text-left relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none">
-                        <span class="flex flex-1">
-                            <span class="flex flex-col">
-                                <span id="group-0-label"
-                                      class="block text-sm font-medium text-gray-900">Veranstaltende</span>
-                                <span id="group-0-description-0"
-                                      class="mt-1 flex items-center text-sm text-gray-500">Last message sent an hour
-                                    ago</span>
-                                <span id="group-0-description-1" class="mt-6 text-sm font-medium text-gray-900">
-                                    {{ this.countAllHosts }} E-Mails</span>
+            {% if is_granted('ROLE_ADMIN') %}
+                <fieldset>
+                    <legend class="text-base font-semibold leading-6 text-gray-900">{{ 'mailing.selectGroup'|trans }}</legend>
+
+                    <div class="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-3 sm:gap-x-4">
+                        <button
+                                data-action="live#emit"
+                                data-event="group(group=hosts)"
+                                class="{{ group == 'hosts' ? 'border-indigo-600 ring-2 ring-indigo-600' : 'border-gray-300' }} text-left relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none">
+                            <span class="flex flex-1">
+                                <span class="flex flex-col">
+                                    <span id="group-0-label"
+                                          class="block text-sm font-medium text-gray-900">Veranstaltende</span>
+                                    <span id="group-0-description-0"
+                                          class="mt-1 flex items-center text-sm text-gray-500">Last message sent an hour
+                                        ago</span>
+                                    <span id="group-0-description-1" class="mt-6 text-sm font-medium text-gray-900">
+                                        {{ this.countAllHosts }} E-Mails</span>
+                                </span>
                             </span>
-                        </span>
-                        {% if group == 'hosts' %}
-                            <svg class="h-5 w-5 text-indigo-600" viewBox="0 0 20 20" fill="currentColor"
-                                 aria-hidden="true">
-                                <path fill-rule="evenodd"
-                                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                      clip-rule="evenodd"/>
-                            </svg>
-                        {% endif %}
-                        <span aria-hidden="true"
-                              class="{{ group == 'hosts' ? 'border-indigo-600' : 'border-transparent' }} pointer-events-none absolute -inset-px rounded-lg border-2"></span>
-                    </button>
-                    <button data-action="live#emit"
-                            data-event="group(group=participants)"
-                            class="{{ group == 'participants' ? 'border-indigo-600 ring-2 ring-indigo-600' : 'border-gray-300' }} text-left relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none">
-                        <span class="flex flex-1">
-                            <span class="flex flex-col">
-                                <span id="group-1-label"
-                                      class="block text-sm font-medium text-gray-900">Teilnehmende</span>
-                                <span id="group-1-description-0"
-                                      class="mt-1 flex items-center text-sm text-gray-500">Last message sent 2 weeks
-                                    ago</span>
-                                <span id="group-1-description-1" class="mt-6 text-sm font-medium text-gray-900">
-                                    {{ this.countAllParticipants }} E-Mails</span>
+                            {% if group == 'hosts' %}
+                                <svg class="h-5 w-5 text-indigo-600" viewBox="0 0 20 20" fill="currentColor"
+                                     aria-hidden="true">
+                                    <path fill-rule="evenodd"
+                                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                          clip-rule="evenodd"/>
+                                </svg>
+                            {% endif %}
+                            <span aria-hidden="true"
+                                  class="{{ group == 'hosts' ? 'border-indigo-600' : 'border-transparent' }} pointer-events-none absolute -inset-px rounded-lg border-2"></span>
+                        </button>
+                        <button data-action="live#emit"
+                                data-event="group(group=participants)"
+                                class="{{ group == 'participants' ? 'border-indigo-600 ring-2 ring-indigo-600' : 'border-gray-300' }} text-left relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none">
+                            <span class="flex flex-1">
+                                <span class="flex flex-col">
+                                    <span id="group-1-label"
+                                          class="block text-sm font-medium text-gray-900">Teilnehmende</span>
+                                    <span id="group-1-description-0"
+                                          class="mt-1 flex items-center text-sm text-gray-500">Last message sent 2 weeks
+                                        ago</span>
+                                    <span id="group-1-description-1" class="mt-6 text-sm font-medium text-gray-900">
+                                        {{ this.countAllParticipants }} E-Mails</span>
+                                </span>
                             </span>
-                        </span>
-                        {% if group == 'participants' %}
-                            <svg class="h-5 w-5 text-indigo-600" viewBox="0 0 20 20" fill="currentColor"
-                                 aria-hidden="true">
-                                <path fill-rule="evenodd"
-                                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                      clip-rule="evenodd"/>
-                            </svg>
-                        {% endif %}
-                        <span aria-hidden="true"
-                              class="{{ group == 'participants' ? 'border-indigo-600' : 'border-transparent' }} pointer-events-none absolute -inset-px rounded-lg border-2"></span>
-                    </button>
-                </div>
-            </fieldset>
+                            {% if group == 'participants' %}
+                                <svg class="h-5 w-5 text-indigo-600" viewBox="0 0 20 20" fill="currentColor"
+                                     aria-hidden="true">
+                                    <path fill-rule="evenodd"
+                                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                          clip-rule="evenodd"/>
+                                </svg>
+                            {% endif %}
+                            <span aria-hidden="true"
+                                  class="{{ group == 'participants' ? 'border-indigo-600' : 'border-transparent' }} pointer-events-none absolute -inset-px rounded-lg border-2"></span>
+                        </button>
+                    </div>
+                </fieldset>
+            {% endif %}
 
             {% if 'hosts' == group %}
 

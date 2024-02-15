@@ -20,10 +20,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted('ROLE_ADMIN')]
 final class ToolsController extends AbstractController
 {
     #[Route('/tools', name: 'admin_tools')]
+    #[IsGranted('ROLE_ADMIN')]
     public function index(Request $request, Breadcrumb $breadcrumb): Response
     {
         return $this->render('@FerienpassAdmin/page/tools/index.html.twig', [

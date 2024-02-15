@@ -23,22 +23,27 @@
 {% endmacro %}
 
 {% macro badge_green(label, size='xs', class='') %}
-    {% set class = class ~ ' text-green-700 bg-green-50 ring-green-600/20' %}
+    {% set class = class ~ ' text-green-700 bg-green-50 ring-green-600/20 dark:text-green-400 dark:bg-green-400/10 dark:ring-green-400/20' %}
     {{ _self.badge(label, size, class|trim) }}
 {% endmacro %}
 
 {% macro badge_yellow(label, size='xs', class='') %}
-    {% set class = class ~ ' text-yellow-700 bg-yellow-50 ring-yellow-600/20' %}
+    {% set class = class ~ ' text-yellow-700 bg-yellow-50 ring-yellow-600/20 dark:text-yellow-400 dark:bg-yellow-400/10 dark:ring-yellow-400/20' %}
+    {{ _self.badge(label, size, class|trim) }}
+{% endmacro %}
+
+{% macro badge_orange(label, size='xs', class='') %}
+    {% set class = class ~ ' text-orange-700 bg-orange-50 ring-orange-600/20 dark:text-orange-400 dark:bg-orange-400/10 dark:ring-orange-400/20' %}
     {{ _self.badge(label, size, class|trim) }}
 {% endmacro %}
 
 {% macro badge_red(label, size='xs', class='') %}
-    {% set class = class ~ ' text-red-700 bg-red-50 ring-red-600/20' %}
+    {% set class = class ~ ' text-red-700 bg-red-50 ring-red-600/20 dark:text-red-400 dark:bg-red-400/10 dark:ring-red-400/20' %}
     {{ _self.badge(label, size, class|trim) }}
 {% endmacro %}
 
 {% macro badge_gray(label, size='xs', class='') %}
-    {% set class = class ~ ' text-gray-700 bg-gray-50 ring-gray-600/20' %}
+    {% set class = class ~ ' text-gray-700 bg-gray-50 ring-gray-600/20 dark:text-gray-400 dark:bg-gray-400/10 dark:ring-gray-400/20' %}
     {{ _self.badge(label, size, class|trim) }}
 {% endmacro %}
 
@@ -58,5 +63,18 @@
         {{ _self.badge_red(label, size, class) }}
     {% else %}
         {{ _self.badge_gray(label, size, class) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro offer_status_badge(status, size='xs', class='') %}
+    {% set label = 'offers.status.'~status %}
+    {% set label = label|trans({}, 'admin') %}
+
+    {% if status == 'cancelled' %}
+        {{ _self.badge_red(label, size, class) }}
+    {% elseif status == 'draft' %}
+        {{ _self.badge_orange(label, size, class) }}
+    {% else %}
+        {{ _self.badge_green(label, size, class) }}
     {% endif %}
 {% endmacro %}

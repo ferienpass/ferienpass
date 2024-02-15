@@ -36,6 +36,11 @@
 
     </div>
 
+    {% if offer.state == 'draft' and not is_granted('ROLE_ADMIN') %}
+        <twig:Admin:Alert class="mt-6" type="warning" message="Dieses Angebot ist im Entwurfsmodus. Bitte stellen Sie es fertig, in dem Sie beim Bearbeiten den Button ”Speichern und finalisieren“ benutzen."></twig:Admin:Alert>
+    {% endif %}
+
+
     <div class="mt-6">
         {% embed '@FerienpassAdmin/components/content_tabs.html.twig' with { tabs: ['web', 'pdf'] } %}
 

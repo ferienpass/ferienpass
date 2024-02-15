@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Export\XlsxExport;
 use Ferienpass\CoreBundle\Entity\Edition;
@@ -28,9 +27,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Workflow\WorkflowInterface;
 
 #[Route('/angebote/{edition?null}')]
 final class OffersController extends AbstractController
@@ -77,58 +74,8 @@ final class OffersController extends AbstractController
     }
 
     #[Route('/{id}', name: 'admin_offer_proof', requirements: ['id' => '\d+'])]
-    public function show(Offer $offer, Request $request, PdfExports $pdfExports, EntityManagerInterface $em, \Ferienpass\CoreBundle\Session\Flash $flash, MessageBusInterface $messageBus, Breadcrumb $breadcrumb, WorkflowInterface $offerStateMachine): Response
+    public function show(Offer $offer, PdfExports $pdfExports, Breadcrumb $breadcrumb): Response
     {
-        if ($request->isMethod('delete')) {
-            $this->denyAccessUnlessGranted('delete', $offer);
-
-            // Do not delete variants
-            if ($offer->isVariantBase() && !$offer->getVariants()->isEmpty()) {
-                /** @var Offer $firstVariant */
-                $firstVariant = $offer->getVariants()->first();
-
-                $firstVariant->setVariantBase(null);
-
-                /** @var Offer $variant */
-                foreach ($offer->getVariants() as $variant) {
-                    if ($variant === $firstVariant) {
-                        continue;
-                    }
-
-                    $variant->setVariantBase($firstVariant);
-                }
-            }
-
-            $em->remove($offer);
-            $em->flush();
-
-            $flash->addConfirmation(text: 'Das Angebot wurde gelöscht.');
-
-            return $this->redirectToRoute('host_offer_list');
-        }
-
-        if ($request->isMethod('post') && 'cancel' === $request->get('act')) {
-            $this->denyAccessUnlessGranted('cancel', $offer);
-
-            $offerStateMachine->apply($offer, Offer::TRANSITION_CANCEL);
-            $em->flush();
-
-            $flash->addConfirmation(text: 'Das Angebot wurde abgesagt.');
-
-            return $this->redirect($request->getUri());
-        }
-
-        if ($request->isMethod('post') && 'relaunch' === $request->get('act')) {
-            $this->denyAccessUnlessGranted('relaunch', $offer);
-
-            $offerStateMachine->apply($offer, Offer::TRANSITION_RELAUNCH);
-            $em->flush();
-
-            $flash->addConfirmation(text: 'Das Angebot wurde wiederhergestellt.');
-
-            return $this->redirect($request->getUri());
-        }
-
         $this->denyAccessUnlessGranted('view', $offer);
 
         return $this->render('@FerienpassAdmin/page/offers/proof.html.twig', [
