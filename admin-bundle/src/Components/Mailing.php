@@ -192,7 +192,7 @@ class Mailing extends AbstractController
                 case 'host':
                     $tokens = $this->normalizer->normalize($object, context: ['groups' => 'notification']);
                     foreach (array_keys($tokens) as $property) {
-                        $availableTokens["$token.$property"] = $this->container->get('twig')->createTemplate(sprintf('{{ %s }}', "$token.$property"))->render([$token => $object]);
+                        $availableTokens["$token.$property"] = $this->container->get('twig')->createTemplate(sprintf('{{ %s }}', "$token.$property"))->render([$token => $tokens]);
                     }
                     break;
             }
