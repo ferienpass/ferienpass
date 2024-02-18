@@ -23,7 +23,7 @@
                             </div>
                         {% endif %}
                         {% import "@FerienpassCore/Macro/offer.html.twig" as offer_macro %}
-                        <h1 class="mb-2">{{ offer.name|raw }}</h1>
+                        <h1 class="mb-2">{{ offer.name }}</h1>
                         <div class="font-semibold text-xl text-gray-500 mb-4">{{ offer_macro.age(offer) }}</div>
                         <div class="text-gray-500 text-lg">{{ offer.description|encodeEmail }}</div>
                         <div class="mt-6 text-xl font-semibold">{{ offer_macro.date_combined(offer.dates) }}</div>
@@ -37,7 +37,7 @@
                                         <path d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
                                               clip-rule="evenodd" fill-rule="evenodd"></path>
                                     </svg>
-                                    <span>{{ offer.meetingPoint|raw }}</span>
+                                    <span>{{ offer.meetingPoint }}</span>
                                 </div>
                             {% endif %}
                             {% if offer.location|default %}
@@ -46,7 +46,7 @@
                                         <path d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
                                               clip-rule="evenodd" fill-rule="evenodd"></path>
                                     </svg>
-                                    <span>{{ offer.location|raw }}</span>
+                                    <span>{{ offer.location }}</span>
                                 </div>
                             {% endif %}
                             {% if offer.bring|default %}
@@ -60,7 +60,7 @@
                                         <path d="M384,21.3C384,9.6,374.4,0,362.7,0H320c-11.8,0-21.3,9.6-21.3,21.3V64H384V21.3z"/>
                                         <path d="M213.3,21.3C213.3,9.6,203.8,0,192,0h-42.7C137.6,0,128,9.6,128,21.3V64h85.3V21.3z"/>
                                     </svg>
-                                    <span>{{ offer.bring|raw }}</span>
+                                    <span>{{ offer.bring }}</span>
                                 </div>
                             {% endif %}
                             <div class="flex items-center text-gray-700 text-lg mb-2">
@@ -184,7 +184,7 @@
                                                       stroke-width="2"
                                                       d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                             </svg>
-                                            <span class="ml-2 text-gray-500 text-sm leading-5">{{ offer.applyText|raw|encodeEmail }}</span>
+                                            <span class="ml-2 text-gray-500 text-sm leading-5">{{ offer.applyText|encodeEmail }}</span>
                                         </dd>
                                     </dl>
                                 {% endif %}

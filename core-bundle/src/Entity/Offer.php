@@ -623,12 +623,12 @@ class Offer
         $this->comment = $comment;
     }
 
-    public function getState(): ?string
+    public function getState(): string
     {
         return $this->state;
     }
 
-    public function setState(?string $state): void
+    public function setState(string $state): void
     {
         $this->state = $state;
     }

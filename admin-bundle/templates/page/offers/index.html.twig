@@ -51,7 +51,7 @@
                 </p>
 ',
                 ],
-                prepend: '{{ component("Admin:OfferWorkflowButton", { offer: item }) }}',
+                prepend: '{{ component("Admin:OfferWorkflowButton", { offer: item, key: item.id,  id: "owb"~item.id~item.state }) }}',
                 columns: {
                     name: '<span class="{{ item.cancelled ? "line-through" : "" }}">{{ item.name }}</span>',
                     hosts: '{{ item.hosts|map(h => h.name)|join(", ") }}',

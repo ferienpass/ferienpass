@@ -12,7 +12,7 @@
                             {{ contao_figure(host.logo, '_host_details_logo') }}
                         </div>
                     {% endif %}
-                    <h1 class="mb-6">{{ host.name|raw }}</h1>
+                    <h1 class="mb-6">{{ host.name }}</h1>
                     <div class="text-gray-500 text-lg">{{ host.text|encodeEmail }}</div>
                     <div class="mt-4">
                         <a href="javascript:history.back()" class="font-medium text-primary-600 hover:underline">&larr;
@@ -29,7 +29,7 @@
                             <dd>
                                 <p>
                                     <span>{{ host.street }}</span><br>
-                                    <span>{{ host.postal ~' ' ~ host.city|raw }}</span>
+                                    <span>{{ host.postal ~' ' ~ host.city }}</span>
                                 </p>
                             </dd>
                         </div>
