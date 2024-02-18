@@ -44,15 +44,15 @@ final class ParticipantsController extends AbstractController
     {
     }
 
-    #[Route('{_suffix}', name: 'admin_participants_index', defaults: ['_suffix' => ''])]
-    public function index(ParticipantRepository $repository, Breadcrumb $breadcrumb, string $_suffix, XlsxExport $xlsxExport): Response
+    #[Route('{_suffix?}', name: 'admin_participants_index', requirements: ['_suffix' => '\.\w+'])]
+    public function index(ParticipantRepository $repository, Breadcrumb $breadcrumb, ?string $_suffix, XlsxExport $xlsxExport): Response
     {
         $qb = $repository->createQueryBuilder('i');
         $qb->orderBy('i.lastname');
 
         // $filter = $this->filterFactory->create($qb)->applyFilter($request->query->all());
 
-        $_suffix = ltrim($_suffix, '.');
+        $_suffix = ltrim((string) $_suffix, '.');
         if ('' !== $_suffix) {
             // TODO service-tagged exporter
             if ('xlsx' === $_suffix) {

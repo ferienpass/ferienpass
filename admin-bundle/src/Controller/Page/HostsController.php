@@ -37,7 +37,7 @@ final class HostsController extends AbstractController
     {
     }
 
-    #[Route('{_suffix?}', name: 'admin_hosts_index')]
+    #[Route('{_suffix?}', name: 'admin_hosts_index', requirements: ['_suffix' => '\.\w+'])]
     public function index(?string $_suffix, HostRepository $repository, Request $request, Breadcrumb $breadcrumb, XlsxExport $xlsxExport): Response
     {
         $qb = $repository->createQueryBuilder('i');

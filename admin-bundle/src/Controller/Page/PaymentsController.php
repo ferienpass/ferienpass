@@ -44,7 +44,7 @@ final class PaymentsController extends AbstractController
     {
     }
 
-    #[Route('{_suffix?}', name: 'admin_payments_index')]
+    #[Route('{_suffix?}', name: 'admin_payments_index', requirements: ['_suffix' => '\.\w+'])]
     public function index(PaymentRepository $repository, Breadcrumb $breadcrumb, ?string $_suffix, XlsxExport $xlsxExport): Response
     {
         $qb = $repository->createQueryBuilder('i');
