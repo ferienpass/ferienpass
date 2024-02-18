@@ -197,9 +197,10 @@
 
 
 {% block offer_image_widget %}
+    {% import "@ContaoCore/Image/Studio/_macros.html.twig" as studio %}
 
-    {% if form.vars.image_uuid %}
-        {{ contao_figure(form.vars.image_uuid, [200, 200, 'proportional'], {}) }}
+    {% if form.vars.figure is defined %}
+        {{- studio.figure(form.vars.figure) -}}
     {% endif %}
 
 {% endblock %}

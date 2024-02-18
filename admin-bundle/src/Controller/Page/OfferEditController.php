@@ -14,17 +14,17 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Controller\Page;
 
 use Contao\CoreBundle\Exception\PageNotFoundException;
-use Contao\CoreBundle\Framework\ContaoFramework;
-use Contao\Dbafs;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Form\EditOfferType;
 use Ferienpass\AdminBundle\Service\FileUploader;
 use Ferienpass\CoreBundle\Entity\Edition;
+use Ferienpass\CoreBundle\Entity\File;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\OfferDate;
-use Ferienpass\CoreBundle\Ux\Flash;
+use Ferienpass\CoreBundle\Entity\OfferMedia;
+use Ferienpass\CoreBundle\Session\Flash;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -37,7 +37,7 @@ use Symfony\Component\Workflow\WorkflowInterface;
 #[Route('/angebote/{edition?null}')]
 final class OffersEditController extends AbstractController
 {
-    public function __construct(#[Autowire(service: 'ferienpass.file_uploader.offer')] private readonly FileUploader $fileUploader, private readonly ManagerRegistry $doctrine, private readonly WorkflowInterface $offerStateMachine, private readonly ContaoFramework $contaoFramework)
+    public function __construct(#[Autowire(service: 'ferienpass.file_uploader.offer_media')] private readonly FileUploader $fileUploader, #[Autowire(service: 'ferienpass.file_uploader.agreement_letters')] private readonly FileUploader $pdfFileUploader, private readonly ManagerRegistry $doctrine, private readonly WorkflowInterface $offerStateMachine)
     {
     }
 
@@ -45,7 +45,7 @@ final class OffersEditController extends AbstractController
     #[Route('/neu', name: 'admin_offers_new')]
     #[Route('/kopieren/{id}', name: 'admin_offers_copy')]
     #[Route('/variante/{id}', name: 'admin_offers_new_variant')]
-    public function __invoke(#[MapEntity(id: 'id')] ?Offer $offer, #[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, EntityManagerInterface $em, Request $request, Breadcrumb $breadcrumb): Response
+    public function __invoke(#[MapEntity(id: 'id')] ?Offer $offer, #[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, EntityManagerInterface $em, Request $request, Breadcrumb $breadcrumb, Flash $flash): Response
     {
         $offer = $this->getOffer($offer, $edition, $request);
 
@@ -55,27 +55,17 @@ final class OffersEditController extends AbstractController
             // Add alias to the change-set, later the {@see AliasListener.php} kicks in
             $offer->setAlias(uniqid());
 
-            $imageFile = $form->get('uploadImage')->getData();
-            if ($imageFile) {
-                $imgPath = $this->fileUploader->upload($imageFile);
-
-                $this->contaoFramework->initialize();
-
-                $fileModel = Dbafs::addResource($imgPath);
-
-                $offer->setImage($fileModel->uuid);
+            if ($form->has('uploadImage') && ($upload = $form->get('uploadImage')->getData()) && ($file = $this->fileUploader->upload($upload))) {
+                $offer->setImage($em->getReference(OfferMedia::class, $file->getUuid()));
+                $offer->getImage()->setUploadedBy($this->getUser());
             }
 
-            //            if ($imgCopyright = $form->get('imgCopyright')->getData()) {
-            //                $fileModel = FilesModel::findByPk($offer->getImage());
-            //                if (null !== $fileModel) {
-            //                    /** @psalm-suppress UndefinedMagicPropertyAssignment */
-            //                    $fileModel->imgCopyright = $imgCopyright;
-            //                    $fileModel->save();
-            //                }
-            //            }
+            if ($form->has('uploadedAgreementLetter') && ($upload = $form->get('uploadedAgreementLetter')->getData()) && ($file = $this->pdfFileUploader->upload($upload))) {
+                $offer->setAgreementLetter($em->getReference(File::class, $file->getUuid()));
+                $offer->getAgreementLetter()->setUploadedBy($this->getUser());
+            }
 
-            $this->addFlash(...Flash::confirmation()->text('Die Daten wurden erfolgreich gespeichert.')->create());
+            $flash->addConfirmation(text: 'Die Daten wurden erfolgreich gespeichert.');
 
             foreach ($this->offerStateMachine->getEnabledTransitions($offer) as $enabledTransition) {
                 if (!$this->isGranted($enabledTransition->getName(), $offer)) {

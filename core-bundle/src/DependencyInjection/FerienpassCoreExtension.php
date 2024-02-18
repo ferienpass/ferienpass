@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\DependencyInjection;
 
+use Contao\CoreBundle\DependencyInjection\Filesystem\ConfigureFilesystemInterface;
+use Contao\CoreBundle\DependencyInjection\Filesystem\FilesystemConfiguration;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExports;
 use Ferienpass\CoreBundle\Export\Offer\Xml\XmlExports;
@@ -26,7 +28,7 @@ use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
-final class FerienpassCoreExtension extends Extension implements PrependExtensionInterface
+final class FerienpassCoreExtension extends Extension implements PrependExtensionInterface, ConfigureFilesystemInterface
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
@@ -90,6 +92,22 @@ final class FerienpassCoreExtension extends Extension implements PrependExtensio
         ]);
 
         $this->prependWorkflow($container);
+    }
+
+    public function configureFilesystem(FilesystemConfiguration $config): void
+    {
+        $config->mountLocalAdapter('files/Angebote', 'offer_media', 'offer_media');
+        $config->addVirtualFilesystem('offer_media', 'offer_media');
+        $config->addDefaultDbafs('offer_media', 'OfferMedia');
+
+        $config->mountLocalAdapter('files/Einverständniserklärungen', 'agreement_letters', 'agreement_letters');
+        $config->addVirtualFilesystem('agreement_letters', 'agreement_letters');
+
+        $config->mountLocalAdapter('files/Logos', 'logos', 'logos');
+        $config->addVirtualFilesystem('logos', 'logos');
+
+        $config->mountLocalAdapter('files/Dateiexporte', 'exports', 'exports');
+        $config->addVirtualFilesystem('exports', 'exports');
     }
 
     private function prependWorkflow(ContainerBuilder $container): void

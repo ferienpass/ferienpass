@@ -74,6 +74,9 @@ class MenuBuilder
             $menu->addChild('accounts.title', [
                 'route' => 'admin_accounts_index',
             ]);
+            $menu->addChild('files.title', [
+                'route' => 'admin_files',
+            ]);
             $menu->addChild('tools.title', [
                 'route' => 'admin_tools',
             ]);

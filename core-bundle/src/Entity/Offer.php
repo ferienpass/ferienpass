@@ -93,11 +93,21 @@ class Offer
     #[Groups('docx_export')]
     private ?string $teaser = null;
 
+    /** @deprecated */
     #[ORM\Column(type: 'binary_string', length: 16, nullable: true)]
     private ?string $image = null;
 
-    #[ORM\Column(type: 'binary_string', length: 16, nullable: true)]
-    private ?string $agreementLetter = null;
+    #[ORM\ManyToOne(targetEntity: OfferMedia::class, inversedBy: 'offer')]
+    #[ORM\JoinColumn(name: 'media', referencedColumnName: 'uuid')]
+    private ?OfferMedia $media = null;
+
+    /** @deprecated */
+    #[ORM\Column(name: 'agreement_letter', type: 'binary_string', length: 16, nullable: true)]
+    private ?string $agreementLetterD = null;
+
+    #[ORM\ManyToOne(targetEntity: OfferAgreementLetter::class, inversedBy: 'offer')]
+    #[ORM\JoinColumn(name: 'agree_letter', referencedColumnName: 'uuid')]
+    private ?OfferAgreementLetter $agreementLetter = null;
 
     #[ORM\Column(type: 'binary_string', nullable: true)]
     private ?string $downloads = null;
@@ -327,9 +337,9 @@ class Offer
         return $this->teaser;
     }
 
-    public function getImage(): ?string
+    public function getImage(): ?OfferMedia
     {
-        return $this->image;
+        return $this->media;
     }
 
     public function isPublished(): bool
@@ -392,9 +402,9 @@ class Offer
         $this->teaser = $teaser;
     }
 
-    public function setImage(?string $image): void
+    public function setImage(?OfferMedia $image): void
     {
-        $this->image = $image;
+        $this->media = $image;
     }
 
     public function setPublished(bool $published): void
@@ -722,9 +732,14 @@ class Offer
         $this->requiresAgreementLetter = $requiresAgreementLetter;
     }
 
-    public function getAgreementLetter(): ?string
+    public function getAgreementLetter(): ?OfferAgreementLetter
     {
         return $this->agreementLetter;
+    }
+
+    public function setAgreementLetter(?OfferAgreementLetter $agreementLetter): void
+    {
+        $this->agreementLetter = $agreementLetter;
     }
 
     public function getMemberAssociations(): Collection

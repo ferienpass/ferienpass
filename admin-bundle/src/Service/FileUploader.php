@@ -13,28 +13,29 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Service;
 
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Contao\CoreBundle\Filesystem\FilesystemItem;
+use Contao\CoreBundle\Filesystem\VirtualFilesystemInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class FileUploader
 {
-    public function __construct(private readonly string $projectDir, private readonly string $targetDir, private readonly SluggerInterface $slugger)
+    public function __construct(private readonly VirtualFilesystemInterface $storage, private readonly SluggerInterface $slugger)
     {
     }
 
-    public function upload(UploadedFile $file): string
+    public function upload(UploadedFile $file): ?FilesystemItem
     {
         $originalFilename = pathinfo($file->getClientOriginalName(), \PATHINFO_FILENAME);
         $safeFilename = $this->slugger->slug($originalFilename);
         $fileName = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
 
-        try {
-            $file->move($this->projectDir.'/'.$this->targetDir, $fileName);
-        } catch (FileException $e) {
-            // ... handle exception if something happens during file upload
-        }
+        $stream = fopen($file->getRealPath(), 'r+');
+        $this->storage->writeStream($fileName, $stream);
+        fclose($stream);
 
-        return $this->targetDir.'/'.$fileName;
+        dd($this->storage->listContents('')->toArray(), $this->storage->has($fileName), $fileName, $this->storage->get($fileName));
+
+        return $this->storage->get($fileName);
     }
 }
