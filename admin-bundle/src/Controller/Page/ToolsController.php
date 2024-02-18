@@ -55,4 +55,13 @@ final class ToolsController extends AbstractController
             'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'subjectrichts.title'),
         ]);
     }
+
+    #[Route('/einstellungen', name: 'admin_tools_settings')]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
+    public function settings(Breadcrumb $breadcrumb): Response
+    {
+        return $this->render('@FerienpassAdmin/page/tools/settings.html.twig', [
+            'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'settings.title'),
+        ]);
+    }
 }

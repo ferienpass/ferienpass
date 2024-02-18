@@ -569,3 +569,14 @@ export:
   title: Export
   selectExport: Export auswählen
   button: Export starten
+
+settings:
+  title: Einstellungen
+
+offerCategories:
+  legend.categories.0: Kategorien
+  label.name: Name
+  label.alias: Alias
+  help.alias: Der Alias wird automatisch generiert.
+  edit_offer_categories_categories_entry_delete: Kategorie löschen
+  edit_offer_categories_categories_add: Neue Kategorie

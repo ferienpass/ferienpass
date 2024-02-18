@@ -1,0 +1,35 @@
+{% extends "@FerienpassAdmin/layout/base.html.twig" %}
+{% trans_default_domain 'admin' %}
+
+{% block main %}
+
+
+
+
+    <div class="lg:flex lg:gap-x-16">
+
+        <div class="flex overflow-x-auto border-b border-gray-900/5 py-4 lg:block lg:w-64 lg:flex-none lg:border-0">
+            <nav class="flex-none px-4 sm:px-6 lg:px-0">
+                <ul role="list" class="flex gap-x-3 gap-y-1 whitespace-nowrap lg:flex-col">
+                    <li>
+                        <a href="{{ path(app.request.get('_route')) }}" class="{{ true  ? 'bg-gray-200/50 text-indigo-600' :  'text-gray-700 hover:text-indigo-600 hover:bg-gray-200/50' }}bg-gray-50 text-indigo-600 group flex gap-x-3 rounded-md py-2 pl-2 pr-3 text-sm leading-6 font-semibold">
+                            <span class="h-6 w-6 shrink-0 text-indigo-600">{{ source('@FerienpassAdmin/icons/tag.outline.svg') }}</span>
+                            Angebotskategorien
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="px-4 py-4 sm:px-6 lg:flex-auto lg:px-0">
+            <div class="mx-auto max-w-2xl space-y-16 sm:space-y-20 lg:mx-0 lg:max-w-none">
+
+                <twig:Admin:Settings:OfferCategories />
+
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}

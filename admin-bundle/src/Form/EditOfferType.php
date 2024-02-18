@@ -20,6 +20,7 @@ use Ferienpass\AdminBundle\Form\CompoundType\OfferDatesType;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\OfferCategory;
 use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -64,7 +65,7 @@ class EditOfferType extends AbstractType
             ->add('name', null, ['fieldset_group' => 'base', 'width' => '2/3', 'required' => true])
             ->add('description', TextareaType::class, ['fieldset_group' => 'base'])
 //            ->add('parent', EntityType::class, [ 'class' => User::class ])
-            // ->add('categories', EntityType::class, ['class' => OfferCategory::class, 'choice_label' => 'name', 'fieldset_group' => 'base'])
+            ->add('categories', EntityType::class, ['class' => OfferCategory::class, 'multiple' => true, 'expanded' => true, 'choice_label' => 'name', 'placeholder' => '-', 'fieldset_group' => 'base'])
             ->add('dates', OfferDatesType::class, ['help' => 'Sie können eine zusätzliche Zeit eintragen, wenn die gleiche Gruppe von Kindern an mehreren Terminen erscheinen muss. Wenn Sie das Angebot mehrmals anbieten, verwenden Sie stattdessen die Kopierfunktion auf der Übersichtsseite.', 'fieldset_group' => 'dates'])
             ->add('applicationDeadline', DateType::class, ['help' => 'offers.help.applicationDeadline', 'input_format' => 'd.m.Y', 'widget' => 'single_text', 'fieldset_group' => 'dates', 'width' => '1/3'])
             ->add('minAge', IntegerType::class, ['attr' => ['placeholder' => 'kein Mindestalter'], 'fieldset_group' => 'details', 'width' => '1/3'])

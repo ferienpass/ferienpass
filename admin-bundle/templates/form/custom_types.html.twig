@@ -20,6 +20,28 @@
 
 {%- endblock -%}
 
+{%- block _edit_offer_categories_categories_entry_row -%}
+
+    <div class="mt-10 relative">
+        <div class="absolute inset-0 flex items-center" aria-hidden="true">
+            <div class="w-full border-t border-gray-300"></div>
+        </div>
+        <div class="relative flex items-center justify-between">
+            <h2 class="bg-gray-50 dark:bg-gray-950/95 pr-3 text-xl font-medium leading-6 text-gray-900 dark:text-gray-100/90">
+                {{ data is not null ? data.name : 'Neue Kategorie' }}
+            </h2>
+
+            {%- if button_delete is defined and not button_delete.rendered -%}
+                {{ form_widget(button_delete) }}
+            {%- endif -%}
+
+        </div>
+    </div>
+
+    {{ block('form_row') }}
+
+{%- endblock -%}
+
 {%- block _edit_offer_dates_entry_row -%}
 
     <div class="mt-10 relative">
