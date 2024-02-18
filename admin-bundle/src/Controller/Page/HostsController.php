@@ -33,7 +33,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 #[Route('/veranstaltende')]
 final class HostsController extends AbstractController
 {
-    public function __construct(#[Autowire(service: 'ferienpass.file_uploader.host')] private readonly FileUploader $fileUploader)
+    public function __construct(#[Autowire(service: 'ferienpass.file_uploader.logos')] private readonly FileUploader $fileUploader)
     {
     }
 

@@ -74,11 +74,30 @@ class EditOfferType extends AbstractType
             ->add('fee', MoneyType::class, ['divisor' => 100, 'html5' => true, 'fieldset_group' => 'details', 'width' => '1/3'])
             ->add('wheelchairAccessible', ChoiceType::class, ['choices' => ['Ja' => true, 'Nein' => false], 'placeholder' => 'Nach Absprache', 'expanded' => false, 'multiple' => false, 'fieldset_group' => 'details', 'width' => '1/3'])
             ->add('requiresApplication', CheckboxType::class, ['help' => 'offers.help.requiresApplication', 'fieldset_group' => 'applications', 'width' => '1/2'])
+            ->add('requiresAgreementLetter', CheckboxType::class, ['help' => 'offers.help.requiresAgreementLetter', 'fieldset_group' => 'agreementLetter', 'width' => '1/2'])
             ->add('onlineApplication', CheckboxType::class, ['help' => 'offers.help.onlineApplication', 'fieldset_group' => 'applications', 'width' => '1/2'])
             ->add('minParticipants', IntegerType::class, ['attr' => ['placeholder' => '-'], 'fieldset_group' => 'applications', 'width' => '1/3'])
             ->add('maxParticipants', IntegerType::class, ['attr' => ['placeholder' => 'ohne Begrenzung'], 'fieldset_group' => 'applications', 'width' => '1/3'])
             ->add('applyText', null, ['help' => 'offers.help.applyText', 'fieldset_group' => 'applications', 'width' => '1/2'])
-            ->add('contact', null, ['help' => 'offers.help.contact', 'fieldset_group' => 'applications', 'width' => '1/2'])
+            ->add('contactUser', EntityType::class, [
+                'class' => User::class,
+                'query_builder' => function (EntityRepository $er): QueryBuilder {
+                    $qb = $er->createQueryBuilder('u')
+                        ->where("JSON_SEARCH(u.roles, 'one', :role) IS NOT NULL")
+                        ->setParameter('role', 'ROLE_HOST');
+
+                    if (!$this->security->isGranted('ROLE_ADMIN') && (($user = $this->security->getUser()) instanceof User)) {
+                        $qb->innerJoin('u.hostAssociations', 'ha', Join::WITH, 'ha.host IN (:hosts)')->setParameter('hosts', $user->getHosts());
+                    }
+
+                    return $qb->orderBy('u.lastname', 'ASC');
+                },
+                'choice_label' => 'name',
+                'placeholder' => '-',
+                'help' => 'offers.help.contactUser',
+                'fieldset_group' => 'applications',
+                'width' => '1/2',
+            ])
             ->add('existingImage', OfferImageType::class, ['fieldset_group' => 'media'])
             ->add('uploadImage', DropzoneType::class, [
                 'fieldset_group' => 'media',
@@ -149,6 +168,23 @@ class EditOfferType extends AbstractType
                 }
 
                 $form->add('submitAnd'.ucfirst($enabledTransition->getName()), SubmitType::class);
+            }
+
+            if ($offer->requiresAgreementLetter()) {
+                $form->add('uploadAgreeLetter', DropzoneType::class, [
+                    'fieldset_group' => 'agreementLetter',
+                    'attr' => ['placeholder' => 'offers.dropzonePlaceholder'],
+                    'mapped' => false,
+                    'constraints' => [
+                        new File([
+                            'maxSize' => '6Mi',
+                            'mimeTypes' => [
+                                'application/pdf',
+                            ],
+                            'mimeTypesMessage' => 'Folgende Dateiformate sind erlaubt: PDF',
+                        ]),
+                    ],
+                ]);
             }
         });
 

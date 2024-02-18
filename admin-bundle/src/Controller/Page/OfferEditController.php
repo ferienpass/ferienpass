@@ -35,9 +35,9 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[Route('/angebote/{edition?null}')]
-final class OffersEditController extends AbstractController
+final class OfferEditController extends AbstractController
 {
-    public function __construct(#[Autowire(service: 'ferienpass.file_uploader.offer')] private readonly FileUploader $fileUploader, private readonly ManagerRegistry $doctrine, private readonly WorkflowInterface $offerStateMachine, private readonly ContaoFramework $contaoFramework)
+    public function __construct(#[Autowire(service: 'ferienpass.file_uploader.offer_media')] private readonly FileUploader $fileUploader, #[Autowire(service: 'ferienpass.file_uploader.agreement_letters')] private readonly FileUploader $pdfFileUploader, private readonly ManagerRegistry $doctrine, private readonly WorkflowInterface $offerStateMachine, private readonly ContaoFramework $contaoFramework)
     {
     }
 
@@ -64,6 +64,19 @@ final class OffersEditController extends AbstractController
                 $fileModel = Dbafs::addResource($imgPath);
 
                 $offer->setImage($fileModel->uuid);
+            }
+
+            if ($form->has('uploadAgreeLetter')) {
+                $imageFile = $form->get('uploadAgreeLetter')->getData();
+                if ($imageFile) {
+                    $imgPath = $this->pdfFileUploader->upload($imageFile);
+
+                    $this->contaoFramework->initialize();
+
+                    $fileModel = Dbafs::addResource($imgPath);
+
+                    $offer->setAgreementLetter($fileModel->uuid);
+                }
             }
 
             //            if ($imgCopyright = $form->get('imgCopyright')->getData()) {
@@ -137,7 +150,7 @@ final class OffersEditController extends AbstractController
             $copy->setRequiresApplication($offer->requiresApplication());
             $copy->setOnlineApplication($offer->isOnlineApplication());
             $copy->setApplyText($offer->getApplyText());
-            $copy->setContact($offer->getContact());
+            $copy->setContactUser($offer->getContactUser());
             $copy->setFee($offer->getFee());
             $copy->setImage($offer->getImage());
 
@@ -165,7 +178,7 @@ final class OffersEditController extends AbstractController
             $copy->setRequiresApplication($offer->requiresApplication());
             $copy->setOnlineApplication($offer->isOnlineApplication());
             $copy->setApplyText($offer->getApplyText());
-            $copy->setContact($offer->getContact());
+            $copy->setContactUser($offer->getContactUser());
             $copy->setFee($offer->getFee());
             $copy->setImage($offer->getImage());
 

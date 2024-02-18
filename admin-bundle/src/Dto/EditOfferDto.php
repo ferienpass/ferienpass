@@ -106,7 +106,7 @@ class EditOfferDto implements OfferDto
         $self->requiresApplication = $offer->requiresApplication();
         $self->onlineApplication = $offer->isOnlineApplication();
         $self->applyText = $offer->getApplyText();
-        $self->contact = $offer->getContact();
+        $self->contact = $offer->getContactUser();
         $self->fee = $offer->getFee();
         $self->image = $offer->getImage();
         $self->wheelchairAccessible = $offer->isWheelchairAccessible();
@@ -132,7 +132,7 @@ class EditOfferDto implements OfferDto
         $offer->setRequiresApplication($this->requiresApplication);
         $offer->setOnlineApplication($this->onlineApplication);
         $offer->setApplyText($this->applyText);
-        $offer->setContact($this->contact);
+        $offer->setContactUser($this->contact);
         $offer->setFee($this->fee);
         $offer->setImage($this->image);
         $offer->setWheelchairAccessible($this->wheelchairAccessible);

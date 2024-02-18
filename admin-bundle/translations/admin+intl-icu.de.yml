@@ -105,6 +105,8 @@ offers:
   legend.media:
     - Foto
     - Laden Sie ein Foto zur Veröffentlichung hoch. Nutzen Sie nur gemeinfreie Fotos und geben Sie in jedem Fall den/die Fotografin an.
+  legend.agreementLetter.0: Einverständniserklärung
+  legend.agreementLetter.1: Wählen Sie aus, ob Sie eine gesonderte Einverständniserklärung benötigen.
   label:
     name: Name
     hosts: Veranstaltende
@@ -121,11 +123,13 @@ offers:
     fee: Teilnahmegebühr
     wheelchairAccessible: Rollstuhl-zugängig
     requiresApplication: Anmeldung erforderlich
+    requiresAgreementLetter: Einverständniserklärung erforderlich
+    uploadAgreeLetter: PDF hochladen
     onlineApplication: Anmeldesystem nutzen
-    minParticipants: min. Teilnehmer
-    maxParticipants: max. Teilnehmer
+    minParticipants: min. Teilnehmerzahl
+    maxParticipants: max. Teilnehmerzahl
     applyText: Anmeldungen unter (wenn nicht online)
-    contact: Auskunft unter
+    contactUser: Ansprechperson
     submit: Daten speichern
     submitAndComplete: Speichern und finalisieren
     submitAndApprove: Speichern und freigeben
@@ -139,13 +143,15 @@ offers:
     edition: Sie können das Angebot in eine andere Saison verschieben.
     hosts: Das Angebot muss von mindestens einem Veranstalter ausgeführt werden. Sie können aber auch mehrere auswählen.
     applyText: Wie kann sich zu dem Angebot angemeldet werden (wenn Online-System nicht genutzt)?
-    contact: Wer gibt Auskunft (z.B. Name + TelNr)? Leer lassen, falls die Info schon in "Anmeldung unter" steht.
+    contactUser: Der Ansprechpartner erscheint mit Name und Kontatkdaten auf der Anmeldeseite.
     requiresApplication: Eine vorherige Anmeldung ist erforderlich, um am Angebot teilnehmen zu können.
     onlineApplication: Die Anmeldungen über das Online-System laufen lassen.
     applicationDeadline: Ab folgendem Tag sind Anmeldungen zum Angebot nicht mehr möglich.
+    requiresAgreementLetter: Sie können ein PDF-Dokument hochladen.
   filter.edition: Saisons
   filter.host: Veranstaltende
   filter.requiresApplication: Anmeldung erforderlich
+  filter.requiresAgreementLetter: Einverständniserklärung erforderlich
   filter.onlineApplication: Online-Anmeldesystem
   filter.status: Status
   edit_offer_dates_add: Zusätzliche Zeit zu diesem Termin
@@ -462,10 +468,6 @@ export.xlsx.attendancesErroredCount: fehlerhaft
 export.xlsx.attendancesPaidCount: bezahlt
 export.xlsx.unpaidAttendances: unbezahlt
 
-export.pdf.print.0: 'Druckbögen (PDF)'
-export.pdf.print.1: 'Exportiert alle Angebote im druckfertigen PDF-Format.'
-
-
 notifications:
   title: Benachrichtigungen
   action: Ansehen
@@ -562,3 +564,8 @@ mailing:
     waiting: auf Zuteilung wartend
     withdrawn: abgemeldet
     error: fehlerhaft
+
+export:
+  title: Export
+  selectExport: Export auswählen
+  button: Export starten
