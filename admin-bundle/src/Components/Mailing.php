@@ -13,20 +13,30 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Components;
 
+use Ferienpass\CoreBundle\Notification\MailingNotification;
+use Ferienpass\CoreBundle\Notifier;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Ferienpass\CoreBundle\Repository\HostRepository;
 use Ferienpass\CoreBundle\Repository\OfferRepository;
 use Ferienpass\CoreBundle\Repository\ParticipantRepository;
 use Ferienpass\CoreBundle\Repository\UserRepository;
+use Ferienpass\CoreBundle\Session\Flash;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Notifier\Recipient\Recipient;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveListener;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\ValidatableComponentTrait;
+use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 use Twig\Environment;
+use Twig\Error\Error;
 
 #[AsLiveComponent(route: 'live_component_admin')]
 class Mailing extends AbstractController
@@ -54,16 +64,18 @@ class Mailing extends AbstractController
     public array $hosts = [];
 
     #[LiveProp(writable: true)]
+    #[Assert\NotBlank()]
+    public string $emailSubject = '';
+
+    #[LiveProp(writable: true)]
+    #[Assert\NotBlank()]
     public string $emailText = '';
 
     #[LiveProp(writable: true)]
     public array $attendanceStatus = [];
 
-    public function __construct(private readonly EditionRepository $editionRepository, private readonly ParticipantRepository $participantRepository, private readonly UserRepository $userRepository, private readonly HostRepository $hostRepository, private readonly OfferRepository $offerRepository, private readonly Environment $twig)
+    public function __construct(private readonly EditionRepository $editionRepository, private readonly ParticipantRepository $participantRepository, private readonly UserRepository $userRepository, private readonly HostRepository $hostRepository, private readonly OfferRepository $offerRepository, private readonly Environment $twig, private readonly RequestStack $requestStack, private readonly NormalizerInterface $normalizer, private readonly Notifier $notifier, private readonly MailingNotification $mailingNotification)
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->group = 'participants';
-        }
     }
 
     #[LiveListener('group')]
@@ -72,6 +84,7 @@ class Mailing extends AbstractController
         $this->group = $group;
     }
 
+    #[ExposeInTemplate]
     public function countAllHosts()
     {
         $qb = $this->userRepository->createQueryBuilder('u')
@@ -84,6 +97,7 @@ class Mailing extends AbstractController
         return $qb->getQuery()->getSingleScalarResult();
     }
 
+    #[ExposeInTemplate]
     public function countAllParticipants()
     {
         $qb = $this->participantRepository->createQueryBuilder('p')
@@ -97,38 +111,45 @@ class Mailing extends AbstractController
         return $qb->getQuery()->getSingleScalarResult();
     }
 
+    #[ExposeInTemplate]
     public function context()
     {
         $context = [];
 
+        $context['baseUrl'] = $this->requestStack->getCurrentRequest()?->getSchemeAndHttpHost().$this->requestStack->getCurrentRequest()?->getBaseUrl();
+
         if (1 === \count($this->editions)) {
-            $context['edition'] = array_values($this->editions)[0];
+            $context['edition'] = $this->editionRepository->find(array_values($this->editions)[0]);
         }
         if (1 === \count($this->offers)) {
-            $context['offer'] = array_values($this->offers)[0];
+            $context['offer'] = $this->offerRepository->find(array_values($this->offers)[0]);
         }
         if (1 === \count($this->hosts)) {
-            $context['host'] = array_values($this->hosts)[0];
+            $context['host'] = $this->hostRepository->find(array_values($this->hosts)[0]);
         }
 
         return $context;
     }
 
+    #[ExposeInTemplate]
     public function editionOptions()
     {
         return $this->editionRepository->findBy(['archived' => 0]);
     }
 
+    #[ExposeInTemplate]
     public function offerOptions()
     {
         return $this->offerRepository->findBy(['id' => $this->offers]);
     }
 
+    #[ExposeInTemplate]
     public function hostOptions()
     {
         return $this->hostRepository->findBy(['id' => $this->hosts]);
     }
 
+    #[ExposeInTemplate]
     public function recipients()
     {
         $return = [];
@@ -137,7 +158,7 @@ class Mailing extends AbstractController
             foreach ($this->queryHostAccounts() as $item) {
                 $return[$item->getEmail()][] = $item;
             }
-        } else {
+        } elseif ('participants' === $this->group) {
             foreach ($this->queryParticipants() as $item) {
                 $return[$item->getEmail()][] = $item;
             }
@@ -146,9 +167,72 @@ class Mailing extends AbstractController
         return $return;
     }
 
-    public function preview()
+    #[ExposeInTemplate]
+    public function preview(): string|false
     {
-        return $this->twig->createTemplate($this->emailText)->render($this->context());
+        try {
+            return $this->twig->createTemplate($this->emailText)->render($this->context());
+        } catch (Error) {
+            return false;
+        }
+    }
+
+    #[ExposeInTemplate]
+    public function availableTokens()
+    {
+        $availableTokens = [];
+
+        foreach ($this->context() as $token => $object) {
+            switch ($token) {
+                case 'baseUrl':
+                    $availableTokens[$token] = $object;
+                    break;
+                case 'edition':
+                case 'offer':
+                case 'host':
+                    $tokens = $this->normalizer->normalize($object, context: ['groups' => 'notification']);
+                    foreach (array_keys($tokens) as $property) {
+                        $availableTokens["$token.$property"] = $this->container->get('twig')->createTemplate(sprintf('{{ %s }}', "$token.$property"))->render([$token => $object]);
+                    }
+                    break;
+            }
+        }
+
+        return $availableTokens;
+    }
+
+    #[LiveAction]
+    public function submit()
+    {
+        $this->validate();
+        $this->dispatchBrowserEvent('admin:modal:open');
+    }
+
+    #[LiveAction]
+    public function send(Flash $flash)
+    {
+        foreach (array_keys($this->recipients()) as $email) {
+            $notification = clone $this->mailingNotification;
+            $notification->subject($this->emailSubject);
+            $notification->content($this->emailText);
+            $notification->context($this->context());
+
+            $this->notifier->send($notification, new Recipient($email));
+        }
+
+        $flash->addConfirmation('Versand erfolgreich', 'Die E-Mails wurden versandt.');
+
+        $this->emailSubject = '';
+        $this->emailText = '';
+
+        $this->dispatchBrowserEvent('admin:modal:close');
+        $this->resetValidation();
+    }
+
+    #[LiveAction]
+    public function cancel()
+    {
+        $this->dispatchBrowserEvent('admin:modal:close');
     }
 
     private function queryHostAccounts()

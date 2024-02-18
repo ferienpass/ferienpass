@@ -1,5 +1,5 @@
 <div {{ attributes.defaults(stimulus_controller('ferienpass/admin-modal')) }}
-        {{ stimulus_action('ferienpass/admin-modal', 'show', 'admin:modal:open') }}
+        {{ stimulus_action('ferienpass/admin-modal', 'show', 'admin:modal:open@window') }}
         class="hidden">
     <div class="z-10 fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
         <div {{ stimulus_target('ferienpass/admin-modal', 'backdrop') }}
@@ -14,7 +14,7 @@
             <div class="absolute inset-0 bg-gray-500/75 dark:bg-gray-800/75"></div>
         </div>
         <div {{ stimulus_target('ferienpass/admin-modal', 'modal') }}
-                {{ stimulus_action('ferienpass/admin-modal', 'hide', 'admin:modal:close') }}
+                {{ stimulus_action('ferienpass/admin-modal', 'hide', 'admin:modal:close@window') }}
                 data-transition-enter="ease-out duration-300"
                 data-transition-enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 data-transition-enter-end="opacity-100 translate-y-0 sm:scale-100"

@@ -71,7 +71,7 @@ class MenuBuilder
             ]);
         }
         if ($this->isGranted('ROLE_ADMIN')) {
-            $menu->addChild('Accounts', [
+            $menu->addChild('accounts.title', [
                 'route' => 'admin_accounts_index',
             ]);
             $menu->addChild('tools.title', [

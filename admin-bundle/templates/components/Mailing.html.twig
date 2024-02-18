@@ -23,7 +23,7 @@
                                           class="mt-1 flex items-center text-sm text-gray-500">Last message sent an hour
                                         ago</span>
                                     <span id="group-0-description-1" class="mt-6 text-sm font-medium text-gray-900">
-                                        {{ this.countAllHosts }} E-Mails</span>
+                                        {{ countAllHosts }} E-Mails</span>
                                 </span>
                             </span>
                             {% if group == 'hosts' %}
@@ -48,7 +48,7 @@
                                           class="mt-1 flex items-center text-sm text-gray-500">Last message sent 2 weeks
                                         ago</span>
                                     <span id="group-1-description-1" class="mt-6 text-sm font-medium text-gray-900">
-                                        {{ this.countAllParticipants }} E-Mails</span>
+                                        {{ countAllParticipants }} E-Mails</span>
                                 </span>
                             </span>
                             {% if group == 'participants' %}
@@ -113,7 +113,7 @@
                     <p class="mt-1 text-sm leading-6 text-gray-600">Nur an Veranstalter mit Angebot in einer dieser
                         Saisons.</p>
                     <div class="mt-4 space-y-2">
-                        {% for edition in this.editionOptions %}
+                        {% for edition in editionOptions %}
                             <div class="relative flex gap-x-3">
                                 <div class="flex items-center">
                                     <input id="editions{{ loop.index }}"
@@ -139,7 +139,7 @@
                     <legend class="text-sm font-semibold leading-6 text-gray-900">Angebote</legend>
                     <p class="mt-1 text-sm leading-6 text-gray-600">Nur an Teilnehmende aus folgenden Angeboten.</p>
                     <div class="mt-4 space-y-2">
-                        {% for offer in this.offerOptions %}
+                        {% for offer in offerOptions %}
                             <div class="relative flex gap-x-3">
                                 <div class="flex items-center">
                                     <input id="editions{{ loop.index }}"
@@ -189,7 +189,7 @@
                     <p class="mt-1 text-sm leading-6 text-gray-600">Nur an Ansprechpartner von folgenden Veranstaltern
                         versenden.</p>
                     <div class="mt-4 space-y-2">
-                        {% for host in this.hostOptions %}
+                        {% for host in hostOptions %}
                             <div class="relative flex gap-x-3">
                                 <div class="flex items-center">
                                     <input id="hosts{{ loop.index }}"
@@ -220,7 +220,7 @@
 
             <div class="mt-6">
 
-                {% for email, users in this.recipients %}
+                {% for email, users in recipients %}
 
                     <span class="inline-flex items-center space-x-2 rounded-full bg-white border border-gray-200 p-1 pr-2 mb-1">
 
@@ -242,7 +242,7 @@
 
             </div>
 
-            <p class="mt-4 font-medium text-sm text-gray-900">{{ this.recipients|length }} E-Mails</p>
+            <p class="mt-4 font-medium text-sm text-gray-900">{{ recipients|length }} E-Mails</p>
 
         </div>
 
@@ -253,10 +253,21 @@
 
             <p class="text-sm leading-5 text-gray-500 dark:text-gray-300">{{ 'mailing.write.1'|trans }}</p>
 
-            {% if this.recipients|length %}
-                <form class="mt-6" action="#">
-                    <div x-data="{ preview: false }">
-                        <div class="flex items-center" aria-orientation="horizontal" role="tablist">
+            {% if recipients|length %}
+                <form class="mt-6 grid gap-6">
+
+                    <div class="col-span-2">
+                        <label for="emailSubject" class="block text-sm font-medium leading-6 text-gray-900">E-Mail-Betreff</label>
+                        <div class="mt-2">
+                            <input type="text" data-model="emailSubject" id="emailSubject" class="">
+                        </div>
+                    </div>
+
+
+                    <div class="col-span-3" x-data="{ preview: false }">
+                        <label for="emailText"
+                               class="block text-sm font-medium leading-6 text-gray-900">E-Mail-Text</label>
+                        <div class="mt-2 flex items-center" aria-orientation="horizontal" role="tablist">
                             <button @click="preview = false"
                                     id="tabs-1-tab-1"
                                     :class="{ 'bg-gray-100 text-gray-900 hover:bg-gray-200': !preview, 'bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-900': preview}"
@@ -296,14 +307,22 @@
                                  tabindex="0">
                                 <div class="border-b">
                                     <div class="mx-px mt-px px-3 pb-12 pt-2 text-sm leading-5 text-gray-800">
-                                        {{ this.preview }}
+                                        {% if preview == false %}
+                                            <twig:Admin:Alert type="error"
+                                                              message="Es gibt einen Fehler mit dem E-Mail-Text. Die E-Mail kann so nicht versendet werden."/>
+                                        {% else %}
+                                            {{ preview|nl2br }}
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="mt-2 flex justify-end">
+
+                    <div class="col-span-3 flex justify-end">
                         <button type="submit"
+                                data-action="live#action"
+                                data-action-name="prevent|submit"
                                 class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                             E-Mail versenden
                         </button>
@@ -318,6 +337,72 @@
 
         </div>
 
+        <div class="pt-6">
+            <h3>Benachrichtigungs-Tokens</h3>
+
+            <p class="text-sm leading-5 text-gray-500 dark:text-gray-300">
+                Sie können folgende Tokens verwenden, die vor dem Versenden mit dem richtigen Inhalt
+                ersetzt werden.
+            </p>
+
+            <div class="mt-6 border-t border-gray-100 dark:border-gray-700">
+                <dl class="divide-y divide-gray-100 dark:divide-gray-800">
+                    <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100">
+                            Token
+                        </dt>
+                        <dd class="mt-1 text-sm font-semibold leading-6 text-gray-700 dark:text-gray-200 sm:col-span-2 sm:mt-0">
+                            Beispiel
+                        </dd>
+                    </div>
+                    {% for name, value in availableTokens %}
+                        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                            <dt class="text-sm font-medium leading-6 text-gray-900 dark:text-gray-100">{{ "{{ #{name} }}" }}</dt>
+                            <dd class="mt-1 text-sm leading-6 text-gray-700 dark:text-gray-200 sm:col-span-2 sm:mt-0">{{ value }}</dd>
+                        </div>
+                    {% endfor %}
+                </dl>
+            </div>
+        </div>
+
     </div>
+
+    {% component "Admin:Modal" %}
+        {% block content %}
+
+            <div class="overflow-hidden">
+                <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">
+                    E-Mail-Versand starten
+                </h3>
+                <div class="mt-2scroll">
+                    <p class="text-sm text-gray-500">Sind Sie sicher, dass Sie folgende E-Mail an
+                        die {{ recipients|length }} Empfänger:innen versenden wollen?</p>
+                </div>
+
+                <div class="mt-2 overflow-x-scroll" id="preview">
+                    <template shadowrootmode="open">
+                        {% include '@FerienpassCore/Email/mailing.html.twig' with context|merge({content: emailText}) %}
+                    </template>
+                </div>
+            </div>
+            <div class="mt-4 sm:flex sm:flex-row-reverse">
+                <button type="button"
+                        data-action="live#action"
+                        data-action-name="prevent|send"
+                        class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">
+                    {{ recipients|length }} E-Mails versenden
+                </button>
+                <button type="button"
+                        data-action="live#action"
+                        data-action-name="prevent|cancel"
+                        class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
+                    Abbrechen
+                </button>
+            </div>
+
+
+
+        {% endblock %}
+    {% endcomponent %}
 
 </div>
