@@ -68,7 +68,7 @@ final class ToolsController extends AbstractController
         ]);
     }
 
-    #[Route('/download/{file}', name: 'admin_download')]
+    #[Route('/download/{file}', name: 'admin_download', requirements: ['file' => '^[A-Za-z0-9+/]*={0,2}$'])]
     public function download(string $file, UriSigner $uriSigner, Request $request): BinaryFileResponse
     {
         if (!$uriSigner->checkRequest($request)) {
