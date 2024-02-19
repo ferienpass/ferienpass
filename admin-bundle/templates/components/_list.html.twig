@@ -54,7 +54,7 @@
 
                     {% elseif actions|length > 0 %}
 
-                        {% set action = actions.firstChild %}
+                        {% set action = actions|first %}
                         {%- set label = action.label -%}
                         {%- set label = label|trans(action.extra('translation_params', {})) -%}
                         <a href="{{ action.uri }}"

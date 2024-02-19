@@ -9,7 +9,12 @@
                 <div class="max-w-lg mx-auto lg:max-w-none">
                     {% if host.logo|default %}
                         <div class="mb-8 -mt-6">
-                            {{ contao_figure(host.logo, '_host_details_logo') }}
+                            {{ contao_figure(host.logo, picture_config({
+                                width: 300,
+                                height: 80,
+                                resizeMode: 'box',
+                                densities: '1x, 2x'
+                            })) }}
                         </div>
                     {% endif %}
                     <h1 class="mb-6">{{ host.name }}</h1>

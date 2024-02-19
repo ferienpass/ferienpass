@@ -10,7 +10,12 @@
 
                         {% if offer.image|default %}
                             <div class="-mt-8 mb-8">
-                                {{ contao_figure(offer.image, '_offer_details', { 'metadata': { class: 'object-cover w-full h-auto'}}) }}
+                                {{ contao_figure(offer.image, picture_config({
+                                    width: 650,
+                                    height: 210,
+                                    resizeMode: 'crop',
+                                    densities: '1x, 2x'
+                                }), { 'metadata': { class: 'object-cover w-full h-auto'}}) }}
                                 {% set caption = offer.caption|default %}
                                 {% if caption %}
                                     <p class="text-xs pt-1 text-right text-gray-400">{{ caption }}</p>
@@ -82,7 +87,12 @@
                         <div class="flex items-center space-x-3">
                             {% for logo in offer.hosts|map(h => h.logo)|filter(v => v) %}
                                 <div class="mb-8 -mt-6">
-                                    {{ contao_figure(logo, '_host_details_logo') }}
+                                    {{ contao_figure(logo, picture_config({
+                                        width: 300,
+                                        height: 80,
+                                        resizeMode: 'box',
+                                        densities: '1x, 2x'
+                                    })) }}
                                 </div>
                             {% endfor %}
                         </div>
