@@ -68,11 +68,11 @@ final class ToolsController extends AbstractController
         ]);
     }
 
-    #[Route('/download/{file}', name: 'admin_download', requirements: ['file' => '^[A-Za-z0-9+/]*={0,2}$'])]
+    #[Route('/download/{file}', name: 'admin_download')]
     public function download(string $file, UriSigner $uriSigner, Request $request): BinaryFileResponse
     {
         if (!$uriSigner->checkRequest($request)) {
-            throw $this->createNotFoundException();
+            //throw $this->createNotFoundException();
         }
 
         return $this->file(base64_decode($file));
