@@ -79,13 +79,17 @@ class Mailing extends AbstractController
     {
     }
 
+    public function mount()
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->group = 'participants';
+        }
+    }
+
+
     #[LiveListener('group')]
     public function changeGroup(#[LiveArg] string $group)
     {
-        if (!$this->isGranted('ROLE_ADMIN') && 'participants' !== $this->group) {
-            throw $this->createAccessDeniedException();
-        }
-
         $this->group = $group;
     }
 
