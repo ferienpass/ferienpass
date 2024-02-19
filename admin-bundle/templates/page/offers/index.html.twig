@@ -38,17 +38,22 @@
 {% endif %}
 ',
                     '
-                <p class="flex items-center space-x-1" title="aktuelle Anmeldungen">
-                    <span class="{{ (item.maxParticipants and item.attendancesConfirmed|length >= item.maxParticipants) ? \'text-red-700\' : \'text-green-700\' }}">
-                        <svg viewBox="0 0 2 2" class="h-2 w-2 fill-current">
-                            <circle cx="1" cy="1" r="1"/>
-                        </svg>
-                    </span>
-
-                    <span>
-                        {{ item.attendancesNotWithdrawn|length ~ \' / \' ~ (item.maxParticipants ?: \'∞\') ~ \'\' }}
-                    </span>
-                </p>
+{% if not item.requiresApplication %}
+   <span title="keine Anmeldungen">n.a.</span>
+{% elseif not item.onlineApplication %}
+   <span title="Anmeldungen über Veranstalter">–</span>
+{% else %}
+    <p class="flex items-center space-x-1" title="aktuelle Anmeldungen">
+        <span class="{{ (item.maxParticipants and item.attendancesConfirmed|length >= item.maxParticipants) ? \'text-red-700\' : \'text-green-700\' }}">
+            <svg viewBox="0 0 2 2" class="h-2 w-2 fill-current">
+                <circle cx="1" cy="1" r="1"/>
+            </svg>
+        </span>
+        <span>
+            {{ item.attendancesNotWithdrawn|length ~ \' / \' ~ (item.maxParticipants ?: \'∞\') ~ \'\' }}
+        </span>
+    </p>
+{% endif %}
 ',
                 ],
                 prepend: '{{ component("Admin:OfferWorkflowButton", { offer: item, key: item.id,  id: "owb"~item.id~item.state }) }}',
