@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Components;
 
+use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Notification\MailingNotification;
 use Ferienpass\CoreBundle\Notifier;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
@@ -153,13 +154,32 @@ class Mailing extends AbstractController
     #[ExposeInTemplate]
     public function offerOptions()
     {
-        return $this->offerRepository->findBy(['id' => $this->offers]);
+        $qb = $this->offerRepository->createQueryBuilder('o')
+            ->where('o.id IN (:ids)')
+            ->setParameter('ids', $this->offers);
+
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $user = $this->getUser();
+            $qb->innerJoin('o.hosts', 'hosts')->andWhere('hosts IN (:hosts)')->setParameter('hosts', $user instanceof User ? $user->getHosts() : []);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
     #[ExposeInTemplate]
     public function hostOptions()
     {
-        return $this->hostRepository->findBy(['id' => $this->hosts]);
+        $qb = $this->hostRepository->createQueryBuilder('h')
+            ->where('h.id IN (:ids)')
+            ->setParameter('ids', $this->hosts)
+        ;
+
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $user = $this->getUser();
+            $qb->andWhere('h.id IN (:hosts)')->setParameter('hosts', $user instanceof User ? $user->getHosts() : []);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
     #[ExposeInTemplate]
@@ -285,8 +305,9 @@ class Mailing extends AbstractController
             ->leftJoin('offer.edition', 'edition')
         ;
 
-        if (!$this->isGranted('ROLE_ADMIN') && [] === $this->offers) {
-            return [];
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $user = $this->getUser();
+            $qb->innerJoin('offer.hosts', 'hosts')->andWhere('hosts IN (:hosts)')->setParameter('hosts', $user instanceof User ? $user->getHosts() : []);
         }
 
         if ($this->offers) {
