@@ -1,6 +1,6 @@
 {% set block = block('link') %}
 
-{% if uri is not null %}
+{% if uri|default(null) is not null %}
     <a class="group flex items-center px-4 py-2 text-sm leading-5 text-gray-700 dark:text-gray-100/70 hover:bg-gray-100 dark:hover:bg-gray-900/50 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
        href="{{ uri }}" {{ attr|default([])|map((value, key) => "#{key}=\"#{value}\"")|join(" ")|raw }}>
         {{ block|raw }}

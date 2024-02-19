@@ -137,14 +137,6 @@ class SearchableQueryableList extends AbstractController
         $this->routeParameters['page'] = $page;
     }
 
-    //    #[LiveAction]
-    //    public function view(#[LiveArg] Participant $participant)
-    //    {
-    //        $this->emit('view', [
-    //            'participant' => $participant,
-    //        ]);
-    //    }
-
     protected function instantiateForm(): FormInterface
     {
         if (null === $filter = $this->getFilter()) {

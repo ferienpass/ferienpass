@@ -63,7 +63,7 @@ final class OffersController extends AbstractController
         return $this->render('@FerienpassAdmin/page/offers/index.html.twig', [
             'qb' => $qb,
             'createUrl' => null === $edition || $this->isGranted('offer.create', $edition) ? $this->generateUrl('admin_offers_new', array_filter(['edition' => $edition?->getAlias()])) : null,
-            'exports' => ['xlsx'],
+            'exports' => $this->isGranted('ROLE_ADMIN') ? ['xlsx'] : [],
             'searchable' => ['name'],
             'items' => $qb->getQuery()->getResult(),
             'edition' => $edition,
