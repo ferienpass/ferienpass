@@ -16,10 +16,8 @@ namespace Ferienpass\CmsBundle\Controller\Fragment;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\CoreBundle\Exception\ResponseException;
 use Contao\FilesModel;
-use Contao\MemberModel;
 use Ferienpass\CmsBundle\Controller\Frontend\AbstractController;
 use Ferienpass\CoreBundle\Entity\Offer;
-use Ferienpass\CoreBundle\Entity\OfferMemberAssociation;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +30,7 @@ final class OfferDetailsController extends AbstractController
 
     public function __invoke(Offer $offer, Request $request): Response
     {
-        $members = $offer->getMemberAssociations()->map(fn (OfferMemberAssociation $a) => MemberModel::findByPk($a->getMember()));
+        // $members = $offer->getMemberAssociations()->map(fn (OfferMemberAssociation $a) => $a->getMember());
 
         if ($request->query->has('file')) {
             $this->handleDownload($request, $offer);
@@ -40,7 +38,7 @@ final class OfferDetailsController extends AbstractController
 
         return $this->render('@FerienpassCms/fragment/offer_details.html.twig', [
             'offer' => $offer,
-            'members' => $members,
+            'members' => [],
         ]);
     }
 

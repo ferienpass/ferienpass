@@ -57,7 +57,7 @@ class Mailing extends AbstractController
     #[LiveProp(writable: true)]
     public array $editions = [];
 
-    #[LiveProp(writable: true, url: true)]
+    #[LiveProp(writable: true, onUpdated: 'onOffersUpdated', url: true)]
     public array $offers = [];
 
     #[LiveProp(writable: true, url: true)]
@@ -81,7 +81,20 @@ class Mailing extends AbstractController
     #[LiveListener('group')]
     public function changeGroup(#[LiveArg] string $group)
     {
+        if (!$this->isGranted('ROLE_ADMIN') && 'participants' !== $this->group) {
+            throw $this->createAccessDeniedException();
+        }
+
         $this->group = $group;
+    }
+
+    public function onOffersUpdated($previous): void
+    {
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return;
+        }
+
+        $this->offers = $previous;
     }
 
     #[ExposeInTemplate]
@@ -271,6 +284,10 @@ class Mailing extends AbstractController
             ->innerJoin('attendances.offer', 'offer')
             ->leftJoin('offer.edition', 'edition')
         ;
+
+        if (!$this->isGranted('ROLE_ADMIN') && [] === $this->offers) {
+            return [];
+        }
 
         if ($this->offers) {
             $qb->andWhere('offer IN (:offers)')->setParameter('offers', $this->offers);

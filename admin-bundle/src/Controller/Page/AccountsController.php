@@ -38,7 +38,7 @@ final class AccountsController extends AbstractController
         'admins' => 'ROLE_ADMIN',
     ];
 
-    #[Route('{_suffix?}', name: 'admin_accounts_index', requirements: ['role'=>'\w+','_suffix' => '\.\w+'])]
+    #[Route('{_suffix?}', name: 'admin_accounts_index', requirements: ['role' => '\w+', '_suffix' => '\.\w+'])]
     public function index(string $role, ?string $_suffix, UserRepository $repository, Breadcrumb $breadcrumb, FactoryInterface $menuFactory, XlsxExport $xlsxExport): Response
     {
         if (!\in_array($role, array_keys(self::ROLES), true)) {
