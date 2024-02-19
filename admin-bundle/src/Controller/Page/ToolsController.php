@@ -15,7 +15,10 @@ namespace Ferienpass\AdminBundle\Controller\Page;
 
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\UriSigner;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -63,5 +66,15 @@ final class ToolsController extends AbstractController
         return $this->render('@FerienpassAdmin/page/tools/settings.html.twig', [
             'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'settings.title'),
         ]);
+    }
+
+    #[Route('/download/{file}', name: 'admin_download')]
+    public function download(string $file, UriSigner $uriSigner, Request $request): BinaryFileResponse
+    {
+        if (!$uriSigner->checkRequest($request)) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->file(base64_decode($file));
     }
 }

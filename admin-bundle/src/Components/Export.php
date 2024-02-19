@@ -18,7 +18,8 @@ use Ferienpass\CoreBundle\Export\Offer\OfferExporter;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Ferienpass\CoreBundle\Repository\OfferRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\UriSigner;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
@@ -73,13 +74,17 @@ final class Export extends AbstractController
     }
 
     #[LiveAction]
-    public function submit(): BinaryFileResponse
+    public function submit(UriSigner $uriSigner): Response
     {
         $this->validate();
 
         $offers = $this->queryOffers();
 
-        return $this->file($this->exporter->getExporter($this->export)->generate($offers));
+        $file = $this->exporter->getExporter($this->export)->generate($offers);
+
+        $url = $this->generateUrl('admin_download', ['file' => base64_encode($file)]);
+
+        return $this->redirect($uriSigner->sign($url));
     }
 
     private function queryOffers(): iterable
