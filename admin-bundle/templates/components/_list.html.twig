@@ -44,6 +44,7 @@
                 <div class="flex flex-none items-center gap-x-4">
 
                     {% set actions = list_actions(item) %}
+                    {% set actions = actions.children|filter(a => a.displayed) %}
 
                     {% if actionUrl is defined %}
 
@@ -51,7 +52,7 @@
                            class="rounded-md bg-white dark:bg-gray-100/5 px-2.5 py-1.5 text-sm font-semibold text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-0 hover:bg-gray-50 dark:hover:bg-gray-100/10">
                             {{ "#{translationPrefix}.action"|trans }}</a>
 
-                    {% elseif actions.hasChildren %}
+                    {% elseif actions|length > 0 %}
 
                         {% set action = actions.firstChild %}
                         {%- set label = action.label -%}
@@ -60,8 +61,7 @@
                            class="rounded-md bg-white dark:bg-gray-100/5 px-2.5 py-1.5 text-sm font-semibold text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-0 hover:bg-gray-50 dark:hover:bg-gray-100/10">
                             {{ label }}</a>
 
-                        {% set actions = actions.children|slice(1)|filter(a => a.displayed) %}
-
+                        {% set actions = actions|slice(1) %}
                         {% if actions|length %}
                             <div class="flex-none">
 
