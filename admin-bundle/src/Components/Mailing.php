@@ -86,7 +86,6 @@ class Mailing extends AbstractController
         }
     }
 
-
     #[LiveListener('group')]
     public function changeGroup(#[LiveArg] string $group)
     {

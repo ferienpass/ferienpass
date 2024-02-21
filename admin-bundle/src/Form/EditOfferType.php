@@ -172,6 +172,7 @@ class EditOfferType extends AbstractType
             }
 
             if ($offer->requiresAgreementLetter()) {
+                $form->add('existingPdf', OfferPdfType::class, ['fieldset_group' => 'agreementLetter']);
                 $form->add('uploadAgreeLetter', DropzoneType::class, [
                     'fieldset_group' => 'agreementLetter',
                     'attr' => ['placeholder' => 'offers.dropzonePlaceholder'],
