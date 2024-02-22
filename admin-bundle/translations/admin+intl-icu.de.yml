@@ -441,10 +441,6 @@ changePassword.headline: Passwort ändern
 changePassword.caption: Ändern Sie Ihr Passwort – helfen Sie mit, Ihren Account zu schützen und teilen Sie nie Ihr Passwort.
 twoFactor.headline: Zwei-Faktor-Authentifizierung
 twoFactor.caption: Sie können Ihren Account zusätzlich mit Zwei-Faktor-Authentifizierung absichern.
-organizationReader.headline: Stammdaten
-organizationReader.caption: Bitte überprüfen Sie, ob die im System hinterlegten Stammdaten aktuell sind.
-inviteTeam.headline: Mitarbeiter:in einladen
-inviteTeam.caption: Sie können eine Mitarbeiter:in zu Ihrem Team hinzufügen. Dazu benötigen wir die E-Mail-Adresse.
 
 export.xlsx.createdAt: Buchungsdatum
 export.xlsx.billingAddress: Rechnungsanschrift
@@ -524,6 +520,10 @@ notifications:
   payment_created.1: Beleg wird als PDF an Rechnungsempfänger versendet.
   user_password.0: Account › Passwort-Reset
   user_password.1: Enthält den Password-Link zum Zurücksetzen des Passworts.
+
+organization:
+  title: Stammdaten
+
 
 exports:
   title: Export

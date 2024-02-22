@@ -63,13 +63,13 @@ class PersonalDataType extends AbstractType
             ])
             ->add('phone', options: [
                 'constraints' => [
-                    new PhoneNumber(['defaultRegion' => 'DE']),
+                    new PhoneNumber(defaultRegion: ' DE'),
                 ],
                 'width' => '1/2',
             ])
             ->add('mobile', TextType::class, [
                 'constraints' => [
-                    new PhoneNumber(['defaultRegion' => 'DE', 'type' => PhoneNumber::MOBILE]),
+                    new PhoneNumber(type: PhoneNumber::MOBILE, defaultRegion: 'DE'),
                 ],
                 'width' => '1/2',
             ])
