@@ -8,6 +8,22 @@
 
         <h1>{{ 'organization.title'|trans }}</h1>
 
+        {% if aside_nav is defined and aside_nav.hasChildren %}
+            <div class="-ml-3 mt-6">
+                <nav class="flex space-x-4" aria-label="{{ aside_nav.name|trans }}">
+
+                    {% for item in aside_nav.children %}
+                        <a href="{{ item.uri }}"
+                           class="{{ item.current ? 'ml-3 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100/80' : 'text-gray-500 dark:text-gray-100/50 hover:text-gray-700 dark:hover:text-gray-100/80' }} rounded-md px-3 py-2 whitespace-nowrap text-sm font-medium"
+                           {% if item.current %}aria-current="page"{% endif %}>
+                            <span>{{ item.label|trans }}</span>
+                        </a>
+                    {% endfor %}
+
+                </nav>
+            </div>
+        {% endif %}
+
         <twig:Admin:OrganizationData class="mt-12" host="{{ host }}"/>
 
     </div>
