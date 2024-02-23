@@ -580,3 +580,14 @@ offerCategories:
   help.alias: Der Alias wird automatisch generiert.
   edit_offer_categories_categories_entry_delete: Kategorie löschen
   edit_offer_categories_categories_add: Neue Kategorie
+
+eraseData:
+  title: Daten löschen
+  cta.headline: Daten sofort löschen
+  cta.text: Personenbezogene Daten von untenstehenden Kindern ({count} Kinder + zugehörige Eltern) sind zum Löschen bereit. Bitte bestätigen Sie den Vorgang.
+  cta.button: Daten löschen
+  empty: Es gibt nichts zu löschen.
+  name: Name
+  latestAttendance: letzte Anmeldung
+  countAttendances: Anzahl Anmeldungen
+  user: Eltern-Account wird gelöscht

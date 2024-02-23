@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Controller\Page;
 
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
+use Ferienpass\CoreBundle\Facade\EraseDataFacade;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -65,6 +66,27 @@ final class ToolsController extends AbstractController
     {
         return $this->render('@FerienpassAdmin/page/tools/settings.html.twig', [
             'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'settings.title'),
+        ]);
+    }
+
+    #[IsGranted('ROLE_SUPER_ADMIN')]
+    #[Route('/daten-löschen', name: 'admin_erase_data')]
+    public function eraseData(EraseDataFacade $eraseDataFacade, Breadcrumb $breadcrumb, Request $request): Response
+    {
+        $participants = $eraseDataFacade->expiredParticipants();
+
+        $form = $this->createFormBuilder()->getForm();
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $eraseDataFacade->eraseData();
+
+            return $this->redirectToRoute('admin_erase_data');
+        }
+
+        return $this->render('@FerienpassAdmin/page/tools/erase_data.html.twig', [
+            'form' => $form,
+            'participants' => $participants,
+            'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'eraseData.title'),
         ]);
     }
 
