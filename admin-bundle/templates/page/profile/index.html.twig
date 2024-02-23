@@ -8,7 +8,7 @@
 
         <h1>{{ 'organization.title'|trans }}</h1>
 
-        {% if aside_nav is defined and aside_nav.hasChildren %}
+        {% if aside_nav is defined and aside_nav.hasChildren and aside_nav.children|length > 1 %}
             <div class="-ml-3 mt-6">
                 <nav class="flex space-x-4" aria-label="{{ aside_nav.name|trans }}">
 

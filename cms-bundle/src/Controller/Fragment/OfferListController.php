@@ -31,7 +31,7 @@ final class OfferListController extends AbstractController
 
     public function __invoke(Request $request, Session $session): Response
     {
-        $qb = $this->offerRepository->createQueryBuilder('o')->where('o.published = 1');
+        $qb = $this->offerRepository->createQueryBuilder('o')->where('o.state = "published"');
         $hasEditions = $this->editionRepository->count([]) > 0;
         $pageModel = $request->attributes->get('pageModel');
         if ($pageModel->edition) {
