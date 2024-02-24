@@ -15,10 +15,10 @@ namespace Ferienpass\AdminBundle\Controller\Page;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
+use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Export\ParticipantList\PdfExport;
 use Ferienpass\CoreBundle\Export\ParticipantList\WordExport;
-use Ferienpass\CoreBundle\Repository\AttendanceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +31,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/angebote/{edition?null}/{id}/zuordnen', requirements: ['id' => '\d+'])]
 class OfferAssignController extends AbstractController
 {
-    public function __construct(private readonly AttendanceRepository $attendanceRepository, private readonly PdfExport $pdfExport, private readonly WordExport $wordExport)
+    public function __construct(private readonly PdfExport $pdfExport, private readonly WordExport $wordExport)
     {
     }
 
@@ -45,7 +45,7 @@ class OfferAssignController extends AbstractController
             $sorting = $lastAttendance ? $lastAttendance->getSorting() : 0;
 
             foreach ($attendances as $a) {
-                $a->setConfirmed();
+                $a->setStatus(Attendance::STATUS_CONFIRMED, user: $this->getUser());
                 $a->setSorting($sorting += 128);
             }
 

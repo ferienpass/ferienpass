@@ -574,6 +574,7 @@ settings:
   title: Einstellungen
 
 offerCategories:
+  title: Angebotskategorien
   legend.categories.0: Kategorien
   label.name: Name
   label.alias: Alias

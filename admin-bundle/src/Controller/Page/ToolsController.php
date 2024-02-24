@@ -65,7 +65,7 @@ final class ToolsController extends AbstractController
     public function settings(Breadcrumb $breadcrumb): Response
     {
         return $this->render('@FerienpassAdmin/page/tools/settings.html.twig', [
-            'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'settings.title'),
+            'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'settings.title', 'offerCategories.title'),
         ]);
     }
 

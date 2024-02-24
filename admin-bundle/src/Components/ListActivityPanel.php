@@ -70,7 +70,7 @@ class ListActivityPanel extends AbstractController
         }
 
         $activity = array_merge(...$activity);
-        usort($activity, fn (AttendanceLog|ParticipantLog $a, AttendanceLog|ParticipantLog $b) => $a->getCreatedAt() <=> $b->getCreatedAt());
+        usort($activity, fn (ParticipantLog $a, ParticipantLog $b) => $a->getCreatedAt() <=> $b->getCreatedAt());
 
         return $activity;
     }
@@ -85,7 +85,7 @@ class ListActivityPanel extends AbstractController
             return;
         }
 
-        $comment = new ParticipantLog($this->item, $this->newComment, $user);
+        $comment = new ParticipantLog($this->item, $user, comment: $this->newComment);
 
         $em->persist($comment);
         $em->flush();
