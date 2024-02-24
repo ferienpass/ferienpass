@@ -24,9 +24,11 @@
         <div class="hidden md:flex">
             {% for i in 1..pagination.lastPage %}
                 {% if i == pagination.currentPage %}
-                    <strong class="-mt-px border-t-2 border-primary-500 dark:border-primary-500/70 pt-4 px-4 inline-flex items-center text-sm leading-5 font-medium text-primary-600 dark:text-primary-600/70 focus:outline-none focus:text-primary-800 focus:border-primary-700 transition ease-in-out duration-150">{{ i }}</strong>
+                    <strong id="pgnl{{ i }}"
+                            class="-mt-px border-t-2 border-primary-500 dark:border-primary-500/70 pt-4 px-4 inline-flex items-center text-sm leading-5 font-medium text-primary-600 dark:text-primary-600/70 focus:outline-none focus:text-primary-800 focus:border-primary-700 transition ease-in-out duration-150">{{ i }}</strong>
                 {% else %}
-                    <a href="{{ path(routeName ?? app.request.get('_route'), (this.routeParameters ?? app.request.query.all)|merge({page: i})) }}"
+                    <a id="pgnl{{ i }}"
+                       href="{{ path(routeName ?? app.request.get('_route'), (this.routeParameters ?? app.request.query.all)|merge({page: i})) }}"
                        data-action="live#action"
                        data-action-name="prevent|paginate(page={{ i }})"
                        class="-mt-px border-t-2 border-transparent pt-4 px-4 inline-flex items-center text-sm leading-5 font-medium text-gray-500 dark:text-gray-100/50 hover:text-gray-700 dark:hover:text-gray-100/80 hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:text-gray-700 focus:border-gray-400 transition ease-in-out duration-150"
