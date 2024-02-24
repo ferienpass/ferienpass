@@ -85,7 +85,8 @@
     "symfony/workflow": "^7.0",
     "symfony/ux-twig-component": "^2.13",
     "symfony/ux-autocomplete": "^2.14",
-    "symfony/expression-language": "^6.4"
+    "symfony/expression-language": "^6.4",
+    "league/commonmark": "^2.4"
   },
   "suggest": {
     "spatie/pdf-to-image": "To generate images from PDF Print Sheets"

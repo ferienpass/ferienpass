@@ -315,7 +315,9 @@
                                                 <twig:Admin:Alert type="error"
                                                                   message="Es gibt einen Fehler mit dem E-Mail-Text. Die E-Mail kann so nicht versendet werden."/>
                                             {% else %}
-                                                {{ preview|nl2br }}
+                                                <div class="prose prose-sm">
+                                                    {{ preview|raw }}
+                                                </div>
                                             {% endif %}
                                         </div>
                                     </div>

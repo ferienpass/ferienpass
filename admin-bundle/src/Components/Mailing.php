@@ -22,6 +22,7 @@ use Ferienpass\CoreBundle\Repository\OfferRepository;
 use Ferienpass\CoreBundle\Repository\ParticipantRepository;
 use Ferienpass\CoreBundle\Repository\UserRepository;
 use Ferienpass\CoreBundle\Session\Flash;
+use League\CommonMark\CommonMarkConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Notifier\Recipient\Recipient;
@@ -207,7 +208,7 @@ class Mailing extends AbstractController
     public function preview(): string|false
     {
         try {
-            return $this->twig->createTemplate($this->emailText)->render($this->context());
+            return $this->twig->createTemplate($this->parsedEmailText())->render($this->context());
         } catch (Error) {
             return false;
         }
@@ -250,7 +251,7 @@ class Mailing extends AbstractController
         foreach (array_keys($this->recipients()) as $email) {
             $notification = clone $this->mailingNotification;
             $notification->subject($this->emailSubject);
-            $notification->content($this->emailText);
+            $notification->content($this->parsedEmailText());
             $notification->context($this->context());
 
             $this->notifier->send($notification, new Recipient($email));
@@ -297,6 +298,16 @@ class Mailing extends AbstractController
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    private function parsedEmailText(): string
+    {
+        $converter = new CommonMarkConverter([
+            'html_input' => 'strip',
+            'allow_unsafe_links' => false,
+        ]);
+
+        return (string) $converter->convert($this->emailText);
     }
 
     private function queryParticipants()

@@ -53,7 +53,8 @@
     "twig/intl-extra": "^2.14 || ^3.0",
     "symfony/ux-dropzone": "^2.13",
     "symfony/ux-twig-component": "^2.13",
-    "symfony/ux-autocomplete": "^2.14"
+    "symfony/ux-autocomplete": "^2.14",
+    "league/commonmark": "^2.4"
   },
   "require-dev": {
     "contao/manager-plugin": "^2.7"
