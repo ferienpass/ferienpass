@@ -111,8 +111,9 @@
                                 <div class="flex items-center gap-x-2">
 
                                     {% if item.activity is defined %}
-                                        <button data-action="live#emit"
-                                                data-event="view(id={{ item.id }}, class=Ferienpass\CoreBundle\Entity\Participant)"
+                                        <button type="button"
+                                                data-action="live#emit"
+                                                data-event="view(id={{ item.id }})"
                                         >
                                             <span class="flex w-16 gap-x-1" title="Bearbeitungsnotizen">
                                                 <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24"

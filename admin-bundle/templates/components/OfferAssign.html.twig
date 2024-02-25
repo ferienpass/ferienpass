@@ -21,22 +21,22 @@
         </div>
         {% if max is not null %}
             <div class="px-4 border-b border-t -mt-px py-2 sm:px-6"
-{#                    {% if max is not null %}#}
-{#                        :class="{ 'bg-yellow-50 border-orange-200': count > {{ max }}, 'bg-gray-50 border-gray-200': count <= {{ max }} }"#}
-{#                    {% else %}#}
-{#                        :class="{ 'bg-gray-50 border-gray-200': true }"#}
-{#                    {% endif %}#}
+                    {#                    {% if max is not null %} #}
+                    {#                        :class="{ 'bg-yellow-50 border-orange-200': count > {{ max }}, 'bg-gray-50 border-gray-200': count <= {{ max }} }" #}
+                    {#                    {% else %} #}
+                    {#                        :class="{ 'bg-gray-50 border-gray-200': true }" #}
+                    {#                    {% endif %} #}
             >
                 <p class="leading-5"
-{#                        {% if max is not null %}#}
-{#                            :class="{ 'text-orange-700': count > {{ max }}, 'text-gray-700': count <= {{ max }} }"#}
-{#                        {% else %}#}
-{#                            :class="{ 'text-gray-700': true }"#}
-{#                        {% endif %}#}
+                        {#                        {% if max is not null %} #}
+                        {#                            :class="{ 'text-orange-700': count > {{ max }}, 'text-gray-700': count <= {{ max }} }" #}
+                        {#                        {% else %} #}
+                        {#                            :class="{ 'text-gray-700': true }" #}
+                        {#                        {% endif %} #}
                 >
                     <span class="ml-auto inline-block py-0.5 px-3 mr-1 -ml-2 text-xs leading-4 rounded-full font-medium"
-{#                          :class="{ 'bg-yellow-200 text-orange-700': count > {{ max }}, 'bg-gray-200 text-gray-600': count <= {{ max }} }"#}
-                          >0</span>von {% if max %}{{ max }} Kindern{% else %}∞{% endif %}
+                            {#                          :class="{ 'bg-yellow-200 text-orange-700': count > {{ max }}, 'bg-gray-200 text-gray-600': count <= {{ max }} }" #}
+                    >0</span>von {% if max %}{{ max }} Kindern{% else %}∞{% endif %}
                 </p>
             </div>
         {% endif %}
@@ -63,34 +63,50 @@
 
                             <div class="w-full">
                                 <div class="flex justify-between">
-                                    <a href="{{ path('admin_participants_edit', { id: attendance.participant.id }) }}"
-                                       class="font-medium block text-sm text-gray-700 truncate"
-                                       target="_blank"
-                                    >
-                                        {{ attendance.participant.name }}
-                                    </a>
-                                    <div>
-                                        {% if attendance.participant.user %}
-                                            <a class="text-gray-400 hover:text-gray-500"
-                                               href="{{ path('admin_accounts_edit', { id: attendance.participant.user.id }) }}"
-                                               target="_blank"
-                                            >
-                                                <span class="w-5 h-5 block">{{ source('@FerienpassCore/Icons/user-circle-solid.svg.twig') }}</span>
-                                            </a>
-                                        {% endif %}
-                                    </div>
+                                    {% if not attendance.participant %}
+                                        <span class="font-medium block text-sm text-gray-700 truncate">Gelöschter
+                                            Teilnehmer</span>
+                                    {% else %}
+                                        <a href="{{ path('admin_participants_edit', { id: attendance.participant.id }) }}"
+                                           class="font-medium block text-sm text-gray-700 truncate"
+                                           target="_blank"
+                                        >
+                                            {{ attendance.participant.name }}
+                                        </a>
+                                        <div>
+                                            {% if attendance.participant.user %}
+                                                <a class="text-gray-400 hover:text-gray-500"
+                                                   href="{{ path('admin_accounts_edit', { id: attendance.participant.user.id }) }}"
+                                                   target="_blank"
+                                                >
+                                                    <span class="w-5 h-5 block">{{ source('@FerienpassCore/Icons/user-circle-solid.svg.twig') }}</span>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                                 {% set firstDate = attendance.offer.dates|first %}
-                                <p class="text-gray-500 text-sm mb-1">{{ attendance.participant.age(firstDate ? firstDate.begin : null) ~ ' Jahre' }}</p>
+                                <p class="text-gray-500 text-sm mb-1">{{ attendance.participant ? attendance.participant.age(firstDate ? firstDate.begin : null) : attendance.age ~ ' Jahre' }}</p>
                                 <p class="text-gray-500 text-xs flex items-center">
                                     <span>{{ 'enrolledBefore'|trans({days: date(attendance.createdAt).diff(date()).days}) }}</span>
                                 </p>
-                                <a class="text-gray-500 text-xs"
-                                   href="{{ path('admin_participants_attendances', { id: attendance.participant.id }) }}"
-                                   target="_blank"
-                                >
-                                    {{ 'countOverallApplications'|trans({count: attendance.participant.attendancesNotWithdrawn(attendance.offer.edition)|length}) }}
-                                </a>
+                                {% if attendance.participant %}
+                                    <a class="text-gray-500 text-xs"
+                                       href="{{ path('admin_participants_attendances', { id: attendance.participant.id }) }}"
+                                       target="_blank"
+                                    >
+                                        {{ 'countOverallApplications'|trans({count: attendance.participant.attendancesNotWithdrawn(attendance.offer.edition)|length}) }}
+                                    </a>
+                                {% endif %}
+                                {% if attendance.activity is defined %}
+                                    <button type="button"
+                                            class="text-gray-500 text-xs"
+                                            data-action="live#emit"
+                                            data-event="view(id={{ attendance.id }})"
+                                    >
+                                        {{ attendance.activity|length }} Vorgänge/Kommentare
+                                    </button>
+                                {% endif %}
 
                                 {% if attendance.task and attendance.task.maxApplications %}
                                     <p class="mt-0.5">
@@ -171,5 +187,11 @@
             </div>
         {% endif %}
     {% endif %}
+
+    {% component "Admin:SlideOver" %}
+        {% block content %}
+            <twig:Admin:ListActivityPanel entity="Ferienpass\\CoreBundle\\Entity\\Attendance"/>
+        {% endblock %}
+    {% endcomponent %}
 
 </div>

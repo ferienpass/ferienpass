@@ -1,85 +1,16 @@
 {% trans_default_domain 'admin' %}
 
-<div {{ attributes }}>
+<div {{ attributes }} data-poll>
 
     {% if item is not null %}
 
-        <h1 class="text-xl font-bold text-gray-900 sm:text-2xl">{{ item.name }}</h1>
-
-        <p class="text-gray-500 text-sm">
-            <span class="block">{{ item.dateOfBirth|date('d.m.Y') }}
-                ({{ item.age }} Jahre)</span>
-            <span class="block">{{ item.ownPhone }}</span>
-            <span class="block">{{ item.ownMobile }}</span>
-            <span class="block">{{ item.ownEmail }}</span>
-        </p>
-
-        {% if item.user is not null %}
-            <h2 class="text-base font-bold text-gray-900">{{ item.user.firstname ~' '~item.user.lastname }}</h2>
-            <p class="text-gray-500 text-sm">
-
-                <span class="block">{{ item.user.email }}</span>
-                <span class="block">{{ item.user.phone }}</span>
-                <span class="block">{{ item.user.mobile }}</span>
-            </p>
-        {% endif %}
-
-        <h2 class="mt-6 text-base font-semibold leading-6 text-gray-900">Aktivität</h2>
-
-        {% if this.activity is empty %}
-
-            <p class="text-gray-500 italic text-sm">Bisher keine Kommentare&nbsp;…</p>
-        {% else %}
-            <ul role="list" class="mt-6 space-y-6">
-
-                {% for activity in this.activity %}
-                    {% if activity.comment is defined %}
-
-                        <li class="relative flex gap-x-4">
-                            <div class="absolute left-0 top-0 flex w-6 justify-center -bottom-6">
-                                <div class="w-px bg-gray-200"></div>
-                            </div>
-                            <span class="relative mt-3 flex-none inline-flex items-center justify-center h-6 w-6 rounded-full bg-gray-400">
-                                <span class="text-xs font-medium leading-none text-white">{{ activity.user.firstname|first|upper ~ activity.user.lastname|first|upper }}</span>
-                            </span>
-                            <div class="flex-auto rounded-md p-3 ring-1 ring-inset ring-gray-200">
-                                <div class="flex justify-between gap-x-4">
-                                    <div class="py-0.5 text-xs leading-5 text-gray-500">
-                                        <span
-                                                class="font-medium text-gray-900">{{ activity.user.firstname~' '~activity.user.lastname }}</span>
-                                        commented
-                                    </div>
-                                    <time datetime="{{ activity.createdAt|date('c') }}"
-                                          class="flex-none py-0.5 text-xs leading-5 text-gray-500">{{ activity.createdAt|ago }}
-                                    </time>
-                                </div>
-                                <p class="text-sm leading-6 text-gray-500">{{ activity.comment|nl2br }}</p>
-                            </div>
-                        </li>
-
-                    {% elseif activity.attendance is defined %}
-
-                        <li class="relative flex gap-x-4">
-                            <div class="absolute left-0 top-0 flex w-6 justify-center -bottom-6">
-                                <div class="w-px bg-gray-200"></div>
-                            </div>
-                            <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-white">
-                                <div class="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300"></div>
-                            </div>
-                            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-500">
-                                <span
-                                        class="font-medium text-gray-900">{{ activity.user.firstname ~' '~activity.user.lastname }}</span> {{ ('attendances.activity.'~activity.action)|trans }}
-                            </p>
-                            <time datetime="{{ activity.createdAt|date('c') }}"
-                                  class="flex-none py-0.5 text-xs leading-5 text-gray-500">{{ activity.createdAt|ago }}
-                            </time>
-                        </li>
-
-                    {% endif %}
-                {% endfor %}
-
-            </ul>
-        {% endif %}
+        {% set templateSuffix = {
+            'Ferienpass\\CoreBundle\\Entity\\Attendance': 'attendance',
+            'Ferienpass\\CoreBundle\\Entity\\Participant': 'participant',
+            'Ferienpass\\CoreBundle\\Entity\\Offer': 'offer'
+        } %}
+        {% set templateSuffix = attribute(templateSuffix, entity) %}
+        {% include "@FerienpassAdmin/components/_list_panel_#{templateSuffix}.html.twig" %}
 
         <!-- New comment form -->
         <div class="mt-6 flex gap-x-3">

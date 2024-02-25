@@ -2,10 +2,10 @@
 
 {% set config = {
     columns: {
-        name: '{{ item.participant.name }}',
-        email: '{{ item.participant.email }}',
-        mobile: '{{ item.participant.mobile }}',
-        phone: '{{ item.participant.phone }}',
+        name: '{{ item.participant ? item.participant.name : "Gelöschter Teillnehmer" }}',
+        email: '{{ item.participant ? item.participant.email : "-" }}',
+        mobile: '{{ item.participant ? item.participant.mobile : "-" }}',
+        phone: '{{ item.participant ? item.participant.phone : "-" }}',
         status: '
 {% import "@FerienpassAdmin/components/content_elements.html.twig" as partials %}
 {{ partials.status_badge(item.status, "sm", "-ml-2") }}

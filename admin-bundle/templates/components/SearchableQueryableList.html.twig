@@ -30,13 +30,13 @@
 
     {% component "Admin:Modal" %}
         {% block content %}
-            <twig:Admin:ListDeleteModal type="{{ (routeName ?? app.request.get('_route'))|split('_')[1] }}" />
+            <twig:Admin:ListDeleteModal type="{{ (routeName ?? app.request.get('_route'))|split('_')[1] }}"/>
         {% endblock %}
     {% endcomponent %}
 
     {% component "Admin:SlideOver" %}
         {% block content %}
-            <twig:Admin:ListActivityPanel />
+            <twig:Admin:ListActivityPanel entity="{{ entityClass }}"/>
         {% endblock %}
     {% endcomponent %}
 

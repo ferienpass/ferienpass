@@ -1,0 +1,21 @@
+{% extends '@FerienpassAdmin/components/_list_panel.html.twig' %}
+
+{% block summary %}
+    <p class="text-gray-500 text-sm">
+        <span class="block">{{ item.dateOfBirth|date('d.m.Y') }}
+            ({{ item.age }} Jahre)</span>
+        <span class="block">{{ item.ownPhone }}</span>
+        <span class="block">{{ item.ownMobile }}</span>
+        <span class="block">{{ item.ownEmail }}</span>
+    </p>
+
+    {% if item.user is not null %}
+        <h2 class="text-base font-bold text-gray-900">{{ item.user.name }}</h2>
+        <p class="text-gray-500 text-sm">
+
+            <span class="block">{{ item.user.email }}</span>
+            <span class="block">{{ item.user.phone }}</span>
+            <span class="block">{{ item.user.mobile }}</span>
+        </p>
+    {% endif %}
+{% endblock %}

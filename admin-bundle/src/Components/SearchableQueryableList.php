@@ -29,6 +29,7 @@ use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
+use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
 #[AsLiveComponent(route: 'live_component_admin')]
 class SearchableQueryableList extends AbstractController
@@ -137,6 +138,12 @@ class SearchableQueryableList extends AbstractController
         $this->routeParameters['page'] = $page;
     }
 
+    #[ExposeInTemplate]
+    public function entityClass(): string
+    {
+        return explode(' ', (string) $this->qb->getDQLPart('from')[0], 2)[0];
+    }
+
     protected function instantiateForm(): FormInterface
     {
         if (null === $filter = $this->getFilter()) {
@@ -181,8 +188,6 @@ class SearchableQueryableList extends AbstractController
 
     private function getFilter(): ?AbstractFilter
     {
-        $entity = explode(' ', (string) $this->qb->getDQLPart('from')[0], 2)[0];
-
-        return $this->filterRegistry->byEntity($entity);
+        return $this->filterRegistry->byEntity($this->entityClass());
     }
 }

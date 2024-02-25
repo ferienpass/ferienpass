@@ -14,7 +14,10 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Components;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Ferienpass\CoreBundle\Entity\AttendanceLog;
+use Ferienpass\CoreBundle\Entity\Attendance;
+use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\OfferLog;
+use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Entity\ParticipantLog;
 use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,6 +38,9 @@ class ListActivityPanel extends AbstractController
     use DefaultActionTrait;
     use ValidatableComponentTrait;
 
+    #[LiveProp]
+    public string $entity;
+
     #[LiveProp(hydrateWith: 'hydrateItem', dehydrateWith: 'dehydrateItem')]
     public ?object $item = null;
 
@@ -47,9 +53,9 @@ class ListActivityPanel extends AbstractController
     }
 
     #[LiveListener('view')]
-    public function open(#[LiveArg] int $id, #[LiveArg] string $class)
+    public function open(#[LiveArg] int $id)
     {
-        $this->item = $this->entityManager->getRepository($class)->find($id);
+        $this->item = $this->entityManager->getRepository($this->entity)->find($id);
         $this->newComment = '';
 
         $this->resetValidation();
@@ -58,21 +64,7 @@ class ListActivityPanel extends AbstractController
 
     public function activity()
     {
-        if (null === $this->item) {
-            return null;
-        }
-
-        $activity = [];
-        $activity[] = $this->item->getActivity()->toArray();
-
-        foreach ($this->item->getAttendances() as $attendance) {
-            $activity[] = $attendance->getActivity()->toArray();
-        }
-
-        $activity = array_merge(...$activity);
-        usort($activity, fn (ParticipantLog $a, ParticipantLog $b) => $a->getCreatedAt() <=> $b->getCreatedAt());
-
-        return $activity;
+        return $this->item?->getActivity()->toArray();
     }
 
     #[LiveAction]
@@ -85,7 +77,16 @@ class ListActivityPanel extends AbstractController
             return;
         }
 
-        $comment = new ParticipantLog($this->item, $user, comment: $this->newComment);
+        $comment = match (true) {
+            $this->item instanceof Attendance => new ParticipantLog($this->item->getParticipant(), $user, attendance: $this->item, comment: $this->newComment),
+            $this->item instanceof Participant => new ParticipantLog($this->item, $user, comment: $this->newComment),
+            $this->item instanceof Offer => new OfferLog($this->item, $user, comment: $this->newComment),
+            default => null,
+        };
+
+        if (null === $comment) {
+            return;
+        }
 
         $em->persist($comment);
         $em->flush();
@@ -98,22 +99,17 @@ class ListActivityPanel extends AbstractController
         // $this->addFlash('success', 'Post saved!');
     }
 
-    public function dehydrateItem(?object $item): array|null
+    public function dehydrateItem(?object $item): int|null
     {
-        if (null === $item) {
-            return null;
-        }
-
-        return [$item::class, $item->getId()];
+        return $item?->getId();
     }
 
-    public function hydrateItem(?array $data): ?object
+    public function hydrateItem(?int $data): ?object
     {
         if (null === $data) {
             return null;
         }
-        [$class, $id] = $data;
 
-        return $this->entityManager->getRepository($class)->find($id);
+        return $this->entityManager->getRepository($this->entity)->find($data);
     }
 }

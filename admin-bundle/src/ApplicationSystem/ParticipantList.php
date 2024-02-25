@@ -49,6 +49,10 @@ class ParticipantList
     public function confirm(array $attendances, bool $reorder = false): void
     {
         foreach ($attendances as $attendance) {
+            if (null === $attendance->getParticipant()) {
+                continue;
+            }
+
             $oldStatus = $attendance->getStatus();
             if (Attendance::STATUS_CONFIRMED === $oldStatus) {
                 continue;
@@ -76,6 +80,10 @@ class ParticipantList
     public function reject(array $attendances, bool $reorder = false): void
     {
         foreach ($attendances as $attendance) {
+            if (null === $attendance->getParticipant()) {
+                continue;
+            }
+
             $oldStatus = $attendance->getStatus();
 
             if (Attendance::STATUS_WITHDRAWN === $oldStatus) {

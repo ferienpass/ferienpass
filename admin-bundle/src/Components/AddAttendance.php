@@ -60,7 +60,7 @@ class AddAttendance extends AbstractController
         $this->submitForm();
 
         /** @var AddAttendanceDto $dto */
-        $dto = $this->getFormInstance()->getData();
+        $dto = $this->getForm()->getData();
         $attendanceFacade->create($dto->getOffer(), $dto->getParticipant(), $dto->getStatus(), $dto->shallNotify());
 
         return $this->redirectToRoute('admin_participants_attendances', ['id' => $this->participant->getId()]);

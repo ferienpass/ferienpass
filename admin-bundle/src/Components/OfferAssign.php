@@ -47,6 +47,10 @@ class OfferAssign extends AbstractController
     {
         $this->denyAccessUnlessGranted('participants.view', $attendance->getOffer());
 
+        if (null === $attendance->getParticipant()) {
+            return;
+        }
+
         $offer = $attendance->getOffer();
         $oldStatus = $attendance->getStatus();
 
