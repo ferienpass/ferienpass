@@ -62,10 +62,26 @@ final class ToolsController extends AbstractController
 
     #[Route('/einstellungen', name: 'admin_tools_settings')]
     #[IsGranted('ROLE_SUPER_ADMIN')]
-    public function settings(Breadcrumb $breadcrumb): Response
+    public function settings(): Response
     {
-        return $this->render('@FerienpassAdmin/page/tools/settings.html.twig', [
+        return $this->redirectToRoute('admin_tools_settings_export');
+    }
+
+    #[Route('/einstellungen/angebotskategorien', name: 'admin_tools_settings_categories')]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
+    public function settingsCategories(Breadcrumb $breadcrumb): Response
+    {
+        return $this->render('@FerienpassAdmin/page/tools/settings_categories.html.twig', [
             'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'settings.title', 'offerCategories.title'),
+        ]);
+    }
+
+    #[Route('/einstellungen/export', name: 'admin_tools_settings_export')]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
+    public function settingsExports(Breadcrumb $breadcrumb): Response
+    {
+        return $this->render('@FerienpassAdmin/page/tools/settings_export.html.twig', [
+            'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'settings.title', 'export.title'),
         ]);
     }
 
