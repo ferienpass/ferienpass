@@ -11,7 +11,7 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CoreBundle\Form;
+namespace Ferienpass\CmsBundle\Form;
 
 use Ferienpass\CmsBundle\Form\SimpleType\ContaoRequestTokenType;
 use Ferienpass\CoreBundle\Dto\Annotation\OfferFilterType as OfferFilterTypeAnnotation;

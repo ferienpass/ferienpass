@@ -15,8 +15,8 @@ namespace Ferienpass\CmsBundle\Controller\Fragment;
 
 use Contao\CoreBundle\Controller\AbstractFragmentController;
 use Doctrine\ORM\EntityManagerInterface;
+use Ferienpass\CmsBundle\Form\UserPersonalDataType;
 use Ferienpass\CoreBundle\Entity\User;
-use Ferienpass\CoreBundle\Form\UserPersonalDataType;
 use Ferienpass\CoreBundle\Ux\Flash;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

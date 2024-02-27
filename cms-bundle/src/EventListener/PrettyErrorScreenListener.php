@@ -11,8 +11,9 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CoreBundle\EventListener;
+namespace Ferienpass\CmsBundle\EventListener;
 
+use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\CoreBundle\Exception\InvalidRequestTokenException;
 use Contao\CoreBundle\Exception\ResponseException;
 use Contao\CoreBundle\Util\LocaleUtil;
@@ -29,7 +30,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 use Twig\Environment;
 
-#[AsEventListener]
+#[AsEventListener(priority: -48)]
 class PrettyErrorScreenListener
 {
     public function __construct(private readonly Environment $twig, private readonly PageBuilderFactory $pageBuilderFactory)
@@ -38,12 +39,14 @@ class PrettyErrorScreenListener
 
     public function __invoke(ExceptionEvent $event): void
     {
-        return;
         if (!$event->isMainRequest()) {
             return;
         }
 
         $request = $event->getRequest();
+        if (ContaoCoreBundle::SCOPE_FRONTEND !== $request->attributes->get('_scope')) {
+            return;
+        }
 
         if ('html' !== $request->getRequestFormat()) {
             return;

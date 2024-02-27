@@ -11,10 +11,10 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CoreBundle\Form;
+namespace Ferienpass\CmsBundle\Form;
 
+use Ferienpass\CmsBundle\Form\CompundType\ParticipantType;
 use Ferienpass\CmsBundle\Form\SimpleType\ContaoRequestTokenType;
-use Ferienpass\CoreBundle\Form\CompundType\ParticipantType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;

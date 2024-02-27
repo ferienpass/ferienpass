@@ -15,9 +15,9 @@ namespace Ferienpass\CmsBundle\Controller\Fragment;
 
 use Contao\CoreBundle\Controller\AbstractController;
 use Doctrine\ORM\EntityManagerInterface;
+use Ferienpass\CmsBundle\Form\UserParticipantsType;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Entity\User;
-use Ferienpass\CoreBundle\Form\UserParticipantsType;
 use Ferienpass\CoreBundle\Ux\Flash;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

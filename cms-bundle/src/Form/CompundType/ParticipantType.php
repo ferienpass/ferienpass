@@ -11,7 +11,7 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CoreBundle\Form\CompundType;
+namespace Ferienpass\CmsBundle\Form\CompundType;
 
 use Ferienpass\CoreBundle\Entity\Participant;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber;

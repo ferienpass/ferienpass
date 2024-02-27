@@ -27,11 +27,6 @@ class Login extends AbstractController
     use ComponentWithFormTrait;
     use DefaultActionTrait;
 
-    protected function instantiateForm(): FormInterface
-    {
-        return $this->createForm(UserLoginType::class);
-    }
-
     public function targetPath(Request $request): string
     {
         // If the form was submitted and the credentials were wrong, take the target
@@ -50,5 +45,10 @@ class Login extends AbstractController
         }
 
         return $targetPath ?? '';
+    }
+
+    protected function instantiateForm(): FormInterface
+    {
+        return $this->createForm(UserLoginType::class);
     }
 }

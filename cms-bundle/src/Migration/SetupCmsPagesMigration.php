@@ -56,6 +56,8 @@ class SetupCmsPagesMigration extends AbstractMigration
             $this->connection->executeStatement("INSERT INTO tl_page (pid, tstamp, title, alias, type, published, hide) VALUES ($rootId, $time, '$type', '$type', '$type', 1, 1); ");
         }
 
+        $this->connection->executeStatement('UPDATE tl_page SET protected=0 WHERE protected=1');
+
         return $this->createResult(true);
     }
 }

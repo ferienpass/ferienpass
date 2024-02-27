@@ -11,26 +11,19 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CoreBundle\Form;
+namespace Ferienpass\CmsBundle\Form;
 
+use Ferienpass\CmsBundle\Form\CompundType\ParticipantType;
 use Ferienpass\CmsBundle\Form\SimpleType\ContaoRequestTokenType;
-use Ferienpass\CoreBundle\Form\CompundType\ParticipantType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Security;
 
 class ApplyFormParticipantType extends AbstractType
 {
-    public function __construct(private readonly Security $security)
-    {
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $user = $this->security->getUser();
-
         $builder
             ->add('participant', ParticipantType::class)
             ->add('request_token', ContaoRequestTokenType::class)
