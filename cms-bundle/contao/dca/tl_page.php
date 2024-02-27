@@ -54,10 +54,9 @@ unset(
 $GLOBALS['TL_DCA']['tl_page']['fields']['edition'] = [
     'exclude' => true,
     'inputType' => 'select',
-    'foreignKey' => 'Edition.name',
     'eval' => [
         'tl_class' => 'w50',
         'includeBlankOption' => true,
     ],
-    'sql' => "varchar(64) NOT NULL default ''",
+    'sql' => 'int(10) NOT NULL default 0',
 ];
