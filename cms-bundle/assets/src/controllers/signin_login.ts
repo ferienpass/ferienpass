@@ -7,11 +7,14 @@ import {Component, getComponent} from '@symfony/ux-live-component';
 export default class extends Controller {
     static values = {
         requestToken: String,
+        targetPath: String,
     };
 
-    static targets = [ "username", "password", "remember_me" ]
+    static targets = ["error", "username", "password", "remember_me"]
 
+    declare readonly targetPathValue?: string;
     declare readonly requestTokenValue?: string;
+    declare readonly errorTarget: HTMLElement;
     declare readonly usernameTarget: HTMLInputElement;
     declare readonly passwordTarget: HTMLInputElement;
 
@@ -29,12 +32,26 @@ export default class extends Controller {
         });
     }
 
-    submit(event: SubmitEvent) {
-       fetch('/check_login', { method: 'POST', headers: {'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest'}, body: JSON.stringify({username: this.usernameTarget.value, password: this.passwordTarget.value, REQUEST_TOKEN: this.requestTokenValue}) })
-            .then(response => response.json())
-            //.then(json => message = json.message)
-            //.then(message => { if(!message) authError = true })
-            .catch(() => { window.location.reload() })
-            //.finally(() => { isLoading = false; })
+    async submit(event: SubmitEvent) {
+        const response = await fetch('/check_login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest'},
+            body: JSON.stringify({
+                username: this.usernameTarget.value,
+                password: this.passwordTarget.value,
+                REQUEST_TOKEN: this.requestTokenValue
+            })
+        })
+
+        const json = await response.json()
+
+        if (!("user" in json)) {
+            this.errorTarget.classList.remove('hidden')
+        } else {
+            this.errorTarget.classList.add('hidden')
+            if (this.targetPathValue) {
+                window.location.href = this.targetPathValue
+            }
+        }
     }
 }

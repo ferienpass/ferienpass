@@ -1,4 +1,4 @@
-<div {{ attributes.defaults(stimulus_controller('ferienpass/cms-signin-login', { requestToken: contao_request_token() })) }}>
+<div {{ attributes.defaults(stimulus_controller('ferienpass/cms-signin-login', { requestToken: contao_request_token(), targetPath: this.targetPath(app.request) })) }}>
 
     <div class="mx-auto w-full max-w-sm">
         <div>
@@ -12,8 +12,7 @@
                 attr: stimulus_action('ferienpass/cms-signin-login', 'submit:prevent').toArray()
             }) }}
 
-            {% if error %}
-            <div class="mt-6 mb-6">
+            <div class="mt-6 mb-6 hidden" {{ stimulus_target('ferienpass/cms-signin-login', 'error') }}>
                 {% embed '@FerienpassCore/Alert/error.html.twig' with {headline: 'Anmeldung fehlgeschlagen'} %}
                     {% block content %}
                         <ul class="list-disc">
@@ -28,37 +27,28 @@
                     {% endblock %}
                 {% endembed %}
             </div>
-            {% endif %}
 
-            <div class="mt-6 mb-6">
-                {% embed '@FerienpassCore/Alert/error.html.twig' %}
-                    {% block content %}<p></p>{% endblock %}
-                {% endembed %}
+            <div class="grid gap-4">
+                {{ form_row(form.username, { attr: stimulus_target('ferienpass/cms-signin-login', 'username').toArray() }) }}
+                {{ form_row(form.password, { attr: stimulus_target('ferienpass/cms-signin-login', 'password').toArray() }) }}
             </div>
 
-                <div class="grid gap-4">
-                    {{ form_row(form.username, { attr: stimulus_target('ferienpass/cms-signin-login', 'username').toArray() }) }}
-                    {{ form_row(form.password, { attr: stimulus_target('ferienpass/cms-signin-login', 'password').toArray() }) }}
+            <div class="mt-6 flex items-center justify-between">
+
+                <div class="flex items-center">
+                    {{ form_row(form.autologin, { attr: stimulus_target('ferienpass/cms-signin-login', 'remember_me').toArray() }) }}
                 </div>
 
-                <div class="mt-6 flex items-center justify-between">
-
-                    <div class="flex items-center">
-                        {{ form_row(form.autologin, { attr: stimulus_target('ferienpass/cms-signin-login', 'remember_me').toArray() }) }}
-                    </div>
-
-                    <div class="text-sm leading-5">
-                        <a class="font-medium text-primary-600 hover:text-primary-500 focus:outline-none focus:underline transition ease-in-out duration-150"
-                           href="{{ path('lost_password') }}">Passwort vergessen?</a>
-                    </div>
+                <div class="text-sm leading-5">
+                    <a class="font-medium text-primary-600 hover:text-primary-500 focus:outline-none focus:underline transition ease-in-out duration-150"
+                       href="{{ path('lost_password') }}">Passwort vergessen?</a>
                 </div>
+            </div>
 
             <div class="mt-6">
                 {{ form_row(form.submit, {'attr': {'class': 'w-full'}}) }}
             </div>
             {{ form_end(form) }}
-
-{#            {% include '@FerienpassCore/Partial/loading-overlay.html.twig' %}#}
 
         </div>
     </div>
