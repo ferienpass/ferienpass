@@ -45,7 +45,7 @@ final class OfferListController extends AbstractController
             $qb->andWhere('o.edition = :edition')->setParameter('edition', $edition->getId(), Types::INTEGER);
         }
 
-        if ($hasEditions && null === $edition) {
+        if ($hasEditions && (null === $edition || !$edition->isOnline())) {
             return $this->render('@FerienpassCms/fragment/offer_list.html.twig');
         }
 
