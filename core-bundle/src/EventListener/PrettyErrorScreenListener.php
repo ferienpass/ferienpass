@@ -20,20 +20,19 @@ use Contao\PageModel;
 use Contao\StringUtil;
 use Ferienpass\CmsBundle\Fragment\FragmentReference;
 use Ferienpass\CmsBundle\Page\PageBuilderFactory;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\AcceptHeader;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Twig\Environment;
-use Twig\Error\Error;
 
+#[AsEventListener]
 class PrettyErrorScreenListener
 {
-    public function __construct(private readonly bool $prettyErrorScreens, private readonly Environment $twig, private readonly PageBuilderFactory $pageBuilderFactory)
+    public function __construct(private readonly Environment $twig, private readonly PageBuilderFactory $pageBuilderFactory)
     {
     }
 
@@ -62,14 +61,6 @@ class PrettyErrorScreenListener
         $exception = $event->getThrowable();
 
         switch (true) {
-            case $exception instanceof UnauthorizedHttpException:
-                $this->renderErrorScreenByType(401, $event);
-                break;
-
-            case $exception instanceof AccessDeniedHttpException:
-                $this->renderErrorScreenByType(403, $event);
-                break;
-
             case $exception instanceof NotFoundHttpException:
                 $this->renderErrorScreenByType(404, $event);
                 break;
@@ -135,17 +126,9 @@ class PrettyErrorScreenListener
 
     private function renderTemplate(string $template, int $statusCode, ExceptionEvent $event): void
     {
-        if (!$this->prettyErrorScreens) {
-            return;
-        }
-
         $view = '@FerienpassCore/Error/'.$template.'.html.twig';
         $parameters = $this->getTemplateParameters($view, $statusCode, $event);
-        try {
-            $event->setResponse(new Response($this->twig->render($view, $parameters), $statusCode));
-        } catch (Error) {
-            $event->setResponse(new Response($this->twig->render('@ContaoCore/Error/error.html.twig'), 500));
-        }
+        $event->setResponse(new Response($this->twig->render($view, $parameters), $statusCode));
     }
 
     private function getTemplateParameters(string $view, int $statusCode, ExceptionEvent $event): array
@@ -167,12 +150,6 @@ class PrettyErrorScreenListener
     private function getResponseFromPageHandler(int $type, ?PageModel $pageModel): ?Response
     {
         return match (true) {
-            401 === $type => $this->pageBuilderFactory->create($pageModel)
-                ->addFragment('main', new FragmentReference('ferienpass.fragment.error401'))
-                ->getResponse(),
-            403 === $type => $this->pageBuilderFactory->create($pageModel)
-                ->addFragment('main', new FragmentReference('ferienpass.fragment.error403'))
-                ->getResponse(),
             404 === $type => $this->pageBuilderFactory->create($pageModel)
                 ->addFragment('main', new FragmentReference('ferienpass.fragment.error404'))
                 ->getResponse(),

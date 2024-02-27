@@ -16,8 +16,8 @@ namespace Ferienpass\CmsBundle\Controller\ContentElement;
 use Contao\ContentModel;
 use Contao\CoreBundle\Controller\ContentElement\AbstractContentElementController;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsContentElement;
+use Contao\CoreBundle\Twig\FragmentTemplate;
 use Contao\StringUtil;
-use Contao\Template;
 use Ferienpass\CoreBundle\Entity\EditionTask;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,7 +30,7 @@ class CountdownController extends AbstractContentElementController
     {
     }
 
-    protected function getResponse(Template $template, ContentModel $model, Request $request): Response
+    protected function getResponse(FragmentTemplate $template, ContentModel $model, Request $request): Response
     {
         $passEdition = $this->editionRepository->findOneClosestByTask('show_offers');
         if (null === $passEdition) {

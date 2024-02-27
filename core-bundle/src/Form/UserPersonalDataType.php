@@ -66,7 +66,7 @@ class UserPersonalDataType extends AbstractType
                 'label' => 'tl_member.phone.0',
                 'translation_domain' => 'contao_tl_member',
                 'constraints' => [
-                    new PhoneNumber(['type' => PhoneNumber::FIXED_LINE, 'defaultRegion' => 'DE']),
+                    new PhoneNumber(type: PhoneNumber::FIXED_LINE, defaultRegion: 'DE'),
                 ],
                 'attr' => [
                     'placeholder' => '030-00000',
@@ -76,7 +76,7 @@ class UserPersonalDataType extends AbstractType
                 'label' => 'tl_member.mobile.0',
                 'translation_domain' => 'contao_tl_member',
                 'constraints' => [
-                    new PhoneNumber(['type' => PhoneNumber::MOBILE, 'defaultRegion' => 'DE']),
+                    new PhoneNumber(type: PhoneNumber::MOBILE, defaultRegion: 'DE'),
                 ],
                 'attr' => [
                     'placeholder' => '0172-0000000',
