@@ -69,7 +69,7 @@
                                 <twig:Admin:Dropdown>
                                     <twig:block name="dropdown">
                                         {% for action in actions %}
-                                            {% embed '@FerienpassAdmin/components/dropdown-a.html.twig' with { uri: action.uri, attr: action.extra('attr', [], linkAttributes: action.linkAttributes) } %}
+                                            {% embed '@FerienpassAdmin/components/dropdown-a.html.twig' with { uri: action.uri, attr: action.extra('attr', []), linkAttributes: action.linkAttributes } %}
                                                 {% trans_default_domain 'admin' %}
                                                 {% block link %}
                                                     <span class="mr-3 h-5 w-5 text-gray-400 flex-shrink-0">{{ source('@FerienpassAdmin/icons/'~action.extra('icon')~'.svg', ignore_missing = true) }}</span>
