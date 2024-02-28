@@ -42,7 +42,7 @@ class SearchableQueryableList extends AbstractController
     public array $config;
 
     #[LiveProp]
-    public array $searchable;
+    public array $searchable = [];
 
     #[LiveProp(writable: true)]
     public string $query = '';

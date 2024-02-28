@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Menu;
 
 use Ferienpass\AdminBundle\Controller\Page\AccountsController;
+use Ferienpass\CoreBundle\Entity\AccessCodeStrategy;
 use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Host;
@@ -63,6 +64,11 @@ class ActionsBuilder
 
         if ($item instanceof Edition) {
             $this->editions($menu, $item);
+
+            return $menu;
+        }
+        if ($item instanceof AccessCodeStrategy) {
+            $this->accessCodes($menu, $item);
 
             return $menu;
         }
@@ -261,6 +267,24 @@ class ActionsBuilder
         $root->addChild('delete', [
             'label' => 'editions.action.delete',
             'display' => $this->isGranted('delete', $item),
+            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
+        ]);
+    }
+
+    private function accessCodes(ItemInterface $root, AccessCodeStrategy $item)
+    {
+        $root->addChild('edit', [
+            'label' => 'accessCodes.action.edit',
+            'route' => 'admin_accessCodes_edit',
+            'routeParameters' => ['id' => $item->getId()],
+            // 'display' => $this->isGranted('edit', $item),
+            'extras' => ['icon' => 'pencil-solid'],
+        ]);
+
+        $class = $item::class;
+        $root->addChild('delete', [
+            'label' => 'accessCodes.action.delete',
+            // 'display' => $this->isGranted('delete', $item),
             'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
         ]);
     }

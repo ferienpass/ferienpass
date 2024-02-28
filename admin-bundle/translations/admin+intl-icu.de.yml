@@ -594,3 +594,23 @@ eraseData:
   latestAttendance: letzte Anmeldung
   countAttendances: Anzahl Anmeldungen
   user: Eltern-Account wird gelöscht
+
+accessCodes:
+  title: Zugangscodes
+  new: Neue Zugangscode-Strategie
+  legend.base.0: Name
+  legend.base.1: Der Name hilft Ihnen, die Zugangscodes im System wiederzufinden. Wenn die Zugangscodes für den Osterferienpass gelten sollen, dann vergeben Sie doch ”Osterferienpass“ als Name.
+  legend.codes.0: Zugangscodes
+  legend.codes.1: Hier pflegen Sie die tatsächlichen Zugangscodes, die von den Teilnehmenden eingelöst werden können.
+  legend.settings.0: Einstellungen
+  legend.settings.1: Meistens ist es sinnvoll, dass ein Zugangscode nur einmal eingelöst werden darf. Sie können aber auch 0 auswählen, dann können die nachfolgenden Codes beliebig oft verwendet werden.
+  label.name: Name
+  label.max: Benutzungsgrenze
+  label.codes: Zugangscodes
+  help.max: Geben Sie an, wie oft ein Zugangscode benutzt werden darf.
+  action.edit: Bearbeiten
+  action.delete: Löschen
+  deleteModal.headline: Zugangscodes löschen
+  deleteModal.confirm: Sind Sie sicher, dass Sie folgenden Zugangscodes löschen möchten?
+  edit_access_codes_codes_add: Neuer Code
+  edit_access_codes_codes_entry_delete: Code löschen

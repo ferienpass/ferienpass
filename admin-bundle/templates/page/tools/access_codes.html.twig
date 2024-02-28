@@ -1,0 +1,68 @@
+{% extends "@FerienpassAdmin/page/tools/_settings.html.twig" %}
+{% trans_default_domain 'admin' %}
+
+{% import "@FerienpassAdmin/components/content_elements.html.twig" as partials %}
+
+{% set translationPrefix = app.request.get('_route')|split('_')[1] %}
+{% set action = app.request.get('_route')|split('_')[2] %}
+
+{% block main %}
+
+
+    {% set headline = "#{translationPrefix}.#{action}.title"|trans %}
+
+    <div class="flex justify-between">
+
+        {{ partials.h1((headline == "#{translationPrefix}.#{action}.title") ? "#{translationPrefix}.title"|trans : headline) }}
+
+        <div class="flex space-x-3 justify-end">
+
+            {% block headline_actions %}
+
+                {% if exports is defined %}
+
+                    <twig:Admin:Dropdown toggleLabel="Exportieren…" toggleSize="lg">
+                        <twig:block name="dropdown">
+                            {% for format in exports %}
+                                {% embed '@FerienpassAdmin/components/dropdown-a.html.twig' with {'uri': path(app.request.attributes.get('_route'), app.request.query.all|merge(app.request.get('_route_params'))|merge({ '_suffix': ".#{format}" }))} %}
+                                    {% block link %}
+                                        <span class="mr-1.5 h-5 w-5 text-gray-400 flex-shrink-0">{{ source('@FerienpassAdmin/icons/filetype/'~format~'.svg', ignore_missing = true) }}</span>
+                                        <span class="text-left leading-tight">{{ format|upper }}</span>
+                                    {% endblock %}
+                                {% endembed %}
+                            {% endfor %}
+                        </twig:block>
+                    </twig:Admin:Dropdown>
+
+                {% endif %}
+
+                {% if createUrl|default(null) is not null %}
+                    <a href="{{ createUrl }}"
+                       class="rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">
+                        <span class="flex items-center space-x-1">
+                            <span class="h-5 w-5">{{ source('@FerienpassAdmin/icons/plus-solid.svg') }}</span>
+                            <span>Neu anlegen</span>
+                        </span>
+                    </a>
+                {% endif %}
+
+            {% endblock %}
+
+        </div>
+
+    </div>
+
+
+    {{ component('Admin:SearchableQueryableList', {
+        qb: qb,
+        routeName: app.request.get('_route'),
+        routeParameters: app.request.query.all,
+        config: {
+            title: '{{ item.name }}',
+            info: [
+                "{{ item.codes|length }} Codes"
+            ]
+        }
+    }) }}
+
+{% endblock %}

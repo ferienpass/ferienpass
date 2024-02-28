@@ -64,6 +64,10 @@
                             holiday: "{{ item.holiday ? item.holiday.periodBegin|date('d.m.Y') ~ ' - ' ~  item.holiday.periodEnd|date('d.m.Y') : '' }}",
                             countOffers: '{{ item.offers|length }}',
                             archived: '{{ item.archived ? "ja" : "nein" }}',
+                        },
+                        accessCodes: {
+                            name: '{{ item.name }}',
+                            codes: '{{ item.codes|length }} Codes',
                         }
                     } %}
 

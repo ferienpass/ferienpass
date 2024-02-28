@@ -65,6 +65,12 @@ class AccessCode
         return $this->strategy;
     }
 
+    // TODO make immutable
+    public function setCode(?string $code): void
+    {
+        $this->code = (string) $code;
+    }
+
     public function getCode(): string
     {
         return $this->code;

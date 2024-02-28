@@ -16,9 +16,10 @@ namespace Ferienpass\CoreBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ferienpass\CoreBundle\Repository\AccessCodeStrategyRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: AccessCodeStrategyRepository::class)]
 class AccessCodeStrategy
 {
     #[ORM\Id]
@@ -36,9 +37,8 @@ class AccessCodeStrategy
     #[ORM\OneToMany(mappedBy: 'strategy', targetEntity: AccessCode::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $codes;
 
-    #[ORM\Column(type: 'boolean')]
-    private bool $unique = true;
     #[ORM\Column(type: 'integer')]
+    #[Assert\GreaterThanOrEqual(0)]
     private int $max = 1;
 
     public function __construct()
@@ -72,19 +72,19 @@ class AccessCodeStrategy
         return $this->codes;
     }
 
-    public function isUnique(): bool
+    public function addCode(AccessCode $code)
     {
-        return $this->unique;
+        $this->codes->add($code);
+    }
+
+    public function removeCode(AccessCode $code)
+    {
+        $this->codes->removeElement($code);
     }
 
     public function getMax(): int
     {
         return $this->max;
-    }
-
-    public function setUnique(bool $unique): void
-    {
-        $this->unique = $unique;
     }
 
     public function setMax(int $max): void

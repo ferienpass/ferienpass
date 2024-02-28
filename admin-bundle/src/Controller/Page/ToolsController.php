@@ -13,8 +13,13 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
+use Ferienpass\AdminBundle\Form\EditAccessCodesType;
+use Ferienpass\CoreBundle\Entity\AccessCodeStrategy;
 use Ferienpass\CoreBundle\Facade\EraseDataFacade;
+use Ferienpass\CoreBundle\Repository\AccessCodeStrategyRepository;
+use Ferienpass\CoreBundle\Session\Flash;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,6 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\UriSigner;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Translation\TranslatableMessage;
 
 final class ToolsController extends AbstractController
 {
@@ -103,6 +109,49 @@ final class ToolsController extends AbstractController
             'form' => $form,
             'participants' => $participants,
             'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'eraseData.title'),
+        ]);
+    }
+
+    #[Route('/einstellungen/zugangscodes', name: 'admin_accessCodes_index')]
+    public function accessCodes(Breadcrumb $breadcrumb, AccessCodeStrategyRepository $repository): Response
+    {
+        $qb = $repository->createQueryBuilder('i');
+
+        $qb->addOrderBy('i.name', 'ASC');
+
+        return $this->render('@FerienpassAdmin/page/tools/access_codes.html.twig', [
+            'qb' => $qb,
+            'createUrl' => $this->generateUrl('admin_accessCodes_create'),
+            'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'settings.title', 'accessCodes.title'),
+        ]);
+    }
+
+    #[Route('/einstellungen/zugangscodes/neu', name: 'admin_accessCodes_create')]
+    #[Route('/einstellungen/zugangscodes/{id}', name: 'admin_accessCodes_edit')]
+    public function edit(?AccessCodeStrategy $accessCodeStrategy, Request $request, EntityManagerInterface $em, Breadcrumb $breadcrumb, Flash $flash): Response
+    {
+        $accessCodeStrategy ??= new AccessCodeStrategy();
+
+        $form = $this->createForm(EditAccessCodesType::class, $accessCodeStrategy);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (!$em->contains($accessCodeStrategy = $form->getData())) {
+                $em->persist($accessCodeStrategy);
+            }
+
+            $em->flush();
+
+            $flash->addConfirmation(text: new TranslatableMessage('editConfirm', domain: 'admin'));
+
+            return $this->redirectToRoute('admin_accessCodes_edit', ['id' => $accessCodeStrategy->getId()]);
+        }
+
+        $breadcrumbTitle = $accessCodeStrategy ? $accessCodeStrategy->getName().' (bearbeiten)' : 'accessCodes.new';
+
+        return $this->render('@FerienpassAdmin/page/tools/access_codes_edit.html.twig', [
+            'item' => $accessCodeStrategy,
+            'form' => $form->createView(),
+            'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'settings.title', 'accessCodes.title', $breadcrumbTitle),
         ]);
     }
 
