@@ -1,13 +1,18 @@
 {% set block = block('link') %}
+{% import '@KnpMenu/menu.html.twig' as knp_menu %}
 
 {% if uri|default(null) is not null %}
     <a class="group flex items-center px-4 py-2 text-sm leading-5 text-gray-700 dark:text-gray-100/70 hover:bg-gray-100 dark:hover:bg-gray-900/50 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
+            {% if linkAttributes is defined %}
+                {{ knp_menu.attributes(linkAttributes) }}
+            {% endif %}
        href="{{ uri }}" {{ attr|default([])|map((value, key) => "#{key}=\"#{value}\"")|join(" ")|raw }}>
         {{ block|raw }}
     </a>
 {% else %}
-    <button type="button" class="group flex items-center px-4 py-2 text-sm leading-5 text-gray-700 dark:text-gray-100/70 hover:bg-gray-100 dark:hover:bg-gray-900/50 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
-       {{ attr|default([])|map((value, key) => "#{key}=\"#{value}\"")|join(" ")|raw }}>
+    <button type="button"
+            class="group flex items-center px-4 py-2 text-sm leading-5 text-gray-700 dark:text-gray-100/70 hover:bg-gray-100 dark:hover:bg-gray-900/50 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
+            {{ attr|default([])|map((value, key) => "#{key}=\"#{value}\"")|join(" ")|raw }}>
         {{ block|raw }}
     </button>
 {% endif %}

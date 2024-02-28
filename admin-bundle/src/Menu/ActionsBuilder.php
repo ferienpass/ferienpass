@@ -152,7 +152,7 @@ class ActionsBuilder
                 'label' => 'offers.action.assign',
                 'route' => 'admin_offer_assign',
                 'routeParameters' => array_filter(['id' => $item->getId(), 'edition' => $item->getEdition()?->getAlias()]),
-                'display' => $this->isGranted('participants.view', $item),
+                'display' => $this->isGranted('participants.view', $item) && ($item->getEdition()?->hostsCanAssign() || $this->isGranted('ROLE_ADMIN')),
                 'extras' => ['icon' => 'user-group-solid'],
             ]);
         }
@@ -314,7 +314,7 @@ class ActionsBuilder
         $root->addChild('edit', [
             'label' => 'accounts.action.edit',
             'route' => 'admin_accounts_edit',
-            'routeParameters' => ['id' => $item->getId(), 'role' => array_search($item->getRoles()[0], AccountsController::ROLES, true) ?: 'eltern'],
+            'routeParameters' => ['id' => $item->getId(), 'role' => array_search($item->getRoles()[0] ?? 'ROLE_USER', AccountsController::ROLES, true) ?: 'eltern'],
             'display' => $this->isGranted('edit', $item),
             'extras' => ['icon' => 'pencil-solid'],
         ]);
@@ -324,6 +324,7 @@ class ActionsBuilder
             'route' => false ? 'user_account' : 'admin_index',
             'routeParameters' => ['_switch_user' => $item->getUserIdentifier()],
             'display' => $this->isGranted('ROLE_ALLOWED_TO_SWITCH'),
+            'linkAttributes' => ['data-turbo' => 'false'],
             'extras' => ['icon' => 'logout-filled', 'translation_params' => ['user' => $item->getUserIdentifier()]],
         ]);
 

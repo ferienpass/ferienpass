@@ -231,6 +231,8 @@ editions:
     archived:
       - Archivieren
       - Wenn Sie für etwas Ordnung schaffen wollen, können Sie die Saison archivieren.
+    hosts:
+      - Veranstaltende
   task:
     holiday: Ferien
     host_editing_stage: Bearbeitungsphase für Veranstaltende
@@ -257,6 +259,8 @@ editions:
     accessCodeStrategy: Anmeldung nur mit Zugangscodes
     hide_status: Aktuellen Status verbergen
     archived: Saison archivieren
+    hosts: Auf Veranstaltende limitieren
+    hostsCanAssign: Veranstaltende dürfen Plätze zulosen
     holiday: Ferien
     countOffers: Anzahl Angebote
   help:
@@ -269,6 +273,8 @@ editions:
     accessCodeStrategy: Wenn eine Anmeldung nur mit Zugangscode möglich ist, wählen Sie hier die erlaubten Zugangscodes aus.
     hide_status: Den Eltern den aktuellen Status nicht anzeigen. Dies sollte aktiviert werden für das Losverfahren, damit die Eltern den Status erst nach dem Losen einsehen können.
     archived: Die Saison wird nicht mehr angezeigt in Eingabemasken, bleibt aber erhalten.
+    hosts: Wenn gewünscht, wird die Bearbeitung dieser Saision auf die ausgewählten Veranstalter limitiert.
+    hostsCanAssign: Die Veranstaltende dürfen Ihre Plätze selbst zulosen.
   edit_edition_tasks_entry_delete: Phase löschen
   edit_edition_tasks_add: Neue Phase definieren
   deleteModal.headline: Saison löschen

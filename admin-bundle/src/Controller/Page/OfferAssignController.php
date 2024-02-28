@@ -25,9 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted('ROLE_ADMIN')]
 #[Route('/angebote/{edition?null}/{id}/zuordnen', requirements: ['id' => '\d+'])]
 class OfferAssignController extends AbstractController
 {
@@ -38,6 +36,10 @@ class OfferAssignController extends AbstractController
     #[Route('', name: 'admin_offer_assign')]
     public function __invoke(Offer $offer, Request $request, Session $session, ManagerRegistry $doctrine, Breadcrumb $breadcrumb): Response
     {
+        if (!$offer->getEdition()->hostsCanAssign()) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        }
+
         if ($request->isMethod('POST') && 'confirm_all_waiting' === $request->request->get('FORM_SUBMIT')) {
             $attendances = $offer->getAttendancesWaiting();
 

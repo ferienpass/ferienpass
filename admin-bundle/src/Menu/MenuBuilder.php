@@ -20,11 +20,11 @@ use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Ferienpass\CoreBundle\Repository\HostRepository;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\SwitchUserToken;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Http\Logout\LogoutUrlGenerator;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -107,12 +107,14 @@ class MenuBuilder
                 'label' => new TranslatableMessage('user.impersonation_exit', ['%impersonator%' => $impersonatorUser->getUserIdentifier()], 'admin'),
                 'route' => 'admin_accounts_index',
                 'routeParameters' => ['_switch_user' => '_exit'],
+                'linkAttributes' => ['data-turbo' => 'false'],
                 'extras' => ['icon' => 'logout-filled'],
             ]);
         }
 
         $menu->addChild('user.logout', [
             'uri' => $this->logoutUrlGenerator->getLogoutUrl('ferienpass_admin'),
+            'linkAttributes' => ['data-turbo' => 'false'],
             'extras' => ['icon' => 'logout-filled'],
         ]);
 

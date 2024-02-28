@@ -53,6 +53,10 @@ final class OffersController extends AbstractController
         $menu = $factory->createItem('offers.editions');
 
         foreach ($editionRepository->findBy(['archived' => false], ['createdAt' => 'DESC']) as $e) {
+            if (!$this->isGranted('ROLE_ADMIN') && !$e->getHosts()->isEmpty() && !$e->getHosts()->contains($user->getHosts()->first())) {
+                continue;
+            }
+
             $menu->addChild($e->getName(), [
                 'route' => 'admin_offers_index',
                 'routeParameters' => ['edition' => $e->getAlias()],
