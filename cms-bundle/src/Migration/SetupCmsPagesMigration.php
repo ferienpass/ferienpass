@@ -25,6 +25,8 @@ class SetupCmsPagesMigration extends AbstractMigration
         'offer_details',
         'offer_list',
         'lost_password',
+        'registration_welcome',
+        'registration_confirm',
     ];
 
     public function __construct(private readonly Connection $connection)
@@ -37,7 +39,10 @@ class SetupCmsPagesMigration extends AbstractMigration
             return false;
         }
 
-        return $this->connection->fetchOne('SELECT COUNT(*) FROM tl_page WHERE type IN (?)', [self::REQUIRED_PAGES], [ArrayParameterType::STRING]) < \count(self::REQUIRED_PAGES);
+        $existingPages = $this->existingPages();
+        $missingPages = array_diff(self::REQUIRED_PAGES, $existingPages);
+
+        return \count($missingPages) > 0;
     }
 
     public function run(): MigrationResult
@@ -49,7 +54,7 @@ class SetupCmsPagesMigration extends AbstractMigration
             $rootId = $this->connection->lastInsertId();
         }
 
-        $existingPages = $this->connection->fetchFirstColumn('SELECT type FROM tl_page WHERE type IN (?)', [self::REQUIRED_PAGES], [ArrayParameterType::STRING]);
+        $existingPages = $this->existingPages();
         $missingPages = array_diff(self::REQUIRED_PAGES, $existingPages);
 
         foreach ($missingPages as $type) {
@@ -59,5 +64,10 @@ class SetupCmsPagesMigration extends AbstractMigration
         $this->connection->executeStatement('UPDATE tl_page SET protected=0 WHERE protected=1');
 
         return $this->createResult(true);
+    }
+
+    private function existingPages(): array
+    {
+        return $this->connection->fetchFirstColumn('SELECT type FROM tl_page WHERE type IN (?)', [self::REQUIRED_PAGES], [ArrayParameterType::STRING]);
     }
 }

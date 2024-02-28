@@ -21,6 +21,7 @@ use Contao\PageModel;
 use Contao\StringUtil;
 use Ferienpass\CmsBundle\Fragment\FragmentReference;
 use Ferienpass\CmsBundle\Page\PageBuilderFactory;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\AcceptHeader;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,13 +34,13 @@ use Twig\Environment;
 #[AsEventListener(priority: -48)]
 class PrettyErrorScreenListener
 {
-    public function __construct(private readonly Environment $twig, private readonly PageBuilderFactory $pageBuilderFactory)
+    public function __construct(#[Autowire(param: 'kernel.debug')] private readonly bool $isDebug, private readonly Environment $twig, private readonly PageBuilderFactory $pageBuilderFactory)
     {
     }
 
     public function __invoke(ExceptionEvent $event): void
     {
-        if (!$event->isMainRequest()) {
+        if ($this->isDebug || !$event->isMainRequest()) {
             return;
         }
 

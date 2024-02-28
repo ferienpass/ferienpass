@@ -1,3 +1,21 @@
+login:
+  username: E-Mail-Adresse
+  password: Passwort
+  autologin: Angemeldet bleiben
+  forgotPassword: Passwort vergessen?
+
+registration:
+  firstname: Vorname
+  lastname: Nachname
+  email: E-Mail-Adresse
+  plainPassword: Passwort
+  mobile: Handynummer
+  phone: Festnetznummer
+
+apply:
+  accessCode: Zugangscode für {edition}
+  accessCodeHelp: Für die Anmeldung im {edition} benötigen Sie einen Zugangscode. Geben Sie Ihren Zugangscode hier ein. Wenn Sie keine Plätze im {edition} buchen wollen, können Sie das Feld auch leer lassen.
+
 changePassword:
   submit: Passwort ändern
   oldPassword: Altes Passwort

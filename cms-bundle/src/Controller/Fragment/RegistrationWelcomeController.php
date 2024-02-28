@@ -24,7 +24,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RegistrationWelcomeController extends AbstractController
 {
-    public function __invoke(Request $request, EntityManagerInterface $em): Response
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
+
+    public function __invoke(Request $request): Response
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
@@ -35,14 +39,14 @@ class RegistrationWelcomeController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var iterable<int, Participant> $participants */
+            /** @var iterable<Participant> $participants */
             $participants = $form->get('participants')->getData();
 
             foreach ($participants as $participant) {
-                $em->persist($participant);
+                $this->entityManager->persist($participant);
             }
 
-            $em->flush();
+            $this->entityManager->flush();
 
             $this->addFlash(...Flash::confirmationModal()
                 ->headline('Los geht\'s!')

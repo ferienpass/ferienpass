@@ -94,6 +94,9 @@ class UserRegistrationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
+            'mapped' => false,
+            'label_format' => 'registration.%name%',
+            'translation_domain' => 'cms',
             'ask_phone' => true,
             'ask_mobile' => true,
             'csrf_protection' => false,

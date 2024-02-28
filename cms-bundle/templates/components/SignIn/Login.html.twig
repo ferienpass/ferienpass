@@ -1,3 +1,5 @@
+{% trans_default_domain 'cms' %}
+
 <div {{ attributes.defaults(stimulus_controller('ferienpass/cms-signin-login', { requestToken: contao_request_token(), targetPath: this.targetPath(app.request) })) }}>
 
     <div class="mx-auto w-full max-w-sm">
@@ -41,7 +43,7 @@
 
                 <div class="text-sm leading-5">
                     <a class="font-medium text-primary-600 hover:text-primary-500 focus:outline-none focus:underline transition ease-in-out duration-150"
-                       href="{{ path('lost_password') }}">Passwort vergessen?</a>
+                       href="{{ path('lost_password') }}">{{ 'login.forgotPassword'|trans }}</a>
                 </div>
             </div>
 

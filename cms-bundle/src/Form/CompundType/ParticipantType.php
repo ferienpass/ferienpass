@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace Ferienpass\CmsBundle\Form\CompundType;
 
+use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Participant;
+use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
@@ -29,7 +31,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ParticipantType extends AbstractType
 {
-    public function __construct(private readonly Security $security)
+    public function __construct(private readonly Security $security, private readonly EditionRepository $editionRepository)
     {
     }
 
@@ -86,27 +88,24 @@ class ParticipantType extends AbstractType
             ]);
         }
 
-        if ($options['access_code']) {
-            $builder->add('accessCode', TextType::class, [
-                'label' => 'Zugangscode',
-                'required' => true,
-                'mapped' => false,
-                'constraints' => [
-                ],
-                'attr' => [
-                ],
-            ]);
-        }
+        $editionsWithCode = $options['edition'] ? [$options['edition']] : $this->editionRepository->findWithActiveAccessCodeStrategies();
+        $builder->add('accessCodes', AccessCodesType::class, [
+            'editions' => $editionsWithCode,
+            'by_reference' => false,
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $user = $this->security->getUser();
 
-        $resolver->setDefined('access_code');
+        $resolver->setDefined('edition');
+        $resolver->addAllowedTypes('edition', [Edition::class, 'null']);
 
         $resolver->setDefaults([
-            'access_code' => false,
+            'edition' => null,
+            'label_format' => 'apply.%name%',
+            'translation_domain' => 'cms',
             'data_class' => Participant::class,
             'empty_data' => fn (FormInterface $form) => new Participant($user ?? null),
         ]);

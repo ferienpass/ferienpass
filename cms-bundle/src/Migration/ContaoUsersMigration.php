@@ -25,7 +25,7 @@ class ContaoUsersMigration extends AbstractMigration
 
     public function shouldRun(): bool
     {
-        return !$this->connection->createSchemaManager()->tablesExist(['Users']);
+        return !$this->connection->createSchemaManager()->tablesExist(['User']);
     }
 
     public function run(): MigrationResult
