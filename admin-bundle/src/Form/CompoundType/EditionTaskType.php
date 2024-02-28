@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Form\CompoundType;
 
+use Ferienpass\CoreBundle\Entity\AccessCodeStrategy;
 use Ferienpass\CoreBundle\Entity\EditionTask;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -93,6 +95,9 @@ class EditionTaskType extends AbstractType
 
             if ($data->isAnApplicationSystem() && $data->isAllowAnonymous()) {
                 $form->add('allowAnonymousFee', CheckboxType::class, ['label' => 'editions.label.allow_anonymous_fee', 'help' => 'editions.help.allow_anonymous_fee']);
+            }
+            if ($data->isAnApplicationSystem()) {
+                $form->add('accessCodeStrategy', EntityType::class, ['class' => AccessCodeStrategy::class, 'multiple' => false, 'expanded' => false, 'choice_label' => 'name', 'placeholder' => '-', 'help' => 'editions.help.accessCodeStrategy']);
             }
         });
     }

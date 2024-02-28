@@ -85,13 +85,28 @@ class ParticipantType extends AbstractType
                 ],
             ]);
         }
+
+        if ($options['access_code']) {
+            $builder->add('accessCode', TextType::class, [
+                'label' => 'Zugangscode',
+                'required' => true,
+                'mapped' => false,
+                'constraints' => [
+                ],
+                'attr' => [
+                ],
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $user = $this->security->getUser();
 
+        $resolver->setDefined('access_code');
+
         $resolver->setDefaults([
+            'access_code' => false,
             'data_class' => Participant::class,
             'empty_data' => fn (FormInterface $form) => new Participant($user ?? null),
         ]);

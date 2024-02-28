@@ -25,7 +25,7 @@ class ApplyFormParticipantType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('participant', ParticipantType::class)
+            ->add('participant', ParticipantType::class, ['access_code' => $options['access_code']])
             ->add('request_token', ContaoRequestTokenType::class)
             ->add('submit', SubmitType::class, ['label' => 'Speichern und weiter'])
         ;
@@ -33,7 +33,9 @@ class ApplyFormParticipantType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
+        $resolver->setDefined('access_code');
         $resolver->setDefaults([
+            'access_code' => false,
             'csrf_protection' => false,
         ]);
     }

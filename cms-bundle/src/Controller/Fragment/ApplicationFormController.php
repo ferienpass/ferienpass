@@ -56,10 +56,12 @@ class ApplicationFormController extends AbstractController
         $countParticipants = $this->attendanceRepository->count(['status' => 'confirmed', 'offer' => $offer]) + $this->attendanceRepository->count(['status' => 'waitlisted', 'offer' => $offer]);
         $vacant = $offer->getMaxParticipants() > 0 ? $offer->getMaxParticipants() - $countParticipants : null;
 
+        $accessCodeRequired = null !== $applicationSystem->getTask()?->getAccessCodeStrategy();
+
         $user = $this->getUser();
         $allowAnonymous = (bool) $applicationSystem->getTask()?->isAllowAnonymous();
         $allowAnonymousFee = (bool) $applicationSystem->getTask()?->isAllowAnonymousFee();
-        $participantForm = $this->formFactory->create(ApplyFormParticipantType::class);
+        $participantForm = $this->formFactory->create(ApplyFormParticipantType::class, null, ['access_code' => $accessCodeRequired]);
         $applicationForm = $this->formFactory->create(ApplyFormType::class, null, [
             'offer' => $offer,
             'application_system' => $applicationSystem,

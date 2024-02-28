@@ -109,6 +109,7 @@ class ApplyFormType extends AbstractType
     private function ineligibility(Offer $offer, Participant $participant, ApplicationSystemInterface $applicationSystem): void
     {
         $this->unconfirmed($offer, $participant, $applicationSystem);
+        $this->noAccessCode($offer, $participant, $applicationSystem);
         $this->ageValid($offer, $participant, $applicationSystem);
         $this->overlappingOffer($participant, $offer);
         $this->limitReached($offer, $participant, $applicationSystem);
@@ -237,5 +238,14 @@ class ApplyFormType extends AbstractType
         if (false === $identifier || null === ($optInToken = $this->optIn->find($identifier)) || !$optInToken->isConfirmed()) {
             throw new IneligibleParticipantException($offer, $participant, new TranslatableMessage('ineligible.unconfirmedEmail', ['email' => $participant->getEmail()]));
         }
+    }
+
+    private function noAccessCode(Offer $offer, Participant $participant, ApplicationSystemInterface $applicationSystem): void
+    {
+        if (null === $applicationSystem->getTask()?->getAccessCodeStrategy() || $applicationSystem->getTask()?->getAccessCodeStrategy()?->isEnabledParticipant($participant)) {
+            return;
+        }
+
+        throw new IneligibleParticipantException($offer, $participant, new TranslatableMessage('ineligible.noAccessCode'));
     }
 }
