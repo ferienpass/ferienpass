@@ -7,7 +7,6 @@ use Contao\CoreBundle\Migration\MigrationInterface;
 use Contao\CoreBundle\OptIn\OptInInterface;
 use Ferienpass\CmsBundle\Controller\Fragment\ChangePasswordController;
 use Ferienpass\CmsBundle\Controller\Fragment\CloseAccount;
-use Ferienpass\CmsBundle\Controller\Fragment\LostPasswordController;
 use Ferienpass\CmsBundle\Controller\Fragment\ParticipantsController;
 use Ferienpass\CmsBundle\Controller\Fragment\PersonalDataController;
 use Ferienpass\CmsBundle\Menu\MenuBuilder;
@@ -37,12 +36,6 @@ return function(ContainerConfigurator $container): void {
     $services
         ->load('Ferienpass\\CmsBundle\\Controller\\Fragment\\', '../src/Controller/Fragment/')
         ->tag('ferienpass.fragment')
-    ;
-
-    $services->get(LostPasswordController::class)
-        ->tag('ferienpass.fragment', ['type' => 'lost_password', 'method' => 'request'])
-        ->tag('ferienpass.fragment', ['type' => 'lost_password_requested', 'method' => 'requested'])
-        ->tag('ferienpass.fragment', ['type' => 'lost_password_reset', 'method' => 'reset'])
     ;
 
     // Aliases for autowiring
