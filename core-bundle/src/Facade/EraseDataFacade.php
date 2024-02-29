@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Facade;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\CoreBundle\Entity\Attendance;
@@ -108,21 +109,30 @@ SQL
 
     private function deleteMembersWithNoParticipants(): void
     {
-        $this->doctrine->getRepository(User::class)
+        $userIds = $this->doctrine->getRepository(User::class)
             ->createQueryBuilder('u')
+            ->select('u.id')
             ->leftJoin('u.participants', 'p')
-            ->delete()
             ->where('p.id IS NULL')
             // ->andWhere('u.lastLogin < DATE_SUB(NOW(), INTERVAL 2 WEEK)')
             ->andWhere("JSON_SEARCH(u.roles, 'one', :role_member) IS NOT NULL")
             ->andWhere("JSON_SEARCH(u.roles, 'one', :role_host) IS NULL")
             ->andWhere("JSON_SEARCH(u.roles, 'one', :role_admin) IS NULL")
             ->andWhere("JSON_SEARCH(u.roles, 'one', :role_sadmin) IS NULL")
-            ->andWhere('u.dontDeleteBefore IS NULL OR u.dontDeleteBefore < NOW()')
+            ->andWhere('u.dontDeleteBefore IS NULL OR u.dontDeleteBefore < CURRENT_TIMESTAMP()')
             ->setParameter('role_member', 'ROLE_MEMBER')
             ->setParameter('role_host', 'ROLE_HOST')
             ->setParameter('role_admin', 'ROLE_ADMIN')
             ->setParameter('role_sadmin', 'ROLE_SUPER_ADMIN')
+            ->getQuery()
+            ->getSingleColumnResult()
+        ;
+
+        $this->doctrine->getRepository(User::class)
+            ->createQueryBuilder('u')
+            ->delete()
+            ->where('u.id IN (:ids)')
+            ->setParameter('ids', $userIds, ArrayParameterType::INTEGER)
             ->getQuery()
             ->execute()
         ;

@@ -19,7 +19,6 @@ use Ferienpass\AdminBundle\Form\EditNotificationType;
 use Ferienpass\CoreBundle\Applications\UnconfirmedApplications;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Notification;
-use Ferienpass\CoreBundle\Message\ConfirmApplications;
 use Ferienpass\CoreBundle\Notification\AbstractNotification;
 use Ferienpass\CoreBundle\Notification\EditionAwareNotificationInterface;
 use Ferienpass\CoreBundle\Notifier;
@@ -130,23 +129,16 @@ final class NotificationsController extends AbstractController
         ]);
     }
 
-    #[Route('/zusagen-versenden', name: 'admin_notifications_send_acceptances')]
+    #[Route('/zulassungsbescheide', name: 'admin_notifications_send_acceptances', priority: 2)]
     public function sendAcceptances(Request $request, MessageBusInterface $messageBus, UnconfirmedApplications $unconfirmedApplications, Breadcrumb $breadcrumb)
     {
         $form = $this->createFormBuilder()->getForm();
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $messageBus->dispatch(new ConfirmApplications($unconfirmedApplications->getAttendanceIds()));
-
-            return $this->redirectToRoute('admin_notifications_send_acceptances');
-        }
 
         return $this->render('@FerienpassAdmin/page/notifications/send_attendances.html.twig', [
             'members' => $unconfirmedApplications->getUninformedMembers(),
             'participants' => $unconfirmedApplications->getUninformedParticipants(),
             'form' => $form->createView(),
-            'breadcrumb' => $breadcrumb->generate('Benachrichtigungen', 'Zusagen versenden'),
+            'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'notifications.title', 'Zulassungsbescheide versenden'),
         ]);
     }
 
