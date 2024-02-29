@@ -113,7 +113,8 @@
                                     {% if item.activity is defined %}
                                         <button type="button"
                                                 data-action="live#emit"
-                                                data-event="view(id={{ item.id }})"
+                                                data-live-event-param="view"
+                                                data-live-id-param="{{ item.id }}"
                                         >
                                             <span class="flex w-16 gap-x-1" title="Bearbeitungsnotizen">
                                                 <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24"

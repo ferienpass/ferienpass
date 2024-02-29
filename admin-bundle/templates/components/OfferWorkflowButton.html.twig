@@ -48,7 +48,8 @@
                 {% for transition in transitions %}
                     <button type="button"
                             data-action="live#action"
-                            data-action-name="apply(transition={{ transition.name }})"
+                            data-live-action-param="apply"
+                            data-live-transition-param="{{ transition.name }}"
                             class="flex items-center space-x-2 text-gray-700 px-4 py-2 text-sm">
 
                         {{ _self.icon(transition.tos|first, true) }}
