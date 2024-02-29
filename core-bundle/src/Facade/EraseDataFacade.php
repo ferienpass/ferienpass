@@ -66,7 +66,8 @@ FROM Participant p
          INNER JOIN Edition e ON e.id = f.edition
          INNER JOIN EditionTask et ON e.id = et.pid
          LEFT JOIN OfferDate d ON d.offer_id = f.id
-WHERE et.periodEnd > NOW() OR d.end > NOW()
+         LEFT JOIN User u ON u.id = p.member_id
+WHERE et.periodEnd > NOW() OR d.end > NOW() OR (u.dontDeleteBefore IS NOT NULL AND u.dontDeleteBefore > NOW())
 SQL
         )->fetchAllNumeric();
 
@@ -117,6 +118,7 @@ SQL
             ->andWhere("JSON_SEARCH(u.roles, 'one', :role_host) IS NULL")
             ->andWhere("JSON_SEARCH(u.roles, 'one', :role_admin) IS NULL")
             ->andWhere("JSON_SEARCH(u.roles, 'one', :role_sadmin) IS NULL")
+            ->andWhere('u.dontDeleteBefore IS NULL OR u.dontDeleteBefore < NOW()')
             ->setParameter('role_member', 'ROLE_MEMBER')
             ->setParameter('role_host', 'ROLE_HOST')
             ->setParameter('role_admin', 'ROLE_ADMIN')

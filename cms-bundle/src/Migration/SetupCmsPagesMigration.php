@@ -21,6 +21,7 @@ use Doctrine\DBAL\Connection;
 class SetupCmsPagesMigration extends AbstractMigration
 {
     private const REQUIRED_PAGES = [
+        'account_deleted',
         'host_details',
         'offer_details',
         'offer_list',

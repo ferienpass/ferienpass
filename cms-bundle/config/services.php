@@ -46,15 +46,15 @@ return function(ContainerConfigurator $container): void {
 
     // Tagged user account fragments
     $services->get(ParticipantsController::class)
-        ->tag('ferienpass.user_account', ['key' => 'participants', 'alias' => 'teilnehmer', 'icon' => 'user-group'])
+        ->tag('ferienpass.user_account', ['key' => 'participants', 'alias' => 'teilnehmer', 'icon' => 'user-group', 'priority' => 100])
     ;
 
     $services->get(PersonalDataController::class)
-        ->tag('ferienpass.user_account', ['key' => 'personal_data', 'alias' => 'persönliche-daten', 'icon' => 'user-circle'])
+        ->tag('ferienpass.user_account', ['key' => 'personal_data', 'alias' => 'persönliche-daten', 'icon' => 'user-circle', 'priority' => 90])
     ;
 
     $services->get(ChangePasswordController::class)
-        ->tag('ferienpass.user_account', ['key' => 'change_password', 'alias' => 'passwort-ändern', 'icon' => 'lock-closed'])
+        ->tag('ferienpass.user_account', ['key' => 'change_password', 'alias' => 'passwort-ändern', 'icon' => 'lock-closed', 'priority' => 30])
     ;
 
     $services->get(CloseAccount::class)

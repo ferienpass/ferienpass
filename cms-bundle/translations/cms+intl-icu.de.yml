@@ -1,8 +1,15 @@
+userAccount:
+  participants: Teilnehmer:innen
+  personal_data: Persönliche Daten
+  change_password: Passwort ändern
+  close_account: Account-Löschung
+
 login:
   username: E-Mail-Adresse
   password: Passwort
   autologin: Angemeldet bleiben
   forgotPassword: Passwort vergessen?
+  submit: Anmelden
 
 registration:
   firstname: Vorname
