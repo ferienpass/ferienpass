@@ -15,7 +15,7 @@ namespace Ferienpass\CoreBundle\MessageHandler;
 
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Message\OfferCancelled;
-use Ferienpass\CoreBundle\Notifier;
+use Ferienpass\CoreBundle\Notifier\Notifier;
 use Ferienpass\CoreBundle\Repository\OfferRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Notifier\Recipient\Recipient;
@@ -40,6 +40,8 @@ class WhenOfferCancelledThenNotify
             if (null === $notification || '' === $email = (string) $attendance->getParticipant()?->getEmail()) {
                 continue;
             }
+
+            $notification->
 
             $this->notifier->send($notification, new Recipient($email, (string) $attendance->getParticipant()->getMobile()));
         }

@@ -15,7 +15,7 @@ namespace Ferienpass\CoreBundle\MessageHandler;
 
 use Ferienpass\CoreBundle\Entity\Payment;
 use Ferienpass\CoreBundle\Message\PaymentReceiptCreated;
-use Ferienpass\CoreBundle\Notifier;
+use Ferienpass\CoreBundle\Notifier\Notifier;
 use Ferienpass\CoreBundle\Repository\PaymentRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Notifier\Recipient\Recipient;

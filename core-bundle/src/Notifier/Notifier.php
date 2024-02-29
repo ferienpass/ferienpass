@@ -11,8 +11,9 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CoreBundle;
+namespace Ferienpass\CoreBundle\Notifier;
 
+use Ferienpass\CoreBundle\Entity;
 use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Host;

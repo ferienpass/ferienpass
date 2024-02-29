@@ -17,7 +17,7 @@ use Ferienpass\AdminBundle\Controller\Page\AccountsController;
 use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Message\HostCreated;
-use Ferienpass\CoreBundle\Notifier;
+use Ferienpass\CoreBundle\Notifier\Notifier;
 use Ferienpass\CoreBundle\Repository\HostRepository;
 use Ferienpass\CoreBundle\Repository\UserRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

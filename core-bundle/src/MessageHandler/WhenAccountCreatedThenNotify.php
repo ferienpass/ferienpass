@@ -15,7 +15,7 @@ namespace Ferienpass\CoreBundle\MessageHandler;
 
 use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Message\AccountCreated;
-use Ferienpass\CoreBundle\Notifier;
+use Ferienpass\CoreBundle\Notifier\Notifier;
 use Ferienpass\CoreBundle\Repository\UserRepository;
 use Symfony\Component\HttpKernel\UriSigner;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

@@ -14,14 +14,14 @@ declare(strict_types=1);
 namespace Ferienpass\CoreBundle\Monolog;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Ferienpass\CoreBundle\Entity\EventLog;
+use Ferienpass\CoreBundle\Entity\MessageLog;
 use Ferienpass\CoreBundle\Monolog\Context\MessageContext;
-use Ferienpass\CoreBundle\Repository\EventLogRepository;
+use Ferienpass\CoreBundle\Repository\MessageLogRepository;
 use Monolog\Handler\AbstractProcessingHandler;
 
-class EventLogHandler extends AbstractProcessingHandler
+class MessageLogHandler extends AbstractProcessingHandler
 {
-    public function __construct(private readonly EventLogRepository $repository, private readonly EntityManagerInterface $em)
+    public function __construct(private readonly MessageLogRepository $repository, private readonly EntityManagerInterface $em)
     {
         parent::__construct();
     }
@@ -35,8 +35,8 @@ class EventLogHandler extends AbstractProcessingHandler
 
         $message = $messageContext->getMessage();
 
-        $id = $record['context']['id'];
-        if (null !== $this->repository->findOneBy(['uniqueId' => $id])) {
+        $uniqueId = $record['context']['id'];
+        if (null !== $this->repository->findOneBy(['uniqueId' => $uniqueId])) {
             return;
         }
 
@@ -45,7 +45,7 @@ class EventLogHandler extends AbstractProcessingHandler
             $related[] = $this->em->getReference($entity, $id);
         }
 
-        $logEntry = new EventLog($id, $message::class, related: $related);
+        $logEntry = new MessageLog($uniqueId, $message::class, related: $related);
 
         $this->em->persist($logEntry);
 

@@ -15,7 +15,7 @@ namespace Ferienpass\AdminBundle\MessageHandler;
 
 use Ferienpass\AdminBundle\Message\HostLostPassword;
 use Ferienpass\CoreBundle\Entity\User;
-use Ferienpass\CoreBundle\Notifier;
+use Ferienpass\CoreBundle\Notifier\Notifier;
 use Ferienpass\CoreBundle\Repository\UserRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Notifier\Recipient\Recipient;

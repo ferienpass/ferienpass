@@ -19,4 +19,8 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 interface NotificationInterface
 {
     public static function getName(): string;
+
+    public function getContext(): array;
+
+    public function getMessageId(): ?string;
 }

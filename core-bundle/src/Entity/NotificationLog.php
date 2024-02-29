@@ -14,10 +14,11 @@ declare(strict_types=1);
 namespace Ferienpass\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Ferienpass\CoreBundle\Repository\NotificationLogRepository;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Message;
 
-#[ORM\Entity(repositoryClass: 'Ferienpass\CoreBundle\Repository\NotificationLogRepository')]
+#[ORM\Entity(repositoryClass: NotificationLogRepository::class)]
 class NotificationLog
 {
     #[ORM\Id]
@@ -25,9 +26,9 @@ class NotificationLog
     #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: 'EventLog', inversedBy: 'notifications')]
+    #[ORM\ManyToOne(targetEntity: MessageLog::class, inversedBy: 'notifications')]
     #[ORM\JoinColumn(name: 'log_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private EventLog $logEntry;
+    private MessageLog $logEntry;
 
     #[ORM\Column(type: 'datetime_immutable', options: ['default' => 'CURRENT_TIMESTAMP'])]
     private \DateTimeInterface $createdAt;
@@ -41,7 +42,7 @@ class NotificationLog
     #[ORM\Column(name: 'sender', type: 'string')]
     private string $sender;
 
-    public function __construct(EventLog $logEntry, Message $message, Address $sender, Address ...$recipients)
+    public function __construct(MessageLog $logEntry, Message $message, Address $sender, Address ...$recipients)
     {
         $this->logEntry = $logEntry;
         $this->message = $message;
@@ -60,7 +61,7 @@ class NotificationLog
         return $this->createdAt;
     }
 
-    public function getLogEntry(): EventLog
+    public function getLogEntry(): MessageLog
     {
         return $this->logEntry;
     }

@@ -31,6 +31,20 @@ abstract class AbstractNotification extends Notification implements ServiceSubsc
 {
     use ServiceSubscriberTrait;
 
+    protected ?string $messageId = null;
+
+    public function messageId(string $messageId): static
+    {
+        $this->messageId = $messageId;
+
+        return $this;
+    }
+
+    public function getMessageId(): ?string
+    {
+        return $this->messageId;
+    }
+
     public function getSubject(): string
     {
         try {

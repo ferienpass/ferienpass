@@ -14,24 +14,37 @@ declare(strict_types=1);
 namespace Ferienpass\CoreBundle\EventListener\Notifier;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Ferienpass\CoreBundle\Notifier\Message\EmailMessage;
+use Ferienpass\CoreBundle\Notifier\Mime\NotificationEmail;
+use Ferienpass\CoreBundle\Repository\MessageLogRepository;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
-use Symfony\Component\Notifier\Event\SentMessageEvent;
 
 #[AsEventListener]
 class SentMessageListener
 {
-    public function __construct(private readonly EntityManagerInterface $entityManager)
+    public function __construct(private readonly EntityManagerInterface $entityManager, private readonly MessageLogRepository $repository)
     {
     }
 
-    public function __invoke(SentMessageEvent $event)
+    public function __invoke(\Symfony\Component\Mailer\Event\SentMessageEvent $event)
     {
         $message = $event->getMessage()->getOriginalMessage();
+        if (!$message instanceof NotificationEmail) {
+            return;
+        }
+        $a = $this->repository->findOneBy(['uniqueId' => $message->getMessageId()]);
+        dd($a);
 
-        //        $logEntry = new NotificationLog('', $message, $message->);
-        //
-        //        $this->entityManager->persist($logEntry);
-        //
-        //        $this->entityManager->flush();
+        //        $log = new NotificationLog();
+
+        if ($message instanceof EmailMessage) {
+            $notification = $message->getNotification();
+
+            //                    $logEntry = new NotificationLog('', $message, $message->g);
+            //
+            //                    $this->entityManager->persist($logEntry);
+            //
+            //                    $this->entityManager->flush();
+        }
     }
 }

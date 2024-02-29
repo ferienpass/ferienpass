@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Controller\Page;
 
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
-use Ferienpass\CoreBundle\Notifier;
+use Ferienpass\CoreBundle\Notifier\Notifier;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;

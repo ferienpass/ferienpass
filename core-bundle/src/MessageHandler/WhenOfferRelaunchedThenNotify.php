@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\CoreBundle\MessageHandler;
 
 use Ferienpass\CoreBundle\Message\OfferRelaunched;
-use Ferienpass\CoreBundle\Notifier;
+use Ferienpass\CoreBundle\Notifier\Notifier;
 use Ferienpass\CoreBundle\Repository\OfferRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Notifier\Recipient\Recipient;

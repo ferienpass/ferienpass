@@ -20,8 +20,9 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Middleware\MiddlewareInterface;
 use Symfony\Component\Messenger\Middleware\StackInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
+use Symfony\Component\Messenger\Stamp\HandlerArgumentsStamp;
 
-class EventLogMiddleware implements MiddlewareInterface
+class MessageLogMiddleware implements MiddlewareInterface
 {
     public function __construct(private readonly LoggerInterface $logger)
     {
@@ -33,14 +34,17 @@ class EventLogMiddleware implements MiddlewareInterface
             $envelope = $envelope->with(new UniqueIdStamp());
         }
 
+        $stamp = $envelope->last(UniqueIdStamp::class);
+
+        $envelope = $envelope->with(new HandlerArgumentsStamp([
+            $stamp->getUniqueId(),
+        ]));
+
         $envelope = $stack->next()->handle($envelope, $stack);
         $message = $envelope->getMessage();
         if (!$message instanceof LoggableMessageInterface) {
             return $envelope;
         }
-
-        /** @var UniqueIdStamp $stamp */
-        $stamp = $envelope->last(UniqueIdStamp::class);
 
         // Add the message context to the log.
         // The EventLogHandler will persist the message log in the database.

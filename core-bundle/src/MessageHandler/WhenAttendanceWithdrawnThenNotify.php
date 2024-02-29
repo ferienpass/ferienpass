@@ -16,7 +16,7 @@ namespace Ferienpass\CoreBundle\MessageHandler;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Message\AttendanceStatusChanged;
-use Ferienpass\CoreBundle\Notifier;
+use Ferienpass\CoreBundle\Notifier\Notifier;
 use Ferienpass\CoreBundle\Repository\AttendanceRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Notifier\Recipient\Recipient;

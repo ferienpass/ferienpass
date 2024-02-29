@@ -11,7 +11,7 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CoreBundle\Twig\Mime;
+namespace Ferienpass\CoreBundle\Notifier\Mime;
 
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 
@@ -23,6 +23,8 @@ class NotificationEmail extends TemplatedEmail
         'action_url' => null,
         'footer_text' => 'Notification email sent by Symfony',
     ];
+
+    private ?string $messageId = null;
 
     public function __construct(private readonly string $type)
     {
@@ -39,6 +41,18 @@ class NotificationEmail extends TemplatedEmail
         [$this->type, $parentData] = $data;
 
         parent::__unserialize($parentData);
+    }
+
+    public function messageId(?string $messageId): static
+    {
+        $this->messageId = $messageId;
+
+        return $this;
+    }
+
+    public function getMessageId(): ?string
+    {
+        return $this->messageId;
     }
 
     /**

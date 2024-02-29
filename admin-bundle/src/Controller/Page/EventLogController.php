@@ -16,7 +16,6 @@ namespace Ferienpass\AdminBundle\Controller\Page;
 use Doctrine\Common\Collections\Criteria;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\CoreBundle\Message\ParticipantListChanged;
-use Ferienpass\CoreBundle\Repository\EventLogRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +27,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class EventLogController extends AbstractController
 {
     #[Route('', name: 'admin_event_log')]
-    public function index(EventLogRepository $repository, Breadcrumb $breadcrumb, Request $request): Response
+    public function index(MessageLogRepository $repository, Breadcrumb $breadcrumb, Request $request): Response
     {
         $criteria = (new Criteria())
             ->where(Criteria::expr()->neq('message', ParticipantListChanged::class))
