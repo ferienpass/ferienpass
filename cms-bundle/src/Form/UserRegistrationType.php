@@ -91,7 +91,7 @@ class UserRegistrationType extends AbstractType
             ;
         }
 
-        $builder->add(ContaoRequestTokenType::class);
+        $builder->add('requestToken', ContaoRequestTokenType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
