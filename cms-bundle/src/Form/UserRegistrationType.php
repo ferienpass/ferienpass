@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\CmsBundle\Form;
 
+use Ferienpass\CmsBundle\Form\SimpleType\ContaoRequestTokenType;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -89,6 +90,8 @@ class UserRegistrationType extends AbstractType
                 ])
             ;
         }
+
+        $builder->add(ContaoRequestTokenType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
