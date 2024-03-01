@@ -483,6 +483,7 @@ notifications:
   legend.sms.1: Definieren Sie den Text, die als Kurznachricht versendet werden.
   legend.disable.0: Benachrichtigung deaktivieren
   label.edition: Saison
+  label.emailReplyTo: Antwortadresse
   label.emailSubject: Betreff
   label.emailText: Text
   label.smsText: Textnachricht
