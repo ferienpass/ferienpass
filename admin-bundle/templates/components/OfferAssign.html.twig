@@ -102,7 +102,8 @@
                                     <button type="button"
                                             class="text-gray-500 text-xs"
                                             data-action="live#emit"
-                                            data-event="view(id={{ attendance.id }})"
+                                            data-live-event-param="view"
+                                            data-live-id-param="{{ attendance.id }}"
                                     >
                                         {{ attendance.activity|length }} Vorgänge/Kommentare
                                     </button>

@@ -36,8 +36,8 @@
                                     </div>
 
                                     <button type="submit"
-                                            data-action="live#action"
-                                            data-action-name="prevent|save"
+                                            data-action="live#action:prevent"
+                                            data-live-action-param="save"
                                             class="rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                                         Speichern
                                     </button>
@@ -50,7 +50,8 @@
 
                                 <button class="font-semibold text-indigo-600 hover:text-indigo-500"
                                         data-action="live#action"
-                                        data-action-name="edit(property={{ property }})"
+                                        data-live-action-param="edit"
+                                        data-live-property-param="{{ property }}"
                                 >
                                     Bearbeiten
                                 </button>
@@ -81,7 +82,7 @@
 
                                 <button type="submit"
                                         data-action="live#action"
-                                        data-action-name="files(logo)|upload"
+                                        data-live-action-param="files(logo)|upload"
                                         class="rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                                     Speichern
                                 </button>
@@ -112,7 +113,7 @@
 
                             <button class="font-semibold text-indigo-600 hover:text-indigo-500"
                                     data-action="live#action"
-                                    data-action-name="showUploadLogo"
+                                    data-live-action-param="showUploadLogo"
                             >
                                 Bearbeiten
                             </button>
@@ -165,8 +166,8 @@
                         </div>
 
                         <button type="submit"
-                                data-action="live#action"
-                                data-action-name="prevent|invite"
+                                data-action="live#action:prevent"
+                                data-live-action-param="invite"
                                 class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                             Einladung versenden
                         </button>
@@ -176,7 +177,7 @@
 
                     <button type="button"
                             data-action="live#action"
-                            data-action-name="showAddMember"
+                            data-live-action-param="showAddMember"
                             class="text-sm font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
                         <span aria-hidden="true">+</span> Team-Mitglied ergänzen
                     </button>

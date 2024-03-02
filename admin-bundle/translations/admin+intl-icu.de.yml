@@ -483,6 +483,7 @@ notifications:
   legend.sms.1: Definieren Sie den Text, die als Kurznachricht versendet werden.
   legend.disable.0: Benachrichtigung deaktivieren
   label.edition: Saison
+  label.emailReplyTo: Antwortadresse
   label.emailSubject: Betreff
   label.emailText: Text
   label.smsText: Textnachricht
@@ -620,3 +621,7 @@ accessCodes:
   deleteModal.confirm: Sind Sie sicher, dass Sie folgenden Zugangscodes löschen möchten?
   edit_access_codes_codes_add: Neuer Code
   edit_access_codes_codes_entry_delete: Code löschen
+
+applicationSystem:
+  lot: Losverfahren
+  firstcome: Windhundverfahren

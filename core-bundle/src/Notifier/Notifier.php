@@ -43,7 +43,7 @@ use Symfony\Component\Notifier\Recipient\RecipientInterface;
 class Notifier implements NotifierInterface
 {
     /**
-     * @var array<string, Notification>
+     * @var array<string, AbstractNotification>
      */
     private array $notifications;
 
@@ -276,6 +276,10 @@ class Notifier implements NotifierInterface
             ->subject($entity->getEmailSubject() ?? '')
             ->content($entity->getEmailText() ?? '')
         ;
+
+        if ($entity->getEmailReplyTo()) {
+            $notification->replyTo($entity->getEmailReplyTo());
+        }
 
         return $notification;
     }

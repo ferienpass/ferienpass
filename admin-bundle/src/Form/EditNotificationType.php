@@ -20,6 +20,7 @@ use Ferienpass\CoreBundle\Entity\Notification;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -73,6 +74,7 @@ class EditNotificationType extends AbstractType
 
         if ($options['supports_email']) {
             $builder
+                ->add('emailReplyTo', EmailType::class, ['fieldset_group' => 'email', 'width' => '2/3'])
                 ->add('emailSubject', null, ['fieldset_group' => 'email', 'width' => '2/3'])
                 ->add('emailText', TextareaType::class, [
                     'attr' => ['rows' => 5],

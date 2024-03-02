@@ -38,7 +38,9 @@
                         ( {{ offer_macro.date_single(item.attendance.offer.dates|first) }})
                     {% endif %}
                 </div>
+                {% if item.attendance.participant %}
                 <div class="truncate text-gray-500">{{ item.attendance.participant.name }}</div>
+                {% endif %}
             </td>
             <td class="py-5 pl-8 pr-0 text-right align-top tabular-nums text-gray-700">{{ (item.amount/100)|format_currency('EUR', locale='de') }}</td>
         </tr>
