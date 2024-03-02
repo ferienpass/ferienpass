@@ -621,3 +621,7 @@ accessCodes:
   deleteModal.confirm: Sind Sie sicher, dass Sie folgenden Zugangscodes löschen möchten?
   edit_access_codes_codes_add: Neuer Code
   edit_access_codes_codes_entry_delete: Code löschen
+
+applicationSystem:
+  lot: Losverfahren
+  firstcome: Windhundverfahren
