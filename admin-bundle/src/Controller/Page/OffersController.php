@@ -19,7 +19,6 @@ use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExports;
-use Ferienpass\CoreBundle\Message\AccountCreated;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Ferienpass\CoreBundle\Repository\HostRepository;
 use Ferienpass\CoreBundle\Repository\OfferRepository;
@@ -28,19 +27,15 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/angebote/{edition?null}')]
 final class OffersController extends AbstractController
 {
     #[Route('{_suffix?}', name: 'admin_offers_index', requirements: ['edition' => '\w+', '_suffix' => '\.\w+'])]
-    public function index(MessageBusInterface $messageBus, #[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, ?string $_suffix, OfferRepository $repository, HostRepository $hostRepository, Request $request, Breadcrumb $breadcrumb, FactoryInterface $factory, EditionRepository $editionRepository, XlsxExport $xlsxExport): Response
+    public function index(#[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, ?string $_suffix, OfferRepository $repository, HostRepository $hostRepository, Request $request, Breadcrumb $breadcrumb, FactoryInterface $factory, EditionRepository $editionRepository, XlsxExport $xlsxExport): Response
     {
         $user = $this->getUser();
-
-        $messageBus->dispatch(new AccountCreated($user->getId()));
-
         if (!$user instanceof User) {
             throw new \RuntimeException('No user');
         }
