@@ -52,6 +52,8 @@ class Outbox extends AbstractController
     #[ExposeInTemplate]
     public function getPagination(): Paginator
     {
+        $this->qb->orderBy('message.createdAt', 'DESC');
+
         $this->addQueryBuilderSearch();
 
         return (new Paginator($this->qb, 50 * $this->page))->paginate();
