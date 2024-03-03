@@ -18,7 +18,6 @@ use Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExports;
 use Ferienpass\CoreBundle\Export\Offer\Xml\XmlExports;
 use Ferienpass\CoreBundle\Export\ParticipantList\WordExport;
 use Ferienpass\CoreBundle\Messenger\MessageLogMiddleware;
-use Ferienpass\CoreBundle\Monolog\MessageLogHandler;
 use Ferienpass\CoreBundle\Repository\ResetPasswordRequestRepository;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -81,6 +80,7 @@ final class FerienpassCoreExtension extends Extension implements PrependExtensio
                     'messenger.bus.default' => [
                         'middleware' => [
                             MessageLogMiddleware::class,
+                            'doctrine_transaction',
                         ],
                     ],
                 ],
@@ -89,17 +89,6 @@ final class FerienpassCoreExtension extends Extension implements PrependExtensio
 
         $container->prependExtensionConfig('symfonycasts_reset_password', [
             'request_password_repository' => ResetPasswordRequestRepository::class,
-        ]);
-
-        $container->prependExtensionConfig('monolog', [
-            'channels' => ['ferienpass_event'],
-            'handlers' => [
-                'ferienpass_event' => [
-                    'channels' => ['ferienpass_event'],
-                    'type' => 'service',
-                    'id' => MessageLogHandler::class,
-                ],
-            ],
         ]);
 
         $this->prependWorkflow($container);

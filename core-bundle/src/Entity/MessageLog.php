@@ -26,9 +26,6 @@ class MessageLog
     #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
     private int $id;
 
-    #[ORM\Column(type: 'string')]
-    private string $uniqueId;
-
     #[ORM\Column(type: 'datetime_immutable', options: ['default' => 'CURRENT_TIMESTAMP'])]
     private \DateTimeInterface $createdAt;
 
@@ -51,12 +48,11 @@ class MessageLog
     #[ORM\JoinColumn(name: 'payment_id', referencedColumnName: 'id')]
     private Payment|null $payment;
 
-    #[ORM\OneToMany(mappedBy: 'logEntry', targetEntity: NotificationLog::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'logEntry', targetEntity: SentMessage::class, cascade: ['persist', 'remove'])]
     private Collection $notifications;
 
-    public function __construct(string $uniqueId, string $message, Attendance $attendance = null, User $user = null, Offer $offer = null, Payment $payment = null, array $related = [])
+    public function __construct(string $message, Attendance $attendance = null, User $user = null, Offer $offer = null, Payment $payment = null, array $related = [])
     {
-        $this->uniqueId = $uniqueId;
         $this->message = $message;
         $this->attendance = $attendance;
         $this->user = $user;
@@ -93,11 +89,6 @@ class MessageLog
         $this->id = $id;
     }
 
-    public function getUniqueId(): string
-    {
-        return $this->uniqueId;
-    }
-
     public function getCreatedAt(): \DateTimeInterface
     {
         return $this->createdAt;
@@ -131,5 +122,13 @@ class MessageLog
     public function getNotifications(): Collection
     {
         return $this->notifications;
+    }
+
+    public function addSentNotification(SentMessage $notification): void
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications[] = $notification;
+            $notification->setLogEntry($this);
+        }
     }
 }

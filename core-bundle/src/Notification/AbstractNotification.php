@@ -29,30 +29,9 @@ use Twig\Error\Error;
 
 abstract class AbstractNotification extends Notification implements ServiceSubscriberInterface
 {
+    use LoggableNotificationTrait;
+    use ReplyToTrait;
     use ServiceSubscriberTrait;
-
-    protected ?string $messageId = null;
-
-    public function messageId(string $messageId): static
-    {
-        $this->messageId = $messageId;
-
-        return $this;
-    }
-
-    public function getMessageId(): ?string
-    {
-        return $this->messageId;
-    }
-
-    private ?string $replyTo = null;
-
-    public function replyTo(string $replyTo): static
-    {
-        $this->replyTo = $replyTo;
-
-        return $this;
-    }
 
     public function getSubject(): string
     {

@@ -15,6 +15,7 @@ namespace Ferienpass\CoreBundle\MessageHandler;
 
 use Ferienpass\CoreBundle\Applications\UnconfirmedApplications;
 use Ferienpass\CoreBundle\Entity\Attendance;
+use Ferienpass\CoreBundle\Entity\MessageLog;
 use Ferienpass\CoreBundle\Message\ConfirmApplications;
 use Ferienpass\CoreBundle\Notifier\Notifier;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -27,7 +28,7 @@ class WhenConfirmApplicationsThenNotify
     {
     }
 
-    public function __invoke(ConfirmApplications $message): void
+    public function __invoke(ConfirmApplications $message, MessageLog $log): void
     {
         foreach (array_merge([$this->unconfirmedApplications->getUninformedMembers(), $this->unconfirmedApplications->getUninformedParticipants()]) as $uninformedMember) {
             /** @var Attendance[] $attendances */
@@ -37,7 +38,7 @@ class WhenConfirmApplicationsThenNotify
                 continue;
             }
 
-            $this->notifier->send($notification, new Recipient($email));
+            $this->notifier->send($notification->belongsTo($log), new Recipient($email));
         }
     }
 }

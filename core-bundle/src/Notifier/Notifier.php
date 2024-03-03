@@ -247,7 +247,7 @@ class Notifier implements NotifierInterface
             return null;
         }
 
-        $notification = $this->notifications[$key];
+        $notification = clone $this->notifications[$key];
 
         $entity = $this->notificationRepository
             ->createQueryBuilder('n')

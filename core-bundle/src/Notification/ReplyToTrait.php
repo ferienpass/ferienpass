@@ -13,10 +13,14 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Notification;
 
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-
-#[AutoconfigureTag('ferienpass.notification')]
-interface NotificationInterface
+trait ReplyToTrait
 {
-    public static function getName(): string;
+    private ?string $replyTo = null;
+
+    public function replyTo(string $replyTo): static
+    {
+        $this->replyTo = $replyTo;
+
+        return $this;
+    }
 }

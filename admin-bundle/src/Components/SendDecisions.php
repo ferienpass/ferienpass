@@ -17,7 +17,7 @@ use Ferienpass\CoreBundle\Applications\UnconfirmedApplications;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Message\ConfirmApplications;
 use Ferienpass\CoreBundle\Notification\MailingNotification;
-use Ferienpass\CoreBundle\Notifier;
+use Ferienpass\CoreBundle\Notifier\Notifier;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Ferienpass\CoreBundle\Repository\HostRepository;
 use Ferienpass\CoreBundle\Repository\OfferRepository;

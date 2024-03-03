@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Notifier\Message;
 
+use Ferienpass\CoreBundle\Notification\AbstractNotification;
 use Ferienpass\CoreBundle\Notification\NotificationInterface;
 use Ferienpass\CoreBundle\Notifier\Mime\NotificationEmail;
 use Symfony\Component\Notifier\Exception\InvalidArgumentException;
@@ -25,7 +26,7 @@ class EmailMessage extends BaseEmailMessage implements FromNotificationInterface
 {
     private ?Notification $notification = null;
 
-    public static function fromFerienpassNotification(NotificationInterface&Notification $notification, EmailRecipientInterface $recipient, callable $useEmail = null): BaseEmailMessage
+    public static function fromFerienpassNotification(NotificationInterface&AbstractNotification $notification, EmailRecipientInterface $recipient, callable $useEmail = null): BaseEmailMessage
     {
         if ('' === $recipient->getEmail()) {
             throw new InvalidArgumentException(sprintf('"%s" needs an email, it cannot be empty.', __CLASS__));
@@ -36,8 +37,12 @@ class EmailMessage extends BaseEmailMessage implements FromNotificationInterface
             ->subject($notification->getSubject())
             ->content($notification->getContent())
             ->context($notification->getContext())
-            ->messageId($notification->getMessageId())
+            ->belongsTo($notification->getBelongsTo())
         ;
+
+        if (null !== $notification->getReplyTo()) {
+            $email->replyTo($notification->getReplyTo());
+        }
 
         if (\is_callable($useEmail)) {
             $useEmail($email);

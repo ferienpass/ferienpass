@@ -11,12 +11,15 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CoreBundle\Notification;
+namespace Ferienpass\CoreBundle\Entity;
 
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use Doctrine\ORM\Mapping as ORM;
 
-#[AutoconfigureTag('ferienpass.notification')]
-interface NotificationInterface
+#[ORM\Entity]
+class SentSms extends SentMessage
 {
-    public static function getName(): string;
+    private function __construct()
+    {
+        parent::__construct();
+    }
 }

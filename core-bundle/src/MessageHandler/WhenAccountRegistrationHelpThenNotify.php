@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\MessageHandler;
 
+use Ferienpass\CoreBundle\Entity\MessageLog;
 use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Message\AccountRegistrationHelp;
 use Ferienpass\CoreBundle\Notifier\Notifier;
@@ -27,7 +28,7 @@ class WhenAccountRegistrationHelpThenNotify
     {
     }
 
-    public function __invoke(AccountRegistrationHelp $message): void
+    public function __invoke(AccountRegistrationHelp $message, MessageLog $log): void
     {
         /** @var User $user */
         $user = $this->repository->find($message->getUserId());
@@ -40,6 +41,6 @@ class WhenAccountRegistrationHelpThenNotify
             return;
         }
 
-        $this->notifier->send($notification, new Recipient($email));
+        $this->notifier->send($notification->belongsTo($log), new Recipient($email));
     }
 }
