@@ -92,6 +92,15 @@ final class ToolsController extends AbstractController
     }
 
     #[IsGranted('ROLE_SUPER_ADMIN')]
+    #[Route('/postausgang', name: 'admin_outbox')]
+    public function outbox(Breadcrumb $breadcrumb): Response
+    {
+        return $this->render('@FerienpassAdmin/page/tools/outbox.html.twig', [
+            'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'outbox.title'),
+        ]);
+    }
+
+    #[IsGranted('ROLE_SUPER_ADMIN')]
     #[Route('/daten-löschen', name: 'admin_erase_data')]
     public function eraseData(EraseDataFacade $eraseDataFacade, Breadcrumb $breadcrumb, Request $request): Response
     {

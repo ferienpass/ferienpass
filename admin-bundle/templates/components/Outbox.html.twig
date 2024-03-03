@@ -1,0 +1,187 @@
+{% trans_default_domain 'admin' %}
+
+<div {{ attributes }} class="rounded border border-gray-200 overflow-hidden lg:flex">
+
+    <section aria-labelledby="message-heading"
+             class="flex h-full min-w-0 flex-1 flex-col overflow-hidden lg:order-last">
+
+        <div class="flex-shrink-0 border-b border-gray-200 bg-white">
+
+            <div class="h-16">
+                <div class="px-4 sm:px-6 lg:px-8">
+                    {% if message is not null %}
+                        <div class="flex justify-between py-3">
+                            <div>
+                                <div class="isolate inline-flex rounded-md shadow-sm sm:space-x-3 sm:shadow-none">
+                                    <span class="space-x-3 flex">
+                                        <button type="button"
+                                                class="relative -ml-px items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:z-10 hover:bg-gray-50 focus:z-10 inline-flex">
+                                            <span class="-ml-0.5 h-5 w-5 text-gray-400">
+                                                {{ source('@FerienpassAdmin/icons/arrow-uturn-right.mini.svg') }}
+                                            </span>
+                                            Erneut versenden
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% if message is not null %}
+            <div class="min-h-0 flex-1 overflow-y-auto">
+                <div class="bg-white pb-6 pt-5 shadow relative z-10">
+                    <div class="px-4 sm:px-6 lg:px-8">
+
+                        {% if message.logEntry is not null %}
+                            <div class="-mt-2 mb-2 flex items-center gap-1.5">
+                                <p class="text-indigo-600 text-xs font-medium">
+                                    {{ "outbox.message.#{message.logEntry.message}"|trans }}
+                                </p>
+                                <span class="w-4 h-4 text-gray-500">
+                                    {{ source('@FerienpassAdmin/icons/chevron-right.micro.svg') }}
+                                </span>
+                                {% if message.logEntry.user is not null %}
+                                    <a href="{{ path('admin_accounts_edit', {id: message.logEntry.user.id}) }}"
+                                       target="_blank"
+                                       class="inline-flex items-center gap-x-1 rounded px-2 py-1 text-xs font-medium text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100">
+                                        <span class="h-4 w-4">
+                                            {{ source('@FerienpassAdmin/icons/user.micro.svg') }}
+                                        </span>
+                                        {{ message.logEntry.user.name }}
+                                    </a>
+                                {% endif %}
+                                {% if message.logEntry.attendance is not null %}
+                                    <a href="{{ path('admin_participants_index', {id: message.logEntry.attendance.participant.id}) }}"
+                                       target="_blank"
+                                       class="inline-flex items-center gap-x-1 rounded px-2 py-1 text-xs font-medium text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100">
+                                        <span class="h-4 w-4">
+                                            {{ source('@FerienpassAdmin/icons/user.micro.svg') }}
+                                        </span>
+                                        {{ message.logEntry.attendance.participant.name }}
+                                    </a>
+                                    <a href="{{ path('admin_offers_edit', {id: message.logEntry.attendance.offer.id}) }}"
+                                       target="_blank"
+                                       class="inline-flex items-center gap-x-1 rounded px-2 py-1 text-xs font-medium text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100">
+                                        <span class="h-4 w-4">
+                                            {{ source('@FerienpassAdmin/icons/user.micro.svg') }}
+                                        </span>
+                                        {{ message.logEntry.attendance.offer.name }}
+                                    </a>
+                                {% endif %}
+                                {% if message.logEntry.offer is not null %}
+                                    <a href="{{ path('admin_offers_edit', {id: message.logEntry.attendance.offer.id}) }}"
+                                       target="_blank"
+                                       class="inline-flex items-center gap-x-1 rounded px-2 py-1 text-xs font-medium text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100">
+                                        <span class="h-4 w-4">
+                                            {{ source('@FerienpassAdmin/icons/user.micro.svg') }}
+                                        </span>
+                                        {{ message.logEntry.attendance.offer.name }}
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        <h1 id="message-heading" class="text-lg font-medium text-gray-900">{{ message.subject }}</h1>
+                        <p class="mt-1 truncate text-sm text-gray-500"><span
+                                    class="text-gray-700 font-medium">Von:</span> {{ message.from }}</p>
+                        <p class="mt-1 truncate text-sm text-gray-500"><span
+                                    class="text-gray-700 font-medium">An:</span> {{ message.to }}</p>
+                        {% if message.replyTo|default %}
+                            <p class="mt-1 truncate text-sm text-gray-500"><span class="text-gray-700 font-medium">Antwort
+                                    an:</span> {{ message.replyTo }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div id="preview" data-turbo="false">
+                    <template shadowrootmode="open">
+                        {{ message.html|raw }}
+                    </template>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-center py-12">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                     aria-hidden="true">
+                    <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                </svg>
+                <h3 class="mt-2 text-sm font-semibold text-gray-900">Nachrichtenvorschau</h3>
+                <p class="mt-1 text-sm text-gray-500">Wählen Sie eine Nachricht zum Anzeigen aus.</p>
+            </div>
+
+        {% endif %}
+    </section>
+
+    <aside class="hidden lg:order-first lg:block lg:flex-shrink-0">
+        <div class="relative flex h-full w-96 flex-col border-r border-gray-200 bg-gray-100">
+            <div class="flex-shrink-0">
+                <div class="flex h-16 flex-col justify-center bg-white px-6">
+                    <div class="flex items-baseline space-x-3">
+                        <h2 class="text-lg font-medium text-gray-900">{{ 'outbox.title'|trans }}</h2>
+                        <p class="text-sm font-medium text-gray-500">{{ pagination.numResults }} Nachrichten</p>
+                    </div>
+                </div>
+                <div class="border-b border-t border-gray-200 bg-gray-50 px-6 py-2 text-sm font-medium text-gray-500">
+                    Nach Datum sortiert
+                </div>
+            </div>
+            <nav aria-label="Message list" class="min-h-0 flex-1 overflow-y-auto">
+                <ul role="list" class="divide-y divide-gray-200 border-b border-gray-200">
+                    {% for message in pagination.results %}
+                        <li class="relative bg-white px-6 py-5 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 hover:bg-gray-50">
+                            <div class="flex justify-between space-x-3">
+                                <div class="min-w-0 flex-1">
+                                    <a class="block focus:outline-none"
+                                       data-action="live#emit:prevent"
+                                       data-live-event-param="open"
+                                       data-live-message-param="{{ message.id }}">
+                                        <span class="absolute inset-0" aria-hidden="true"></span>
+                                        <p class="truncate text-sm font-medium text-gray-900 flex items-center gap-1">
+
+                                            {% if message.isEmail %}
+                                            <span class="w-4 h-4 text-gray-500">{{ source('@FerienpassAdmin/icons/envelope.micro.svg') }}</span
+                                            {% elseif message.isSms %}
+                                            <span class="w-4 h-4 text-gray-500">{{ source('@FerienpassAdmin/icons/device-phone-mobile.micro.svg') }}</span
+                                                    {% endif %}>
+                                            <span>{{ message.to }}</span>
+                                        </p>
+                                        {% if message.subject is defined %}
+                                            <p class="truncate text-sm text-gray-500">{{ message.subject }}</p>
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                <time datetime="{{ message.createdAt|date('c') }}"
+                                      class="flex-shrink-0 whitespace-nowrap text-sm text-gray-500">{{ message.createdAt|ago }}
+                                </time>
+                            </div>
+                            <div class="mt-1">
+                                <p class="line-clamp-2 text-sm text-gray-600">{{ message.text|slice(0, 100) }}</p>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                {% if pagination.hasNextPage %}
+                    <div class="flex justify-center py-2">
+                        <button type="button"
+                                data-action="live#emit"
+                                data-live-event-param="loadMore"
+                                class="relative items-center gap-x-1.5 rounded px-2 py-1 text-sm font-semibold text-gray-900 hover:bg-gray-200/50 inline-flex">
+                            <span class="-ml-0.5 h-5 w-5 text-gray-500">
+                                {{ source('@FerienpassAdmin/icons/plus.mini.svg') }}
+                            </span>
+                            Mehr laden
+                        </button>
+                    </div>
+                {% endif %}
+
+            </nav>
+        </div>
+    </aside>
+
+</div>

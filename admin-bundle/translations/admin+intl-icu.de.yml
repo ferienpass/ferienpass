@@ -602,6 +602,11 @@ eraseData:
   countAttendances: Anzahl Anmeldungen
   user: Eltern-Account wird gelöscht
 
+outbox:
+  title: Postausgang
+  message:
+    Ferienpass\CoreBundle\Message\AccountCreated: Account erstellt
+
 accessCodes:
   title: Zugangscodes
   new: Neue Zugangscode-Strategie
