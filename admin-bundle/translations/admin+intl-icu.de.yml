@@ -608,6 +608,7 @@ outbox:
     Ferienpass\CoreBundle\Message\AccountCreated: Account erstellt
     Ferienpass\CoreBundle\Message\AccountResendActivation: Aktivierungsmail erneut versenden
     Ferienpass\CoreBundle\Message\AccountActivated: Account aktiviert
+    Ferienpass\CoreBundle\Message\HostCreated: Veranstalter registriert
 
 accessCodes:
   title: Zugangscodes
