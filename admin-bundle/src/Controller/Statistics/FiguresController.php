@@ -52,7 +52,7 @@ class FiguresController extends AbstractController
         }
 
         return (int) $this->attendanceRepository->createQueryBuilder('a')
-            ->select('COUNT(DISTINCT COALESCE(IDENTITY(a.participant), a.participantId))')
+            ->select('COUNT(DISTINCT COALESCE(IDENTITY(a.participant), a.participantPseudonym))')
             ->innerJoin('a.offer', 'o')
             ->andWhere('o.edition = :edition')
             ->setParameter('edition', $edition->getId())

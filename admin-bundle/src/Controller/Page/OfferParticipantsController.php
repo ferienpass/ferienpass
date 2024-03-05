@@ -59,27 +59,27 @@ final class OfferParticipantsController extends AbstractController
 
         /** @var Form $ms */
         $ms = $this->createForm(MultiSelectType::class, options: [
-            'buttons' => ['confirm', 'reject'],
+            'buttons' => ['confirm', 'confirmAndInform', 'reject', 'rejectAndInform'],
             'items' => $items->toArray(),
         ]);
 
         $ms->handleRequest($request);
         if ($ms->isSubmitted() && $ms->isValid()) {
             $action = $ms->getClickedButton()->getName();
-            $this->denyAccessUnlessGranted("participants.$action", $offer);
+            $this->denyAccessUnlessGranted(sprintf('participants.%s', substr($action, 0, 6)), $offer);
 
             $selectedParticipants = $ms->get('items')->getData()->toArray();
 
-            if ('confirm' === $action) {
-                $this->participantList->confirm($selectedParticipants, reorder: false);
+            if ('confirm' === $action || 'confirmAndInform' === $action) {
+                $this->participantList->confirm($selectedParticipants, reorder: false, notify: 'confirmAndInform' === $action);
 
                 $flash->addConfirmation(text: 'Den Teilnehmer:innen wurde zugesagt.');
             }
 
-            if ('reject' === $action) {
-                $this->participantList->reject($selectedParticipants, reorder: false);
+            if ('reject' === $action || 'rejectAndInform' === $action) {
+                $this->participantList->reject($selectedParticipants, reorder: false, notify: 'rejectAndInform' === $action);
 
-                $flash->addConfirmation(text: 'Den Teilnehmer:innen wurde agesagt.');
+                $flash->addConfirmation(text: 'Den Teilnehmer:innen wurde abgesagt.');
             }
 
             return $this->redirectToRoute('admin_offer_participants');

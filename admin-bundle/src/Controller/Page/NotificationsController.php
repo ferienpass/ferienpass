@@ -16,7 +16,6 @@ namespace Ferienpass\AdminBundle\Controller\Page;
 use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Form\EditNotificationType;
-use Ferienpass\CoreBundle\Applications\UnconfirmedApplications;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Notification;
 use Ferienpass\CoreBundle\Notification\AbstractNotification;
@@ -29,7 +28,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Notifier\Notification\EmailNotificationInterface;
 use Symfony\Component\Notifier\Recipient\Recipient;
 use Symfony\Component\Routing\Attribute\Route;
@@ -129,15 +127,10 @@ final class NotificationsController extends AbstractController
         ]);
     }
 
-    #[Route('/zulassungsbescheide', name: 'admin_notifications_send_acceptances', priority: 2)]
-    public function sendAcceptances(Request $request, MessageBusInterface $messageBus, UnconfirmedApplications $unconfirmedApplications, Breadcrumb $breadcrumb)
+    #[Route('/zulassungsbescheide', name: 'admin_send_decisions', priority: 2)]
+    public function sendDecisions(Breadcrumb $breadcrumb)
     {
-        $form = $this->createFormBuilder()->getForm();
-
-        return $this->render('@FerienpassAdmin/page/notifications/send_attendances.html.twig', [
-            'members' => $unconfirmedApplications->getUninformedMembers(),
-            'participants' => $unconfirmedApplications->getUninformedParticipants(),
-            'form' => $form->createView(),
+        return $this->render('@FerienpassAdmin/page/notifications/send_decisions.html.twig', [
             'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'notifications.title', 'Zulassungsbescheide versenden'),
         ]);
     }

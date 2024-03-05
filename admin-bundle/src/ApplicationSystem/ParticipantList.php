@@ -46,7 +46,7 @@ class ParticipantList
     /**
      * @param Attendance[] $attendances
      */
-    public function confirm(array $attendances, bool $reorder = false): void
+    public function confirm(array $attendances, bool $reorder = false, bool $notify = true): void
     {
         foreach ($attendances as $attendance) {
             if (null === $attendance->getParticipant()) {
@@ -60,7 +60,7 @@ class ParticipantList
 
             $attendance->setStatus(Attendance::STATUS_CONFIRMED, $this->security->getUser());
 
-            $this->dispatchMessage(new AttendanceStatusChanged($attendance->getId(), $oldStatus, $attendance->getStatus()));
+            $this->dispatchMessage(new AttendanceStatusChanged($attendance->getId(), $oldStatus, $attendance->getStatus(), $notify));
         }
 
         $this->doctrine->getManager()->flush();
@@ -77,7 +77,7 @@ class ParticipantList
     /**
      * @param Attendance[] $attendances
      */
-    public function reject(array $attendances, bool $reorder = false): void
+    public function reject(array $attendances, bool $reorder = false, bool $notify = true): void
     {
         foreach ($attendances as $attendance) {
             if (null === $attendance->getParticipant()) {
@@ -92,7 +92,7 @@ class ParticipantList
 
             $attendance->setStatus(Attendance::STATUS_WITHDRAWN, $this->security->getUser());
 
-            $this->dispatchMessage(new AttendanceStatusChanged($attendance->getId(), $oldStatus, $attendance->getStatus()));
+            $this->dispatchMessage(new AttendanceStatusChanged($attendance->getId(), $oldStatus, $attendance->getStatus(), $notify));
         }
 
         $this->doctrine->getManager()->flush();

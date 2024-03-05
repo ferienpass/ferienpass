@@ -13,9 +13,10 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Components;
 
-use Ferienpass\CoreBundle\Applications\UnconfirmedApplications;
+use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Edition;
-use Ferienpass\CoreBundle\Message\ConfirmApplications;
+use Ferienpass\CoreBundle\Facade\DecisionsFacade;
+use Ferienpass\CoreBundle\Message\SendAttendanceDecisions;
 use Ferienpass\CoreBundle\Notification\MailingNotification;
 use Ferienpass\CoreBundle\Notifier\Notifier;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
@@ -47,20 +48,32 @@ class SendDecisions extends AbstractController
     #[LiveProp(writable: true, url: true)]
     public ?Edition $edition = null;
 
-    public function __construct(private readonly EditionRepository $editionRepository, private readonly ParticipantRepository $participantRepository, private readonly UserRepository $userRepository, private readonly HostRepository $hostRepository, private readonly OfferRepository $offerRepository, private readonly Environment $twig, private readonly RequestStack $requestStack, private readonly NormalizerInterface $normalizer, private readonly Notifier $notifier, private readonly MailingNotification $mailingNotification, private readonly UnconfirmedApplications $unconfirmedApplications)
+    public function __construct(private readonly EditionRepository $editionRepository, private readonly ParticipantRepository $participantRepository, private readonly UserRepository $userRepository, private readonly HostRepository $hostRepository, private readonly OfferRepository $offerRepository, private readonly Environment $twig, private readonly RequestStack $requestStack, private readonly NormalizerInterface $normalizer, private readonly Notifier $notifier, private readonly MailingNotification $mailingNotification, private readonly DecisionsFacade $unconfirmedApplications)
     {
     }
 
     #[ExposeInTemplate]
     public function editionOptions()
     {
-        $a = $this->unconfirmedApplications->getAttendanceIds();
-
-        $qb = $this->editionRepository->createQueryBuilder('e')
-
-        ;
+        $qb = $this->editionRepository->createQueryBuilder('e');
 
         return $qb->getQuery()->getResult();
+    }
+
+    #[ExposeInTemplate]
+    public function attendances(): array
+    {
+        if (null === $this->edition) {
+            return [];
+        }
+
+        $return = [];
+        /** @var Attendance $attendance */
+        foreach ($this->unconfirmedApplications->attendances($this->edition) as $attendance) {
+            $return[$attendance->getEmail()][$attendance->getParticipant()->getId()][] = $attendance;
+        }
+
+        return $return;
     }
 
     #[LiveAction]
@@ -71,9 +84,13 @@ class SendDecisions extends AbstractController
     }
 
     #[LiveAction]
-    public function send(Flash $flash, MessageBusInterface $messageBus, UnconfirmedApplications $unconfirmedApplications)
+    public function send(Flash $flash, MessageBusInterface $messageBus)
     {
-        $messageBus->dispatch(new ConfirmApplications($unconfirmedApplications->getAttendanceIds()));
+        if (null === $this->edition) {
+            throw new \RuntimeException('This should not happen');
+        }
+
+        $messageBus->dispatch(new SendAttendanceDecisions($this->edition->getId()));
 
         $flash->addConfirmation('Versand erfolgreich', 'Die E-Mails wurden versandt.');
 

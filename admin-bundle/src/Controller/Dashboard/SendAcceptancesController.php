@@ -13,31 +13,22 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Dashboard;
 
-use Ferienpass\CoreBundle\Applications\UnconfirmedApplications;
+use Ferienpass\CoreBundle\Facade\DecisionsFacade;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 
 class SendAcceptancesController extends AbstractController
 {
-    public function __construct(private readonly UnconfirmedApplications $unconfirmedApplications)
+    public function __construct(private readonly DecisionsFacade $decisionsFacade)
     {
     }
 
     public function __invoke(): Response
     {
+        return new Response('', Response::HTTP_NO_CONTENT);
+
         if (!$this->isGranted('ROLE_ADMIN')) {
             return new Response('', Response::HTTP_NO_CONTENT);
         }
-
-        // TODO: Only show widget when there is a current Edition with active/finished "allocation" task
-        // TODO 2: Make the "allocation" task mandatory for Editions with lot application system
-        $count = \count($this->unconfirmedApplications->getUninformedMembers()) + \count($this->unconfirmedApplications->getUninformedParticipants());
-        if (!$count) {
-            return new Response('', Response::HTTP_NO_CONTENT);
-        }
-
-        return $this->render('@FerienpassAdmin/fragment/dashboard/send_acceptances.html.twig', [
-            'count' => $count,
-        ]);
     }
 }
