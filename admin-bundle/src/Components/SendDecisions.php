@@ -90,7 +90,7 @@ class SendDecisions extends AbstractController
             throw new \RuntimeException('This should not happen');
         }
 
-        $messageBus->dispatch(new SendAttendanceDecisions($this->edition->getId()));
+        $messageBus->dispatch(new SendAttendanceDecisions($this->edition->getId(), array_map(fn (Attendance $a) => $a->getId(), $this->unconfirmedApplications->attendances($this->edition))));
 
         $flash->addConfirmation('Versand erfolgreich', 'Die E-Mails wurden versandt.');
 
