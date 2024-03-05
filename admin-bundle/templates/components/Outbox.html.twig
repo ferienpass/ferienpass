@@ -43,52 +43,59 @@
                                 <span class="w-4 h-4 text-gray-500">
                                     {{ source('@FerienpassAdmin/icons/chevron-right.micro.svg') }}
                                 </span>
-                                {% if message.logEntry.user is not null %}
-                                    <a href="{{ path('admin_accounts_edit', {id: message.logEntry.user.id}) }}"
+                                {% for user in message.logEntry.users %}
+                                    <a href="{{ path('admin_accounts_edit', {id: user.id}) }}"
                                        target="_blank"
                                        class="inline-flex items-center gap-x-1 rounded px-2 py-1 text-xs font-medium text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100">
                                         <span class="h-4 w-4">
                                             {{ source('@FerienpassAdmin/icons/user.micro.svg') }}
                                         </span>
-                                        {{ message.logEntry.user.name }}
+                                        {{ user.name }}
                                     </a>
-                                {% endif %}
-                                {% if message.logEntry.attendance is not null %}
-                                    <a href="{{ path('admin_participants_index', {id: message.logEntry.attendance.participant.id}) }}"
+                                {% endfor %}
+                                {% for attendance in message.logEntry.attendances %}
+                                    <a href="{{ path('admin_participants_index', {id: attendance.participant.id}) }}"
                                        target="_blank"
                                        class="inline-flex items-center gap-x-1 rounded px-2 py-1 text-xs font-medium text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100">
                                         <span class="h-4 w-4">
                                             {{ source('@FerienpassAdmin/icons/user.micro.svg') }}
                                         </span>
-                                        {{ message.logEntry.attendance.participant.name }}
+                                        {{ attendance.participant.name }}
                                     </a>
-                                    <a href="{{ path('admin_offers_edit', {id: message.logEntry.attendance.offer.id}) }}"
+                                    <a href="{{ path('admin_offers_edit', {id: attendance.offer.id}) }}"
                                        target="_blank"
                                        class="inline-flex items-center gap-x-1 rounded px-2 py-1 text-xs font-medium text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100">
                                         <span class="h-4 w-4">
                                             {{ source('@FerienpassAdmin/icons/user.micro.svg') }}
                                         </span>
-                                        {{ message.logEntry.attendance.offer.name }}
+                                        {{ attendance.offer.name }}
                                     </a>
-                                {% endif %}
-                                {% if message.logEntry.offer is not null %}
-                                    <a href="{{ path('admin_offers_edit', {id: message.logEntry.attendance.offer.id}) }}"
+                                {% endfor %}
+                                {% for offer in message.logEntry.offers %}
+                                    <a href="{{ path('admin_offers_edit', {id: attendance.offer.id}) }}"
                                        target="_blank"
                                        class="inline-flex items-center gap-x-1 rounded px-2 py-1 text-xs font-medium text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100">
                                         <span class="h-4 w-4">
                                             {{ source('@FerienpassAdmin/icons/user.micro.svg') }}
                                         </span>
-                                        {{ message.logEntry.attendance.offer.name }}
+                                        {{ attendance.offer.name }}
                                     </a>
-                                {% endif %}
+                                {% endfor %}
                             </div>
                         {% endif %}
 
-                        <h1 id="message-heading" class="text-lg font-medium text-gray-900">{{ message.subject }}</h1>
-                        <p class="mt-1 truncate text-sm text-gray-500"><span
-                                    class="text-gray-700 font-medium">Von:</span> {{ message.from }}</p>
-                        <p class="mt-1 truncate text-sm text-gray-500"><span
-                                    class="text-gray-700 font-medium">An:</span> {{ message.to }}</p>
+                        {% if message.subject|default %}
+                            <h1 id="message-heading"
+                                class="text-lg font-medium text-gray-900">{{ message.subject }}</h1>
+                        {% endif %}
+                        {% if message.from|default %}
+                            <p class="mt-1 truncate text-sm text-gray-500"><span
+                                        class="text-gray-700 font-medium">Von:</span> {{ message.from }}</p>
+                        {% endif %}
+                        {% if message.to|default %}
+                            <p class="mt-1 truncate text-sm text-gray-500"><span
+                                        class="text-gray-700 font-medium">An:</span> {{ message.to }}</p>
+                        {% endif %}
                         {% if message.replyTo|default %}
                             <p class="mt-1 truncate text-sm text-gray-500"><span class="text-gray-700 font-medium">Antwort
                                     an:</span> {{ message.replyTo }}</p>
@@ -96,11 +103,13 @@
                     </div>
                 </div>
 
-                <div id="preview" data-turbo="false">
-                    <template shadowrootmode="open">
-                        {{ message.html|raw }}
-                    </template>
-                </div>
+                {% if message.html|default %}
+                    <div id="preview" data-turbo="false">
+                        <template shadowrootmode="open">
+                            {{ message.html|raw }}
+                        </template>
+                    </div>
+                {% endif %}
             </div>
         {% else %}
             <div class="text-center py-12">
@@ -133,7 +142,7 @@
             <nav aria-label="Message list" class="min-h-0 flex-1 overflow-y-auto">
                 <ul role="list" class="divide-y divide-gray-200 border-b border-gray-200">
                     {% for item in pagination.results %}
-                        <li class="relative px-6 py-5 {{ item.id == message.id ? 'bg-gray-50' : 'bg-white' }} focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 hover:bg-gray-50">
+                        <li class="relative px-6 py-5 {{ item.id == message.id|default ? 'bg-gray-50' : 'bg-white' }} focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 hover:bg-gray-50">
                             <div class="flex justify-between space-x-3">
                                 <div class="min-w-0 flex-1">
                                     <a class="block focus:outline-none"
