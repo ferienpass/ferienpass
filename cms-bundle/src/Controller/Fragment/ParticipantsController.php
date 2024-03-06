@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\CmsBundle\Controller\Fragment;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Ferienpass\CmsBundle\Controller\Frontend\AbstractController;
+use Ferienpass\CmsBundle\Controller\AbstractController;
 use Ferienpass\CmsBundle\Form\UserParticipantsType;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Entity\User;

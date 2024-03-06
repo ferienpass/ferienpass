@@ -11,7 +11,7 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CmsBundle\Controller\Frontend;
+namespace Ferienpass\CmsBundle\Controller;
 
 use Contao\CoreBundle\Controller\AbstractController as ContaoAbstractController;
 use Contao\PageModel;

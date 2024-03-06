@@ -4,29 +4,34 @@
             <div class="relative z-10 px-2 flex lg:px-0">
                 <div class="flex-shrink-0">
                     {% block logo %}
-                        <h1 class="text-sm text-gray-500 font-normal leading-tight">{{ 'hostPortal'|trans }}<br>{{ 'pageTitle'|trans }}</h1>
+                        <h1 class="text-sm text-gray-500 font-normal leading-tight">{{ 'hostPortal'|trans }}
+                            <br>{{ 'pageTitle'|trans }}</h1>
                     {% endblock %}
                 </div>
             </div>
-            <div class="relative z-10 flex items-center lg:hidden">
-                <button type="button"
-                        @click="mobileMenuOpen = !mobileMenuOpen"
-                        class="rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-900"
-                        aria-controls="mobile-menu"
-                        :aria-expanded="mobileMenuOpen ? 'true' : 'false'">
-                    <span class="sr-only">Menü öffnen</span>
-                    <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                         stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                    <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                         stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
+
+            {% set menu = knp_menu_get('admin_primary') %}
+            {% if menu.hasChildren %}
+                <div class="relative z-10 flex items-center lg:hidden">
+                    <button type="button"
+                            @click="mobileMenuOpen = !mobileMenuOpen"
+                            class="rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-900"
+                            aria-controls="mobile-menu"
+                            :aria-expanded="mobileMenuOpen ? 'true' : 'false'">
+                        <span class="sr-only">Menü öffnen</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            {% endif %}
             <div class="hidden lg:relative lg:z-10 lg:ml-4 lg:flex lg:items-center lg:space-x-4">
 
                 <div class="flex items-center">

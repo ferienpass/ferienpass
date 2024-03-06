@@ -168,6 +168,7 @@ offers:
   status.unpublished: Unveröffentlicht
   workflow.complete: Finalisieren
   workflow.approve: Freigeben
+  workflow.unapprove: Freigabe zurückziehen
   workflow.publish: Veröffentlichen
   workflow.unpublish: Unveröffentlichen
   workflow.cancel: Absagen

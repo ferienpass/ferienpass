@@ -16,7 +16,7 @@ namespace Ferienpass\CmsBundle\Controller\Fragment;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\CoreBundle\Exception\ResponseException;
 use Contao\FilesModel;
-use Ferienpass\CmsBundle\Controller\Frontend\AbstractController;
+use Ferienpass\CmsBundle\Controller\AbstractController;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;

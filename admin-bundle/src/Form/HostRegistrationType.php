@@ -42,14 +42,14 @@ class HostRegistrationType extends AbstractType
             ->add('lastname', null, [
                 'label' => new TranslatableMessage('tl_member.lastname.0', [], 'contao_tl_member'),
             ])
-            ->add('memberPhone', null, [
+            ->add('userPhone', null, [
                 'label' => new TranslatableMessage('tl_member.phone.0', [], 'contao_tl_member'),
                 'required' => false,
             ])
-            ->add('memberEmail', EmailType::class, [
+            ->add('userEmail', EmailType::class, [
                 'label' => new TranslatableMessage('tl_member.email.0', [], 'contao_tl_member'),
             ])
-            ->add('memberPassword', PasswordType::class, [
+            ->add('userPassword', PasswordType::class, [
                 'label' => new TranslatableMessage('MSC.password.0', [], 'contao_default'),
             ])
             ->add('name', null, [

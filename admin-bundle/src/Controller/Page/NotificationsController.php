@@ -20,6 +20,7 @@ use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Notification;
 use Ferienpass\CoreBundle\Notification\AbstractNotification;
 use Ferienpass\CoreBundle\Notification\EditionAwareNotificationInterface;
+use Ferienpass\CoreBundle\Notification\EmailToAwareNotificationInterface;
 use Ferienpass\CoreBundle\Notifier\Notifier;
 use Ferienpass\CoreBundle\Repository\NotificationRepository;
 use Ferienpass\CoreBundle\Session\Flash;
@@ -65,7 +66,7 @@ final class NotificationsController extends AbstractController
 
         $editions = $em->createQuery('SELECT e FROM '.Edition::class.' e WHERE e IN (SELECT IDENTITY(n.edition) FROM '.Notification::class.' n WHERE n.type = :type)')->setParameter('type', $type)->getResult();
         $entity = $repository->findOneBy(['type' => $type, 'edition' => $edition]) ?? $this->newNotificationForType($type);
-        $form = $this->createForm(EditNotificationType::class, $entity, ['notification_type' => $type, 'supports_sms' => 'attendance_newly_confirmed' === $type, 'new_edition' => 'admin_notifications_new' === $request->get('_route'), 'can_delete' => null !== $edition]);
+        $form = $this->createForm(EditNotificationType::class, $entity, ['notification_type' => $type, 'supports_sms' => 'attendance_newly_confirmed' === $type, 'new_edition' => 'admin_notifications_new' === $request->get('_route'), 'can_delete' => null !== $edition, 'supports_email_to' => is_subclass_of($notifier->getClass($type), EmailToAwareNotificationInterface::class)]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

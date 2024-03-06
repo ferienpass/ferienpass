@@ -20,46 +20,32 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class HostRegistrationDto
 {
-    /**
-     * @Assert\NotBlank
-     */
+    #[Assert\NotBlank()]
     public ?string $firstname = null;
 
-    /**
-     * @Assert\NotBlank
-     */
+    #[Assert\NotBlank()]
     public ?string $lastname = null;
 
-    /**
-     * @PhoneNumber(defaultRegion="DE")
-     */
-    public ?string $memberPhone = null;
+    #[PhoneNumber(defaultRegion: 'DE')]
+    public ?string $userPhone = null;
 
-    /**
-     * @Assert\Email()
-     */
-    public ?string $memberEmail = null;
-    public ?string $memberPassword = null;
+    #[Assert\Email()]
+    public ?string $userEmail = null;
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 8)]
+    public ?string $userPassword = null;
 
-    /**
-     * @Assert\NotBlank
-     */
+    #[Assert\NotBlank()]
     public ?string $name = null;
     public ?string $text = null;
 
-    /**
-     * @Assert\Email()
-     */
+    #[Assert\Email]
     public ?string $email = null;
 
-    /**
-     * @PhoneNumber(defaultRegion="DE")
-     */
+    #[PhoneNumber(defaultRegion: 'DE')]
     public ?string $phone = null;
 
-    /**
-     * @Assert\Url()
-     */
+    #[Assert\Url]
     public ?string $website = null;
     public ?string $street = null;
     public ?string $postal = null;
@@ -71,9 +57,9 @@ class HostRegistrationDto
 
         $user->setFirstname($this->firstname);
         $user->setLastname($this->lastname);
-        $user->setPhone($this->memberPhone);
-        $user->setEmail($this->memberEmail);
-        $user->setPlainPassword($this->memberPassword);
+        $user->setPhone($this->userPhone);
+        $user->setEmail($this->userEmail);
+        $user->setPlainPassword($this->userPassword);
 
         return $user;
     }

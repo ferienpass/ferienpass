@@ -42,6 +42,8 @@ class EditNotificationType extends AbstractType
             ->setRequired('notification_type')
             ->setDefined('supports_email')
             ->setDefault('supports_email', true)
+            ->setDefined('supports_email_to')
+            ->setDefault('supports_email_to', false)
             ->setDefined('supports_sms')
             ->setDefault('supports_sms', false)
             ->setDefined('new_edition')
@@ -69,6 +71,12 @@ class EditNotificationType extends AbstractType
                     'required' => true,
                     'placeholder' => '-',
                 ])
+            ;
+        }
+
+        if ($options['supports_email_to']) {
+            $builder
+                ->add('emailTo', EmailType::class, ['fieldset_group' => 'email', 'width' => '2/3'])
             ;
         }
 

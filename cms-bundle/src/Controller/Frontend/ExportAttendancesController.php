@@ -13,53 +13,51 @@ declare(strict_types=1);
 
 namespace Ferienpass\CmsBundle\Controller\Frontend;
 
-use Contao\CoreBundle\Exception\PageNotFoundException;
-use Contao\MemberModel;
-use Ferienpass\CoreBundle\Entity\Attendance;
-use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Export\Offer\ICal\ICalExport;
 use Ferienpass\CoreBundle\Repository\OfferRepository;
+use Ferienpass\CoreBundle\Repository\UserRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 
 #[Route(defaults: ['token_check' => false])]
-class ExportAttendancesController extends \Contao\CoreBundle\Controller\AbstractController
+class ExportAttendancesController extends AbstractController
 {
-    public function __construct(#[Autowire('%kernel.secret%')] private readonly string $secret, private readonly ICalExport $iCal, private readonly OfferRepository $offerRepository)
+    public function __construct(#[Autowire('%kernel.secret%')] private readonly string $secret)
     {
     }
 
-    #[Route(path: '/share/anmeldungen-ferienpass-{memberId}-{token}.{_format}', defaults: ['format' => 'ics'], requirements: ['memberId' => '\d+'])]
-    public function __invoke(int $memberId, string $token, string $_format, Request $request)
+    #[Route(path: '/anmeldungen-{memberId}-{token}.{_format}', requirements: ['memberId' => '\d+'], defaults: ['format' => 'ics'])]
+    public function __invoke(int $memberId, string $token, string $_format, Request $request, ICalExport $iCal, UserRepository $userRepository, OfferRepository $offerRepository)
     {
-        if (null === $member = MemberModel::findByPk($memberId)) {
-            throw new PageNotFoundException('Member ID not found: '.$memberId);
+        $user = $userRepository->find($memberId);
+        if (null === $user) {
+            throw $this->createNotFoundException();
         }
 
-        $expectedToken = hash('ripemd128', implode('', [$member->id, $_format, $this->secret]));
+        $expectedToken = hash('ripemd128', implode('', [$user->getId(), $_format, $this->secret]));
         $expectedToken = substr($expectedToken, 0, 8);
         if (false === hash_equals($expectedToken, $token)) {
-            throw new BadCredentialsException();
+            throw $this->createAccessDeniedException();
         }
 
         if ('ics' !== $_format) {
-            throw new PageNotFoundException('Format not supported: '.$_format);
+            throw $this->createNotFoundException();
         }
 
-        $offers = $this->offerRepository->createQueryBuilder('o')
-            ->innerJoin(Attendance::class, 'a')
-            ->innerJoin(Participant::class, 'p')
-            ->where('p.member = :member')
-            ->setParameter('member', $memberId)
+        $offers = $offerRepository->createQueryBuilder('o')
+            ->innerJoin('o.attendances', 'a')
+            ->innerJoin('p.participants', 'p')
+            ->where('p.user = :user')
+            ->setParameter('user', $user)
             ->getQuery()
             ->getResult()
         ;
 
-        $response = new BinaryFileResponse($this->iCal->generate($offers));
+        $response = new BinaryFileResponse($iCal->generate($offers));
         $response->headers->set('Content-Type', 'text/calendar');
 
         $disposition = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'cal.ics');

@@ -99,7 +99,7 @@ return function(ContainerConfigurator $container): void {
     $services->alias(Helper::class, 'knp_menu.helper');
 
     $services->get(MenuBuilder::class)
-        ->tag('knp_menu.menu_builder', ['method' => 'primaryNavigation', 'alias' => 'ferienpass_admin_primary'])
+        ->tag('knp_menu.menu_builder', ['method' => 'primaryNavigation', 'alias' => 'admin_primary'])
         ->tag('knp_menu.menu_builder', ['method' => 'userNavigation', 'alias' => 'host_user_navigation'])
         ->tag('knp_menu.menu_builder', ['method' => 'offerActions', 'alias' => 'host_offer_actions'])
         ->tag('knp_menu.menu_builder', ['method' => 'offerFilters', 'alias' => 'host_offer_filters'])

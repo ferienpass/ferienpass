@@ -15,7 +15,7 @@ namespace Ferienpass\CmsBundle\Controller\Fragment;
 
 use Contao\CoreBundle\OptIn\OptIn;
 use Doctrine\Persistence\ManagerRegistry;
-use Ferienpass\CmsBundle\Controller\Frontend\AbstractController;
+use Ferienpass\CmsBundle\Controller\AbstractController;
 use Ferienpass\CmsBundle\Form\ApplyFormParticipantType;
 use Ferienpass\CmsBundle\Form\ApplyFormType;
 use Ferienpass\CoreBundle\ApplicationSystem\ApplicationSystems;
