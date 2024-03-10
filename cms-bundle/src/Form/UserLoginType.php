@@ -40,8 +40,10 @@ class UserLoginType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'csrf_protection' => false,
             'mapped' => false,
+            'label_format' => 'login.%name%',
+            'translation_domain' => 'cms',
+            'csrf_protection' => false,
         ]);
     }
 }

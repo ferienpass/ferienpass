@@ -63,13 +63,13 @@ class HostFilter extends AbstractFilterType
         ]);
     }
 
-    public function apply(QueryBuilder $qb, FormInterface $form = null): void
+    public function apply(QueryBuilder $qb, FormInterface $form): void
     {
-        if ((null === $form || $form->isEmpty()) && $this->security->isGranted('ROLE_ADMIN')) {
+        if ($form->isEmpty() && $this->security->isGranted('ROLE_ADMIN')) {
             return;
         }
 
-        if ((null === $form || $form->isEmpty()) && !$this->security->isGranted('ROLE_ADMIN')) {
+        if ($form->isEmpty() && !$this->security->isGranted('ROLE_ADMIN')) {
             if (!($user = $this->security->getUser()) instanceof User) {
                 $qb->where('i.id = 0');
 

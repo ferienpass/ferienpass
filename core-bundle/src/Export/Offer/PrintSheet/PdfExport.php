@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Export\Offer\PrintSheet;
 
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\File;
 use Contao\FilesModel;
 use Ferienpass\CoreBundle\Entity\Host;
@@ -28,7 +29,7 @@ class PdfExport implements OffersExportInterface
 {
     private PdfExportConfig $config;
 
-    public function __construct(private Filesystem $filesystem, #[Autowire('%kernel.project_dir%')] private string $projectDir, private Environment $twig)
+    public function __construct(private Filesystem $filesystem, #[Autowire('%kernel.project_dir%')] private string $projectDir, private Environment $twig, private readonly ContaoFramework $contaoFramework)
     {
     }
 
@@ -46,7 +47,7 @@ class PdfExport implements OffersExportInterface
 
         $html = $this->render($offers);
         $hash = md5($html);
-        $tmpPath = $this->projectDir.'/system/tmp/pdf';
+        $tmpPath = sys_get_temp_dir().'/pdf';
         $pdfPath = sprintf('%s/%s.pdf', $tmpPath, $hash);
 
         $this->filesystem->mkdir($tmpPath);
@@ -61,6 +62,8 @@ class PdfExport implements OffersExportInterface
 
     private function render(iterable $items): string
     {
+        $this->contaoFramework->initialize();
+
         $images = [];
         /** @var Offer $item */
         foreach ($items as $item) {
@@ -80,6 +83,7 @@ class PdfExport implements OffersExportInterface
 
     private function createPdf(string $path, string $html, array $mPdfConfig): void
     {
+        $mPdfConfig = array_merge(['tempDir' => sys_get_temp_dir()], $mPdfConfig);
         if (file_exists($path)) {
             return;
         }

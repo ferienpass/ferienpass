@@ -1,0 +1,59 @@
+<div {{ attributes.defaults(stimulus_controller('ferienpass/admin-dropdown')) }}>
+
+    <div class="relative">
+        <button {{ stimulus_action('ferienpass/admin-dropdown', 'toggle') }}
+                type="button"
+                aria-expanded="false"
+                aria-haspopup="true"
+        >
+
+            {% block toggle %}
+                {% if toggleLabel is not null %}
+                    <span class="inline-flex items-center gap-x-0.5 rounded-md bg-white dark:bg-white/5 {{ toggleSize|default('sm') == 'lg' ? 'px-3 py-2' : 'px-2.5 py-1.5' }} text-sm font-medium text-gray-900 dark:text-white/95 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-white/10 hover:bg-gray-50 dark:hover:bg-white/10">
+                        <span class="flex items-center space-x-1">
+                            <span>{{ toggleLabel }}</span>
+                            <span class="h-5 w-5 text-gray-500">{{ source('@FerienpassAdmin/icons/chevron-down-solid.svg') }}</span>
+                        </span>
+                    </span>
+                {% else %}
+                    <span id="options-menu-0-button"
+                          class="-m-2.5 block p-2.5 text-gray-500 dark:text-gray-100/50 hover:text-gray-900 dark:hover:text-gray-100/80">
+                        <span class="sr-only">Open options</span>
+                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"
+                             aria-hidden="true">
+                            <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM11.5 15.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z"/>
+                        </svg>
+                    </span>
+                {% endif %}
+            {% endblock %}
+
+        </button>
+
+        {% if dropdownClass|default is empty %}
+            {% set dropdownClass = 'w-56' %}
+        {% endif %}
+
+        {% if position|default('right') == 'right' %}
+            {% set dropdownClass = dropdownClass ~' origin-top-right right-0' %}
+        {% else %}
+            {% set dropdownClass = dropdownClass ~' origin-top-left left-0' %}
+        {% endif %}
+
+        <div {{ stimulus_target('ferienpass/admin-dropdown', 'dropdown') }}
+             class="{{ dropdownClass }} hidden absolute mt-2 rounded shadow py-1 bg-white z-10 dark:bg-gray-950 ring-1 ring-black ring-opacity-5 divide-y divide-gray-100"
+             data-transition-enter="transition ease-out duration-100"
+             data-transition-enter-start="transform opacity-0 scale-95"
+             data-transition-enter-end="transform opacity-100 scale-100"
+             data-transition-leave="transition ease-in duration-75"
+             data-transition-leave-start="transform opacity-100 scale-100"
+             data-transition-leave-end="transform opacity-0 scale-95"
+        >
+            <div class="py-1 rounded-md bg-white dark:bg-gray-950 shadow-xs relative">
+
+                {% block dropdown %}{% endblock %}
+
+            </div>
+        </div>
+    </div>
+
+</div>

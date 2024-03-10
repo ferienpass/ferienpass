@@ -60,9 +60,9 @@ class EditionFilter extends AbstractFilterType
         ]);
     }
 
-    public function apply(QueryBuilder $qb, FormInterface $form = null): void
+    public function apply(QueryBuilder $qb, FormInterface $form): void
     {
-        if (null === $form || $form->isEmpty()) {
+        if ($form->isEmpty()) {
             if (!$this->security->isGranted('ROLE_ADMIN')) {
                 $qb->innerJoin('i.edition', 'e', Join::WITH, 'e IN (SELECT edition FROM '.Edition::class.' edition WHERE edition.archived <> 1)');
             }

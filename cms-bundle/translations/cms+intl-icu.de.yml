@@ -1,3 +1,28 @@
+userAccount:
+  participants: Teilnehmer:innen
+  personal_data: Persönliche Daten
+  change_password: Passwort ändern
+  close_account: Account-Löschung
+
+login:
+  username: E-Mail-Adresse
+  password: Passwort
+  autologin: Angemeldet bleiben
+  forgotPassword: Passwort vergessen?
+  submit: Anmelden
+
+registration:
+  firstname: Vorname
+  lastname: Nachname
+  email: E-Mail-Adresse
+  plainPassword: Passwort
+  mobile: Handynummer
+  phone: Festnetznummer
+
+apply:
+  accessCode: Zugangscode für {edition}
+  accessCodeHelp: Für die Anmeldung im {edition} benötigen Sie einen Zugangscode. Geben Sie Ihren Zugangscode hier ein. Wenn Sie keine Plätze im {edition} buchen wollen, können Sie das Feld auch leer lassen.
+
 changePassword:
   submit: Passwort ändern
   oldPassword: Altes Passwort

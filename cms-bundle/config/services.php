@@ -7,7 +7,6 @@ use Contao\CoreBundle\Migration\MigrationInterface;
 use Contao\CoreBundle\OptIn\OptInInterface;
 use Ferienpass\CmsBundle\Controller\Fragment\ChangePasswordController;
 use Ferienpass\CmsBundle\Controller\Fragment\CloseAccount;
-use Ferienpass\CmsBundle\Controller\Fragment\LostPasswordController;
 use Ferienpass\CmsBundle\Controller\Fragment\ParticipantsController;
 use Ferienpass\CmsBundle\Controller\Fragment\PersonalDataController;
 use Ferienpass\CmsBundle\Menu\MenuBuilder;
@@ -39,12 +38,6 @@ return function(ContainerConfigurator $container): void {
         ->tag('ferienpass.fragment')
     ;
 
-    $services->get(LostPasswordController::class)
-        ->tag('ferienpass.fragment', ['type' => 'lost_password', 'method' => 'request'])
-        ->tag('ferienpass.fragment', ['type' => 'lost_password_requested', 'method' => 'requested'])
-        ->tag('ferienpass.fragment', ['type' => 'lost_password_reset', 'method' => 'reset'])
-    ;
-
     // Aliases for autowiring
     $services->alias(ContaoContext::class, 'contao.assets.files_context');
     $services->alias(OptInInterface::class, 'contao.opt_in');
@@ -53,15 +46,15 @@ return function(ContainerConfigurator $container): void {
 
     // Tagged user account fragments
     $services->get(ParticipantsController::class)
-        ->tag('ferienpass.user_account', ['key' => 'participants', 'alias' => 'teilnehmer', 'icon' => 'user-group'])
+        ->tag('ferienpass.user_account', ['key' => 'participants', 'alias' => 'teilnehmer', 'icon' => 'user-group', 'priority' => 100])
     ;
 
     $services->get(PersonalDataController::class)
-        ->tag('ferienpass.user_account', ['key' => 'personal_data', 'alias' => 'persönliche-daten', 'icon' => 'user-circle'])
+        ->tag('ferienpass.user_account', ['key' => 'personal_data', 'alias' => 'persönliche-daten', 'icon' => 'user-circle', 'priority' => 90])
     ;
 
     $services->get(ChangePasswordController::class)
-        ->tag('ferienpass.user_account', ['key' => 'change_password', 'alias' => 'passwort-ändern', 'icon' => 'lock-closed'])
+        ->tag('ferienpass.user_account', ['key' => 'change_password', 'alias' => 'passwort-ändern', 'icon' => 'lock-closed', 'priority' => 30])
     ;
 
     $services->get(CloseAccount::class)

@@ -17,7 +17,7 @@ use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExports;
 use Ferienpass\CoreBundle\Export\Offer\Xml\XmlExports;
 use Ferienpass\CoreBundle\Export\ParticipantList\WordExport;
-use Ferienpass\CoreBundle\Monolog\EventLogHandler;
+use Ferienpass\CoreBundle\Messenger\MessageLogMiddleware;
 use Ferienpass\CoreBundle\Repository\ResetPasswordRequestRepository;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -74,19 +74,21 @@ final class FerienpassCoreExtension extends Extension implements PrependExtensio
             ],
         ]);
 
-        $container->prependExtensionConfig('symfonycasts_reset_password', [
-            'request_password_repository' => ResetPasswordRequestRepository::class,
-        ]);
-
-        $container->prependExtensionConfig('monolog', [
-            'channels' => ['ferienpass_event'],
-            'handlers' => [
-                'ferienpass_event' => [
-                    'channels' => ['ferienpass_event'],
-                    'type' => 'service',
-                    'id' => EventLogHandler::class,
+        $container->prependExtensionConfig('framework', [
+            'messenger' => [
+                'buses' => [
+                    'messenger.bus.default' => [
+                        'middleware' => [
+                            MessageLogMiddleware::class,
+                            'doctrine_transaction',
+                        ],
+                    ],
                 ],
             ],
+        ]);
+
+        $container->prependExtensionConfig('symfonycasts_reset_password', [
+            'request_password_repository' => ResetPasswordRequestRepository::class,
         ]);
 
         $this->prependWorkflow($container);
@@ -105,10 +107,11 @@ final class FerienpassCoreExtension extends Extension implements PrependExtensio
                     'transitions' => [
                         Offer::TRANSITION_COMPLETE => ['from' => Offer::STATE_DRAFT, 'to' => Offer::STATE_COMPLETED],
                         Offer::TRANSITION_APPROVE => ['from' => [Offer::STATE_DRAFT, Offer::STATE_COMPLETED], 'to' => Offer::STATE_REVIEWED],
+                        Offer::TRANSITION_UNAPPROVE => ['from' => [Offer::STATE_REVIEWED], 'to' => Offer::STATE_COMPLETED],
                         Offer::TRANSITION_PUBLISH => ['from' => [Offer::STATE_DRAFT, Offer::STATE_COMPLETED, Offer::STATE_REVIEWED, Offer::STATE_UNPUBLISHED], 'to' => Offer::STATE_PUBLISHED],
                         Offer::TRANSITION_CANCEL => ['from' => [Offer::STATE_PUBLISHED], 'to' => Offer::STATE_CANCELLED],
                         Offer::TRANSITION_RELAUNCH => ['from' => [Offer::STATE_CANCELLED], 'to' => Offer::STATE_PUBLISHED],
-                        Offer::TRANSITION_UNPUBLISH => ['from' => [Offer::STATE_CANCELLED, Offer::STATE_PUBLISHED, Offer::STATE_COMPLETED, Offer::STATE_DRAFT, Offer::STATE_REVIEWED], 'to' => Offer::STATE_UNPUBLISHED],
+                        Offer::TRANSITION_UNPUBLISH => ['from' => [Offer::STATE_CANCELLED, Offer::STATE_PUBLISHED], 'to' => Offer::STATE_UNPUBLISHED],
                     ],
                 ],
             ],

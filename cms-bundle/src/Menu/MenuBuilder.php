@@ -46,6 +46,7 @@ class MenuBuilder
 
         $menu->addChild('Abmelden', [
             'uri' => $this->logoutUrlGenerator->getLogoutUrl('contao_frontend'),
+            'linkAttributes' => ['data-turbo' => 'false'],
             'extras' => ['icon' => 'logout-solid'],
         ]);
 

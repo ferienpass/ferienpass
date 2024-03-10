@@ -39,9 +39,15 @@ class Notification
     private ?Edition $edition;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $emailReplyTo = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $emailTo = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $emailSubject = null;
 
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(type: 'text', length: 65535, nullable: true)]
     private ?string $emailText = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
@@ -96,6 +102,21 @@ class Notification
     public function setEmailSubject(string $emailSubject): void
     {
         $this->emailSubject = $emailSubject;
+    }
+
+    public function getEmailReplyTo(): ?string
+    {
+        return $this->emailReplyTo;
+    }
+
+    public function getEmailTo(): ?string
+    {
+        return $this->emailTo;
+    }
+
+    public function setEmailReplyTo(?string $emailReplyTo): void
+    {
+        $this->emailReplyTo = $emailReplyTo;
     }
 
     public function getEmailText(): ?string

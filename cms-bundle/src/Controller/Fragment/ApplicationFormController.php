@@ -15,13 +15,13 @@ namespace Ferienpass\CmsBundle\Controller\Fragment;
 
 use Contao\CoreBundle\OptIn\OptIn;
 use Doctrine\Persistence\ManagerRegistry;
-use Ferienpass\CmsBundle\Controller\Frontend\AbstractController;
+use Ferienpass\CmsBundle\Controller\AbstractController;
+use Ferienpass\CmsBundle\Form\ApplyFormParticipantType;
+use Ferienpass\CmsBundle\Form\ApplyFormType;
 use Ferienpass\CoreBundle\ApplicationSystem\ApplicationSystems;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Facade\AttendanceFacade;
-use Ferienpass\CoreBundle\Form\ApplyFormParticipantType;
-use Ferienpass\CoreBundle\Form\ApplyFormType;
 use Ferienpass\CoreBundle\Repository\AttendanceRepository;
 use Ferienpass\CoreBundle\Ux\Flash;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -59,7 +59,7 @@ class ApplicationFormController extends AbstractController
         $user = $this->getUser();
         $allowAnonymous = (bool) $applicationSystem->getTask()?->isAllowAnonymous();
         $allowAnonymousFee = (bool) $applicationSystem->getTask()?->isAllowAnonymousFee();
-        $participantForm = $this->formFactory->create(ApplyFormParticipantType::class);
+        $participantForm = $this->formFactory->create(ApplyFormParticipantType::class, null, ['edition' => $applicationSystem->getTask()?->getEdition()]);
         $applicationForm = $this->formFactory->create(ApplyFormType::class, null, [
             'offer' => $offer,
             'application_system' => $applicationSystem,

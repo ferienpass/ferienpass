@@ -13,21 +13,24 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\MessageHandler;
 
+use Ferienpass\CoreBundle\Entity\MessengerLog;
 use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Message\AccountResendActivation;
-use Ferienpass\CoreBundle\Notifier;
+use Ferienpass\CoreBundle\Notifier\Notifier;
 use Ferienpass\CoreBundle\Repository\UserRepository;
+use Symfony\Component\HttpKernel\UriSigner;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Notifier\Recipient\Recipient;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsMessageHandler]
 class WhenAccountResendActivationThenNotify
 {
-    public function __construct(private readonly Notifier $notifier, private readonly UserRepository $repository)
+    public function __construct(private readonly Notifier $notifier, private readonly UserRepository $repository, private readonly UrlGeneratorInterface $urlGenerator, private readonly UriSigner $uriSigner)
     {
     }
 
-    public function __invoke(AccountResendActivation $message): void
+    public function __invoke(AccountResendActivation $message, MessengerLog $log): void
     {
         /** @var User $user */
         $user = $this->repository->find($message->getUserId());
@@ -40,6 +43,9 @@ class WhenAccountResendActivationThenNotify
             return;
         }
 
-        $this->notifier->send($notification, new Recipient($email));
+        $this->notifier->send(
+            $notification->belongsTo($log)->actionUrl($this->uriSigner->sign($this->urlGenerator->generate('registration_activate', ['id' => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL))),
+            new Recipient($email)
+        );
     }
 }

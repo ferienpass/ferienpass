@@ -14,14 +14,14 @@ declare(strict_types=1);
 namespace Ferienpass\CoreBundle\Notification;
 
 use Ferienpass\CoreBundle\Entity\User;
-use Ferienpass\CoreBundle\Twig\Mime\NotificationEmail;
-use Symfony\Component\Notifier\Message\EmailMessage;
+use Ferienpass\CoreBundle\Notifier\Message\EmailMessage;
+use Ferienpass\CoreBundle\Notifier\Mime\NotificationEmail;
+use Symfony\Component\Notifier\Message\EmailMessage as SymfonyEmailMessage;
 use Symfony\Component\Notifier\Notification\EmailNotificationInterface;
-use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\Recipient\EmailRecipientInterface;
 use Symfony\Component\Notifier\Recipient\RecipientInterface;
 
-class AccountRegistrationHelpNotification extends Notification implements NotificationInterface, EmailNotificationInterface
+class AccountRegistrationHelpNotification extends AbstractNotification implements NotificationInterface, EmailNotificationInterface
 {
     use ActionUrlTrait;
 
@@ -44,21 +44,24 @@ class AccountRegistrationHelpNotification extends Notification implements Notifi
         return $this;
     }
 
-    public function asEmailMessage(EmailRecipientInterface $recipient, string $transport = null): ?EmailMessage
+    public function getContext(): array
     {
-        $email = (new NotificationEmail(self::getName()))
-            ->to($recipient->getEmail())
-            ->subject($this->getSubject())
-            ->content($this->getContent())
-            ->context([
-                'user' => $this->user,
-            ])
-        ;
+        return array_merge(parent::getContext(), [
+            'user' => $this->user,
+        ]);
+    }
 
-        if (null !== $this->actionUrl) {
-            $email->action('email.account_registration_help.login', $this->actionUrl);
-        }
+    public static function getAvailableTokens(): array
+    {
+        return array_merge(parent::getAvailableTokens(), ['user']);
+    }
 
-        return new EmailMessage($email);
+    public function asEmailMessage(EmailRecipientInterface $recipient, string $transport = null): ?SymfonyEmailMessage
+    {
+        return EmailMessage::fromFerienpassNotification($this, $recipient, function (NotificationEmail $email) {
+            if (null !== $this->actionUrl) {
+                $email->action('email.account_registration_help.login', $this->actionUrl);
+            }
+        });
     }
 }

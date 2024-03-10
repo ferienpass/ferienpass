@@ -20,6 +20,7 @@ use Ferienpass\CoreBundle\Entity\Notification;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -41,6 +42,8 @@ class EditNotificationType extends AbstractType
             ->setRequired('notification_type')
             ->setDefined('supports_email')
             ->setDefault('supports_email', true)
+            ->setDefined('supports_email_to')
+            ->setDefault('supports_email_to', false)
             ->setDefined('supports_sms')
             ->setDefault('supports_sms', false)
             ->setDefined('new_edition')
@@ -71,29 +74,34 @@ class EditNotificationType extends AbstractType
             ;
         }
 
+        if ($options['supports_email_to']) {
+            $builder
+                ->add('emailTo', EmailType::class, ['fieldset_group' => 'email', 'width' => '2/3'])
+            ;
+        }
+
         if ($options['supports_email']) {
             $builder
+                ->add('emailReplyTo', EmailType::class, ['fieldset_group' => 'email', 'width' => '2/3'])
                 ->add('emailSubject', null, ['fieldset_group' => 'email', 'width' => '2/3'])
-                ->add('emailText', TextareaType::class, ['attr' => ['rows' => 5], 'fieldset_group' => 'email', 'help' => 'notifications.help.emailText'])
+                ->add('emailText', TextareaType::class, [
+                    'attr' => ['rows' => 5],
+                    'fieldset_group' => 'email',
+                    'help' => 'notifications.help.emailText',
+                ])
             ;
         }
 
         if ($options['supports_sms']) {
-            $builder
-                ->add('smsText', TextareaType::class, ['attr' => ['rows' => 2], 'fieldset_group' => 'sms', 'help' => 'notifications.help.smsText'])
-            ;
+            $builder->add('smsText', TextareaType::class, ['attr' => ['rows' => 2], 'fieldset_group' => 'sms', 'help' => 'notifications.help.smsText']);
         }
 
-        $builder
-            ->add('disabled', CheckboxType::class, ['fieldset_group' => 'disable', 'help' => 'notifications.help.disable'])
-        ;
+        $builder->add('disabled', CheckboxType::class, ['fieldset_group' => 'disable', 'help' => 'notifications.help.disable']);
 
         $builder->add('submit', SubmitType::class);
 
         if ($options['can_delete']) {
-            $builder
-                ->add('delete', SubmitType::class)
-            ;
+            $builder->add('delete', SubmitType::class);
         }
     }
 }

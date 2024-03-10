@@ -24,15 +24,15 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 class RegistrationActivateController extends AbstractController
 {
-    public function __construct(private readonly Security $security, private readonly MessageBusInterface $messageBus)
+    public function __construct(private readonly Security $security, private readonly MessageBusInterface $messageBus, private readonly EntityManagerInterface $entityManager)
     {
     }
 
-    public function __invoke(User $user, EntityManagerInterface $em, Request $request): Response
+    public function __invoke(User $user, Request $request): Response
     {
         $user->setDisabled(false);
 
-        $em->flush();
+        $this->entityManager->flush();
 
         $this->messageBus->dispatch(new AccountActivated($user->getId()));
 

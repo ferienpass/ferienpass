@@ -14,14 +14,13 @@ declare(strict_types=1);
 namespace Ferienpass\CoreBundle\Notification;
 
 use Ferienpass\CoreBundle\Entity\Attendance;
-use Ferienpass\CoreBundle\Twig\Mime\NotificationEmail;
-use Symfony\Component\Notifier\Message\EmailMessage;
+use Ferienpass\CoreBundle\Notifier\Message\EmailMessage;
+use Symfony\Component\Notifier\Message\EmailMessage as SymfonyEmailMessage;
 use Symfony\Component\Notifier\Notification\EmailNotificationInterface;
-use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\Recipient\EmailRecipientInterface;
 use Symfony\Component\Notifier\Recipient\RecipientInterface;
 
-class AttendanceDecisions extends Notification implements NotificationInterface, EmailNotificationInterface
+class AttendanceDecisions extends AbstractNotification implements NotificationInterface, EmailNotificationInterface, EditionAwareNotificationInterface
 {
     /** @var array<int, array<int, Attendance>> */
     private array $attendances;
@@ -38,22 +37,25 @@ class AttendanceDecisions extends Notification implements NotificationInterface,
 
     public function attendance(Attendance $attendance): static
     {
-        $this->attendances[$attendance->getParticipant()->getId()][] = $this->attendances;
+        $this->attendances[$attendance->getParticipant()->getId()][] = $attendance;
 
         return $this;
     }
 
-    public function asEmailMessage(EmailRecipientInterface $recipient, string $transport = null): ?EmailMessage
+    public function getContext(): array
     {
-        $email = (new NotificationEmail(self::getName()))
-            ->to($recipient->getEmail())
-            ->subject($this->getSubject())
-            ->content($this->getContent())
-            ->context([
-                'attendances' => $this->attendances,
-            ])
-        ;
+        return array_merge(parent::getContext(), [
+            'attendances' => $this->attendances,
+        ]);
+    }
 
-        return new EmailMessage($email);
+    public static function getAvailableTokens(): array
+    {
+        return array_merge(parent::getAvailableTokens(), ['attendances']);
+    }
+
+    public function asEmailMessage(EmailRecipientInterface $recipient, string $transport = null): ?SymfonyEmailMessage
+    {
+        return EmailMessage::fromFerienpassNotification($this, $recipient);
     }
 }

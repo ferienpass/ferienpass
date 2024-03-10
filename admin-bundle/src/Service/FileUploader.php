@@ -19,7 +19,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class FileUploader
 {
-    public function __construct(private readonly string $targetDirectory, private readonly SluggerInterface $slugger)
+    public function __construct(private readonly string $projectDir, private readonly string $targetDir, private readonly SluggerInterface $slugger)
     {
     }
 
@@ -30,16 +30,11 @@ class FileUploader
         $fileName = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
 
         try {
-            $file->move($this->getTargetDirectory(), $fileName);
+            $file->move($this->projectDir.'/'.$this->targetDir, $fileName);
         } catch (FileException $e) {
             // ... handle exception if something happens during file upload
         }
 
-        return $fileName;
-    }
-
-    public function getTargetDirectory(): string
-    {
-        return $this->targetDirectory;
+        return $this->targetDir.'/'.$fileName;
     }
 }

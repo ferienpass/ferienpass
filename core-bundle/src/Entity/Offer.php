@@ -32,6 +32,7 @@ class Offer
     final public const STATE_CANCELLED = 'cancelled';
     final public const TRANSITION_COMPLETE = 'complete';
     final public const TRANSITION_APPROVE = 'approve';
+    final public const TRANSITION_UNAPPROVE = 'unapprove';
     final public const TRANSITION_PUBLISH = 'publish';
     final public const TRANSITION_UNPUBLISH = 'unpublish';
     final public const TRANSITION_CANCEL = 'cancel';
@@ -41,13 +42,20 @@ class Offer
     #[ORM\JoinColumn(name: 'edition', referencedColumnName: 'id')]
     private ?Edition $edition = null;
 
+    #[ORM\Column(type: 'datetime_immutable', options: ['default' => 'CURRENT_TIMESTAMP'])]
+    #[Groups(['notification', 'admin_list'])]
+    private \DateTimeInterface $createdAt;
+
+    #[ORM\Column(type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
+    private \DateTimeInterface $modifiedAt;
+
     /**
      * @psalm-var Collection<int, Host>
      */
     #[ORM\ManyToMany(targetEntity: Host::class, inversedBy: 'offers', cascade: ['persist'])]
     #[ORM\JoinTable(name: 'HostOfferAssociation', )]
-    #[ORM\JoinColumn(name: 'offer_id', referencedColumnName: 'id')]
-    #[ORM\InverseJoinColumn(name: 'host_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'offer_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'host_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     private Collection $hosts;
 
     /**
@@ -56,38 +64,28 @@ class Offer
     #[ORM\OneToMany(mappedBy: 'offer', targetEntity: OfferMemberAssociation::class)]
     private Collection $memberAssociations;
 
-    /**
-     * @Groups("docx_export")
-     */
     #[Assert\NotBlank]
     #[ORM\Column(type: 'string', length: 255, nullable: false, options: ['default' => ''])]
+    #[Groups(['docx_export', 'notification', 'admin_list'])]
     private string $name = '';
 
-    /**
-     * @Groups("docx_export")
-     */
     #[ORM\Column(type: 'string', length: 255, unique: true, nullable: true)]
+    #[Groups('docx_export')]
     private ?string $alias = null;
 
     #[ORM\Column(type: 'string', length: 32, options: ['default' => self::STATE_DRAFT])]
     private string $state;
 
-    /**
-     * @Groups("docx_export")
-     */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['docx_export'])]
     private ?string $comment = null;
 
-    /**
-     * @Groups("docx_export")
-     */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['docx_export', 'notification', 'admin_list'])]
     private ?string $description = null;
 
-    /**
-     * @Groups("docx_export")
-     */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups('docx_export')]
     private ?string $teaser = null;
 
     #[ORM\Column(type: 'binary_string', length: 16, nullable: true)]
@@ -99,12 +97,6 @@ class Offer
     #[ORM\Column(type: 'binary_string', nullable: true)]
     private ?string $downloads = null;
 
-    /**
-     * @Groups("docx_export")
-     */
-    #[ORM\Column(type: 'boolean', options: ['default' => 0])]
-    private bool $published = false;
-
     #[ORM\Column(type: 'string', length: 16, nullable: false, options: ['default' => ''])]
     private string $label = '';
 
@@ -114,64 +106,46 @@ class Offer
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $requiresAgreementLetter = null;
 
-    /**
-     * @Groups("docx_export")
-     */
     #[ORM\Column(type: 'boolean', options: ['default' => 0])]
+    #[Groups('docx_export')]
     private bool $requiresApplication = false;
 
-    /**
-     * @Groups("docx_export")
-     */
     #[ORM\Column(type: 'boolean', options: ['default' => 0])]
+    #[Groups('docx_export')]
     private bool $onlineApplication = false;
 
-    /**
-     * @Groups("docx_export")
-     */
     #[ORM\Column(type: 'date', nullable: true)]
+    #[Groups('docx_export')]
     private ?\DateTimeInterface $applicationDeadline = null;
 
-    /**
-     * @Groups("docx_export")
-     */
+    private bool $saved = false;
+
     #[ORM\Column(type: 'smallint', nullable: true, options: ['unsigned' => true])]
+    #[Groups('docx_export')]
     private ?int $minParticipants = null;
 
-    /**
-     * @Groups("docx_export")
-     */
     #[ORM\Column(type: 'smallint', nullable: true, options: ['unsigned' => true])]
+    #[Groups('docx_export')]
     private ?int $maxParticipants = null;
 
-    /**
-     * @Groups("docx_export")
-     */
     #[ORM\Column(type: 'smallint', length: 2, nullable: true, options: ['unsigned' => true])]
+    #[Groups('docx_export')]
     private ?int $minAge = null;
 
-    /**
-     * @Groups("docx_export")
-     */
     #[ORM\Column(type: 'smallint', length: 2, nullable: true, options: ['unsigned' => true])]
+    #[Groups('docx_export')]
     private ?int $maxAge = null;
 
-    /**
-     * @Groups("docx_export")
-     */
     #[ORM\Column(type: 'integer', nullable: true, options: ['unsigned' => true])]
+    #[Groups('docx_export')]
     private ?int $fee = null;
 
-    /**
-     * @Groups("docx_export")
-     */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups('docx_export')]
     private ?string $meetingPoint = null;
 
-    /**
-     * @Groups("docx_export")
-     */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups('docx_export')]
     private ?string $applyText = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -180,16 +154,13 @@ class Offer
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $datesExport = null;
 
-    /**
-     * @Groups("docx_export")
-     */
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $contact = null;
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'contact_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[Groups('docx_export')]
+    private ?User $contactUser = null;
 
-    /**
-     * @Groups("docx_export")
-     */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups('docx_export')]
     private ?string $bring = null;
 
     /**
@@ -200,16 +171,10 @@ class Offer
     private Collection $dates;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Ferienpass\CoreBundle\Entity\OfferCategory", inversedBy="offers")
-     *
-     * @ORM\JoinTable(
-     *     name="OfferCategoryAssociation",
-     *     joinColumns={@ORM\JoinColumn(name="offer_id", referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="category_id", referencedColumnName="id")}
-     * )
-     *
      * @psalm-var Collection<int, OfferCategory>
      */
+    #[ORM\ManyToMany(targetEntity: OfferCategory::class, inversedBy: 'offers')]
+    #[ORM\JoinTable(name: 'OfferCategoryAssociation', joinColumns: new ORM\JoinColumn('offer_id', 'id', onDelete: 'CASCADE'), inverseJoinColumns: new ORM\JoinColumn('category_id', 'id'))]
     private Collection $categories;
 
     #[ORM\Column(type: 'json', nullable: true)]
@@ -221,25 +186,28 @@ class Offer
     /**
      * @psalm-var Collection<int, Offer>
      */
-    #[ORM\OneToMany(mappedBy: 'variantBase', targetEntity: OfferEntityInterface::class)]
+    #[ORM\OneToMany(mappedBy: 'variantBase', targetEntity: self::class)]
     private Collection $variants;
 
     /**
      * @psalm-var Collection<int, Attendance>
      */
-    #[ORM\OneToMany(mappedBy: 'offer', targetEntity: Attendance::class)]
+    #[ORM\OneToMany(mappedBy: 'offer', targetEntity: Attendance::class, cascade: ['remove'])]
     #[ORM\OrderBy(['status' => 'ASC', 'sorting' => 'ASC'])]
     private Collection $attendances;
 
     #[ORM\ManyToOne(targetEntity: OfferEntityInterface::class, inversedBy: 'variants')]
-    #[ORM\JoinColumn(name: 'varbase', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'varbase', referencedColumnName: 'id', onDelete: 'SET NULL')]
     private ?Offer $variantBase = null;
 
-    #[ORM\OneToMany(mappedBy: 'offer', targetEntity: OfferLog::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'offer', targetEntity: OfferLog::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private Collection $activity;
 
     public function __construct()
     {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->modifiedAt = new \DateTimeImmutable();
         $this->hosts = new ArrayCollection();
         $this->dates = new ArrayCollection();
         $this->variants = new ArrayCollection();
@@ -267,16 +235,6 @@ class Offer
     public function getDates(): Collection
     {
         return $this->dates;
-    }
-
-    /**
-     * @param  Collection|OfferDate[]
-     *
-     * @psalm-param  Collection<int, OfferDate>
-     */
-    public function setDates(Collection $dates): void
-    {
-        $this->dates = $dates;
     }
 
     public function isVariantBase(): bool
@@ -366,7 +324,7 @@ class Offer
 
     public function isPublished(): bool
     {
-        return $this->published;
+        return self::STATE_PUBLISHED === $this->state;
     }
 
     public function requiresApplication(): bool
@@ -404,9 +362,9 @@ class Offer
         return $this->meetingPoint;
     }
 
-    public function setName(string $name): void
+    public function setName(?string $name): void
     {
-        $this->name = $name;
+        $this->name = (string) $name;
     }
 
     public function setAlias(string $alias): void
@@ -427,11 +385,6 @@ class Offer
     public function setImage(?string $image): void
     {
         $this->image = $image;
-    }
-
-    public function setPublished(bool $published): void
-    {
-        $this->published = $published;
     }
 
     public function setRequiresApplication(bool $requiresApplication): void
@@ -540,7 +493,7 @@ class Offer
      */
     public function getAttendances(): Collection
     {
-        return $this->attendances->filter(fn (Attendance $attendance) => null !== $attendance->getParticipant());
+        return $this->attendances;
     }
 
     /**
@@ -654,12 +607,12 @@ class Offer
         $this->comment = $comment;
     }
 
-    public function getState(): ?string
+    public function getState(): string
     {
         return $this->state;
     }
 
-    public function setState(?string $state): void
+    public function setState(string $state): void
     {
         $this->state = $state;
     }
@@ -694,14 +647,14 @@ class Offer
         $this->calculationNotes = $calculationNotes;
     }
 
-    public function getContact(): ?string
+    public function getContactUser(): ?User
     {
-        return $this->contact;
+        return $this->contactUser;
     }
 
-    public function setContact(?string $contact): void
+    public function setContactUser(?User $contactUser): void
     {
-        $this->contact = $contact;
+        $this->contactUser = $contactUser;
     }
 
     public function getActivity(): Collection
@@ -714,9 +667,7 @@ class Offer
         return $this->datesExport;
     }
 
-    /**
-     * @Groups("docx_export")
-     */
+    #[Groups(['docx_export', 'notification'])]
     public function getDate(): string
     {
         if (false === $date = $this->dates->first()) {
@@ -761,9 +712,24 @@ class Offer
         return $this->agreementLetter;
     }
 
+    public function setAgreementLetter(?string $agreementLetter): void
+    {
+        $this->agreementLetter = $agreementLetter;
+    }
+
     public function getMemberAssociations(): Collection
     {
         return $this->memberAssociations;
+    }
+
+    public function isSaved(): bool
+    {
+        return $this->saved;
+    }
+
+    public function setSaved(bool $saved): void
+    {
+        $this->saved = $saved;
     }
 
     public function generateAlias(SluggerInterface $slugger)
@@ -777,5 +743,20 @@ class Offer
         if (!$this->alias) {
             $this->alias = (string) $slugger->slug("{$this->getId()}-{$this->getName()}")->lower();
         }
+    }
+
+    public function getCreatedAt(): \DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function getModifiedAt(): \DateTimeInterface
+    {
+        return $this->modifiedAt;
+    }
+
+    public function setModifiedAt(\DateTimeInterface $modifiedAt = new \DateTimeImmutable()): void
+    {
+        $this->modifiedAt = $modifiedAt;
     }
 }

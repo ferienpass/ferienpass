@@ -44,14 +44,9 @@ class EditionRepository extends ServiceEntityRepository
     public function findOneToShow(PageModel $currentPage = null): ?Edition
     {
         $fallback = null;
-        // TODO: allow editions that have no "show_offers" task but a list page defined
         foreach ($this->findWithActiveTask('show_offers') as $passEdition) {
-            if ((null === $currentPage && null === $fallback) || !$passEdition->getListPage()) {
+            if (null === $currentPage && null === $fallback) {
                 $fallback = $passEdition;
-            }
-
-            if (null !== $currentPage && $passEdition->getListPage() === (int) $currentPage->id) {
-                return $passEdition;
             }
         }
 
@@ -107,6 +102,30 @@ class EditionRepository extends ServiceEntityRepository
                 )
             )
             ->setParameter('period', $taskName)
+            ->getQuery();
+
+        return $qb->getResult();
+    }
+
+    /**
+     * @return array<int, Edition>
+     */
+    public function findWithActiveAccessCodeStrategies(): array
+    {
+        $qb0 = $this->_em->createQueryBuilder();
+        $qb = $this->createQueryBuilder('edition')
+            ->innerJoin(
+                'edition.tasks',
+                'period',
+                Expr\Join::WITH,
+                $qb0->expr()->andX(
+                    $qb0->expr()->eq('period.type', ':period'),
+                    $qb0->expr()->isNotNull('period.accessCodeStrategy'),
+                    $qb0->expr()->lte('period.periodBegin', 'CURRENT_TIMESTAMP()'),
+                    $qb0->expr()->gte('period.periodEnd', 'CURRENT_TIMESTAMP()')
+                )
+            )
+            ->setParameter('period', 'application_system')
             ->getQuery();
 
         return $qb->getResult();

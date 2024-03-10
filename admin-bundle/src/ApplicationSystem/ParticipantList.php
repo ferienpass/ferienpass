@@ -44,11 +44,15 @@ class ParticipantList
     }
 
     /**
-     * @param iterable<Attendance> $attendances
+     * @param Attendance[] $attendances
      */
-    public function confirm(iterable $attendances): void
+    public function confirm(array $attendances, bool $reorder = false, bool $notify = true): void
     {
         foreach ($attendances as $attendance) {
+            if (null === $attendance->getParticipant()) {
+                continue;
+            }
+
             $oldStatus = $attendance->getStatus();
             if (Attendance::STATUS_CONFIRMED === $oldStatus) {
                 continue;
@@ -56,22 +60,30 @@ class ParticipantList
 
             $attendance->setStatus(Attendance::STATUS_CONFIRMED, $this->security->getUser());
 
-            $this->dispatchMessage(new AttendanceStatusChanged($attendance->getId(), $oldStatus, $attendance->getStatus()));
+            $this->dispatchMessage(new AttendanceStatusChanged($attendance->getId(), $oldStatus, $attendance->getStatus(), $notify));
         }
 
         $this->doctrine->getManager()->flush();
 
-        foreach (array_unique(array_map(fn (Attendance $a) => $a->getOffer()->getId(), iterator_to_array($attendances))) as $offerId) {
+        if (false === $reorder) {
+            return;
+        }
+
+        foreach (array_unique(array_map(fn (Attendance $a) => $a->getOffer()->getId(), $attendances)) as $offerId) {
             $this->dispatchMessage(new ParticipantListChanged($offerId));
         }
     }
 
     /**
-     * @param iterable<Attendance> $attendances
+     * @param Attendance[] $attendances
      */
-    public function reject(iterable $attendances): void
+    public function reject(array $attendances, bool $reorder = false, bool $notify = true): void
     {
         foreach ($attendances as $attendance) {
+            if (null === $attendance->getParticipant()) {
+                continue;
+            }
+
             $oldStatus = $attendance->getStatus();
 
             if (Attendance::STATUS_WITHDRAWN === $oldStatus) {
@@ -80,12 +92,16 @@ class ParticipantList
 
             $attendance->setStatus(Attendance::STATUS_WITHDRAWN, $this->security->getUser());
 
-            $this->dispatchMessage(new AttendanceStatusChanged($attendance->getId(), $oldStatus, $attendance->getStatus()));
+            $this->dispatchMessage(new AttendanceStatusChanged($attendance->getId(), $oldStatus, $attendance->getStatus(), $notify));
         }
 
         $this->doctrine->getManager()->flush();
 
-        foreach (array_unique(array_map(fn (Attendance $a) => $a->getOffer()->getId(), iterator_to_array($attendances))) as $offerId) {
+        if (false === $reorder) {
+            return;
+        }
+
+        foreach (array_unique(array_map(fn (Attendance $a) => $a->getOffer()->getId(), $attendances)) as $offerId) {
             $this->dispatchMessage(new ParticipantListChanged($offerId));
         }
     }

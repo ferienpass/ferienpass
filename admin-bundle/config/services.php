@@ -8,6 +8,7 @@ use Ferienpass\AdminBundle\Form\Filter\Offer\EditionFilter;
 use Ferienpass\AdminBundle\Form\Filter\Offer\HostFilter;
 use Ferienpass\AdminBundle\Form\Filter\Offer\OnlineApplicationFilter;
 use Ferienpass\AdminBundle\Form\Filter\Offer\PublishedFilter;
+use Ferienpass\AdminBundle\Form\Filter\Offer\RequiresAgreementLetterFilter;
 use Ferienpass\AdminBundle\Form\Filter\Offer\RequiresApplicationFilter;
 use Ferienpass\AdminBundle\Form\Filter\Offer\StatusFilter;
 use Ferienpass\AdminBundle\Form\Filter\OffersFilter;
@@ -77,6 +78,10 @@ return function(ContainerConfigurator $container): void {
         ->tag('ferienpass_admin.filter.offer', ['key' => 'requiresApplication', 'priority' => 80])
     ;
     $services
+        ->get(RequiresAgreementLetterFilter::class)
+        ->tag('ferienpass_admin.filter.offer', ['key' => 'requiresAgreementLetter', 'priority' => 70])
+    ;
+    $services
         ->get(StatusFilter::class)
         ->tag('ferienpass_admin.filter.offer', ['key' => 'status', 'priority' => 60])
     ;
@@ -94,7 +99,7 @@ return function(ContainerConfigurator $container): void {
     $services->alias(Helper::class, 'knp_menu.helper');
 
     $services->get(MenuBuilder::class)
-        ->tag('knp_menu.menu_builder', ['method' => 'primaryNavigation', 'alias' => 'ferienpass_admin_primary'])
+        ->tag('knp_menu.menu_builder', ['method' => 'primaryNavigation', 'alias' => 'admin_primary'])
         ->tag('knp_menu.menu_builder', ['method' => 'userNavigation', 'alias' => 'host_user_navigation'])
         ->tag('knp_menu.menu_builder', ['method' => 'offerActions', 'alias' => 'host_offer_actions'])
         ->tag('knp_menu.menu_builder', ['method' => 'offerFilters', 'alias' => 'host_offer_filters'])
@@ -106,13 +111,20 @@ return function(ContainerConfigurator $container): void {
     ;
 
     $services->set(FileUploader::class)->abstract();
-    $services->set('ferienpass.file_uploader.offer')
+    $services->set('ferienpass.file_uploader.offer_media')
         ->parent(FileUploader::class)
-        ->arg(0, '%contao.upload_path%/img')
+        ->arg(0, '%kernel.project_dir%')
+        ->arg(1, '%contao.upload_path%/Angebote')
     ;
-    $services->set('ferienpass.file_uploader.host')
+    $services->set('ferienpass.file_uploader.logos')
         ->parent(FileUploader::class)
-        ->arg(0, '%contao.upload_path%/img')
+        ->arg(0, '%kernel.project_dir%')
+        ->arg(1, '%contao.upload_path%/Logos')
+    ;
+    $services->set('ferienpass.file_uploader.agreement_letters')
+        ->parent(FileUploader::class)
+        ->arg(0, '%kernel.project_dir%')
+        ->arg(1, '%contao.upload_path%/Einverständniserklärungen')
     ;
 
     $services->set(StringLoaderExtension::class);

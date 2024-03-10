@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Ferienpass\CmsBundle\Components\SignIn;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Ferienpass\CmsBundle\Form\UserRegistrationType;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Entity\User;
-use Ferienpass\CoreBundle\Form\UserRegistrationType;
 use Ferienpass\CoreBundle\Message\AccountCreated;
 use Ferienpass\CoreBundle\Message\AccountRegistrationHelp;
 use Ferienpass\CoreBundle\Message\AccountResendActivation;

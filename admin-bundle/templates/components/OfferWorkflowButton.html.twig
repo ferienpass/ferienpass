@@ -2,58 +2,66 @@
 
 <div {{ attributes }}>
 
-    {% embed '@FerienpassAdmin/components/dropdown.html.twig' %}
-        {% block toggle %}
-            <button type="button"
-                    class="-mr-1 rounded p-1 hover:bg-gray-200/50"
-                    id="options-menu-0-button" aria-expanded="false"
-                    aria-haspopup="true">
+    {% set transitions = this.transitions %}
+
+    <twig:Admin:Dropdown position="left">
+
+        {% macro icon(status, title=false) %}
+
+            {% set icons = {
+                cancelled: ['x-circle.solid', 'text-red-600'],
+                draft: ['plus-circle.outline', 'text-orange-600'],
+                completed: ['check-circle.outline', 'text-green-600'],
+                reviewed: ['shield-check.outline', 'text-green-600'],
+                published: ['check-circle.solid', 'text-green-600'],
+                unpublished: ['x-circle.outline', 'text-gray-500'],
+            } %}
+
+            {% set icon = attribute(icons, status)|first %}
+            {% set color = attribute(icons, status)|last %}
+            <span aria-label="{{ ("offers.status.#{status}")|trans([], "admin") }}"
+                  class="inline-flex">
+                <span aria-hidden="true"
+                      title="{{ ("offers.status.#{status}")|trans([], "admin") }}"
+                      class="{{ color }} w-6 h-6">
+                    {{ source("@FerienpassAdmin/icons/#{icon}.svg") }}
+                </span>
+            </span>
+        {% endmacro %}
+
+        <twig:block name="toggle">
+            <span class="inline-flex rounded p-0.5 hover:bg-gray-200/50">
+
                 <span class="sr-only">Open options</span>
 
-                {% if "cancelled" == offer.state %}
-                    <span class="flex" aria-label="{{ ("offers.status."~offer.state)|trans([], "admin") }}"><span
-                                title="{{ ("offers.status."~offer.state)|trans([], "admin") }}" aria-hidden="true"
-                                class="text-red-600 w-6 h-6">{{ source("@FerienpassAdmin/icons/x-circle.solid.svg") }}</span></span>
-                {% elseif "draft" == offer.state %}
-                    <span class="flex" aria-label="{{ ("offers.status."~offer.state)|trans([], "admin") }}"><span
-                                title="{{ ("offers.status."~offer.state)|trans([], "admin") }}" aria-hidden="true"
-                                class="text-orange-600 w-6 h-6">{{ source("@FerienpassAdmin/icons/plus-circle.outline.svg") }}</span></span>
-                {% elseif "completed" == offer.state %}
-                    <span class="flex" aria-label="{{ ("offers.status."~offer.state)|trans([], "admin") }}"><span
-                                title="{{ ("offers.status."~offer.state)|trans([], "admin") }}" aria-hidden="true"
-                                class="text-green-600 w-6 h-6">{{ source("@FerienpassAdmin/icons/check-circle.outline.svg") }}</span></span>
-                {% elseif "reviewed" == offer.state %}
-                    <span class="flex" aria-label="{{ ("offers.status."~offer.state)|trans([], "admin") }}"><span
-                                title="{{ ("offers.status."~offer.state)|trans([], "admin") }}" aria-hidden="true"
-                                class="text-green-600 w-6 h-6">{{ source("@FerienpassAdmin/icons/shield-check.outline.svg") }}</span></span>
-                {% elseif "published" == offer.state %}
-                    <span class="flex" aria-label="{{ ("offers.status."~offer.state)|trans([], "admin") }}"><span
-                                title="{{ ("offers.status."~offer.state)|trans([], "admin") }}" aria-hidden="true"
-                                class="text-green-600 w-6 h-6">{{ source("@FerienpassAdmin/icons/check-circle.solid.svg") }}</span></span>
-                {% endif %}
+                {{ _self.icon(offer.state, true) }}
 
+            </span>
+        </twig:block>
 
-            </button>
-        {% endblock %}
-
-        {% block dropdown %}
-
+        <twig:block name="dropdown">
             <div class="px-4 py-3" role="none">
                 <p class="text-sm" role="none">Aktueller Status:</p>
-                <p class="truncate text-sm font-medium text-gray-900">{{ offer.state }}</p>
+                <p class="truncate text-sm font-medium text-gray-900"> {{ "offers.status.#{offer.state}"|trans([], 'admin') }}</p>
             </div>
             <div class="py-1" role="none">
-                {% for transition in this.transitions %}
-                    <a href="#" class="text-gray-700 block px-4 py-2 text-sm" tabindex="-1">{{ transition.name }}</a>
+                {% for transition in transitions %}
+                    <button type="button"
+                            data-action="live#action"
+                            data-live-action-param="apply"
+                            data-live-transition-param="{{ transition.name }}"
+                            class="flex items-center space-x-2 text-gray-700 px-4 py-2 text-sm">
+
+                        {{ _self.icon(transition.tos|first, true) }}
+
+                        <span>
+                            {{ "offers.workflow.#{transition.name}"|trans([], 'admin') }}
+                        </span>
+
+                    </button>
                 {% endfor %}
             </div>
-
-
-
-
-
-        {% endblock %}
-
-    {% endembed %}
+        </twig:block>
+    </twig:Admin:Dropdown>
 
 </div>

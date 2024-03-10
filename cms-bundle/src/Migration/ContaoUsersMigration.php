@@ -25,7 +25,7 @@ class ContaoUsersMigration extends AbstractMigration
 
     public function shouldRun(): bool
     {
-        return !$this->connection->createSchemaManager()->tablesExist(['users']);
+        return !$this->connection->createSchemaManager()->tablesExist(['User']);
     }
 
     public function run(): MigrationResult
@@ -48,15 +48,14 @@ class ContaoUsersMigration extends AbstractMigration
     password      varchar(255)                       null,
     disable       tinyint(1)                         not null,
     lastLogin     datetime                           null,
-    superAdmin    tinyint(1)                         not null,
     editableRoles json                               not null,
     country       varchar(255)                       null
 )
         ');
 
         $this->connection->executeStatement('
-INSERT INTO User (id, firstname, lastname, email, street, postal, city, country, phone, mobile, createdAt, password, roles, disable, editableRoles, superAdmin)
-SELECT id, firstname, lastname, email, street, postal, city, country, phone, mobile, FROM_UNIXTIME(dateAdded), password, IF(`groups` LIKE \'%"1"%\', JSON_ARRAY("ROLE_HOST"), JSON_ARRAY("ROLE_MEMBER")), disable, cast("[]" as json), admin FROM tl_member');
+INSERT INTO User (id, firstname, lastname, email, street, postal, city, country, phone, mobile, createdAt, password, roles, disable, editableRoles)
+SELECT id, firstname, lastname, email, street, postal, city, country, phone, mobile, FROM_UNIXTIME(dateAdded), password, IF(`groups` LIKE \'%"1"%\', JSON_ARRAY("ROLE_HOST"), JSON_ARRAY("ROLE_MEMBER")), disable, cast("[]" as json) FROM tl_member');
 
         return $this->createResult(true);
     }

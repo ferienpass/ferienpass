@@ -33,20 +33,20 @@ class Participant
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeInterface $createdAt;
 
-    #[ORM\ManyToOne(targetEntity: 'Ferienpass\CoreBundle\Entity\User', inversedBy: 'participants')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'participants')]
     #[ORM\JoinColumn(name: 'member_id', referencedColumnName: 'id')]
     private ?User $user;
 
     #[ORM\Column(type: 'string', length: 255, nullable: false, options: ['default' => ''])]
-    #[Groups('admin_list')]
+    #[Groups(['admin_list', 'notification'])]
     private string $firstname;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true, options: ['default' => ''])]
-    #[Groups('admin_list')]
+    #[Groups(['admin_list', 'notification'])]
     private ?string $lastname = null;
 
     #[ORM\Column(type: 'date', nullable: true)]
-    #[Groups('admin_list')]
+    #[Groups(['admin_list', 'notification'])]
     private ?\DateTimeInterface $dateOfBirth = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -66,13 +66,17 @@ class Participant
     #[Groups('admin_list')]
     private bool $discounted = false;
 
+    #[ORM\ManyToMany(targetEntity: AccessCode::class, mappedBy: 'participants')]
+    private Collection $accessCodes;
+
     /**
      * @psalm-var Collection<int, Attendance>
      */
-    #[ORM\OneToMany(mappedBy: 'participant', targetEntity: Attendance::class)]
+    #[ORM\OneToMany(mappedBy: 'participant', targetEntity: Attendance::class, cascade: ['remove'])]
     private Collection $attendances;
 
-    #[ORM\OneToMany(mappedBy: 'participant', targetEntity: ParticipantLog::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'participant', targetEntity: ParticipantLog::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private Collection $activity;
 
     public function __construct(User $user = null)
@@ -81,6 +85,7 @@ class Participant
         $this->createdAt = new \DateTimeImmutable();
         $this->attendances = new ArrayCollection();
         $this->activity = new ArrayCollection();
+        $this->accessCodes = new ArrayCollection();
     }
 
     public function getId(): int
@@ -131,7 +136,7 @@ class Participant
         return $this->mobile;
     }
 
-    #[Groups('admin_list')]
+    #[Groups(['admin_list', 'notification'])]
     public function getMobile(): ?string
     {
         if ($this->mobile) {
@@ -150,7 +155,7 @@ class Participant
         return $this->email;
     }
 
-    #[Groups('admin_list')]
+    #[Groups(['admin_list', 'notification'])]
     public function getEmail(): ?string
     {
         if ($this->email) {
@@ -353,5 +358,37 @@ class Participant
     public function hasUnpaidAttendances(): bool
     {
         return !$this->getAttendancesConfirmed()->filter(fn (Attendance $a) => !$a->isPaid())->isEmpty();
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function getAccessCodes(): Collection
+    {
+        return $this->accessCodes;
+    }
+
+    public function addAccessCode(?AccessCode $code)
+    {
+        if (null === $code) {
+            return;
+        }
+
+        if ($this->accessCodes->contains($code)) {
+            return;
+        }
+
+        $this->accessCodes->add($code);
+        $code->addParticipant($this);
+    }
+
+    public function removeAccessCode(AccessCode $code)
+    {
+        if ($this->accessCodes->contains($code)) {
+            $this->accessCodes->removeElement($code);
+            $code->removeParticipant($this);
+        }
     }
 }

@@ -14,6 +14,7 @@ application.disabled: Aktuell sind keine Anmeldungen möglich.
 
 application.apply: Sie können {name} jetzt für das Angebot anmelden.
 
+ineligible.noAccessCode: 'Dieses Angebot erfordert einen Zugangscode. Hinterlegen Sie den Zugangscode in Ihrem Profil.'
 ineligible.alreadyApplied: '{name} ist bereits registriert für dieses Angebot.'
 ineligible.invalidAge: Sie können {name} nicht anmelden, da das Alter nicht passt.
 ineligible.overlap: Sie können {name} nicht anmelden, da es eine Überschneidung mit einer anderen Anmeldung gibt.
@@ -100,9 +101,3 @@ offerList.filter:
   latest_date: vor dem <strong>{value}</strong>
   favorites: nur gespeicherte Angebote
   category: '{value}'
-
-userAccount:
-  participants: Teilnehmer:innen
-  personal_data: Persönliche Daten
-  change_password: Passwort ändern
-  close_account: Account löschen

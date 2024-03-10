@@ -21,14 +21,17 @@ use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Offer;
 use Ferienpass\CoreBundle\Entity\OfferDate;
 use Ferienpass\CoreBundle\Entity\Participant;
+use Ferienpass\CoreBundle\Entity\ParticipantLog;
 use Ferienpass\CoreBundle\Message\AttendanceCreated;
 use Ferienpass\CoreBundle\Message\AttendanceStatusChanged;
 use Ferienpass\CoreBundle\Message\ParticipantListChanged;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Workflow\Transition;
 
 class AttendanceFacade
 {
-    public function __construct(private readonly MessageBusInterface $messageBus, private readonly ManagerRegistry $doctrine, private readonly ApplicationSystems $applicationSystems)
+    public function __construct(private readonly MessageBusInterface $messageBus, private readonly ManagerRegistry $doctrine, private readonly ApplicationSystems $applicationSystems, private readonly Security $security)
     {
     }
 
@@ -40,9 +43,7 @@ class AttendanceFacade
         $attendance = new Attendance($offer, $participant);
 
         $applicationSystem = $this->applicationSystems->findApplicationSystem($offer);
-        if (null !== $applicationSystem) {
-            $applicationSystem->assignStatus($attendance);
-        }
+        $applicationSystem?->assignStatus($attendance);
 
         return $attendance;
     }
@@ -57,12 +58,14 @@ class AttendanceFacade
      */
     public function create(Offer $offer, Participant $participant, string $status = null, bool $notify = true): void
     {
-        $attendance = $this->findOrCreateAttendance($offer, $participant);
+        $attendance = $this->findOrCreateAttendance($offer, $participant, $status);
         if (null === $attendance) {
             return;
         }
 
-        $this->setStatus($attendance, $status);
+        if (null === $status || $attendance->getStatus() !== $status) {
+            $this->setStatus($attendance, $status);
+        }
 
         $this->doctrine->getManager()->flush();
 
@@ -126,12 +129,14 @@ class AttendanceFacade
         $this->doctrine->getManager()->flush();
     }
 
-    private function findOrCreateAttendance(Offer $offer, Participant $participant): ?Attendance
+    private function findOrCreateAttendance(Offer $offer, Participant $participant, ?string $status): ?Attendance
     {
         $attendance = $this->doctrine->getRepository(Attendance::class)->findOneBy(['offer' => $offer, 'participant' => $participant]);
 
         if (null === $attendance) {
-            $attendance = new Attendance($offer, $participant);
+            $attendance = new Attendance($offer, $participant, $status);
+
+            $attendance->getActivity()[] = new ParticipantLog($attendance->getParticipant(), $this->security->getUser(), $attendance, transition: new Transition(Attendance::TRANSITION_CREATE, '', (string) $status));
 
             $offer->addAttendance($attendance);
             $this->doctrine->getManager()->persist($attendance);
@@ -154,7 +159,7 @@ class AttendanceFacade
     private function setStatus(Attendance $attendance, ?string $status): void
     {
         if (null !== $status) {
-            $attendance->setStatus($status);
+            $attendance->setStatus($status, user: $this->security->getUser());
 
             return;
         }
@@ -198,7 +203,7 @@ class AttendanceFacade
     private function withdrawAttendance(Attendance $attendance): void
     {
         $oldStatus = $attendance->getStatus();
-        $attendance->setStatus('withdrawn');
+        $attendance->setStatus('withdrawn', user: $this->security->getUser());
 
         $this->doctrine->getManager()->flush();
 

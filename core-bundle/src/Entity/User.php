@@ -20,6 +20,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Ferienpass\CoreBundle\Repository\UserRepository;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -45,29 +46,39 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Email]
     #[Assert\NotBlank]
     #[ORM\Column(type: 'string', length: 180, unique: true)]
+    #[Groups(['notification', 'admin_list'])]
     private ?string $email = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Groups(['notification', 'admin_list'])]
     private ?string $firstname = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Groups(['notification', 'admin_list'])]
     private ?string $lastname = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Groups(['notification', 'admin_list'])]
     private ?string $street = null;
 
     #[ORM\Column(type: 'string', length: 16, nullable: true)]
+    #[Groups(['notification', 'admin_list'])]
     private ?string $postal = null;
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Groups(['notification', 'admin_list'])]
     private ?string $city = null;
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Groups(['notification', 'admin_list'])]
     private ?string $country = null;
     #[ORM\Column(type: 'string', length: 64, nullable: true)]
+    #[Groups(['notification', 'admin_list'])]
     private ?string $phone = null;
     #[ORM\Column(type: 'string', length: 64, nullable: true)]
+    #[Groups(['notification', 'admin_list'])]
     private ?string $mobile = null;
 
     #[ORM\Column(type: 'datetime_immutable', options: ['default' => 'CURRENT_TIMESTAMP'])]
+    #[Groups(['notification', 'admin_list'])]
     private \DateTimeInterface $createdAt;
 
     #[ORM\Column(type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
@@ -75,6 +86,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $lastLogin = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $dontDeleteBefore = null;
 
     #[ORM\Column(type: 'json')]
     private array $roles = [];
@@ -88,10 +102,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private bool $disable = false;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: HostMemberAssociation::class, cascade: ['persist'])]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: HostMemberAssociation::class, cascade: ['persist', 'remove'])]
     private Collection $hostAssociations;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Participant::class, cascade: ['persist'])]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Participant::class, cascade: ['persist', 'remove'])]
     private Collection $participants;
 
     public function __construct()
@@ -258,6 +272,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         foreach (array_keys($this->roles, $role, true) as $key) {
             unset($this->roles[$key]);
         }
+
+        $this->roles = array_values($this->roles);
     }
 
     public function getAdminRoles(): array
@@ -283,6 +299,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         foreach (array_keys($this->roles, $role, true) as $key) {
             unset($this->roles[$key]);
         }
+
+        $this->roles = array_values($this->roles);
     }
 
     public function getAccountRoles(): array
@@ -312,6 +330,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->plainPassword = $plainPassword;
     }
 
+    #[Groups(['admin_list'])]
     public function isDisabled(): bool
     {
         return $this->disable;
@@ -324,7 +343,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function isSuperAdmin(): bool
     {
-        return \in_array('ROLE_SUPER_ADMIN', $this->roles, true);
+        return \in_array('ROLE_SUPER_ADMIN', $this->getRoles(), true);
+    }
+
+    public function isAdmin(): bool
+    {
+        return \in_array('ROLE_ADMIN', $this->getRoles(), true);
+    }
+
+    public function isHost(): bool
+    {
+        return \in_array('ROLE_HOST', $this->getRoles(), true);
+    }
+
+    public function isMember(): bool
+    {
+        return \in_array('ROLE_MEMBER', $this->getRoles(), true);
     }
 
     public function setSuperAdmin(bool $superAdmin): void
@@ -351,6 +385,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if (!\in_array('ROLE_ADMIN', $this->roles, true)) {
             $this->roles[] = 'ROLE_ADMIN';
         }
+
+        $this->roles = array_values($this->roles);
     }
 
     public function getHosts(): Collection
@@ -394,6 +430,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastLogin(?\DateTimeInterface $lastLogin): void
     {
         $this->lastLogin = $lastLogin;
+    }
+
+    public function getDontDeleteBefore(): ?\DateTimeInterface
+    {
+        return $this->dontDeleteBefore;
+    }
+
+    public function setDontDeleteBefore(?\DateTimeInterface $dontDeleteBefore): void
+    {
+        $this->dontDeleteBefore = $dontDeleteBefore;
     }
 
     /** @return Collection<Participant> */

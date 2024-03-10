@@ -210,6 +210,12 @@
                                         {% if newParticipant.participant.mobile is defined %}
                                             {{ form_row(newParticipant.participant.mobile) }}
                                         {% endif %}
+
+                                        {% if newParticipant.participant.accessCodes is defined %}
+                                        <div class="col-span-3">
+                                            {{ form_row(newParticipant.participant.accessCodes) }}
+                                        </div>
+                                        {% endif %}
                                     </div>
 
                                     <div class="mt-4">

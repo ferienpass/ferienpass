@@ -20,7 +20,7 @@ use Ferienpass\CmsBundle\Page\PageBuilder;
 #[AsPage('applications')]
 class ApplicationsPage extends AbstractContentPage
 {
-    protected $protected = true;
+    protected bool $protected = true;
 
     protected function modifyPage(PageBuilder $pageBuilder): void
     {

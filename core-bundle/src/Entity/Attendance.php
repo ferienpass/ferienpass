@@ -13,10 +13,13 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ferienpass\CoreBundle\ApplicationSystem\ApplicationSystemInterface;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Workflow\Transition;
 
 #[ORM\Entity]
 #[ORM\UniqueConstraint(columns: ['offer_id', 'participant_id'])]
@@ -27,6 +30,12 @@ class Attendance
     final public const STATUS_WITHDRAWN = 'withdrawn';
     final public const STATUS_WAITING = 'waiting';
     final public const STATUS_ERROR = 'error';
+
+    final public const TRANSITION_CREATE = 'create';
+    final public const TRANSITION_CONFIRM = 'confirm';
+    final public const TRANSITION_WAITLIST = 'waitlist';
+    final public const TRANSITION_WITHDRAW = 'withdraw';
+    final public const TRANSITION_RESET = 'reset';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -43,6 +52,7 @@ class Attendance
     private bool $paid = false;
 
     #[ORM\Column(type: 'datetime_immutable', options: ['default' => 'CURRENT_TIMESTAMP'])]
+    #[Groups('notification')]
     private \DateTimeInterface $createdAt;
 
     #[ORM\Column(type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
@@ -52,44 +62,49 @@ class Attendance
     #[ORM\JoinColumn(name: 'offer_id', referencedColumnName: 'id')]
     private Offer $offer;
 
-    /**
-     * The participant becomes NULL if personal data is erased but attendances are kept for data retention.
-     */
-    #[ORM\ManyToOne(targetEntity: 'Ferienpass\CoreBundle\Entity\Participant', inversedBy: 'attendances')]
+    #[ORM\ManyToOne(targetEntity: Participant::class, inversedBy: 'attendances')]
     #[ORM\JoinColumn(name: 'participant_id', referencedColumnName: 'id', nullable: true)]
-    private ?Participant $participant = null;
+    private ?Participant $participant;
 
-    #[ORM\ManyToOne(targetEntity: 'EditionTask')]
-    #[ORM\JoinColumn(name: 'task_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: EditionTask::class)]
+    #[ORM\JoinColumn(name: 'task_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
     private ?EditionTask $task = null;
 
-    #[ORM\OneToMany(mappedBy: 'attendance', targetEntity: AttendanceLog::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'attendance', targetEntity: ParticipantLog::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $activity;
 
     #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
     private int $userPriority = 0;
 
-    /**
-     * The participant age, retained for statistics.
-     */
-    #[ORM\Column(length: 3, type: 'integer', nullable: true, options: ['unsigned' => true])]
+    #[ORM\Column(type: 'integer', length: 3, nullable: true, options: ['unsigned' => true])]
     private ?int $age = null;
 
-    /**
-     * The original participant id, retained for statistics.
-     */
-    #[ORM\Column(name: 'participant_id_original', type: 'integer', nullable: true, options: ['unsigned' => true])]
-    private ?int $participantId = null;
+    // Only used for data retention.
+    #[ORM\Column(name: 'participant_id_original', type: 'string', length: 10, nullable: true)]
+    private ?string $participantPseudonym = null;
 
-    public function __construct(Offer $offer, Participant $participant, string $status = null)
+    #[ORM\OneToMany(mappedBy: 'attendance', targetEntity: PaymentItem::class)]
+    private Collection $paymentItems;
+
+    #[ORM\ManyToMany(targetEntity: MessengerLog::class, mappedBy: 'attendances')]
+    private Collection $messengerLogs;
+
+    public function __construct(Offer $offer, ?Participant $participant, string $status = null)
     {
         $this->offer = $offer;
         $this->participant = $participant;
 
         $this->createdAt = new \DateTimeImmutable();
         $this->activity = new ArrayCollection();
+        $this->messengerLogs = new ArrayCollection();
+        $this->paymentItems = new ArrayCollection();
 
-        $this->setStatus($status);
+        if (null !== $status && !\in_array($status, [self::STATUS_CONFIRMED, self::STATUS_WAITLISTED, self::STATUS_WITHDRAWN, self::STATUS_WAITING, self::STATUS_ERROR], true)) {
+            throw new InvalidArgumentException('Invalid attendance status');
+        }
+
+        $this->status = $status;
+        $this->setModifiedAt();
     }
 
     public function __toString(): string
@@ -112,25 +127,34 @@ class Attendance
         $this->sorting = $sorting;
     }
 
+    #[Groups('notification')]
     public function getStatus(): ?string
     {
         return $this->status;
     }
 
-    public function setStatus(?string $status, User $user = null): void
+    public function setStatus(?string $status, User $user = null, ApplicationSystemInterface $applicationSystem = null): void
     {
         if (null !== $status && !\in_array($status, [self::STATUS_CONFIRMED, self::STATUS_WAITLISTED, self::STATUS_WITHDRAWN, self::STATUS_WAITING, self::STATUS_ERROR], true)) {
             throw new InvalidArgumentException('Invalid attendance status');
         }
 
+        if (null !== $status) {
+            $transitionName = match ($status) {
+                self::STATUS_CONFIRMED => self::TRANSITION_CONFIRM,
+                self::STATUS_WAITLISTED => self::TRANSITION_WAITLIST,
+                self::STATUS_WITHDRAWN => self::STATUS_WITHDRAWN,
+                self::STATUS_WAITING => self::TRANSITION_RESET,
+            };
+
+            if (null !== $transitionName) {
+                $this->activity[] = new ParticipantLog($this->participant, $user, $this, $applicationSystem, transition: new Transition($transitionName, (string) $this->status, $status));
+            }
+        }
+
         $this->status = $status;
 
         $this->setModifiedAt();
-
-        if (null !== $user) {
-            $activity = new AttendanceLog($this, $status, $user);
-            $this->activity[] = $activity;
-        }
     }
 
     public function getActivity(): Collection
@@ -146,11 +170,6 @@ class Attendance
     public function isPaid(): bool
     {
         return $this->paid;
-    }
-
-    public function setConfirmed(): void
-    {
-        $this->setStatus(self::STATUS_CONFIRMED);
     }
 
     public function isConfirmed(): bool
@@ -227,33 +246,30 @@ class Attendance
         $this->userPriority = $userPriority;
     }
 
-    /**
-     * @Groups("docx_export")
-     */
-    public function getName(): string
+    public function getAge(): ?int
     {
-        return $this->participant->getName();
+        return $this->age;
     }
 
-    /**
-     * @Groups("docx_export")
-     */
+    #[Groups('docx_export')]
+    public function getName(): string
+    {
+        return $this->participant?->getName() ?? '';
+    }
+
+    #[Groups('docx_export')]
     public function getPhone(): string
     {
         return $this->participant?->getPhone() ?? '';
     }
 
-    /**
-     * @Groups("docx_export")
-     */
+    #[Groups('docx_export')]
     public function getEmail(): string
     {
         return $this->participant?->getEmail() ?? '';
     }
 
-    /**
-     * @Groups("docx_export")
-     */
+    #[Groups('docx_export')]
     public function getFee(): string
     {
         $fee = $this->offer->getFee();
@@ -262,5 +278,40 @@ class Attendance
         }
 
         return sprintf('%s €', number_format($fee / 100, 2, ',', '.'));
+    }
+
+    /**
+     * @return Collection|PaymentItem[]
+     *
+     * @psalm-return Collection<int, PaymentItem>
+     */
+    public function getPaymentItems(): Collection
+    {
+        return $this->paymentItems;
+    }
+
+    /**
+     * @return Collection|PaymentItem[]
+     *
+     * @psalm-return Collection<int, PaymentItem>
+     */
+    public function getMessengerLogs(): Collection
+    {
+        return $this->messengerLogs;
+    }
+
+    public function getParticipantPseudonym(): ?string
+    {
+        return $this->participantPseudonym;
+    }
+
+    public function setParticipantPseudonym(string $participantPseudonym): void
+    {
+        $this->participantPseudonym = $participantPseudonym;
+    }
+
+    public function unsetParticipant()
+    {
+        $this->participant = null;
     }
 }

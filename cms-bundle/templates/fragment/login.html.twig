@@ -36,14 +36,14 @@
                     <div class="py-8 px-4 sm:px-10" role="tabpanel" id="tabpanel-login" aria-labelledby="btn-tab-login"
                          x-show="activeTab === 'login'">
 
-                        {{ component('Cms:SignIn:Login') }}
+                        <twig:Cms:SignIn:Login />
 
                     </div>
 
                     <div class="py-8 px-4 sm:px-10" role="tabpanel" id="tabpanel-registration"
                          aria-labelledby="btn-tab-registration" x-show="activeTab === 'registration'">
 
-                        {{ component('Cms:SignIn:Registration') }}
+                        <twig:Cms:SignIn:Registration />
 
                     </div>
                 </div>

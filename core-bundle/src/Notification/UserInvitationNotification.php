@@ -15,14 +15,14 @@ namespace Ferienpass\CoreBundle\Notification;
 
 use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Entity\User;
-use Ferienpass\CoreBundle\Twig\Mime\NotificationEmail;
-use Symfony\Component\Notifier\Message\EmailMessage;
+use Ferienpass\CoreBundle\Notifier\Message\EmailMessage;
+use Ferienpass\CoreBundle\Notifier\Mime\NotificationEmail;
+use Symfony\Component\Notifier\Message\EmailMessage as SymfonyEmailMessage;
 use Symfony\Component\Notifier\Notification\EmailNotificationInterface;
-use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\Recipient\EmailRecipientInterface;
 use Symfony\Component\Notifier\Recipient\RecipientInterface;
 
-class UserInvitationNotification extends Notification implements NotificationInterface, EmailNotificationInterface
+class UserInvitationNotification extends AbstractNotification implements NotificationInterface, EmailNotificationInterface
 {
     use ActionUrlTrait;
 
@@ -61,23 +61,26 @@ class UserInvitationNotification extends Notification implements NotificationInt
         return $this;
     }
 
-    public function asEmailMessage(EmailRecipientInterface $recipient, string $transport = null): ?EmailMessage
+    public function getContext(): array
     {
-        $email = (new NotificationEmail(self::getName()))
-            ->to($recipient->getEmail())
-            ->subject($this->getSubject())
-            ->content($this->getContent())
-            ->context([
-                'user' => $this->user,
-                'host' => $this->host,
-                'email' => $this->email,
-            ])
-        ;
+        return array_merge(parent::getContext(), [
+            'user' => $this->user,
+            'host' => $this->host,
+            'email' => $this->email,
+        ]);
+    }
 
-        if (null !== $this->actionUrl) {
-            $email->action('email.user_invitation.accept', $this->actionUrl);
-        }
+    public static function getAvailableTokens(): array
+    {
+        return array_merge(parent::getAvailableTokens(), ['user', 'host', 'email']);
+    }
 
-        return new EmailMessage($email);
+    public function asEmailMessage(EmailRecipientInterface $recipient, string $transport = null): ?SymfonyEmailMessage
+    {
+        return EmailMessage::fromFerienpassNotification($this, $recipient, function (NotificationEmail $email) {
+            if (null !== $this->actionUrl) {
+                $email->action('email.user_invitation.accept', $this->actionUrl);
+            }
+        });
     }
 }

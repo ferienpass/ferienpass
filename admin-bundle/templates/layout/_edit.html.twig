@@ -24,7 +24,17 @@
 
 {% endmacro %}
 
-{{ form_start(form) }}
+{% set formAttr = {} %}
+{% if useLiveActionSubmit|default(false) %}
+    {% set formAttr = formAttr|merge({
+        'data-action': 'live#action',
+        'data-action-name': 'prevent|save'
+    }) %}
+{% endif %}
+
+{{ form_start(form, { attr: formAttr }) }}
+
+        {{ form_errors(form) }}
 
         {% set fieldsets = form.children|map(
             f => f.vars['fieldset_group'] is defined ? "#{f.vars['fieldset_group']}" : null)|reduce(

@@ -13,10 +13,13 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Components;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\CoreBundle\Entity\OfferEntityInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
@@ -25,7 +28,7 @@ class OfferWorkflowButton extends AbstractController
 {
     use DefaultActionTrait;
 
-    #[LiveProp]
+    #[LiveProp(updateFromParent: true)]
     public OfferEntityInterface $offer;
 
     public function __construct(private readonly WorkflowInterface $offerStateMachine)
@@ -35,5 +38,12 @@ class OfferWorkflowButton extends AbstractController
     public function transitions()
     {
         return $this->offerStateMachine->getEnabledTransitions($this->offer);
+    }
+
+    #[LiveAction]
+    public function apply(#[LiveArg] string $transition, EntityManagerInterface $entityManager)
+    {
+        $this->offerStateMachine->apply($this->offer, $transition);
+        $entityManager->flush();
     }
 }

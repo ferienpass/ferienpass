@@ -15,7 +15,7 @@ namespace Ferienpass\CmsBundle\Controller\Fragment;
 
 use Contao\CoreBundle\Controller\AbstractController;
 use Contao\CoreBundle\Exception\RedirectResponseException;
-use Ferienpass\CoreBundle\Form\ListFiltersType;
+use Ferienpass\CmsBundle\Form\ListFiltersType;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;

@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\CmsBundle\Controller\Fragment;
 
 use Doctrine\DBAL\Types\Types;
-use Ferienpass\CmsBundle\Controller\Frontend\AbstractController;
+use Ferienpass\CmsBundle\Controller\AbstractController;
 use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Ferienpass\CoreBundle\Repository\OfferRepository;

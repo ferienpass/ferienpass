@@ -29,7 +29,7 @@ class EditionTask
     private \DateTimeInterface $createdAt;
 
     #[ORM\ManyToOne(targetEntity: Edition::class, inversedBy: 'tasks')]
-    #[ORM\JoinColumn(name: 'pid', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'pid', referencedColumnName: 'id', onDelete: 'CASCADE')]
     private Edition $edition;
 
     #[ORM\Column(type: 'string', nullable: true)]
@@ -67,6 +67,10 @@ class EditionTask
 
     #[ORM\Column(name: 'application_system', type: 'string', nullable: true)]
     private ?string $applicationSystem = null;
+
+    #[ORM\ManyToOne(targetEntity: AccessCodeStrategy::class)]
+    #[ORM\JoinColumn(name: 'code_strategy_id', referencedColumnName: 'id')]
+    private ?AccessCodeStrategy $accessCodeStrategy = null;
 
     #[ORM\Column(name: 'age_check', type: 'string', nullable: true)]
     private ?string $ageCheck = null;
@@ -279,6 +283,16 @@ class EditionTask
     public function setApplicationSystem(string $applicationSystem): void
     {
         $this->applicationSystem = $applicationSystem;
+    }
+
+    public function getAccessCodeStrategy(): ?AccessCodeStrategy
+    {
+        return $this->accessCodeStrategy;
+    }
+
+    public function setAccessCodeStrategy(?AccessCodeStrategy $accessCodeStrategy): void
+    {
+        $this->accessCodeStrategy = $accessCodeStrategy;
     }
 
     public function isHideStatus(): bool

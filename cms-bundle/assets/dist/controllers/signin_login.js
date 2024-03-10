@@ -24,15 +24,31 @@ export default class default_1 extends Controller {
         });
     }
     submit(event) {
-        fetch('/check_login', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }, body: JSON.stringify({ username: this.usernameTarget.value, password: this.passwordTarget.value, REQUEST_TOKEN: this.requestTokenValue }) })
-            .then(response => response.json())
-            //.then(json => message = json.message)
-            //.then(message => { if(!message) authError = true })
-            .catch(() => { window.location.reload(); });
-        //.finally(() => { isLoading = false; })
+        return __awaiter(this, void 0, void 0, function* () {
+            const response = yield fetch('/check_login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                body: JSON.stringify({
+                    username: this.usernameTarget.value,
+                    password: this.passwordTarget.value,
+                    REQUEST_TOKEN: this.requestTokenValue
+                })
+            });
+            const json = yield response.json();
+            if (!("user" in json)) {
+                this.errorTarget.classList.remove('hidden');
+            }
+            else {
+                this.errorTarget.classList.add('hidden');
+                if (this.targetPathValue) {
+                    window.location.href = this.targetPathValue;
+                }
+            }
+        });
     }
 }
 default_1.values = {
     requestToken: String,
+    targetPath: String,
 };
-default_1.targets = ["username", "password", "remember_me"];
+default_1.targets = ["error", "username", "password", "remember_me"];

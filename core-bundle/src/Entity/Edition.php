@@ -31,6 +31,7 @@ class Edition
     private \DateTimeInterface $createdAt;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Groups('notification')]
     private ?string $name = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
@@ -39,20 +40,26 @@ class Edition
     /**
      * @psalm-var Collection<int, EditionTask>
      */
-    #[ORM\OneToMany(mappedBy: 'edition', targetEntity: EditionTask::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'edition', targetEntity: EditionTask::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $tasks;
 
     /**
      * @psalm-var Collection<int, Offer>
      */
-    #[ORM\OneToMany(mappedBy: 'edition', targetEntity: OfferEntityInterface::class)]
+    #[ORM\OneToMany(mappedBy: 'edition', targetEntity: OfferEntityInterface::class, cascade: ['remove'])]
     private Collection $offers;
-
-    #[ORM\Column(type: 'integer', nullable: true, options: ['unsigned' => true])]
-    private ?int $listPage = null;
 
     #[ORM\Column(type: 'boolean')]
     private bool $archived = false;
+
+    #[ORM\ManyToMany(targetEntity: Host::class)]
+    #[ORM\JoinTable(name: 'EditionToHost', )]
+    #[ORM\JoinColumn(name: 'edition_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'host_id', referencedColumnName: 'id')]
+    private Collection $hosts;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $hostsCanAssign = false;
 
     private ApplicationSystemInterface $applicationSystem;
 
@@ -60,6 +67,7 @@ class Edition
     {
         $this->tasks = new ArrayCollection();
         $this->offers = new ArrayCollection();
+        $this->hosts = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
     }
 
@@ -130,16 +138,6 @@ class Edition
         $this->archived = $archived;
     }
 
-    public function getListPage(): ?int
-    {
-        return $this->listPage;
-    }
-
-    public function setListPage(int $listPage): void
-    {
-        $this->listPage = $listPage;
-    }
-
     /**
      * @return Collection|Offer[]
      *
@@ -148,6 +146,21 @@ class Edition
     public function getOffers(): Collection
     {
         return $this->offers;
+    }
+
+    public function getHosts(): Collection
+    {
+        return $this->hosts;
+    }
+
+    public function hostsCanAssign(): bool
+    {
+        return $this->hostsCanAssign;
+    }
+
+    public function setHostsCanAssign(bool $hostsCanAssign): void
+    {
+        $this->hostsCanAssign = $hostsCanAssign;
     }
 
     public function getHoliday(): ?EditionTask
@@ -216,6 +229,18 @@ class Edition
         return !$tasks->isEmpty();
     }
 
+    public function isOnline(): bool
+    {
+        if ($this->tasks->filter(fn (EditionTask $element) => 'show_offers' === $element->getType())->isEmpty()) {
+            return true;
+        }
+
+        $time = new \DateTimeImmutable();
+        $tasks = $this->tasks->filter(fn (EditionTask $element) => 'show_offers' === $element->getType() && $time >= $element->getPeriodBegin() && $time < $element->getPeriodEnd());
+
+        return !$tasks->isEmpty();
+    }
+
     /**
      * Check whether the host can edit the offers of this pass edition.
      */
@@ -227,6 +252,9 @@ class Edition
         return $hasCurrentHostEditingStage || !$hasHostEditingStages;
     }
 
+    /**
+     * @return Collection<EditionTask>
+     */
     public function getActiveTasks(string $taskName): Collection
     {
         $time = new \DateTimeImmutable();
@@ -236,5 +264,16 @@ class Edition
                 && $time >= $element->getPeriodBegin()
                 && $time < $element->getPeriodEnd()
         );
+    }
+
+    public function getAccessCodeStrategy(): ?AccessCodeStrategy
+    {
+        foreach ($this->getActiveTasks('application_system') as $task) {
+            if ($strategy = $task->getAccessCodeStrategy()) {
+                return $strategy;
+            }
+        }
+
+        return null;
     }
 }

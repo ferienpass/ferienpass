@@ -9,7 +9,7 @@
         </p>
 
         <div class="mt-4">
-            {% embed '@FerienpassAdmin/components/button-default.html.twig' with {uri: mailHref|raw} %}
+            {% embed '@FerienpassAdmin/components/button-default.html.twig' with {uri: mailHref|default} %}
                 {% block link %}
                     <span class="inline-flex h-5 w-5 mr-2">{{ source('@FerienpassAdmin/icons/mail.svg') }}</span>Administrator kontaktieren
                 {% endblock %}

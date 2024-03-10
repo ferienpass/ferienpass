@@ -13,23 +13,26 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\MessageHandler;
 
+use Ferienpass\AdminBundle\Controller\Page\AccountsController;
 use Ferienpass\CoreBundle\Entity\Host;
+use Ferienpass\CoreBundle\Entity\MessengerLog;
 use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Message\HostCreated;
-use Ferienpass\CoreBundle\Notifier;
+use Ferienpass\CoreBundle\Notifier\Notifier;
 use Ferienpass\CoreBundle\Repository\HostRepository;
 use Ferienpass\CoreBundle\Repository\UserRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Notifier\Recipient\Recipient;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsMessageHandler]
 class WhenHostCreatedThenNotify
 {
-    public function __construct(private readonly Notifier $notifier, private readonly HostRepository $hostRepository, private readonly UserRepository $userRepository)
+    public function __construct(private readonly Notifier $notifier, private readonly HostRepository $hostRepository, private readonly UserRepository $userRepository, private readonly UrlGeneratorInterface $urlGenerator)
     {
     }
 
-    public function __invoke(HostCreated $message): void
+    public function __invoke(HostCreated $message, MessengerLog $log): void
     {
         /** @var User $user */
         $user = $this->userRepository->find($message->getUserId());
@@ -40,10 +43,12 @@ class WhenHostCreatedThenNotify
         }
 
         $notification = $this->notifier->hostCreated($host, $user);
-        if (null === $notification || '' === $email = (string) $user->getEmail()) {
+        if (null === $notification || '' === $email = (string) $notification->getEmailTo()) {
             return;
         }
 
-        $this->notifier->send($notification, new Recipient($email, (string) $user->getMobile()));
+        $this->notifier->send(
+            $notification->belongsTo($log)->actionUrl($this->urlGenerator->generate('admin_accounts_index', ['role' => array_search('ROLE_HOST', AccountsController::ROLES, true)], UrlGeneratorInterface::ABSOLUTE_URL)),
+            new Recipient($email));
     }
 }

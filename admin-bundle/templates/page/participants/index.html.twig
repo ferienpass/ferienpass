@@ -8,14 +8,7 @@
         searchable: searchable,
         config: {
             columns: {
-                name: '
-                <a href=""
-                    data-action="live#emit"
-    data-event="name(Admin:SlideOver)|view(item)"
-                >
-                {{ item.name }}
-                </a>
-',
+                name: '{{ item.name }}',
                 dateOfBirth: '{{ item.dateOfBirth|date("d.m.Y") }}',
                 email: '{{ item.email ?: item.member.email|default("-") }}',
                 mobile: '{{ item.mobile ?: item.member.mobile|default("-") }}',

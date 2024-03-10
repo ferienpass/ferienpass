@@ -16,6 +16,7 @@ namespace Ferienpass\CoreBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[ORM\Entity]
 class OfferCategory
@@ -25,8 +26,8 @@ class OfferCategory
     #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
     private int $id;
 
-    #[ORM\Column(name: 'tstamp', type: 'integer', options: ['unsigned' => true])]
-    private int $timestamp;
+    #[ORM\Column(type: 'datetime_immutable', options: ['default' => 'CURRENT_TIMESTAMP'])]
+    private \DateTimeInterface $createdAt;
 
     #[ORM\ManyToMany(targetEntity: OfferEntityInterface::class, mappedBy: 'categories')]
     private Collection $offers;
@@ -34,12 +35,18 @@ class OfferCategory
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true, unique: true)]
+    #[ORM\Column(type: 'string', length: 255, unique: true, nullable: true)]
     private ?string $alias = null;
 
     public function __construct()
     {
         $this->offers = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
     }
 
     public function getOffers(): Collection
@@ -47,13 +54,41 @@ class OfferCategory
         return $this->offers;
     }
 
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
     public function getName(): ?string
     {
         return $this->name;
     }
 
+    public function setAlias(string $alias): void
+    {
+        $this->alias = $alias;
+    }
+
     public function getAlias(): ?string
     {
         return $this->alias;
+    }
+
+    public function getCreatedAt(): \DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function generateAlias(SluggerInterface $slugger)
+    {
+        if (!$this->id) {
+            $this->alias = uniqid();
+
+            return;
+        }
+
+        if (!$this->alias) {
+            $this->alias = (string) $slugger->slug($this->getName())->lower();
+        }
     }
 }

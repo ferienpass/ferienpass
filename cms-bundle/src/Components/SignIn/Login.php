@@ -17,9 +17,7 @@ use Ferienpass\CmsBundle\Form\UserLoginType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
-use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
@@ -29,15 +27,7 @@ class Login extends AbstractController
     use ComponentWithFormTrait;
     use DefaultActionTrait;
 
-    #[LiveProp]
-    public ?AuthenticationException $error = null;
-
-    protected function instantiateForm(): FormInterface
-    {
-        return $this->createForm(UserLoginType::class);
-    }
-
-    private function findTargetPath(Request $request): string
+    public function targetPath(Request $request): string
     {
         // If the form was submitted and the credentials were wrong, take the target
         // path from the submitted data as otherwise it would take the current page
@@ -45,7 +35,7 @@ class Login extends AbstractController
             $targetPath = base64_decode((string) $request->request->get('_target_path'), true);
         } elseif ($request->query->has('redirect')) {
             // We cannot use $request->getUri() here as we want to work with the original URI (no query string reordering)
-            if ($this->container->get('uri_signer')->check($request->getSchemeAndHttpHost().$request->getBaseUrl().$request->getPathInfo().(null !== ($qs = $request->server->get('QUERY_STRING')) ? '?'.$qs : ''))) {
+            if ($this->container->get('uri_signer')->checkRequest($request)) {
                 $targetPath = $request->query->get('redirect');
             }
         }
@@ -55,5 +45,10 @@ class Login extends AbstractController
         }
 
         return $targetPath ?? '';
+    }
+
+    protected function instantiateForm(): FormInterface
+    {
+        return $this->createForm(UserLoginType::class);
     }
 }

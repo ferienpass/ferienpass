@@ -10,6 +10,7 @@ accounts:
     address.0: Postanschrift
     account.0: Account-Status
   action.impersonate: Anmelden als {user}
+  action.delete: Löschen
   ROLE_MEMBER: Eltern
   ROLE_HOST: Veranstaltende
   ROLE_ADMIN: Admins
@@ -34,6 +35,7 @@ accounts:
   sorting.firstname: Sortieren nach Vorname
   sorting.lastname: Sortieren nach Nachname
   label:
+    name: Name
     firstname: Vorname
     lastname: Nachname
     hosts: Veranstalter-Profile
@@ -44,15 +46,20 @@ accounts:
     street: Straße
     postal: PLZ
     city: Ort
-    accountRoles: Account
+    accountRoles: Gruppen
     adminRoles: Rollen
-    disable: Account deaktivieren
+    superAdmin: Super-Admin
+    disabled: Account deaktivieren
+    participants: Teilnehmende
   help:
     hosts: Dieser Account erhält Zugriff auf alle Daten (also Angebote, Teilnehmerlisten) dieses Veranstalters.
     superAdmin: Der Account hat Zugriff auf alle Funktionen.
     accountRoles: Ein Account kann als Veranstalter, Admin, und/oder Eltern gelistet werden.
     adminRoles: Die Rollen definieren, auf wie welche Funktionen dieser Account Zugriff hat.
     disabled: Der Account darf sich nicht mehr anmelden.
+  deleteModal.headline: Account löschen
+  deleteModal.confirm: Sind Sie sicher, dass Sie folgenden Nutzer-Account löschen möchten?
+
 
 offer.tab.web: Webansicht
 offer.tab.pdf: Druckansicht
@@ -65,11 +72,6 @@ offers:
   th.hosts: Veranstalter
   th.date: Datum
   th.attendances: Anmeldungen
-  status.draft: Entwurf
-  status.completed: Vom Veranstalter freigegeben
-  status.reviewed: Vom Admin freigegeben
-  status.published: Auf Webseite veröffentlicht
-  status.cancelled: Angebot abgesagt
   sorting.name: Sortieren nach Titel
   sorting.date: Sortieren nach Datum
   sorting.host: Sortieren nach Veranstalter
@@ -84,7 +86,9 @@ offers:
     freeze: Angebot einfrieren
     cancel: Angebot absagen
     reactivate: Angebot wiederherstellen
-    participantList: Teilnahmeliste
+    participants: Teilnahmeliste
+    assign: Teilnehmer zuordnen
+    mailing: Rundmail
   new: Neues Angebot
   legend.base:
     - Titel und Beschreibung
@@ -101,8 +105,11 @@ offers:
   legend.media:
     - Foto
     - Laden Sie ein Foto zur Veröffentlichung hoch. Nutzen Sie nur gemeinfreie Fotos und geben Sie in jedem Fall den/die Fotografin an.
+  legend.agreementLetter.0: Einverständniserklärung
+  legend.agreementLetter.1: Wählen Sie aus, ob Sie eine gesonderte Einverständniserklärung benötigen.
   label:
     name: Name
+    hosts: Veranstaltende
     edition: Saison
     description: Beschreibung
     categories: Kategorien
@@ -110,16 +117,19 @@ offers:
     minAge: Mindestalter
     maxAge: Maximalalter
     meetingPoint: Treffpunkt
+    date: Datum
     dates: Datum
     bring: Mitzubringen
     fee: Teilnahmegebühr
     wheelchairAccessible: Rollstuhl-zugängig
     requiresApplication: Anmeldung erforderlich
+    requiresAgreementLetter: Einverständniserklärung erforderlich
+    uploadAgreeLetter: PDF hochladen
     onlineApplication: Anmeldesystem nutzen
-    minParticipants: min. Teilnehmer
-    maxParticipants: max. Teilnehmer
+    minParticipants: min. Teilnehmerzahl
+    maxParticipants: max. Teilnehmerzahl
     applyText: Anmeldungen unter (wenn nicht online)
-    contact: Auskunft unter
+    contactUser: Ansprechperson
     submit: Daten speichern
     submitAndComplete: Speichern und finalisieren
     submitAndApprove: Speichern und freigeben
@@ -127,29 +137,50 @@ offers:
     submitAndUnpublish: Speichern und un-veröffentlichen
     submitAndCancel: Speichern und absagen
     submitAndRelaunch: Speichern und wiederherstellen
+    attendances: Anmeldungen
+    uploadImage: Neues Bild hochladen
   help:
     edition: Sie können das Angebot in eine andere Saison verschieben.
+    hosts: Das Angebot muss von mindestens einem Veranstalter ausgeführt werden. Sie können aber auch mehrere auswählen.
     applyText: Wie kann sich zu dem Angebot angemeldet werden (wenn Online-System nicht genutzt)?
-    contact: Wer gibt Auskunft (z.B. Name + TelNr)? Leer lassen, falls die Info schon in "Anmeldung unter" steht.
+    contactUser: Der Ansprechpartner erscheint mit Name und Kontatkdaten auf der Anmeldeseite.
     requiresApplication: Eine vorherige Anmeldung ist erforderlich, um am Angebot teilnehmen zu können.
     onlineApplication: Die Anmeldungen über das Online-System laufen lassen.
     applicationDeadline: Ab folgendem Tag sind Anmeldungen zum Angebot nicht mehr möglich.
+    requiresAgreementLetter: Sie können ein PDF-Dokument hochladen.
   filter.edition: Saisons
   filter.host: Veranstaltende
   filter.requiresApplication: Anmeldung erforderlich
+  filter.requiresAgreementLetter: Einverständniserklärung erforderlich
   filter.onlineApplication: Online-Anmeldesystem
   filter.status: Status
   edit_offer_dates_add: Zusätzliche Zeit zu diesem Termin
   edit_offer_dates_entry_delete: Zeitraum löschen
   dropzonePlaceholder: Wählen Sie ein Bild aus oder platzieren Sie es hier mittels Drag'n'Drop
   uncompletedOffers: Sie haben Angebote im Entwurfsmodus. Bitte markieren Sie alle Angebote als vollständig, damit sie im Ferienpass berücksichtigt werden können.
+  deleteModal.headline: Angebot löschen
+  deleteModal.confirm: Sind Sie sicher, dass Sie folgendes Angebot löschen möchten?
+  status.draft: Entwurf
+  status.completed: Vom Veranstalter freigegeben
+  status.reviewed: Vom Admin freigegeben
+  status.published: Auf Webseite veröffentlicht
+  status.cancelled: Angebot abgesagt
+  status.unpublished: Unveröffentlicht
+  workflow.complete: Finalisieren
+  workflow.approve: Freigeben
+  workflow.unapprove: Freigabe zurückziehen
+  workflow.publish: Veröffentlichen
+  workflow.unpublish: Unveröffentlichen
+  workflow.cancel: Absagen
+  workflow.relaunch: Wiederherstellen
 
 hosts:
   title: Veranstaltende
   new: Neuer Veranstalter
   action:
-    show: Anzeigen
     edit: Bearbeiten
+    mailing: Rundmail
+    delete: Löschen
   legend.base.0: Basisdaten
   legend.contact.0: Kontaktdaten
   legend.address.0: Postanschrift
@@ -167,6 +198,8 @@ hosts:
     postal: PLZ
     city: Ort
     logo: Logo
+    accounts: Accounts
+    numberOffers: Anzahl Angebote
   th:
     name: Name
     email: E-Mail-Adresse
@@ -179,6 +212,8 @@ hosts:
   sorting.numberOffers: Sortieren nach Anzahl Angeboten
   help:
     alias: Der Alias wird automatisch generiert.
+  deleteModal.headline: Veranstalter löschen
+  deleteModal.confirm: Sind Sie sicher, dass Sie folgenden Veranstalter löschen möchten?
 
 editions:
   title: Saisons
@@ -187,6 +222,7 @@ editions:
   action:
     edit: Bearbeiten
     stats: Statistiken
+    delete: Löschen
   legend:
     base:
       - Name der Saison
@@ -196,6 +232,8 @@ editions:
     archived:
       - Archivieren
       - Wenn Sie für etwas Ordnung schaffen wollen, können Sie die Saison archivieren.
+    hosts:
+      - Veranstaltende
   task:
     holiday: Ferien
     host_editing_stage: Bearbeitungsphase für Veranstaltende
@@ -219,8 +257,13 @@ editions:
     skip_max_applications: Mehr Anmeldungen erlauben
     allow_anonymous: Anmeldungen ohne Benutzerkonto
     allow_anonymous_fee: Anmeldungen ohne Benutzerkonto auch für kostenpflichtige Angebote
+    accessCodeStrategy: Anmeldung nur mit Zugangscodes
     hide_status: Aktuellen Status verbergen
     archived: Saison archivieren
+    hosts: Auf Veranstaltende limitieren
+    hostsCanAssign: Veranstaltende dürfen Plätze zulosen
+    holiday: Ferien
+    countOffers: Anzahl Angebote
   help:
     alias: Der Alias wird automatisch generiert.
     max_applications: Zu wie vielen Angeboten darf ein Kind sich in dieser Phase anmelden?
@@ -228,10 +271,15 @@ editions:
     skip_max_applications: Es können unbegrenzt viele Anmeldungen vorgenommen werden, jedoch können nur die angegebene Anzahl an Anmeldungen priorisiert werden.
     allow_anonymous: Erlauben Sie Anmeldungen ohne Benutzerkonto.
     allow_anonymous_fee: Erlauben Sie Anmeldungen ohne Benutzerkonto auch für kostenpflichtige Angebote
+    accessCodeStrategy: Wenn eine Anmeldung nur mit Zugangscode möglich ist, wählen Sie hier die erlaubten Zugangscodes aus.
     hide_status: Den Eltern den aktuellen Status nicht anzeigen. Dies sollte aktiviert werden für das Losverfahren, damit die Eltern den Status erst nach dem Losen einsehen können.
     archived: Die Saison wird nicht mehr angezeigt in Eingabemasken, bleibt aber erhalten.
+    hosts: Wenn gewünscht, wird die Bearbeitung dieser Saision auf die ausgewählten Veranstalter limitiert.
+    hostsCanAssign: Die Veranstaltende dürfen Ihre Plätze selbst zulosen.
   edit_edition_tasks_entry_delete: Phase löschen
   edit_edition_tasks_add: Neue Phase definieren
+  deleteModal.headline: Saison löschen
+  deleteModal.confirm: Sind Sie sicher, dass Sie folgende Saison löschen möchten?
 
 participants:
   title: Teilnehmende
@@ -240,6 +288,7 @@ participants:
   attendances.empty: Es sind keine Anmeldungen vorhanden.
   action.edit: Bearbeiten
   action.attendances: Anmeldungen
+  action.delete: Löschen
   action.show_payment: 'Beleg #{number}'
   new: Neuer Teilnehmer
   legend.base:
@@ -255,6 +304,7 @@ participants:
     - Ermäßigung
     - Bei einer genehmigten Ermäßigung wird die reduzierte Teilnahmegebühr abgerechnet.
   label:
+    name: Name
     firstname: Vorname
     lastname: Nachname
     user: Sorgeberechtigte:r
@@ -276,6 +326,8 @@ participants:
   th.status: Status
   th.attendances: Anmeldungen
   th.paid: Zahlungen
+  deleteModal.headline: Teilnehmer löschen
+  deleteModal.confirm: Sind Sie sicher, dass Sie folgenden Teilnehmer löschen möchten?
 
 payments:
   title: Zahlungen
@@ -332,9 +384,13 @@ user:
 
 editConfirm: Die Daten wurden erfolgreich gespeichert.
 
+ms.confirm: Teilnehmer zusagen
+ms.confirmAndInform: Teilnehmer zusagen und benachrichtigen
+ms.reject: Teilnehmer absagen
+ms.rejectAndInform: Teilnehmer absagen und benachrichtigen
 ms.settle: abrechnen
 ms.reverse: stornieren
-ms.reverse_and_withdraw: stornieren und abmelden
+ms.reverseAndWithdraw: stornieren und abmelden
 
 statusDescription:
   confirmed: Kinder sind zugesagt und nehmen am Angebot teil.
@@ -396,10 +452,6 @@ changePassword.headline: Passwort ändern
 changePassword.caption: Ändern Sie Ihr Passwort – helfen Sie mit, Ihren Account zu schützen und teilen Sie nie Ihr Passwort.
 twoFactor.headline: Zwei-Faktor-Authentifizierung
 twoFactor.caption: Sie können Ihren Account zusätzlich mit Zwei-Faktor-Authentifizierung absichern.
-organizationReader.headline: Stammdaten
-organizationReader.caption: Bitte überprüfen Sie, ob die im System hinterlegten Stammdaten aktuell sind.
-inviteTeam.headline: Mitarbeiter:in einladen
-inviteTeam.caption: Sie können eine Mitarbeiter:in zu Ihrem Team hinzufügen. Dazu benötigen wir die E-Mail-Adresse.
 
 export.xlsx.createdAt: Buchungsdatum
 export.xlsx.billingAddress: Rechnungsanschrift
@@ -423,10 +475,6 @@ export.xlsx.attendancesErroredCount: fehlerhaft
 export.xlsx.attendancesPaidCount: bezahlt
 export.xlsx.unpaidAttendances: unbezahlt
 
-export.pdf.print.0: 'Druckbögen (PDF)'
-export.pdf.print.1: 'Exportiert alle Angebote im druckfertigen PDF-Format.'
-
-
 notifications:
   title: Benachrichtigungen
   action: Ansehen
@@ -438,10 +486,12 @@ notifications:
   legend.sms.1: Definieren Sie den Text, die als Kurznachricht versendet werden.
   legend.disable.0: Benachrichtigung deaktivieren
   label.edition: Saison
+  label.emailTo: Empfängeradresse
+  label.emailReplyTo: Antwortadresse
   label.emailSubject: Betreff
   label.emailText: Text
   label.smsText: Textnachricht
-  label.disable: Benachrichtigung deaktivieren
+  label.disabled: Benachrichtigung deaktivieren
   label.submit: Speichern
   help.emailText: Geben Sie den Text ohne Anrede ein.
   help.smsText: Geben Sie den Text für die Kurznachricht ein.
@@ -472,6 +522,8 @@ notifications:
   attendance_withdrawn:
     - 'Anmeldung › Abgesagt'
     - 'Wenn einem Teilnehmenden abgesagt wurde.'
+  account_registration_help.0: Account › Bereits registriert (Eltern)
+  account_registration_help.1: Informiert den/die Nutzer:in, dass ein Account zu der E-Mail-Adresse bereits besteht.
   proofs.0: Korrekturabzüge
   offer_cancelled.0: Anmeldung › Angebot abgesagt
   offer_cancelled.1: Wenn ein Angebot abgesagt wurde.
@@ -481,6 +533,10 @@ notifications:
   payment_created.1: Beleg wird als PDF an Rechnungsempfänger versendet.
   user_password.0: Account › Passwort-Reset
   user_password.1: Enthält den Password-Link zum Zurücksetzen des Passworts.
+
+organization:
+  title: Stammdaten
+
 
 exports:
   title: Export
@@ -506,3 +562,78 @@ passwordReset:
   newPassword: Neues Passwort
   repeatPassword: Passwort wiederholen
   passwordsDoNotMatch: Die Passwörter müssen übereinstimmen.
+
+mailing:
+  title: Rundmail
+  selectGroup: Empfänger-Gruppe auswählen
+  recipients.0: Empfänger-Adressen
+  recipients.1: Die E-Mail wird an folgende E-Mail-Adressen versendet.
+  write.0: E-Mail verfassen
+  write.1: Die E-Mail wird an folgende E-Mail-Adressen versendet.
+  noRecipients: Es wurden keine Empfänger:innen ausgewählt.
+  attendanceStatus:
+    confirmed: zugesagt
+    waitlisted: auf Warteliste
+    waiting: auf Zuteilung wartend
+    withdrawn: abgemeldet
+    error: fehlerhaft
+
+export:
+  title: Export
+  selectExport: Export auswählen
+  button: Export starten
+
+settings:
+  title: Einstellungen
+
+offerCategories:
+  title: Angebotskategorien
+  legend.categories.0: Kategorien
+  label.name: Name
+  label.alias: Alias
+  help.alias: Der Alias wird automatisch generiert.
+  edit_offer_categories_categories_entry_delete: Kategorie löschen
+  edit_offer_categories_categories_add: Neue Kategorie
+
+eraseData:
+  title: Daten löschen
+  cta.headline: Daten sofort löschen
+  cta.text: Personenbezogene Daten von untenstehenden Kindern ({count} Kinder + zugehörige Eltern) sind zum Löschen bereit. Bitte bestätigen Sie den Vorgang.
+  cta.button: Daten löschen
+  empty: Es gibt nichts zu löschen.
+  name: Name
+  latestAttendance: letzte Anmeldung
+  countAttendances: Anzahl Anmeldungen
+  user: Eltern-Account wird gelöscht
+
+outbox:
+  title: Postausgang
+  message:
+    Ferienpass\CoreBundle\Message\AccountCreated: Account erstellt
+    Ferienpass\CoreBundle\Message\AccountResendActivation: Aktivierungsmail erneut versenden
+    Ferienpass\CoreBundle\Message\AccountActivated: Account aktiviert
+    Ferienpass\CoreBundle\Message\HostCreated: Veranstalter registriert
+
+accessCodes:
+  title: Zugangscodes
+  new: Neue Zugangscode-Strategie
+  legend.base.0: Name
+  legend.base.1: Der Name hilft Ihnen, die Zugangscodes im System wiederzufinden. Wenn die Zugangscodes für den Osterferienpass gelten sollen, dann vergeben Sie doch ”Osterferienpass“ als Name.
+  legend.codes.0: Zugangscodes
+  legend.codes.1: Hier pflegen Sie die tatsächlichen Zugangscodes, die von den Teilnehmenden eingelöst werden können.
+  legend.settings.0: Einstellungen
+  legend.settings.1: Meistens ist es sinnvoll, dass ein Zugangscode nur einmal eingelöst werden darf. Sie können aber auch 0 auswählen, dann können die nachfolgenden Codes beliebig oft verwendet werden.
+  label.name: Name
+  label.max: Benutzungsgrenze
+  label.codes: Zugangscodes
+  help.max: Geben Sie an, wie oft ein Zugangscode benutzt werden darf.
+  action.edit: Bearbeiten
+  action.delete: Löschen
+  deleteModal.headline: Zugangscodes löschen
+  deleteModal.confirm: Sind Sie sicher, dass Sie folgenden Zugangscodes löschen möchten?
+  edit_access_codes_codes_add: Neuer Code
+  edit_access_codes_codes_entry_delete: Code löschen
+
+applicationSystem:
+  lot: Losverfahren
+  firstcome: Windhundverfahren

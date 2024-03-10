@@ -1,0 +1,10 @@
+{% extends '@FerienpassAdmin/components/_list_panel.html.twig' %}
+
+{% block summary %}
+    <p class="text-gray-500 text-sm">
+
+        {{ item.hosts|map(h => h.name)|join(", ") }}
+
+    </p>
+
+{% endblock %}

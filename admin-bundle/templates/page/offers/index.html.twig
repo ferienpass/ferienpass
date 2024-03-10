@@ -21,7 +21,13 @@
             searchable: searchable,
             config: {
                 layout: is_granted('ROLE_ADMIN') ? 'table' : 'list',
-                title: "{{ item.name }}",
+                title: '
+{% import "@FerienpassAdmin/components/content_elements.html.twig" as partials %}
+{% trans_default_domain "admin" %}
+
+{{ item.name }}
+{{ partials.offer_status_badge(item.state, "xs", "ml-2") }}
+',
                 info: [
                     '
 {% if item.dates is not empty %}
@@ -32,19 +38,21 @@
 {% endif %}
 ',
                     '
-                <p class="flex items-center space-x-1" title="aktuelle Anmeldungen">
-                    <span class="{{ (item.maxParticipants and item.attendancesConfirmed|length >= item.maxParticipants) ? \'text-red-700\' : \'text-green-700\' }}">
-                        <svg viewBox="0 0 2 2" class="h-2 w-2 fill-current">
-                            <circle cx="1" cy="1" r="1"/>
-                        </svg>
-                    </span>
-
-                    <span>
-                        {{ item.attendancesNotWithdrawn|length ~ \' / \' ~ (item.maxParticipants ?: \'∞\') ~ \'\' }}
-                    </span>
-                </p>
+{% if item.requiresApplication and item.onlineApplication %}
+    <p class="flex items-center space-x-1" title="aktuelle Anmeldungen">
+        <span class="{{ (item.maxParticipants and item.attendancesConfirmed|length >= item.maxParticipants) ? \'text-red-700\' : \'text-green-700\' }}">
+            <svg viewBox="0 0 2 2" class="h-2 w-2 fill-current">
+                <circle cx="1" cy="1" r="1"/>
+            </svg>
+        </span>
+        <span>
+            {{ item.attendancesNotWithdrawn|length ~ \' / \' ~ (item.maxParticipants ?: \'∞\') ~ \'\' }}
+        </span>
+    </p>
+{% endif %}
 ',
                 ],
+                prepend: '{{ component("Admin:OfferWorkflowButton", { offer: item, key: item.id,  id: "owb"~item.id~item.state }) }}',
                 columns: {
                     name: '<span class="{{ item.cancelled ? "line-through" : "" }}">{{ item.name }}</span>',
                     hosts: '{{ item.hosts|map(h => h.name)|join(", ") }}',
@@ -57,17 +65,19 @@
 {% endif %}
 ',
                     attendances: '
-                <p class="flex items-center space-x-1" title="aktuelle Anmeldungen">
-                    <span class="{{ (item.maxParticipants and item.attendancesConfirmed|length >= item.maxParticipants) ? \'text-red-700\' : \'text-green-700\' }}">
-                        <svg viewBox="0 0 2 2" class="h-2 w-2 fill-current">
-                            <circle cx="1" cy="1" r="1"/>
-                        </svg>
-                    </span>
+{% if item.requiresApplication and item.onlineApplication %}
+    <p class="flex items-center space-x-1" title="aktuelle Anmeldungen">
+        <span class="{{ (item.maxParticipants and item.attendancesConfirmed|length >= item.maxParticipants) ? \'text-red-700\' : \'text-green-700\' }}">
+            <svg viewBox="0 0 2 2" class="h-2 w-2 fill-current">
+                <circle cx="1" cy="1" r="1"/>
+            </svg>
+        </span>
 
-                    <span>
-                        {{ item.attendancesNotWithdrawn|length ~ \' / \' ~ (item.maxParticipants ?: \'∞\') ~ \'\' }}
-                    </span>
-                </p>
+        <span>
+            {{ item.attendancesNotWithdrawn|length ~ \' / \' ~ (item.maxParticipants ?: \'∞\') ~ \'\' }}
+        </span>
+    </p>
+{% endif %}
 ',
                 }
             }}) }}

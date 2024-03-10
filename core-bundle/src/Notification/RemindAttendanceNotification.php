@@ -15,14 +15,14 @@ namespace Ferienpass\CoreBundle\Notification;
 
 use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Export\Offer\ICal\ICalExport;
-use Ferienpass\CoreBundle\Twig\Mime\NotificationEmail;
-use Symfony\Component\Notifier\Message\EmailMessage;
+use Ferienpass\CoreBundle\Notifier\Message\EmailMessage;
+use Ferienpass\CoreBundle\Notifier\Mime\NotificationEmail;
+use Symfony\Component\Notifier\Message\EmailMessage as SymfonyEmailMessage;
 use Symfony\Component\Notifier\Notification\EmailNotificationInterface;
-use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\Recipient\EmailRecipientInterface;
 use Symfony\Component\Notifier\Recipient\RecipientInterface;
 
-class RemindAttendanceNotification extends Notification implements NotificationInterface, EditionAwareNotificationInterface, EmailNotificationInterface
+class RemindAttendanceNotification extends AbstractNotification implements NotificationInterface, EditionAwareNotificationInterface, EmailNotificationInterface
 {
     private Attendance $attendance;
 
@@ -48,18 +48,24 @@ class RemindAttendanceNotification extends Notification implements NotificationI
         return $this;
     }
 
-    public function asEmailMessage(EmailRecipientInterface $recipient, string $transport = null): ?EmailMessage
+    public function getContext(): array
     {
-        $email = (new NotificationEmail(self::getName()))
-            ->to($recipient->getEmail())
-            ->subject($this->getSubject())
-            ->content($this->getContent())
-            ->attachFromPath($this->iCalExport->generate([$this->attendance->getOffer()]), $this->attendance->getOffer()->getAlias())
-            ->context([
-                'attendance' => $this->attendance,
-            ])
-        ;
+        return array_merge(parent::getContext(), [
+            'attendance' => $this->attendance,
+            'offer' => $this->attendance->getOffer(),
+            'participant' => $this->attendance->getParticipant(),
+        ]);
+    }
 
-        return new EmailMessage($email);
+    public static function getAvailableTokens(): array
+    {
+        return array_merge(parent::getAvailableTokens(), ['attendance', 'offer', 'participant']);
+    }
+
+    public function asEmailMessage(EmailRecipientInterface $recipient, string $transport = null): ?SymfonyEmailMessage
+    {
+        return EmailMessage::fromFerienpassNotification($this, $recipient, function (NotificationEmail $email) {
+            $email->attachFromPath($this->iCalExport->generate([$this->attendance->getOffer()]), $this->attendance->getOffer()->getAlias());
+        });
     }
 }

@@ -19,35 +19,23 @@ use Ferienpass\AdminBundle\Form\EditEditionType;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Session\Flash;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
-use Symfony\UX\LiveComponent\Attribute\LiveProp;
-use Symfony\UX\LiveComponent\DefaultActionTrait;
-use Symfony\UX\LiveComponent\LiveCollectionTrait;
 
 #[IsGranted('ROLE_ADMIN')]
 #[Route('/saisons')]
-#[AsLiveComponent(name: 'Admin:EditionsEdit', template: '@FerienpassAdmin/components/EditOffer.html.twig', route: 'live_component_admin')]
 final class EditionsEditController extends AbstractController
 {
-    use DefaultActionTrait;
-    use LiveCollectionTrait;
-
-    #[LiveProp]
-    public Edition $initialFormData;
-
     #[Route('/neu', name: 'admin_editions_create')]
     #[Route('/{alias}', name: 'admin_editions_edit')]
     public function edit(?Edition $edition, Request $request, EntityManagerInterface $em, Breadcrumb $breadcrumb, Flash $flash): Response
     {
-        $this->initialFormData = $edition ?? new Edition();
+        $edition ??= new Edition();
 
-        $form = $this->instantiateForm();
+        $form = $this->createForm(EditEditionType::class, $edition);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             if (!$em->contains($edition = $form->getData())) {
@@ -66,12 +54,7 @@ final class EditionsEditController extends AbstractController
         return $this->render('@FerienpassAdmin/page/edition/edit.html.twig', [
             'item' => $edition,
             'form' => $form->createView(),
-            'breadcrumb' => $breadcrumb->generate(['Werkzeuge & Einstellungen', ['route' => 'admin_tools']], ['editions.title', ['route' => 'admin_editions_index']], $breadcrumbTitle),
+            'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], ['editions.title', ['route' => 'admin_editions_index']], $breadcrumbTitle),
         ]);
-    }
-
-    protected function instantiateForm(): FormInterface
-    {
-        return $this->createForm(EditEditionType::class, $this->initialFormData);
     }
 }

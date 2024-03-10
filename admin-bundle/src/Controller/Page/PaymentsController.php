@@ -44,7 +44,7 @@ final class PaymentsController extends AbstractController
     {
     }
 
-    #[Route('{_suffix?}', name: 'admin_payments_index')]
+    #[Route('{_suffix?}', name: 'admin_payments_index', requirements: ['_suffix' => '\.\w+'])]
     public function index(PaymentRepository $repository, Breadcrumb $breadcrumb, ?string $_suffix, XlsxExport $xlsxExport): Response
     {
         $qb = $repository->createQueryBuilder('i');
@@ -82,13 +82,13 @@ final class PaymentsController extends AbstractController
 
         /** @var Form $ms */
         $ms = $this->createForm(MultiSelectType::class, options: [
-            'buttons' => ['reverse', 'reverse_and_withdraw'],
+            'buttons' => ['reverse', 'reverseAndWithdraw'],
             'items' => $items->toArray(),
         ]);
 
         $ms->handleRequest($request);
-        if ($ms->isSubmitted() && $ms->isValid() && \in_array($ms->getClickedButton()->getName(), ['reverse', 'reverse_and_withdraw'], true)) {
-            return $this->reverseFormSubmit($ms, $payment, $numberGenerator, $em, $flash, $messageBus, 'reverse_and_withdraw' === $ms->getClickedButton()->getName());
+        if ($ms->isSubmitted() && $ms->isValid() && \in_array($ms->getClickedButton()->getName(), ['reverse', 'reverseAndWithdraw'], true)) {
+            return $this->reverseFormSubmit($ms, $payment, $numberGenerator, $em, $flash, $messageBus, 'reverseAndWithdraw' === $ms->getClickedButton()->getName());
         }
 
         return $this->render('@FerienpassAdmin/page/payments/reverse.html.twig', [

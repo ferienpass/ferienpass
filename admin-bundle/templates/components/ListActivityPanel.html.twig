@@ -1,0 +1,42 @@
+{% trans_default_domain 'admin' %}
+
+<div {{ attributes }} data-poll>
+
+    {% if item is not null %}
+
+        {% set templateSuffix = {
+            'Ferienpass\\CoreBundle\\Entity\\Attendance': 'attendance',
+            'Ferienpass\\CoreBundle\\Entity\\Participant': 'participant',
+            'Ferienpass\\CoreBundle\\Entity\\Offer': 'offer'
+        } %}
+        {% set templateSuffix = attribute(templateSuffix, entity) %}
+        {% include "@FerienpassAdmin/components/_list_panel_#{templateSuffix}.html.twig" %}
+
+        <!-- New comment form -->
+        <div class="mt-6 flex gap-x-3">
+            <span class="flex-none inline-flex items-center justify-center h-6 w-6 rounded-full bg-gray-400">
+                <span class="text-xs font-medium leading-none text-white">{{ app.user.firstname|first|upper ~ app.user.lastname|first|upper }}</span>
+            </span>
+            <form action="#" class="relative flex-auto">
+                <div class="overflow-hidden rounded-lg pb-12 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-primary-600">
+                    <label for="comment" class="sr-only">Verfasse deinen Kommentar…</label>
+                    <textarea rows="2" name="comment" id="comment"
+                              data-model="newComment"
+                              class="block w-full resize-none border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                              placeholder="Verfasse deinen Kommentar…"></textarea>
+                </div>
+
+                <div class="absolute inset-x-0 bottom-0 flex justify-end py-2 pl-3 pr-2">
+                    <button type="submit"
+                            data-action="live#action:prevent"
+                            data-live-action-param="comment"
+                            class="rounded-md bg-white dark:bg-gray-100/5 px-2.5 py-1.5 text-sm font-semibold text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-0 hover:bg-gray-50 dark:hover:bg-gray-100/10">
+                        Kommentieren
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    {% endif %}
+
+</div>

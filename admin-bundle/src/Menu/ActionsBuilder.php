@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Menu;
 
 use Ferienpass\AdminBundle\Controller\Page\AccountsController;
+use Ferienpass\CoreBundle\Entity\AccessCodeStrategy;
 use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Host;
@@ -66,6 +67,11 @@ class ActionsBuilder
 
             return $menu;
         }
+        if ($item instanceof AccessCodeStrategy) {
+            $this->accessCodes($menu, $item);
+
+            return $menu;
+        }
 
         if ($item instanceof Attendance) {
             $this->attendances($menu, $item);
@@ -114,17 +120,17 @@ class ActionsBuilder
             'extras' => ['icon' => 'calendar-solid'],
         ]);
 
-        $root->addChild('copy', [
-            'label' => 'offers.action.copy',
-            'route' => 'admin_offers_copy',
-            'routeParameters' => array_filter(['id' => $item->getId(), 'edition' => $item->getEdition()?->getAlias()]),
-            'display' => $this->isGranted('view', $item),
-            'extras' => ['icon' => 'duplicate-solid'],
-        ]);
-
-        if (!$this->isGranted('ROLE_ADMIN')) {
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $root->addChild('copy', [
+                'label' => 'offers.action.copy',
+                'route' => 'admin_offers_copy',
+                'routeParameters' => array_filter(['id' => $item->getId(), 'edition' => $item->getEdition()?->getAlias()]),
+                'display' => $this->isGranted('view', $item),
+                'extras' => ['icon' => 'duplicate-solid'],
+            ]);
+        } else {
             foreach ($this->editionRepository->findWithActiveTask('host_editing_stage') as $edition) {
-                $root->addChild('copy' . $edition->getId(), [
+                $root->addChild('copy'.$edition->getId(), [
                     'label' => 'offers.action.copyTo',
                     'route' => 'admin_offers_copy',
                     'routeParameters' => ['id' => $item->getId(), 'edition' => $edition->getAlias()],
@@ -134,33 +140,37 @@ class ActionsBuilder
             }
         }
 
-        //        $root->addChild('delete', [
-        //            'label' => 'offers.action.delete',
-        //            'route' => 'admin_offer_show',
-        //            'routeParameters' => array_filter(['id' => $item->getId(), 'edition' => $item->getEdition()?->getAlias()],
-        //            'display' => $this->isGranted('delete', $item),
-        //            'extras' => [
-        //                'method' => 'delete',
-        //                'icon' => 'trash-solid',
-        //            ],
-        //        ]);
-
         if ($item->isOnlineApplication()) {
             $root->addChild('participantList', [
-                'label' => 'offers.action.participantList',
-                'route' => 'admin_offer_attendances',
+                'label' => 'offers.action.participants',
+                'route' => 'admin_offer_participants',
                 'routeParameters' => array_filter(['id' => $item->getId(), 'edition' => $item->getEdition()?->getAlias()]),
                 'display' => $this->isGranted('participants.view', $item),
                 'extras' => ['icon' => 'user-group-solid'],
             ]);
-            $root->addChild('participantList2', [
-                'label' => 'offers.action.participantList',
-                'route' => 'admin_offer_applications',
+            $root->addChild('participantAssigning', [
+                'label' => 'offers.action.assign',
+                'route' => 'admin_offer_assign',
                 'routeParameters' => array_filter(['id' => $item->getId(), 'edition' => $item->getEdition()?->getAlias()]),
-                'display' => $this->isGranted('participants.view', $item),
+                'display' => $this->isGranted('participants.view', $item) && ($item->getEdition()?->hostsCanAssign() || $this->isGranted('ROLE_ADMIN')),
                 'extras' => ['icon' => 'user-group-solid'],
             ]);
         }
+
+        $root->addChild('mailing', [
+            'label' => 'offers.action.mailing',
+            'route' => 'admin_tools_mailing',
+            'routeParameters' => ['group' => 'participants', 'offers' => [$item->getId()]],
+            'display' => $this->isGranted('participants.view', $item),
+            'extras' => ['icon' => 'mail'],
+        ]);
+
+        $class = $item::class;
+        $root->addChild('delete', [
+            'label' => 'accounts.action.delete',
+            'display' => $this->isGranted('delete', $item),
+            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
+        ]);
     }
 
     private function participants(ItemInterface $root, Participant $item)
@@ -191,6 +201,13 @@ class ActionsBuilder
             ->getResult()
         ;
 
+        $class = $item::class;
+        $root->addChild('delete', [
+            'label' => 'participants.action.delete',
+            'display' => $this->isGranted('delete', $item),
+            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
+        ]);
+
         /** @var Payment $payment */
         foreach ($payments as $payment) {
             $root->addChild('show_payment.'.$payment->getId(), [
@@ -212,6 +229,20 @@ class ActionsBuilder
             'display' => $this->isGranted('edit', $item),
             'extras' => ['icon' => 'pencil-solid'],
         ]);
+
+        $root->addChild('mailing', [
+            'label' => 'hosts.action.mailing',
+            'route' => 'admin_tools_mailing',
+            'routeParameters' => ['group' => 'hosts', 'hosts' => [$item->getId()]],
+            'extras' => ['icon' => 'mail'],
+        ]);
+
+        $class = $item::class;
+        $root->addChild('delete', [
+            'label' => 'hosts.action.delete',
+            'display' => $this->isGranted('delete', $item),
+            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
+        ]);
     }
 
     private function editions(ItemInterface $root, Edition $item)
@@ -231,13 +262,38 @@ class ActionsBuilder
             'display' => $this->isGranted('stats', $item),
             'extras' => ['icon' => 'chart-pie.mini'],
         ]);
+
+        $class = $item::class;
+        $root->addChild('delete', [
+            'label' => 'editions.action.delete',
+            'display' => $this->isGranted('delete', $item),
+            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
+        ]);
+    }
+
+    private function accessCodes(ItemInterface $root, AccessCodeStrategy $item)
+    {
+        $root->addChild('edit', [
+            'label' => 'accessCodes.action.edit',
+            'route' => 'admin_accessCodes_edit',
+            'routeParameters' => ['id' => $item->getId()],
+            // 'display' => $this->isGranted('edit', $item),
+            'extras' => ['icon' => 'pencil-solid'],
+        ]);
+
+        $class = $item::class;
+        $root->addChild('delete', [
+            'label' => 'accessCodes.action.delete',
+            // 'display' => $this->isGranted('delete', $item),
+            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
+        ]);
     }
 
     private function attendances(ItemInterface $root, Attendance $item)
     {
         $root->addChild('offer', [
             'label' => 'attendance.action.offer',
-            'route' => 'admin_offer_applications',
+            'route' => 'admin_offer_assign',
             'routeParameters' => ['id' => $item->getOffer()->getId(), 'edition' => $item->getOffer()->getEdition()->getAlias()],
             'display' => $this->isGranted('view', $item->getOffer()),
         ]);
@@ -245,11 +301,10 @@ class ActionsBuilder
 
     private function payments(ItemInterface $root, Payment $item)
     {
-        $root->addChild('offer', [
+        $root->addChild('receipt', [
             'label' => 'payments.action.receipt',
             'route' => 'admin_payments_receipt',
             'routeParameters' => ['id' => $item->getId()],
-            //   'display' => $this->isGranted('view', $item->getOffer()),
             'extras' => ['icon' => 'pencil-solid'],
         ]);
     }
@@ -259,20 +314,26 @@ class ActionsBuilder
         $root->addChild('edit', [
             'label' => 'accounts.action.edit',
             'route' => 'admin_accounts_edit',
-            'routeParameters' => ['id' => $item->getId(), 'role' => array_search($item->getRoles()[0], AccountsController::ROLES, true) ?: 'eltern'],
-            // 'display' => $this->isGranted('edit', $item),
+            'routeParameters' => ['id' => $item->getId(), 'role' => array_search($item->getRoles()[0] ?? 'ROLE_USER', AccountsController::ROLES, true) ?: 'eltern'],
+            'display' => $this->isGranted('edit', $item),
             'extras' => ['icon' => 'pencil-solid'],
         ]);
 
-        // if ($this->isGranted('ROLE_HOST', $item)) {
         $root->addChild('impersonate', [
             'label' => 'accounts.action.impersonate',
-            'route' => true ? 'user_account' : 'admin_index',
+            'route' => false ? 'user_account' : 'admin_index',
             'routeParameters' => ['_switch_user' => $item->getUserIdentifier()],
             'display' => $this->isGranted('ROLE_ALLOWED_TO_SWITCH'),
-            'extras' => ['icon' => 'logout-filled', 'translation_params' => ['user'=>$item->getUserIdentifier()]],
+            'linkAttributes' => ['data-turbo' => 'false'],
+            'extras' => ['icon' => 'logout-filled', 'translation_params' => ['user' => $item->getUserIdentifier()]],
         ]);
-        // }
+
+        $class = $item::class;
+        $root->addChild('delete', [
+            'label' => 'accounts.action.delete',
+            'display' => $this->isGranted('delete', $item),
+            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
+        ]);
     }
 
     private function isGranted(string $attribute, object $item = null): bool

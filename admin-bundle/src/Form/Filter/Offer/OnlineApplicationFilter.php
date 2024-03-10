@@ -48,9 +48,9 @@ class OnlineApplicationFilter extends AbstractFilterType
         ]);
     }
 
-    public function apply(QueryBuilder $qb, FormInterface $form = null): void
+    public function apply(QueryBuilder $qb, FormInterface $form): void
     {
-        if (null === $form || $form->isEmpty()) {
+        if ($form->isEmpty()) {
             return;
         }
 

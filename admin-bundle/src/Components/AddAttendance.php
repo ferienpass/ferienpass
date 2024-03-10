@@ -27,7 +27,7 @@ use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
-#[AsLiveComponent(name: 'AddAttendance', route: 'live_component_admin', template: '@FerienpassAdmin/components/AddAttendance.html.twig')]
+#[AsLiveComponent(route: 'live_component_admin')]
 class AddAttendance extends AbstractController
 {
     use ComponentWithFormTrait;
@@ -60,7 +60,7 @@ class AddAttendance extends AbstractController
         $this->submitForm();
 
         /** @var AddAttendanceDto $dto */
-        $dto = $this->getFormInstance()->getData();
+        $dto = $this->getForm()->getData();
         $attendanceFacade->create($dto->getOffer(), $dto->getParticipant(), $dto->getStatus(), $dto->shallNotify());
 
         return $this->redirectToRoute('admin_participants_attendances', ['id' => $this->participant->getId()]);

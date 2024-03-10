@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\CmsBundle\Controller\Page;
 
 use Contao\ArticleModel;
-use Ferienpass\CmsBundle\Controller\Frontend\AbstractController;
+use Ferienpass\CmsBundle\Controller\AbstractController;
 use Ferienpass\CmsBundle\Fragment\FragmentReference;
 use Ferienpass\CmsBundle\Page\PageBuilder;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,12 +26,12 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AbstractContentPage extends AbstractController
 {
-    protected $protected = false;
+    protected bool $protected = false;
 
     public function __invoke(Request $request): Response
     {
         if ($this->protected) {
-            $this->denyAccessUnlessGranted('ROLE_MEMBER');
+            $this->denyAccessUnlessGranted('ROLE_USER');
         }
 
         $this->initializeContaoFramework();

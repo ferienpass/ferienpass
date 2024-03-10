@@ -57,6 +57,7 @@ final class PrintSheetProofController extends AbstractController
         if ('pdf' === $_format) {
             $response = new BinaryFileResponse($pdfPath);
             $response->headers->add([
+                'X-Frame-Options' => 'SAMEORIGIN',
                 'Content-Type' => 'application/pdf',
                 'Content-Disposition' => $response->headers->makeDisposition($contentDisposition, $downloadName.'.pdf'),
             ]);
