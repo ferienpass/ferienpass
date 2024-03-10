@@ -56,7 +56,7 @@ class Outbox extends AbstractController
 
         $this->addQueryBuilderSearch();
 
-        return (new Paginator($this->qb, 50 * $this->page))->paginate();
+        return (new Paginator($this->qb, 25 * $this->page))->paginate();
     }
 
     #[LiveListener('open')]

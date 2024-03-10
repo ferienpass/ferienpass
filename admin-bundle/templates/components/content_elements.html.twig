@@ -74,6 +74,8 @@
         {{ _self.badge_red(label, size, class) }}
     {% elseif status == 'draft' %}
         {{ _self.badge_orange(label, size, class) }}
+    {% elseif status == 'unpublished' %}
+        {{ _self.badge_gray(label, size, class) }}
     {% else %}
         {{ _self.badge_green(label, size, class) }}
     {% endif %}

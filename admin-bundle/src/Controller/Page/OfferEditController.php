@@ -153,6 +153,9 @@ final class OfferEditController extends AbstractController
             $copy->setContactUser($offer->getContactUser());
             $copy->setFee($offer->getFee());
             $copy->setImage($offer->getImage());
+            foreach ($offer->getHosts() as $host) {
+                $copy->addHost($host);
+            }
 
             $this->doctrine->getManager()->persist($copy);
 
@@ -181,6 +184,9 @@ final class OfferEditController extends AbstractController
             $copy->setContactUser($offer->getContactUser());
             $copy->setFee($offer->getFee());
             $copy->setImage($offer->getImage());
+            foreach ($offer->getHosts() as $host) {
+                $copy->addHost($host);
+            }
 
             $copy->setVariantBase($offer);
 

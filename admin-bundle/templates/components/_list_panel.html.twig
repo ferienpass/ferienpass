@@ -104,6 +104,49 @@
                         </div>
                     </li>
                 {% endif %}
+                {% if activity.isTransition and activity.offer|default(null) is not null %}
+                    <li>
+                        <div class="relative pb-8">
+                            {% if not loop.last %}
+                                <span class="absolute left-5 top-5 -ml-px h-full w-0.5 bg-gray-200"
+                                      aria-hidden="true"></span>
+                            {% endif %}
+                            <div class="relative flex items-start space-x-3">
+                                <div>
+                                    <div class="relative px-1">
+                                        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 ring-8 ring-white">
+                                            <svg class="h-5 w-5 text-gray-500" viewBox="0 0 20 20"
+                                                 fill="currentColor"
+                                                 aria-hidden="true">
+                                                <path fill-rule="evenodd"
+                                                      d="M5.5 3A2.5 2.5 0 003 5.5v2.879a2.5 2.5 0 00.732 1.767l6.5 6.5a2.5 2.5 0 003.536 0l2.878-2.878a2.5 2.5 0 000-3.536l-6.5-6.5A2.5 2.5 0 008.38 3H5.5zM6 7a1 1 0 100-2 1 1 0 000 2z"
+                                                      clip-rule="evenodd"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="min-w-0 flex-1 py-0">
+                                    <div class="text-sm leading-8 text-gray-500">
+                                        <span class="mr-0.5">
+                                            <span class="font-medium text-gray-900">{{ activity.user.name }}</span>
+                                            {{ 'setzte Status auf' }}
+                                        </span>
+                                        {% if activity.transition.tos is not empty %}
+                                            <span class="mr-0.5">
+                                                {{ partials.offer_status_badge(activity.transition.tos|first) }}
+                                            </span>
+                                        {% endif %}
+                                        <span class="whitespace-nowrap">
+                                            <time datetime="{{ activity.createdAt|date('c') }}"
+                                                  class="">{{ activity.createdAt|ago }}
+                                            </time>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                {% endif %}
             {% endfor %}
         </ul>
     </div>

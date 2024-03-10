@@ -385,10 +385,12 @@ user:
 editConfirm: Die Daten wurden erfolgreich gespeichert.
 
 ms.confirm: Teilnehmer zusagen
+ms.confirmAndInform: Teilnehmer zusagen und benachrichtigen
 ms.reject: Teilnehmer absagen
+ms.rejectAndInform: Teilnehmer absagen und benachrichtigen
 ms.settle: abrechnen
 ms.reverse: stornieren
-ms.reverse_and_withdraw: stornieren und abmelden
+ms.reverseAndWithdraw: stornieren und abmelden
 
 statusDescription:
   confirmed: Kinder sind zugesagt und nehmen am Angebot teil.
@@ -484,6 +486,7 @@ notifications:
   legend.sms.1: Definieren Sie den Text, die als Kurznachricht versendet werden.
   legend.disable.0: Benachrichtigung deaktivieren
   label.edition: Saison
+  label.emailTo: Empfängeradresse
   label.emailReplyTo: Antwortadresse
   label.emailSubject: Betreff
   label.emailText: Text
