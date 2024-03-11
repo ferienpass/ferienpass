@@ -73,7 +73,7 @@ class BaseOffer
     #[Groups('docx_export')]
     private ?string $alias = null;
 
-    #[ORM\Column(type: 'string', length: 32, options: ['default' => OfferEntityInterface::STATE_DRAFT])]
+    #[ORM\Column(type: 'string', length: 32, options: ['default' => OfferInterface::STATE_DRAFT])]
     private string $state;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -186,7 +186,7 @@ class BaseOffer
     /**
      * @psalm-var Collection<int, BaseOffer>
      */
-    #[ORM\OneToMany(mappedBy: 'variantBase', targetEntity: OfferEntityInterface::class)]
+    #[ORM\OneToMany(mappedBy: 'variantBase', targetEntity: OfferInterface::class)]
     private Collection $variants;
 
     /**
@@ -196,9 +196,9 @@ class BaseOffer
     #[ORM\OrderBy(['status' => 'ASC', 'sorting' => 'ASC'])]
     private Collection $attendances;
 
-    #[ORM\ManyToOne(targetEntity: OfferEntityInterface::class, inversedBy: 'variants')]
+    #[ORM\ManyToOne(targetEntity: OfferInterface::class, inversedBy: 'variants')]
     #[ORM\JoinColumn(name: 'varbase', referencedColumnName: 'id', onDelete: 'SET NULL')]
-    private ?OfferEntityInterface $variantBase = null;
+    private ?OfferInterface $variantBase = null;
 
     #[ORM\OneToMany(mappedBy: 'offer', targetEntity: OfferLog::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['createdAt' => 'DESC'])]
@@ -214,7 +214,7 @@ class BaseOffer
         $this->categories = new ArrayCollection();
         $this->attendances = new ArrayCollection();
         $this->activity = new ArrayCollection();
-        $this->state = OfferEntityInterface::STATE_DRAFT;
+        $this->state = OfferInterface::STATE_DRAFT;
     }
 
     public function getId(): ?int
@@ -265,7 +265,7 @@ class BaseOffer
     public function getVariants(bool $include = false): Collection
     {
         if ($this->isVariantBase()) {
-            $variants = $this->variants->filter(fn (OfferEntityInterface $v) => true);
+            $variants = $this->variants->filter(fn (OfferInterface $v) => true);
 
             if ($include) {
                 $variants->add($this);
@@ -279,7 +279,7 @@ class BaseOffer
             return $variants;
         }
 
-        return $variants->filter(fn (OfferEntityInterface $v) => $v->getId() !== $this->getId());
+        return $variants->filter(fn (OfferInterface $v) => $v->getId() !== $this->getId());
     }
 
     public function getEdition(): ?Edition
@@ -329,7 +329,7 @@ class BaseOffer
 
     public function isPublished(): bool
     {
-        return OfferEntityInterface::STATE_PUBLISHED === $this->state;
+        return OfferInterface::STATE_PUBLISHED === $this->state;
     }
 
     public function requiresApplication(): bool
@@ -344,7 +344,7 @@ class BaseOffer
 
     public function isCancelled(): bool
     {
-        return OfferEntityInterface::STATE_CANCELLED === $this->state;
+        return OfferInterface::STATE_CANCELLED === $this->state;
     }
 
     public function getMinParticipants(): ?int
@@ -578,12 +578,12 @@ class BaseOffer
         $this->attendances->add($attendance);
     }
 
-    public function getVariantBase(): ?OfferEntityInterface
+    public function getVariantBase(): ?OfferInterface
     {
         return $this->variantBase;
     }
 
-    public function setVariantBase(?OfferEntityInterface $variantBase): void
+    public function setVariantBase(?OfferInterface $variantBase): void
     {
         if (null !== $variantBase && $variantBase->getVariantBase() && $variantBase->getVariantBase()->getId() !== $variantBase->getId()) {
             throw new \LogicException('Not allowed to set non-varbase as varbase');

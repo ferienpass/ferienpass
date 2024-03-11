@@ -14,17 +14,17 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Dto;
 
 use Ferienpass\CoreBundle\Entity\Attendance;
-use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
+use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 use Ferienpass\CoreBundle\Entity\Participant;
 
 class AddAttendanceDto
 {
-    public ?OfferEntityInterface $offer;
+    public ?OfferInterface $offer;
     public ?Participant $participant;
     public string $status;
     public bool $notify;
 
-    public function __construct(Participant $participant = null, OfferEntityInterface $offer = null, string $status = Attendance::STATUS_WAITING, bool $notify = false)
+    public function __construct(Participant $participant = null, OfferInterface $offer = null, string $status = Attendance::STATUS_WAITING, bool $notify = false)
     {
         $this->participant = $participant;
         $this->offer = $offer;
@@ -32,7 +32,7 @@ class AddAttendanceDto
         $this->notify = $notify;
     }
 
-    public function getOffer(): ?OfferEntityInterface
+    public function getOffer(): ?OfferInterface
     {
         return $this->offer;
     }

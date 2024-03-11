@@ -17,6 +17,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Export\XlsxExport;
+use Ferienpass\AdminBundle\Form\Filter\PaymentsFilter;
 use Ferienpass\AdminBundle\Form\MultiSelectType;
 use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Payment;
@@ -60,6 +61,7 @@ final class PaymentsController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/payments/index.html.twig', [
             'qb' => $qb,
+            'filterType' => PaymentsFilter::class,
             'exports' => ['xlsx'],
             'searchable' => ['billingAddress', 'billingEmail', 'receiptNumber'],
             'breadcrumb' => $breadcrumb->generate('payments.title'),

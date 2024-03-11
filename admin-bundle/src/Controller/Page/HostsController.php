@@ -17,6 +17,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Export\XlsxExport;
 use Ferienpass\AdminBundle\Form\EditHostType;
+use Ferienpass\AdminBundle\Form\Filter\HostsFilter;
 use Ferienpass\AdminBundle\Service\FileUploader;
 use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Pagination\Paginator;
@@ -54,6 +55,7 @@ final class HostsController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/hosts/index.html.twig', [
             'qb' => $qb,
+            'filterType' => HostsFilter::class,
             'exports' => ['xlsx'],
             'searchable' => ['name'],
             'createUrl' => $this->generateUrl('admin_hosts_create'),

@@ -14,16 +14,10 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Form\Filter;
 
 use Doctrine\ORM\QueryBuilder;
-use Ferienpass\CoreBundle\Entity\Payment;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PaymentsFilter extends AbstractFilter
 {
-    public static function getEntity(): string
-    {
-        return Payment::class;
-    }
-
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);

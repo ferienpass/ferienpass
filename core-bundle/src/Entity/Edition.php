@@ -16,7 +16,7 @@ namespace Ferienpass\CoreBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
+use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 use Ferienpass\CoreBundle\Exception\AmbiguousHolidayTaskException;
 use Symfony\Component\Serializer\Attribute\Groups;
 
@@ -41,7 +41,7 @@ class Edition
     #[ORM\OneToMany(mappedBy: 'edition', targetEntity: EditionTask::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $tasks;
 
-    #[ORM\OneToMany(mappedBy: 'edition', targetEntity: OfferEntityInterface::class, cascade: ['remove'])]
+    #[ORM\OneToMany(mappedBy: 'edition', targetEntity: OfferInterface::class, cascade: ['remove'])]
     private Collection $offers;
 
     #[ORM\Column(type: 'boolean')]

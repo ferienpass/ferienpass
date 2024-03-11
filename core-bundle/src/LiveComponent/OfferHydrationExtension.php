@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\LiveComponent;
 
-use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
+use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 use Ferienpass\CoreBundle\Repository\OfferRepositoryInterface;
 use Symfony\UX\LiveComponent\Hydration\HydrationExtensionInterface;
 
@@ -25,7 +25,7 @@ class OfferHydrationExtension implements HydrationExtensionInterface
 
     public function supports(string $className): bool
     {
-        return is_subclass_of($className, OfferEntityInterface::class);
+        return is_a($className, OfferInterface::class, true);
     }
 
     public function hydrate(mixed $value, string $className): ?object

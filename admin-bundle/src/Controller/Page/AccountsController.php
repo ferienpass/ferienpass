@@ -17,6 +17,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Export\XlsxExport;
 use Ferienpass\AdminBundle\Form\EditAccountType;
+use Ferienpass\AdminBundle\Form\Filter\AccountsFilter;
 use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Repository\UserRepository;
 use Ferienpass\CoreBundle\Session\Flash;
@@ -80,6 +81,7 @@ final class AccountsController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/accounts/index.html.twig', [
             'qb' => $qb,
+            'filterType' => AccountsFilter::class,
             'exports' => ['xlsx'],
             'role' => $actualRole,
             'searchable' => ['firstname', 'lastname', 'email'],

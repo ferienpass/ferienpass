@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Form\Filter;
 
 use Doctrine\ORM\QueryBuilder;
-use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -24,11 +23,6 @@ class OffersFilter extends AbstractFilter
     public function __construct(#[TaggedIterator('ferienpass_admin.filter.offer', indexAttribute: 'key')] iterable $filterTypes, private readonly Security $security)
     {
         $this->filterTypes = $filterTypes instanceof \Traversable ? iterator_to_array($filterTypes) : $filterTypes;
-    }
-
-    public static function getEntity(): string
-    {
-        return OfferEntityInterface::class;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

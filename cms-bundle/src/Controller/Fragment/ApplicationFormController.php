@@ -19,7 +19,7 @@ use Ferienpass\CmsBundle\Controller\AbstractController;
 use Ferienpass\CmsBundle\Form\ApplyFormParticipantType;
 use Ferienpass\CmsBundle\Form\ApplyFormType;
 use Ferienpass\CoreBundle\ApplicationSystem\ApplicationSystems;
-use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
+use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Facade\AttendanceFacade;
 use Ferienpass\CoreBundle\Repository\AttendanceRepository;
@@ -36,7 +36,7 @@ class ApplicationFormController extends AbstractController
     {
     }
 
-    public function __invoke(OfferEntityInterface $offer, Request $request): Response
+    public function __invoke(OfferInterface $offer, Request $request): Response
     {
         if ($request->query->has('token') && ($optInToken = $this->optIn->find($request->query->get('token'))) && $optInToken->isValid()) {
             $optInToken->confirm();
@@ -84,7 +84,7 @@ class ApplicationFormController extends AbstractController
         ]);
     }
 
-    private function handleSubmitApplications(iterable $participants, OfferEntityInterface $offer, Request $request): Response
+    private function handleSubmitApplications(iterable $participants, OfferInterface $offer, Request $request): Response
     {
         foreach ($participants as $participant) {
             $this->attendanceFacade->create($offer, $participant);
@@ -95,7 +95,7 @@ class ApplicationFormController extends AbstractController
         return $this->redirect($request->getUri());
     }
 
-    private function handleSubmitParticipant(Participant $participant, OfferEntityInterface $offer, Request $request): Response
+    private function handleSubmitParticipant(Participant $participant, OfferInterface $offer, Request $request): Response
     {
         $this->doctrine->getManager()->persist($participant);
         $this->doctrine->getManager()->flush();

@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Export\Offer;
 
+use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
+
 interface OfferExportInterface
 {
-    public function generate(self $offer, string $destination = null): string;
+    public function generate(OfferInterface $offer, string $destination = null): string;
 }

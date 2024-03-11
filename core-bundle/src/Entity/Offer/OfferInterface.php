@@ -17,7 +17,7 @@ use Doctrine\Common\Collections\Collection;
 use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Edition;
 
-interface OfferEntityInterface
+interface OfferInterface
 {
     final public const STATE_DRAFT = 'draft';
     final public const STATE_COMPLETED = 'completed';

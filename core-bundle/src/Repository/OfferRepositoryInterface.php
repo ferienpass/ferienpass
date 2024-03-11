@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Repository;
 
-use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
+use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 
 interface OfferRepositoryInterface extends RepositoryInterface
 {
-    public function findByAlias(string $alias): ?OfferEntityInterface;
+    public function findByAlias(string $alias): ?OfferInterface;
 
-    public function createCopy(OfferEntityInterface $original): OfferEntityInterface;
+    public function createCopy(OfferInterface $original): OfferInterface;
 
-    public function createVariant(OfferEntityInterface $original): OfferEntityInterface;
+    public function createVariant(OfferInterface $original): OfferInterface;
 }

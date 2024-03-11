@@ -16,8 +16,9 @@ namespace Ferienpass\AdminBundle\Controller\Page;
 use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Export\XlsxExport;
+use Ferienpass\AdminBundle\Form\Filter\OffersFilter;
 use Ferienpass\CoreBundle\Entity\Edition;
-use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
+use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExports;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
@@ -65,19 +66,20 @@ final class OffersController extends AbstractController
 
         return $this->render('@FerienpassAdmin/page/offers/index.html.twig', [
             'qb' => $qb,
+            'filterType' => OffersFilter::class,
             'createUrl' => null === $edition || $this->isGranted('offer.create', $edition) ? $this->generateUrl('admin_offers_new', array_filter(['edition' => $edition?->getAlias()])) : null,
             'exports' => $this->isGranted('ROLE_ADMIN') ? ['xlsx'] : [],
             'searchable' => ['name'],
             'items' => $qb->getQuery()->getResult(),
             'edition' => $edition,
-            'uncompletedOffers' => (clone $qb)->select('COUNT(i)')->andWhere('i.state = :status')->setParameter('status', OfferEntityInterface::STATE_DRAFT)->getQuery()->getSingleResult() > 0,
+            'uncompletedOffers' => (clone $qb)->select('COUNT(i)')->andWhere('i.state = :status')->setParameter('status', OfferInterface::STATE_DRAFT)->getQuery()->getSingleResult() > 0,
             'aside_nav' => $menu,
             'breadcrumb' => $breadcrumb->generate('offers.title', $edition?->getName()),
         ]);
     }
 
     #[Route('/{id}', name: 'admin_offer_proof', requirements: ['id' => '\d+'])]
-    public function show(OfferEntityInterface $offer, PdfExports $pdfExports, Breadcrumb $breadcrumb): Response
+    public function show(OfferInterface $offer, PdfExports $pdfExports, Breadcrumb $breadcrumb): Response
     {
         $this->denyAccessUnlessGranted('view', $offer);
 

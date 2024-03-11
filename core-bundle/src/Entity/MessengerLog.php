@@ -16,7 +16,7 @@ namespace Ferienpass\CoreBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
+use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 use Ferienpass\CoreBundle\Repository\MessengerLogRepository;
 
 #[ORM\Entity(repositoryClass: MessengerLogRepository::class)]
@@ -45,7 +45,7 @@ class MessengerLog
     #[ORM\JoinTable(name: 'UserMessengerLog')]
     private Collection $users;
 
-    #[ORM\ManyToMany(targetEntity: OfferEntityInterface::class)]
+    #[ORM\ManyToMany(targetEntity: OfferInterface::class)]
     #[ORM\JoinColumn(name: 'log_id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(nullable: true, onDelete: 'SET NULL')]
     #[ORM\JoinTable(name: 'OfferMessengerLog')]
@@ -78,7 +78,7 @@ class MessengerLog
                 case $item instanceof User:
                     $this->users[] = $item;
                     break;
-                case $item instanceof OfferEntityInterface:
+                case $item instanceof OfferInterface:
                     $this->offers[] = $item;
                     break;
                 case $item instanceof Payment:

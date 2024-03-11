@@ -16,9 +16,10 @@ namespace Ferienpass\AdminBundle\Components;
 use Contao\StringUtil;
 use Doctrine\ORM\QueryBuilder;
 use Ferienpass\AdminBundle\Form\Filter\AbstractFilter;
-use Ferienpass\AdminBundle\Form\Filter\FilterRegistry;
 use Ferienpass\CoreBundle\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\TaggedLocator;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -58,7 +59,10 @@ class SearchableQueryableList extends AbstractController
     #[LiveProp(writable: true)]
     public string $sorting = '';
 
-    public function __construct(private readonly FormFactoryInterface $formFactory, private readonly FilterRegistry $filterRegistry)
+    #[LiveProp]
+    public ?string $filterType = null;
+
+    public function __construct(private readonly FormFactoryInterface $formFactory, #[TaggedLocator('ferienpass_admin.filter')] private readonly ServiceLocator $filters)
     {
     }
 
@@ -188,6 +192,14 @@ class SearchableQueryableList extends AbstractController
 
     private function getFilter(): ?AbstractFilter
     {
-        return $this->filterRegistry->byEntity($this->entityClass());
+        if (null === $this->filterType) {
+            return null;
+        }
+
+        if (!(($filter = $this->filters->get($this->filterType)) instanceof AbstractFilter)) {
+            return null;
+        }
+
+        return $filter;
     }
 }

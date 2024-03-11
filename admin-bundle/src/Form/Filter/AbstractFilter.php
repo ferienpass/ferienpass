@@ -24,8 +24,6 @@ abstract class AbstractFilter extends AbstractType
 {
     protected array $filterTypes = [];
 
-    abstract public static function getEntity(): string;
-
     public function getSearchable(): array
     {
         return array_keys($this->getSorting());

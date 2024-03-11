@@ -16,7 +16,7 @@ namespace Ferienpass\CoreBundle\Controller\Backend\Api;
 use Contao\StringUtil;
 use Doctrine\ORM\Query\Expr\Join;
 use Ferienpass\CoreBundle\Entity\Host;
-use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
+use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 use Ferienpass\CoreBundle\Entity\OfferDate;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Facade\AttendanceFacade;
@@ -57,7 +57,7 @@ final class CreateAttendanceController extends \Symfony\Bundle\FrameworkBundle\C
 
         $offers = $qb->getQuery()->getResult();
 
-        $data = array_map(fn (OfferEntityInterface $o) => [
+        $data = array_map(fn (OfferInterface $o) => [
             'id' => $o->getId(),
             'name' => $o->getName(),
             'hosts' => implode(', ', $o->getHosts()->map(fn (Host $h) => $h->getName())->toArray()),
@@ -106,7 +106,7 @@ final class CreateAttendanceController extends \Symfony\Bundle\FrameworkBundle\C
     }
 
     #[Route(path: '/status/{id}', methods: ['GET'])]
-    public function status(OfferEntityInterface $offer): JsonResponse
+    public function status(OfferInterface $offer): JsonResponse
     {
         $attendance = $this->attendanceFacade->preview($offer, new Participant());
 

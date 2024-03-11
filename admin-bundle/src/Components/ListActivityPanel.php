@@ -15,7 +15,7 @@ namespace Ferienpass\AdminBundle\Components;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\CoreBundle\Entity\Attendance;
-use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
+use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 use Ferienpass\CoreBundle\Entity\OfferLog;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Entity\ParticipantLog;
@@ -80,7 +80,7 @@ class ListActivityPanel extends AbstractController
         $comment = match (true) {
             $this->item instanceof Attendance => new ParticipantLog($this->item->getParticipant(), $user, attendance: $this->item, comment: $this->newComment),
             $this->item instanceof Participant => new ParticipantLog($this->item, $user, comment: $this->newComment),
-            $this->item instanceof OfferEntityInterface => new OfferLog($this->item, $user, comment: $this->newComment),
+            $this->item instanceof OfferInterface => new OfferLog($this->item, $user, comment: $this->newComment),
             default => null,
         };
 

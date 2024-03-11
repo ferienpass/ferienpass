@@ -15,7 +15,7 @@ namespace Ferienpass\CmsBundle\Controller\Fragment;
 
 use Contao\CoreBundle\Controller\AbstractController;
 use Doctrine\DBAL\Types\Types;
-use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
+use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 use Ferienpass\CoreBundle\Filter\OfferListFilterFactory;
 use Ferienpass\CoreBundle\Pagination\Paginator;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
@@ -32,7 +32,7 @@ final class OfferListController extends AbstractController
 
     public function __invoke(Request $request, Session $session): Response
     {
-        $qb = $this->offerRepository->createQueryBuilder('o')->where('o.state = :state_published')->setParameter('state_published', OfferEntityInterface::STATE_PUBLISHED);
+        $qb = $this->offerRepository->createQueryBuilder('o')->where('o.state = :state_published')->setParameter('state_published', OfferInterface::STATE_PUBLISHED);
         $hasEditions = $this->editionRepository->count([]) > 0;
         $pageModel = $request->attributes->get('pageModel');
         if ($pageModel->edition) {

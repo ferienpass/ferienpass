@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Components;
 
 use Doctrine\DBAL\Types\Types;
-use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
+use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 use Ferienpass\CoreBundle\Export\Offer\OfferExporter;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Ferienpass\CoreBundle\Repository\OfferRepositoryInterface;
@@ -98,7 +98,7 @@ final class Export extends AbstractController
 
         if ($this->onlyPublished) {
             $qb->andWhere('offer.state = :state_published');
-            $qb->setParameter('state_published', OfferEntityInterface::STATE_PUBLISHED);
+            $qb->setParameter('state_published', OfferInterface::STATE_PUBLISHED);
         }
 
         if ($this->editions) {

@@ -15,10 +15,10 @@ namespace Ferienpass\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Ferienpass\CoreBundle\Entity\Offer\BaseOffer;
-use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
+use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 use Ferienpass\CoreBundle\Repository\OfferRepository;
 
 #[ORM\Entity(repositoryClass: OfferRepository::class)]
-class Offer extends BaseOffer implements OfferEntityInterface
+class Offer extends BaseOffer implements OfferInterface
 {
 }

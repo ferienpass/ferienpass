@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\CoreBundle\DependencyInjection;
 
 use Ferienpass\CoreBundle\Entity\Offer;
-use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
+use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 use Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExports;
 use Ferienpass\CoreBundle\Export\Offer\Xml\XmlExports;
 use Ferienpass\CoreBundle\Export\ParticipantList\WordExport;
@@ -123,17 +123,17 @@ final class FerienpassCoreExtension extends Extension implements PrependExtensio
                 'offer' => [
                     'type' => 'state_machine',
                     'marking_store' => ['type' => 'method', 'property' => 'state'],
-                    'supports' => [OfferEntityInterface::class],
-                    'initial_marking' => OfferEntityInterface::STATE_DRAFT,
-                    'places' => [OfferEntityInterface::STATE_DRAFT, OfferEntityInterface::STATE_COMPLETED, OfferEntityInterface::STATE_REVIEWED, OfferEntityInterface::STATE_PUBLISHED, OfferEntityInterface::STATE_CANCELLED, OfferEntityInterface::STATE_UNPUBLISHED],
+                    'supports' => [OfferInterface::class],
+                    'initial_marking' => OfferInterface::STATE_DRAFT,
+                    'places' => [OfferInterface::STATE_DRAFT, OfferInterface::STATE_COMPLETED, OfferInterface::STATE_REVIEWED, OfferInterface::STATE_PUBLISHED, OfferInterface::STATE_CANCELLED, OfferInterface::STATE_UNPUBLISHED],
                     'transitions' => [
-                        OfferEntityInterface::TRANSITION_COMPLETE => ['from' => OfferEntityInterface::STATE_DRAFT, 'to' => OfferEntityInterface::STATE_COMPLETED],
-                        OfferEntityInterface::TRANSITION_APPROVE => ['from' => [OfferEntityInterface::STATE_DRAFT, OfferEntityInterface::STATE_COMPLETED], 'to' => OfferEntityInterface::STATE_REVIEWED],
-                        OfferEntityInterface::TRANSITION_UNAPPROVE => ['from' => [OfferEntityInterface::STATE_REVIEWED], 'to' => OfferEntityInterface::STATE_COMPLETED],
-                        OfferEntityInterface::TRANSITION_PUBLISH => ['from' => [OfferEntityInterface::STATE_DRAFT, OfferEntityInterface::STATE_COMPLETED, OfferEntityInterface::STATE_REVIEWED, OfferEntityInterface::STATE_UNPUBLISHED], 'to' => OfferEntityInterface::STATE_PUBLISHED],
-                        OfferEntityInterface::TRANSITION_CANCEL => ['from' => [OfferEntityInterface::STATE_PUBLISHED], 'to' => OfferEntityInterface::STATE_CANCELLED],
-                        OfferEntityInterface::TRANSITION_RELAUNCH => ['from' => [OfferEntityInterface::STATE_CANCELLED], 'to' => OfferEntityInterface::STATE_PUBLISHED],
-                        OfferEntityInterface::TRANSITION_UNPUBLISH => ['from' => [OfferEntityInterface::STATE_CANCELLED, OfferEntityInterface::STATE_PUBLISHED], 'to' => OfferEntityInterface::STATE_UNPUBLISHED],
+                        OfferInterface::TRANSITION_COMPLETE => ['from' => OfferInterface::STATE_DRAFT, 'to' => OfferInterface::STATE_COMPLETED],
+                        OfferInterface::TRANSITION_APPROVE => ['from' => [OfferInterface::STATE_DRAFT, OfferInterface::STATE_COMPLETED], 'to' => OfferInterface::STATE_REVIEWED],
+                        OfferInterface::TRANSITION_UNAPPROVE => ['from' => [OfferInterface::STATE_REVIEWED], 'to' => OfferInterface::STATE_COMPLETED],
+                        OfferInterface::TRANSITION_PUBLISH => ['from' => [OfferInterface::STATE_DRAFT, OfferInterface::STATE_COMPLETED, OfferInterface::STATE_REVIEWED, OfferInterface::STATE_UNPUBLISHED], 'to' => OfferInterface::STATE_PUBLISHED],
+                        OfferInterface::TRANSITION_CANCEL => ['from' => [OfferInterface::STATE_PUBLISHED], 'to' => OfferInterface::STATE_CANCELLED],
+                        OfferInterface::TRANSITION_RELAUNCH => ['from' => [OfferInterface::STATE_CANCELLED], 'to' => OfferInterface::STATE_PUBLISHED],
+                        OfferInterface::TRANSITION_UNPUBLISH => ['from' => [OfferInterface::STATE_CANCELLED, OfferInterface::STATE_PUBLISHED], 'to' => OfferInterface::STATE_UNPUBLISHED],
                     ],
                 ],
             ],

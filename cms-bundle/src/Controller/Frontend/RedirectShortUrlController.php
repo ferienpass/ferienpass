@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\CmsBundle\Controller\Frontend;
 
 use Contao\CoreBundle\ContaoCoreBundle;
-use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
+use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route(path: '/{id}', requirements: ['id' => '\d+'], defaults: ['_scope' => ContaoCoreBundle::SCOPE_FRONTEND])]
 class RedirectShortUrlController extends AbstractController
 {
-    public function __invoke(OfferEntityInterface $offer)
+    public function __invoke(OfferInterface $offer)
     {
         if (!$offer->isPublished()) {
             throw $this->createNotFoundException();

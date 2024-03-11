@@ -15,7 +15,7 @@ namespace Ferienpass\AdminBundle\Components;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\CoreBundle\Entity\Attendance;
-use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
+use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 use Ferienpass\CoreBundle\Message\AttendanceStatusChanged;
 use Ferienpass\CoreBundle\Message\ParticipantListChanged;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,7 +32,7 @@ class OfferAssign extends AbstractController
     use DefaultActionTrait;
 
     #[LiveProp]
-    public OfferEntityInterface $offer;
+    public OfferInterface $offer;
 
     #[LiveProp(writable: true)]
     public bool $autoAssign;

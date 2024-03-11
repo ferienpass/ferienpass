@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Export\ParticipantList;
 
+use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 use Ferienpass\CoreBundle\Export\Offer\OfferExportInterface;
 use Mpdf\Mpdf;
 use Mpdf\Output\Destination as MpdfDestination;
@@ -25,7 +26,7 @@ final class PdfExport implements OfferExportInterface
     {
     }
 
-    public function generate(OfferExportInterface $offer, string $destination = null): string
+    public function generate(OfferInterface $offer, string $destination = null): string
     {
         $html = $this->renderHtml($offer);
         $hash = md5($html);
@@ -42,7 +43,7 @@ final class PdfExport implements OfferExportInterface
         return $destination ?? $pdfPath;
     }
 
-    private function renderHtml(OfferExportInterface $offer): string
+    private function renderHtml(OfferInterface $offer): string
     {
         return $this->twig->render('@FerienpassCore/ParticipantList/Pdf/Page.html.twig', [
             'offer' => $offer,

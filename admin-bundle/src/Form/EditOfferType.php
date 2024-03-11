@@ -19,7 +19,7 @@ use Doctrine\ORM\QueryBuilder;
 use Ferienpass\AdminBundle\Form\CompoundType\OfferDatesType;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Host;
-use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
+use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 use Ferienpass\CoreBundle\Entity\OfferCategory;
 use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -121,7 +121,7 @@ class EditOfferType extends AbstractType
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
             $form = $event->getForm();
-            if (!($offer = $event->getData()) instanceof OfferEntityInterface) {
+            if (!($offer = $event->getData()) instanceof OfferInterface) {
                 return;
             }
 

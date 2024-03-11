@@ -13,16 +13,16 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Repository;
 
-use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
+use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 
 class OfferRepository extends EntityRepository implements OfferRepositoryInterface
 {
-    public function findByAlias(string $alias): ?OfferEntityInterface
+    public function findByAlias(string $alias): ?OfferInterface
     {
         return $this->findOneBy(['alias' => $alias]);
     }
 
-    public function createCopy(OfferEntityInterface $original): OfferEntityInterface
+    public function createCopy(OfferInterface $original): OfferInterface
     {
         $new = $this->createNew();
 
@@ -47,7 +47,7 @@ class OfferRepository extends EntityRepository implements OfferRepositoryInterfa
         return $new;
     }
 
-    public function createVariant(OfferEntityInterface $original): OfferEntityInterface
+    public function createVariant(OfferInterface $original): OfferInterface
     {
         $new = $this->createCopy($original);
         $new->setVariantBase($original);
