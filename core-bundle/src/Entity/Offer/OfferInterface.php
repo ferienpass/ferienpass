@@ -46,6 +46,8 @@ interface OfferInterface
 
     public function isVariant(): bool;
 
+    public function getVariants(): Collection;
+
     public function getVariantBase(): ?self;
 
     public function getHosts(): Collection;

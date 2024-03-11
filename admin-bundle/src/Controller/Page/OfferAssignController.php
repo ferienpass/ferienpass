@@ -16,9 +16,9 @@ namespace Ferienpass\AdminBundle\Controller\Page;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\CoreBundle\Entity\Attendance;
-use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 use Ferienpass\CoreBundle\Export\ParticipantList\PdfExport;
 use Ferienpass\CoreBundle\Export\ParticipantList\WordExport;
+use Ferienpass\CoreBundle\Repository\OfferRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,8 +34,12 @@ class OfferAssignController extends AbstractController
     }
 
     #[Route('', name: 'admin_offer_assign')]
-    public function __invoke(OfferInterface $offer, Request $request, Session $session, ManagerRegistry $doctrine, Breadcrumb $breadcrumb): Response
+    public function __invoke(int $id, Request $request, OfferRepositoryInterface $offerRepository, Session $session, ManagerRegistry $doctrine, Breadcrumb $breadcrumb): Response
     {
+        if (null === $offer = $offerRepository->find($id)) {
+            throw $this->createNotFoundException();
+        }
+
         if (!$offer->getEdition()->hostsCanAssign()) {
             $this->denyAccessUnlessGranted('ROLE_ADMIN');
         }
@@ -80,16 +84,24 @@ class OfferAssignController extends AbstractController
     }
 
     #[Route('.pdf', name: 'admin_offer_assign_pdf')]
-    public function pdf(OfferInterface $offer): Response
+    public function pdf(int $id, OfferRepositoryInterface $offerRepository): Response
     {
+        if (null === $offer = $offerRepository->find($id)) {
+            throw $this->createNotFoundException();
+        }
+
         $path = $this->pdfExport->generate($offer);
 
         return $this->file($path, 'teilnahmeliste.pdf');
     }
 
     #[Route('.docx', name: 'admin_offer_assign_docx')]
-    public function docx(OfferInterface $offer): Response
+    public function docx(int $id, OfferRepositoryInterface $offerRepository): Response
     {
+        if (null === $offer = $offerRepository->find($id)) {
+            throw $this->createNotFoundException();
+        }
+
         $path = $this->wordExport->generate($offer);
 
         return $this->file($path, 'teilnahmeliste.docx');

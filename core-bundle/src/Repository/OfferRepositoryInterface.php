@@ -22,4 +22,6 @@ interface OfferRepositoryInterface extends RepositoryInterface
     public function createCopy(OfferInterface $original): OfferInterface;
 
     public function createVariant(OfferInterface $original): OfferInterface;
+
+    public function updateVariant(OfferInterface $variant): void;
 }

@@ -18,10 +18,10 @@ use Ferienpass\AdminBundle\ApplicationSystem\ParticipantList;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Form\MultiSelectType;
 use Ferienpass\AdminBundle\State\PrivacyConsent;
-use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Export\ParticipantList\PdfExport;
 use Ferienpass\CoreBundle\Facade\AttendanceFacade;
+use Ferienpass\CoreBundle\Repository\OfferRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,8 +35,12 @@ final class OfferParticipantsController extends AbstractController
     {
     }
 
-    public function __invoke(string $_suffix, OfferInterface $offer, Request $request, PdfExport $pdfExport, EntityManagerInterface $em, AttendanceFacade $attendanceFacade, Breadcrumb $breadcrumb, \Ferienpass\CoreBundle\Session\Flash $flash): Response
+    public function __invoke(string $_suffix, int $id, OfferRepositoryInterface $offerRepository, Request $request, PdfExport $pdfExport, EntityManagerInterface $em, AttendanceFacade $attendanceFacade, Breadcrumb $breadcrumb, \Ferienpass\CoreBundle\Session\Flash $flash): Response
     {
+        if (null === $offer = $offerRepository->find($id)) {
+            throw $this->createNotFoundException();
+        }
+
         $this->denyAccessUnlessGranted('participants.view', $offer);
 
         $_suffix = ltrim($_suffix, '.');

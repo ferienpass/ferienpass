@@ -54,4 +54,24 @@ class OfferRepository extends EntityRepository implements OfferRepositoryInterfa
 
         return $new;
     }
+
+    public function updateVariant(OfferInterface $variant): void
+    {
+        $base = $variant->getVariantBase();
+
+        $variant->setName($base->getName());
+        $variant->setDescription($base->getDescription());
+        $variant->setMeetingPoint($base->getMeetingPoint());
+        $variant->setBring($base->getBring());
+        $variant->setMinParticipants($base->getMinParticipants());
+        $variant->setMaxParticipants($base->getMaxParticipants());
+        $variant->setMinAge($base->getMinAge());
+        $variant->setMaxAge($base->getMaxAge());
+        $variant->setRequiresApplication($base->requiresApplication());
+        $variant->setOnlineApplication($base->isOnlineApplication());
+        $variant->setApplyText($base->getApplyText());
+        $variant->setContactUser($base->getContactUser());
+        $variant->setFee($base->getFee());
+        $variant->setImage($base->getImage());
+    }
 }

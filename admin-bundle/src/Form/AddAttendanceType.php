@@ -65,9 +65,8 @@ class AddAttendanceType extends AbstractType
         if ($options['add_participant']) {
             $builder->add('participant', EntityType::class, [
                 'class' => Participant::class,
-                'query_builder' => fn (EntityRepository $er) => $er->createQueryBuilder('o')
-                    ->leftJoin('o.dates', 'dates')
-                    ->orderBy('o.name'),
+                'query_builder' => fn (EntityRepository $er) => $er->createQueryBuilder('p')
+                    ->orderBy('p.lastname'),
                 'choice_label' => 'name',
                 'placeholder' => '-',
             ]);
