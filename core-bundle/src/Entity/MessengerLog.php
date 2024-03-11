@@ -16,7 +16,6 @@ namespace Ferienpass\CoreBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Ferienpass\CoreBundle\Entity\Offer\BaseOffer;
 use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Repository\MessengerLogRepository;
 
@@ -79,7 +78,7 @@ class MessengerLog
                 case $item instanceof User:
                     $this->users[] = $item;
                     break;
-                case $item instanceof BaseOffer:
+                case $item instanceof OfferEntityInterface:
                     $this->offers[] = $item;
                     break;
                 case $item instanceof Payment:

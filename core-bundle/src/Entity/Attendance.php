@@ -17,7 +17,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ferienpass\CoreBundle\ApplicationSystem\ApplicationSystemInterface;
-use Ferienpass\CoreBundle\Entity\Offer\BaseOffer;
 use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -204,7 +203,7 @@ class Attendance
         return $this->createdAt;
     }
 
-    public function getOffer(): BaseOffer
+    public function getOffer(): OfferEntityInterface
     {
         return $this->offer;
     }

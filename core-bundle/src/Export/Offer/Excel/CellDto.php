@@ -13,17 +13,17 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Export\Offer\Excel;
 
-use Ferienpass\CoreBundle\Entity\Offer\BaseOffer;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Style\Style;
 
 final class CellDto
 {
-    public function __construct(private readonly BaseOffer $offer, private readonly Cell $cell, private readonly Style $style)
+    public function __construct(private readonly OfferEntityInterface $offer, private readonly Cell $cell, private readonly Style $style)
     {
     }
 
-    public function offer(): BaseOffer
+    public function offer(): OfferEntityInterface
     {
         return $this->offer;
     }

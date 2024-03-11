@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Export\ParticipantList;
 
-use Ferienpass\CoreBundle\Entity\Offer\BaseOffer;
 use Ferienpass\CoreBundle\Export\Offer\OfferExportInterface;
 use PhpOffice\PhpWord\Exception\Exception as WordException;
 use PhpOffice\PhpWord\Settings;
@@ -32,7 +31,7 @@ final class WordExport implements OfferExportInterface
         return null !== $this->templatePath;
     }
 
-    public function generate(BaseOffer $offer, string $destination = null): string
+    public function generate(OfferExportInterface $offer, string $destination = null): string
     {
         if (null === $this->templatePath) {
             throw new \LogicException('No Word template defined');
@@ -47,7 +46,7 @@ final class WordExport implements OfferExportInterface
         return $destination ?? $docPath;
     }
 
-    private function generateDocument(BaseOffer $offer): TemplateProcessor
+    private function generateDocument(OfferExportInterface $offer): TemplateProcessor
     {
         if (null === $this->templatePath) {
             throw new \RuntimeException('No Word template defined');

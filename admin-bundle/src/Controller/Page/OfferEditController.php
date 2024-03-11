@@ -22,7 +22,7 @@ use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Form\EditOfferType;
 use Ferienpass\AdminBundle\Service\FileUploader;
 use Ferienpass\CoreBundle\Entity\Edition;
-use Ferienpass\CoreBundle\Entity\Offer\BaseOffer;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Entity\OfferDate;
 use Ferienpass\CoreBundle\Repository\OfferRepositoryInterface;
 use Ferienpass\CoreBundle\Ux\Flash;
@@ -114,14 +114,14 @@ final class OfferEditController extends AbstractController
         ]);
     }
 
-    private function getOffer(?BaseOffer $offer, ?Edition $edition, Request $request): BaseOffer
+    private function getOffer(?OfferEntityInterface $offer, ?Edition $edition, Request $request): OfferEntityInterface
     {
         if ('admin_offers_edit' === $request->get('_route') && null === $offer) {
             throw new PageNotFoundException('Item not found');
         }
 
         if (null === $offer) {
-            $offer = new BaseOffer();
+            $offer = $this->offerRepository->createNew();
             $offer->setEdition($edition);
             $offer->addDate(new OfferDate($offer));
 

@@ -20,16 +20,20 @@ use Contao\PageModel;
 use Ferienpass\CmsBundle\Controller\AbstractController;
 use Ferienpass\CmsBundle\Fragment\FragmentReference;
 use Ferienpass\CoreBundle\Entity\Host;
-use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Entity\User;
+use Ferienpass\CoreBundle\Repository\OfferRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 #[AsPage('offer_details', path: '{alias}', contentComposition: false)]
 class OfferDetailsPage extends AbstractController
 {
-    public function __invoke(OfferEntityInterface $offer, Request $request): Response
+    public function __invoke(string $alias, OfferRepositoryInterface $offerRepository, Request $request): Response
     {
+        if (null === $offer = $offerRepository->findByAlias($alias)) {
+            throw new PageNotFoundException();
+        }
+
         if (!$request->attributes->getBoolean('preview') && !$offer->isPublished()) {
             throw new PageNotFoundException();
         }
@@ -62,8 +66,8 @@ class OfferDetailsPage extends AbstractController
         }
 
         return $this->createPageBuilder($pageModel)
-            ->addFragment('main', new FragmentReference('ferienpass.fragment.offer_details', ['id' => $offer->getId()]))
-            ->addFragment('main', new FragmentReference('ferienpass.fragment.application_form', ['id' => $offer->getId()]))
+            ->addFragment('main', new FragmentReference('ferienpass.fragment.offer_details', ['offer' => $offer]))
+            ->addFragment('main', new FragmentReference('ferienpass.fragment.application_form', ['offer' => $offer]))
             ->getResponse()
         ;
     }

@@ -16,7 +16,6 @@ namespace Ferienpass\CoreBundle\Controller\Backend\Api;
 use Contao\StringUtil;
 use Doctrine\ORM\Query\Expr\Join;
 use Ferienpass\CoreBundle\Entity\Host;
-use Ferienpass\CoreBundle\Entity\Offer\BaseOffer;
 use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Entity\OfferDate;
 use Ferienpass\CoreBundle\Entity\Participant;
@@ -107,7 +106,7 @@ final class CreateAttendanceController extends \Symfony\Bundle\FrameworkBundle\C
     }
 
     #[Route(path: '/status/{id}', methods: ['GET'])]
-    public function status(BaseOffer $offer): JsonResponse
+    public function status(OfferEntityInterface $offer): JsonResponse
     {
         $attendance = $this->attendanceFacade->preview($offer, new Participant());
 

@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\CoreBundle\EventListener\Workflow;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Ferienpass\CoreBundle\Entity\Offer\BaseOffer;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Entity\OfferLog;
 use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -31,7 +31,7 @@ class OfferLogTransactionListener
     public function __invoke(AnnounceEvent $event)
     {
         $offer = $event->getSubject();
-        if (!$offer instanceof BaseOffer) {
+        if (!$offer instanceof OfferEntityInterface) {
             throw new \RuntimeException('Unexpected event subject');
         }
 

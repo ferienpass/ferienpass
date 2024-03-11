@@ -15,7 +15,6 @@ namespace Ferienpass\CoreBundle\EventListener\Doctrine\Offer;
 
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\Events;
-use Ferienpass\CoreBundle\Entity\Offer\BaseOffer;
 use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
@@ -27,12 +26,12 @@ class AliasListener
     {
     }
 
-    public function prePersist(BaseOffer $offer)
+    public function prePersist(OfferEntityInterface $offer)
     {
         $offer->generateAlias($this->slugger);
     }
 
-    public function preUpdate(BaseOffer $offer)
+    public function preUpdate(OfferEntityInterface $offer)
     {
         $offer->generateAlias($this->slugger);
     }

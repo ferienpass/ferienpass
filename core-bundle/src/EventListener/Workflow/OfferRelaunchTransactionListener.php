@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\EventListener\Workflow;
 
-use Ferienpass\CoreBundle\Entity\Offer\BaseOffer;
 use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Message\OfferRelaunched;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -29,7 +28,7 @@ class OfferRelaunchTransactionListener
 
     public function __invoke(EnteredEvent $event)
     {
-        if (!($offer = $event->getSubject()) instanceof BaseOffer) {
+        if (!($offer = $event->getSubject()) instanceof OfferEntityInterface) {
             throw new \RuntimeException('Unexpected event subject');
         }
 

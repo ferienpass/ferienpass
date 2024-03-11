@@ -16,7 +16,7 @@ namespace Ferienpass\AdminBundle\Controller\Page;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\CoreBundle\Entity\Attendance;
-use Ferienpass\CoreBundle\Entity\Offer\BaseOffer;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Export\ParticipantList\PdfExport;
 use Ferienpass\CoreBundle\Export\ParticipantList\WordExport;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,7 +34,7 @@ class OfferAssignController extends AbstractController
     }
 
     #[Route('', name: 'admin_offer_assign')]
-    public function __invoke(BaseOffer $offer, Request $request, Session $session, ManagerRegistry $doctrine, Breadcrumb $breadcrumb): Response
+    public function __invoke(OfferEntityInterface $offer, Request $request, Session $session, ManagerRegistry $doctrine, Breadcrumb $breadcrumb): Response
     {
         if (!$offer->getEdition()->hostsCanAssign()) {
             $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -80,7 +80,7 @@ class OfferAssignController extends AbstractController
     }
 
     #[Route('.pdf', name: 'admin_offer_assign_pdf')]
-    public function pdf(BaseOffer $offer): Response
+    public function pdf(OfferEntityInterface $offer): Response
     {
         $path = $this->pdfExport->generate($offer);
 
@@ -88,7 +88,7 @@ class OfferAssignController extends AbstractController
     }
 
     #[Route('.docx', name: 'admin_offer_assign_docx')]
-    public function docx(BaseOffer $offer): Response
+    public function docx(OfferEntityInterface $offer): Response
     {
         $path = $this->wordExport->generate($offer);
 

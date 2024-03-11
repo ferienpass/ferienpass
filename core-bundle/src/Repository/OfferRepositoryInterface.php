@@ -17,6 +17,8 @@ use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 
 interface OfferRepositoryInterface extends RepositoryInterface
 {
+    public function findByAlias(string $alias): ?OfferEntityInterface;
+
     public function createCopy(OfferEntityInterface $original): OfferEntityInterface;
 
     public function createVariant(OfferEntityInterface $original): OfferEntityInterface;

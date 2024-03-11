@@ -16,6 +16,7 @@ namespace Ferienpass\CoreBundle\EventListener\Doctrine\Offer;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Ferienpass\CoreBundle\Entity\Offer\BaseOffer;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 
 #[AsDoctrineListener('preUpdate')]
 class VariantListener
@@ -25,7 +26,7 @@ class VariantListener
     public function preUpdate(LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();
-        if (!$entity instanceof BaseOffer) {
+        if (!$entity instanceof OfferEntityInterface) {
             return;
         }
 

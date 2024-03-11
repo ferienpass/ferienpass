@@ -17,6 +17,11 @@ use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 
 class OfferRepository extends EntityRepository implements OfferRepositoryInterface
 {
+    public function findByAlias(string $alias): ?OfferEntityInterface
+    {
+        return $this->findOneBy(['alias' => $alias]);
+    }
+
     public function createCopy(OfferEntityInterface $original): OfferEntityInterface
     {
         $new = $this->createNew();
