@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Components;
 
 use Ferienpass\AdminBundle\Form\EditOfferType;
-use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -29,7 +29,7 @@ class EditOfferForm extends AbstractController
     use LiveCollectionTrait;
 
     #[LiveProp]
-    public Offer $initialFormData;
+    public OfferEntityInterface $initialFormData;
 
     protected function instantiateForm(): FormInterface
     {

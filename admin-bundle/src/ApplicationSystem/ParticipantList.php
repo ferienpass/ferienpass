@@ -17,7 +17,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\CoreBundle\ApplicationSystem\ApplicationSystems;
 use Ferienpass\CoreBundle\Entity\Attendance;
-use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Facade\AttendanceFacade;
 use Ferienpass\CoreBundle\Message\AttendanceStatusChanged;
@@ -32,7 +32,7 @@ class ParticipantList
     {
     }
 
-    public function add(Offer $offer, array $data): void
+    public function add(OfferEntityInterface $offer, array $data): void
     {
         if (!$data['firstname'] && !$data['lastname']) {
             throw new \InvalidArgumentException('Missing name');
@@ -106,7 +106,7 @@ class ParticipantList
         }
     }
 
-    private function addParticipant(array $data, Offer $offer): void
+    private function addParticipant(array $data, OfferEntityInterface $offer): void
     {
         $applicationSystem = $this->applicationSystems->findApplicationSystem($offer);
 

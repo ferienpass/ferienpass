@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Form\TypeGuesser;
 
-use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Symfony\Component\Form\FormTypeGuesserInterface;
 use Symfony\Component\Form\Guess\TypeGuess;
 use Symfony\Component\Form\Guess\ValueGuess;
@@ -22,7 +22,7 @@ class OfferTypeGuesser implements FormTypeGuesserInterface
 {
     public function guessType(string $class, string $property): ?TypeGuess
     {
-        if (!is_subclass_of($class, Offer::class)) {
+        if (!is_subclass_of($class, OfferEntityInterface::class)) {
             return null;
         }
 

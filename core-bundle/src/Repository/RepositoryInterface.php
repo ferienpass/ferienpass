@@ -11,15 +11,17 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CoreBundle\Dto;
+namespace Ferienpass\CoreBundle\Repository;
 
-use Ferienpass\CoreBundle\Entity\Offer\BaseOffer;
+use Doctrine\Persistence\ObjectRepository;
 
-interface OfferDto
+/**
+ * @extends ObjectRepository<T>
+ */
+interface RepositoryInterface extends ObjectRepository
 {
-    public static function fromEntity(BaseOffer $offer = null): self;
-
-    public function toEntity(BaseOffer $offer = null): BaseOffer;
-
-    public function offerEntity(): ?BaseOffer;
+    /**
+     * @return T
+     */
+    public function createNew();
 }

@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Components;
 
 use Ferienpass\AdminBundle\Dto\AddAttendanceDto;
-use Ferienpass\AdminBundle\Form\ParticipantAddAttendanceType;
-use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\AdminBundle\Form\AddAttendanceType;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Facade\AttendanceFacade;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,7 +34,7 @@ class AddAttendance extends AbstractController
     use DefaultActionTrait;
 
     #[LiveProp]
-    public Offer|null $offer = null;
+    public OfferEntityInterface|null $offer = null;
     #[LiveProp]
     public Participant|null $participant = null;
 
@@ -68,6 +68,9 @@ class AddAttendance extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->formFactory->create(ParticipantAddAttendanceType::class, new AddAttendanceDto($this->participant, $this->offer));
+        return $this->formFactory->create(AddAttendanceType::class, new AddAttendanceDto($this->participant, $this->offer), [
+            'add_participant' => null === $this->participant,
+            'add_offer' => null === $this->offer,
+        ]);
     }
 }

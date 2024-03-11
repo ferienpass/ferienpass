@@ -22,9 +22,9 @@ use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Form\EditOfferType;
 use Ferienpass\AdminBundle\Service\FileUploader;
 use Ferienpass\CoreBundle\Entity\Edition;
-use Ferienpass\CoreBundle\Entity\Offer;
-use Ferienpass\CoreBundle\Entity\OfferEntityInterface;
+use Ferienpass\CoreBundle\Entity\Offer\BaseOffer;
 use Ferienpass\CoreBundle\Entity\OfferDate;
+use Ferienpass\CoreBundle\Repository\OfferRepositoryInterface;
 use Ferienpass\CoreBundle\Ux\Flash;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -38,7 +38,7 @@ use Symfony\Component\Workflow\WorkflowInterface;
 #[Route('/angebote/{edition?null}')]
 final class OfferEditController extends AbstractController
 {
-    public function __construct(#[Autowire(service: 'ferienpass.file_uploader.offer_media')] private readonly FileUploader $fileUploader, #[Autowire(service: 'ferienpass.file_uploader.agreement_letters')] private readonly FileUploader $pdfFileUploader, private readonly ManagerRegistry $doctrine, private readonly WorkflowInterface $offerStateMachine, private readonly ContaoFramework $contaoFramework)
+    public function __construct(#[Autowire(service: 'ferienpass.file_uploader.offer_media')] private readonly FileUploader $fileUploader, #[Autowire(service: 'ferienpass.file_uploader.agreement_letters')] private readonly FileUploader $pdfFileUploader, private readonly ManagerRegistry $doctrine, private readonly WorkflowInterface $offerStateMachine, private readonly ContaoFramework $contaoFramework, private readonly OfferRepositoryInterface $offerRepository)
     {
     }
 
@@ -46,9 +46,9 @@ final class OfferEditController extends AbstractController
     #[Route('/neu', name: 'admin_offers_new')]
     #[Route('/kopieren/{id}', name: 'admin_offers_copy')]
     #[Route('/variante/{id}', name: 'admin_offers_new_variant')]
-    public function __invoke(#[MapEntity(id: 'id')] ?Offer $offer, #[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, EntityManagerInterface $em, Request $request, Breadcrumb $breadcrumb): Response
+    public function __invoke(?int $id, #[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, EntityManagerInterface $em, Request $request, Breadcrumb $breadcrumb): Response
     {
-        $offer = $this->getOffer($offer, $edition, $request);
+        $offer = $this->getOffer($this->offerRepository->find($id), $edition, $request);
 
         $form = $this->createForm(EditOfferType::class, $offer, ['is_variant' => !$offer->isVariantBase()]);
         $form->handleRequest($request);
@@ -114,14 +114,14 @@ final class OfferEditController extends AbstractController
         ]);
     }
 
-    private function getOffer(?Offer $offer, ?Edition $edition, Request $request): Offer
+    private function getOffer(?BaseOffer $offer, ?Edition $edition, Request $request): BaseOffer
     {
         if ('admin_offers_edit' === $request->get('_route') && null === $offer) {
             throw new PageNotFoundException('Item not found');
         }
 
         if (null === $offer) {
-            $offer = new Offer();
+            $offer = new BaseOffer();
             $offer->setEdition($edition);
             $offer->addDate(new OfferDate($offer));
 
@@ -133,30 +133,11 @@ final class OfferEditController extends AbstractController
         }
 
         if ('admin_offers_copy' === $request->get('_route')) {
-            $copy = new Offer();
+            $copy = $this->offerRepository->createCopy($offer);
             $copy->setEdition($edition);
 
             $this->denyAccessUnlessGranted('view', $offer);
             $this->denyAccessUnlessGranted('create', $copy);
-
-            // TODO these properties should be read from the DTO of the current form
-            $copy->setName($offer->getName().' (Kopie)');
-            $copy->setDescription($offer->getDescription());
-            $copy->setMeetingPoint($offer->getMeetingPoint());
-            $copy->setBring($offer->getBring());
-            $copy->setMinParticipants($offer->getMinParticipants());
-            $copy->setMaxParticipants($offer->getMaxParticipants());
-            $copy->setMinAge($offer->getMinAge());
-            $copy->setMaxAge($offer->getMaxAge());
-            $copy->setRequiresApplication($offer->requiresApplication());
-            $copy->setOnlineApplication($offer->isOnlineApplication());
-            $copy->setApplyText($offer->getApplyText());
-            $copy->setContactUser($offer->getContactUser());
-            $copy->setFee($offer->getFee());
-            $copy->setImage($offer->getImage());
-            foreach ($offer->getHosts() as $host) {
-                $copy->addHost($host);
-            }
 
             $this->doctrine->getManager()->persist($copy);
 
@@ -164,32 +145,11 @@ final class OfferEditController extends AbstractController
         }
 
         if ('admin_offers_new_variant' === $request->get('_route')) {
-            $copy = new Offer();
+            $copy = $this->offerRepository->createVariant($offer);
             $copy->setEdition($edition);
 
             $this->denyAccessUnlessGranted('view', $offer);
             $this->denyAccessUnlessGranted('create', $copy);
-
-            // TODO these properties should be read from the DTO of the current form
-            $copy->setName($offer->getName().' (Kopie)');
-            $copy->setDescription($offer->getDescription());
-            $copy->setMeetingPoint($offer->getMeetingPoint());
-            $copy->setBring($offer->getBring());
-            $copy->setMinParticipants($offer->getMinParticipants());
-            $copy->setMaxParticipants($offer->getMaxParticipants());
-            $copy->setMinAge($offer->getMinAge());
-            $copy->setMaxAge($offer->getMaxAge());
-            $copy->setRequiresApplication($offer->requiresApplication());
-            $copy->setOnlineApplication($offer->isOnlineApplication());
-            $copy->setApplyText($offer->getApplyText());
-            $copy->setContactUser($offer->getContactUser());
-            $copy->setFee($offer->getFee());
-            $copy->setImage($offer->getImage());
-            foreach ($offer->getHosts() as $host) {
-                $copy->addHost($host);
-            }
-
-            $copy->setVariantBase($offer);
 
             $this->doctrine->getManager()->persist($copy);
 

@@ -19,11 +19,12 @@ use Doctrine\ORM\QueryBuilder;
 use Ferienpass\AdminBundle\Form\CompoundType\OfferDatesType;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Host;
-use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Entity\OfferCategory;
 use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -42,14 +43,14 @@ use Symfony\UX\Dropzone\Form\DropzoneType;
 
 class EditOfferType extends AbstractType
 {
-    public function __construct(private readonly WorkflowInterface $offerStateMachine, private readonly Security $security)
+    public function __construct(private readonly WorkflowInterface $offerStateMachine, private readonly Security $security, #[Autowire(param: 'ferienpass.model.offer.class')] private readonly string $offerEntityClass)
     {
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Offer::class,
+            'data_class' => $this->offerEntityClass,
             'is_variant' => false,
             'required' => false,
             'label_format' => 'offers.label.%name%',
@@ -120,7 +121,7 @@ class EditOfferType extends AbstractType
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
             $form = $event->getForm();
-            if (!($offer = $event->getData()) instanceof Offer) {
+            if (!($offer = $event->getData()) instanceof OfferEntityInterface) {
                 return;
             }
 

@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\CoreBundle\Security\Voter;
 
 use Ferienpass\CoreBundle\Entity\Host;
-use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Entity\OfferDate;
 use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Repository\AttendanceRepository;
@@ -38,19 +38,19 @@ class OfferVoter extends Voter
             'copy',
             'delete',
             'freeze',
-            Offer::TRANSITION_COMPLETE,
-            Offer::TRANSITION_APPROVE,
-            Offer::TRANSITION_PUBLISH,
-            Offer::TRANSITION_UNPUBLISH,
-            Offer::TRANSITION_RELAUNCH,
-            Offer::TRANSITION_CANCEL,
+            OfferEntityInterface::TRANSITION_COMPLETE,
+            OfferEntityInterface::TRANSITION_APPROVE,
+            OfferEntityInterface::TRANSITION_PUBLISH,
+            OfferEntityInterface::TRANSITION_UNPUBLISH,
+            OfferEntityInterface::TRANSITION_RELAUNCH,
+            OfferEntityInterface::TRANSITION_CANCEL,
             'participants.view',
             'participants.add',
             'participants.reject',
             'participants.confirm',
         ];
 
-        return $subject instanceof Offer && \in_array($attribute, $operations, true);
+        return $subject instanceof OfferEntityInterface && \in_array($attribute, $operations, true);
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
@@ -60,7 +60,7 @@ class OfferVoter extends Voter
             return false;
         }
 
-        /** @var Offer $offer */
+        /** @var OfferEntityInterface $offer */
         $offer = $subject;
 
         return match ($attribute) {
@@ -70,12 +70,12 @@ class OfferVoter extends Voter
             'copy' => $this->canCopy($offer, $user),
             'delete' => $this->canDelete($offer, $user),
             'freeze' => $this->canFreeze($offer, $user),
-            Offer::TRANSITION_CANCEL => $this->canCancel($offer, $user),
-            Offer::TRANSITION_RELAUNCH => $this->canRelaunch($offer, $user),
-            Offer::TRANSITION_PUBLISH => $this->canPublish($offer, $user),
-            Offer::TRANSITION_UNPUBLISH => $this->canUnPublish($offer, $user),
-            Offer::TRANSITION_APPROVE => $this->canApprove($offer, $user),
-            Offer::TRANSITION_COMPLETE => $this->canComplete($offer, $user),
+            OfferEntityInterface::TRANSITION_CANCEL => $this->canCancel($offer, $user),
+            OfferEntityInterface::TRANSITION_RELAUNCH => $this->canRelaunch($offer, $user),
+            OfferEntityInterface::TRANSITION_PUBLISH => $this->canPublish($offer, $user),
+            OfferEntityInterface::TRANSITION_UNPUBLISH => $this->canUnPublish($offer, $user),
+            OfferEntityInterface::TRANSITION_APPROVE => $this->canApprove($offer, $user),
+            OfferEntityInterface::TRANSITION_COMPLETE => $this->canComplete($offer, $user),
             'participants.view' => $this->canViewParticipants($offer, $user),
             'participants.add' => $this->canAddParticipants($offer, $user),
             'participants.reject' => $this->canRejectParticipants($offer, $user),
@@ -84,7 +84,7 @@ class OfferVoter extends Voter
         };
     }
 
-    private function canView(Offer $offer, User $user): bool
+    private function canView(OfferEntityInterface $offer, User $user): bool
     {
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
@@ -96,7 +96,7 @@ class OfferVoter extends Voter
         return $offer->getHosts()->filter(fn (Host $host) => \in_array($host->getId(), $userHostIds, true))->count() > 0;
     }
 
-    private function canEdit(Offer $offer, User $user): bool
+    private function canEdit(OfferEntityInterface $offer, User $user): bool
     {
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
@@ -109,7 +109,7 @@ class OfferVoter extends Voter
         return (null === ($edition = $offer->getEdition())) || $edition->isEditableForHosts();
     }
 
-    private function canCreate(Offer $offer): bool
+    private function canCreate(OfferEntityInterface $offer): bool
     {
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
@@ -122,12 +122,12 @@ class OfferVoter extends Voter
         return !$edition->getActiveTasks('host_editing_stage')->isEmpty();
     }
 
-    private function canCopy(Offer $offer, User $user): bool
+    private function canCopy(OfferEntityInterface $offer, User $user): bool
     {
         return $this->canCreate($offer) && $this->canView($offer, $user);
     }
 
-    private function canDelete(Offer $offer, User $user): bool
+    private function canDelete(OfferEntityInterface $offer, User $user): bool
     {
         if (false === $this->canView($offer, $user)) {
             return false;
@@ -144,7 +144,7 @@ class OfferVoter extends Voter
         return null === ($edition = $offer->getEdition()) || $edition->isEditableForHosts();
     }
 
-    private function canCancel(Offer $offer, User $user): bool
+    private function canCancel(OfferEntityInterface $offer, User $user): bool
     {
         if (false === $this->canView($offer, $user)) {
             return false;
@@ -157,7 +157,7 @@ class OfferVoter extends Voter
         return true;
     }
 
-    private function canFreeze(Offer $offer, User $user): bool
+    private function canFreeze(OfferEntityInterface $offer, User $user): bool
     {
         if (false === $this->canView($offer, $user)) {
             return false;
@@ -172,7 +172,7 @@ class OfferVoter extends Voter
         return 0 === \count($attendances);
     }
 
-    private function canRelaunch(Offer $offer, User $user): bool
+    private function canRelaunch(OfferEntityInterface $offer, User $user): bool
     {
         if (false === $this->canView($offer, $user)) {
             return false;
@@ -185,41 +185,32 @@ class OfferVoter extends Voter
         return true;
     }
 
-    private function canApprove(Offer $offer, User $user): bool
+    private function canApprove(OfferEntityInterface $offer, User $user): bool
     {
         return $this->security->isGranted('ROLE_ADMIN');
     }
 
-    private function canPublish(Offer $offer, User $user): bool
+    private function canPublish(OfferEntityInterface $offer, User $user): bool
     {
         return $this->security->isGranted('ROLE_ADMIN');
     }
 
-    private function canUnPublish(Offer $offer, User $user): bool
+    private function canUnPublish(OfferEntityInterface $offer, User $user): bool
     {
         return $this->security->isGranted('ROLE_ADMIN');
     }
 
-    private function canComplete(Offer $offer, User $user): bool
+    private function canComplete(OfferEntityInterface $offer, User $user): bool
     {
         return true;
     }
 
-    private function canViewParticipants(Offer $offer, User $user): bool
+    private function canViewParticipants(OfferEntityInterface $offer, User $user): bool
     {
         return $this->canView($offer, $user);
     }
 
-    private function canRejectParticipants(Offer $offer, User $user): bool
-    {
-        if ($this->offerIsImmutable($offer)) {
-            return false;
-        }
-
-        return $this->canView($offer, $user);
-    }
-
-    private function canConfirmParticipants(Offer $offer, User $user): bool
+    private function canRejectParticipants(OfferEntityInterface $offer, User $user): bool
     {
         if ($this->offerIsImmutable($offer)) {
             return false;
@@ -228,7 +219,7 @@ class OfferVoter extends Voter
         return $this->canView($offer, $user);
     }
 
-    private function canAddParticipants(Offer $offer, User $user): bool
+    private function canConfirmParticipants(OfferEntityInterface $offer, User $user): bool
     {
         if ($this->offerIsImmutable($offer)) {
             return false;
@@ -237,7 +228,16 @@ class OfferVoter extends Voter
         return $this->canView($offer, $user);
     }
 
-    private function offerIsImmutable(Offer $offer): bool
+    private function canAddParticipants(OfferEntityInterface $offer, User $user): bool
+    {
+        if ($this->offerIsImmutable($offer)) {
+            return false;
+        }
+
+        return $this->canView($offer, $user);
+    }
+
+    private function offerIsImmutable(OfferEntityInterface $offer): bool
     {
         if ($offer->getDates()->isEmpty()) {
             return false;

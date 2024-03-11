@@ -16,7 +16,7 @@ namespace Ferienpass\AdminBundle\Controller\Page;
 use Contao\CoreBundle\Controller\AbstractController;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExports;
-use Ferienpass\CoreBundle\Repository\OfferRepository;
+use Ferienpass\CoreBundle\Repository\OfferRepositoryInterface;
 use Spatie\PdfToImage\Pdf;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +31,7 @@ final class PrintSheetProofController extends AbstractController
     {
     }
 
-    public function __invoke(int $id, string $_format, Request $request, OfferRepository $offerRepository)
+    public function __invoke(int $id, string $_format, Request $request, OfferRepositoryInterface $offerRepository)
     {
         if (!\in_array($_format, ['pdf', 'jpg', 'jpeg', 'png'], true)) {
             throw new PageNotFoundException('Format not supported: '.$_format);

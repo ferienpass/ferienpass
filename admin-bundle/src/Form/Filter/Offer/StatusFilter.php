@@ -15,7 +15,6 @@ namespace Ferienpass\AdminBundle\Form\Filter\Offer;
 
 use Doctrine\ORM\QueryBuilder;
 use Ferienpass\AdminBundle\Form\Filter\AbstractFilterType;
-use Ferienpass\CoreBundle\Entity\Offer;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormInterface;
@@ -42,7 +41,7 @@ class StatusFilter extends AbstractFilterType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'choices' => [Offer::STATE_DRAFT, Offer::STATE_COMPLETED, Offer::STATE_REVIEWED, Offer::STATE_PUBLISHED, Offer::STATE_UNPUBLISHED, Offer::STATE_CANCELLED],
+            'choices' => [BaseOffer::STATE_DRAFT, BaseOffer::STATE_COMPLETED, BaseOffer::STATE_REVIEWED, BaseOffer::STATE_PUBLISHED, BaseOffer::STATE_UNPUBLISHED, BaseOffer::STATE_CANCELLED],
             'choice_label' => function (string $choice): TranslatableMessage {
                 return new TranslatableMessage('offers.status.'.$choice, [], 'admin');
             },

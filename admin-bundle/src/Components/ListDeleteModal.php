@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Components;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -65,7 +65,7 @@ class ListDeleteModal extends AbstractController
 
             $entityManager->flush();
         }
-        if ($this->item instanceof Offer) {
+        if ($this->item instanceof OfferEntityInterface) {
             /** @var $attendance */
             foreach ($this->item->getAttendances() as $attendance) {
                 foreach ($attendance->getPaymentItems() as $paymentItem) {

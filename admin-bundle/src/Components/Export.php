@@ -14,10 +14,10 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Components;
 
 use Doctrine\DBAL\Types\Types;
-use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Export\Offer\OfferExporter;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
-use Ferienpass\CoreBundle\Repository\OfferRepository;
+use Ferienpass\CoreBundle\Repository\OfferRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\UriSigner;
@@ -52,7 +52,7 @@ final class Export extends AbstractController
     #[LiveProp(writable: true)]
     public bool $onlyPublished = true;
 
-    public function __construct(private readonly OfferRepository $offerRepository, private readonly EditionRepository $editionRepository, private readonly OfferExporter $exporter)
+    public function __construct(private readonly OfferRepositoryInterface $offerRepository, private readonly EditionRepository $editionRepository, private readonly OfferExporter $exporter)
     {
     }
 
@@ -98,7 +98,7 @@ final class Export extends AbstractController
 
         if ($this->onlyPublished) {
             $qb->andWhere('offer.state = :state_published');
-            $qb->setParameter('state_published', Offer::STATE_PUBLISHED);
+            $qb->setParameter('state_published', OfferEntityInterface::STATE_PUBLISHED);
         }
 
         if ($this->editions) {

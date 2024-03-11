@@ -11,14 +11,13 @@ declare(strict_types=1);
  * or the documentation under <https://docs.ferienpass.online>.
  */
 
-namespace Ferienpass\CoreBundle\Entity;
+namespace Ferienpass\CoreBundle\Repository;
 
-use Doctrine\ORM\Mapping as ORM;
-use Ferienpass\CoreBundle\Entity\Offer\BaseOffer;
 use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
-use Ferienpass\CoreBundle\Repository\OfferRepository;
 
-#[ORM\Entity(repositoryClass: OfferRepository::class)]
-class Offer extends BaseOffer implements OfferEntityInterface
+interface OfferRepositoryInterface extends RepositoryInterface
 {
+    public function createCopy(OfferEntityInterface $original): OfferEntityInterface;
+
+    public function createVariant(OfferEntityInterface $original): OfferEntityInterface;
 }

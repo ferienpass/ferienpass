@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Symfony\Component\Workflow\Transition;
 
 #[ORM\Entity]
@@ -26,7 +27,7 @@ class OfferLog
 
     #[ORM\ManyToOne(targetEntity: OfferEntityInterface::class, inversedBy: 'activity')]
     #[ORM\JoinColumn(name: 'participant_id', referencedColumnName: 'id')]
-    private Offer $offer;
+    private OfferEntityInterface $offer;
 
     #[ORM\Column(type: 'datetime_immutable', options: ['default' => 'CURRENT_TIMESTAMP'])]
     private \DateTimeInterface $createdAt;
@@ -45,7 +46,7 @@ class OfferLog
     #[ORM\Column(type: 'string', length: 32, nullable: true)]
     private ?string $transitionTo = null;
 
-    public function __construct(Offer $offer, User $user, string $comment = null, Transition $transition = null)
+    public function __construct(OfferEntityInterface $offer, User $user, string $comment = null, Transition $transition = null)
     {
         $this->offer = $offer;
         $this->comment = $comment;
@@ -70,7 +71,7 @@ class OfferLog
         return $this->createdAt;
     }
 
-    public function getOffer(): Offer
+    public function getOffer(): OfferEntityInterface
     {
         return $this->offer;
     }

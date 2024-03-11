@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Controller\Dashboard;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\Offer\BaseOffer;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Facade\AttendanceFacade;
 use Ferienpass\CoreBundle\Form\BackendApplicationType;
@@ -42,7 +42,7 @@ class CreateAttendanceController extends AbstractController
             $status = $form->get('status')->getData();
             $notify = (bool) $form->get('notify')->getData();
 
-            \assert($offer instanceof Offer);
+            \assert($offer instanceof BaseOffer);
 
             if (!$participant instanceof Participant) {
                 $participant = new Participant();

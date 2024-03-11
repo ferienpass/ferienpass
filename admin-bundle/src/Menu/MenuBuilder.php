@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\AdminBundle\Menu;
 
 use Ferienpass\AdminBundle\Event\MenuEvent;
-use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Ferienpass\CoreBundle\Repository\HostRepository;
@@ -124,7 +124,7 @@ class MenuBuilder
     public function offerActions(array $options = []): ItemInterface
     {
         $offer = $options['offer'] ?? null;
-        if (!$offer instanceof Offer) {
+        if (!$offer instanceof OfferEntityInterface) {
             throw new \InvalidArgumentException('Pass "offer" as an option');
         }
 
@@ -276,7 +276,7 @@ class MenuBuilder
     public function participantListActions(array $options = []): ItemInterface
     {
         $offer = $options['offer'] ?? null;
-        if (!$offer instanceof Offer) {
+        if (!$offer instanceof OfferEntityInterface) {
             throw new \InvalidArgumentException('Pass "offer" as option');
         }
 

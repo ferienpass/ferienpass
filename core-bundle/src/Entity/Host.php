@@ -17,6 +17,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Repository\HostRepository;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -290,7 +291,7 @@ class Host
         return $this->offers;
     }
 
-    public function addOffer(Offer $offer): void
+    public function addOffer(OfferEntityInterface $offer): void
     {
         $this->offers->add($offer);
     }

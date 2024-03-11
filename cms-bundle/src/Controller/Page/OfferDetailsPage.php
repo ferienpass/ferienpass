@@ -20,7 +20,7 @@ use Contao\PageModel;
 use Ferienpass\CmsBundle\Controller\AbstractController;
 use Ferienpass\CmsBundle\Fragment\FragmentReference;
 use Ferienpass\CoreBundle\Entity\Host;
-use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
 #[AsPage('offer_details', path: '{alias}', contentComposition: false)]
 class OfferDetailsPage extends AbstractController
 {
-    public function __invoke(Offer $offer, Request $request): Response
+    public function __invoke(OfferEntityInterface $offer, Request $request): Response
     {
         if (!$request->attributes->getBoolean('preview') && !$offer->isPublished()) {
             throw new PageNotFoundException();

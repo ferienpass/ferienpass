@@ -16,8 +16,9 @@ namespace Ferienpass\CoreBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Ferienpass\CoreBundle\ApplicationSystem\ApplicationSystemInterface;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Exception\AmbiguousHolidayTaskException;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: 'Ferienpass\CoreBundle\Repository\EditionRepository')]
 class Edition
@@ -37,15 +38,9 @@ class Edition
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $alias = null;
 
-    /**
-     * @psalm-var Collection<int, EditionTask>
-     */
     #[ORM\OneToMany(mappedBy: 'edition', targetEntity: EditionTask::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $tasks;
 
-    /**
-     * @psalm-var Collection<int, Offer>
-     */
     #[ORM\OneToMany(mappedBy: 'edition', targetEntity: OfferEntityInterface::class, cascade: ['remove'])]
     private Collection $offers;
 
@@ -60,8 +55,6 @@ class Edition
 
     #[ORM\Column(type: 'boolean')]
     private bool $hostsCanAssign = false;
-
-    private ApplicationSystemInterface $applicationSystem;
 
     public function __construct()
     {
@@ -138,11 +131,6 @@ class Edition
         $this->archived = $archived;
     }
 
-    /**
-     * @return Collection|Offer[]
-     *
-     * @psalm-return Collection<int, Offer>
-     */
     public function getOffers(): Collection
     {
         return $this->offers;

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\CmsBundle\Controller\Frontend\Api;
 
-use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -26,7 +26,7 @@ final class OfferController extends AbstractController
     }
 
     #[Route(path: '/{id}/save', methods: ['PUT'], requirements: ['id' => '\d+'])]
-    public function save(Offer $offer): Response
+    public function save(OfferEntityInterface $offer): Response
     {
         $savedOffers = $this->session->get('saved_offers', []);
 

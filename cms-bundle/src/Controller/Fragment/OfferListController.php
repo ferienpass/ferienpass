@@ -15,24 +15,24 @@ namespace Ferienpass\CmsBundle\Controller\Fragment;
 
 use Contao\CoreBundle\Controller\AbstractController;
 use Doctrine\DBAL\Types\Types;
-use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Filter\OfferListFilterFactory;
 use Ferienpass\CoreBundle\Pagination\Paginator;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
-use Ferienpass\CoreBundle\Repository\OfferRepository;
+use Ferienpass\CoreBundle\Repository\OfferRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 final class OfferListController extends AbstractController
 {
-    public function __construct(private readonly EditionRepository $editionRepository, private readonly OfferRepository $offerRepository, private readonly OfferListFilterFactory $filterFactory)
+    public function __construct(private readonly EditionRepository $editionRepository, private readonly OfferRepositoryInterface $offerRepository, private readonly OfferListFilterFactory $filterFactory)
     {
     }
 
     public function __invoke(Request $request, Session $session): Response
     {
-        $qb = $this->offerRepository->createQueryBuilder('o')->where('o.state = :state_published')->setParameter('state_published', Offer::STATE_PUBLISHED);
+        $qb = $this->offerRepository->createQueryBuilder('o')->where('o.state = :state_published')->setParameter('state_published', OfferEntityInterface::STATE_PUBLISHED);
         $hasEditions = $this->editionRepository->count([]) > 0;
         $pageModel = $request->attributes->get('pageModel');
         if ($pageModel->edition) {

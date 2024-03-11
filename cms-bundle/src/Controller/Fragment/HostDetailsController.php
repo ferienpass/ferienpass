@@ -17,13 +17,13 @@ use Doctrine\DBAL\Types\Types;
 use Ferienpass\CmsBundle\Controller\AbstractController;
 use Ferienpass\CoreBundle\Entity\Host;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
-use Ferienpass\CoreBundle\Repository\OfferRepository;
+use Ferienpass\CoreBundle\Repository\OfferRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 final class HostDetailsController extends AbstractController
 {
-    public function __construct(private readonly OfferRepository $offerRepository, private readonly EditionRepository $editionRepository)
+    public function __construct(private readonly OfferRepositoryInterface $offerRepository, private readonly EditionRepository $editionRepository)
     {
     }
 

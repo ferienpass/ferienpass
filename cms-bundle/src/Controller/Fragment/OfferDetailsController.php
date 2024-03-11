@@ -17,7 +17,7 @@ use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\CoreBundle\Exception\ResponseException;
 use Contao\FilesModel;
 use Ferienpass\CmsBundle\Controller\AbstractController;
-use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +28,7 @@ final class OfferDetailsController extends AbstractController
     {
     }
 
-    public function __invoke(Offer $offer, Request $request): Response
+    public function __invoke(OfferEntityInterface $offer, Request $request): Response
     {
         // $members = $offer->getMemberAssociations()->map(fn (OfferMemberAssociation $a) => $a->getMember());
 
@@ -42,7 +42,7 @@ final class OfferDetailsController extends AbstractController
         ]);
     }
 
-    private function handleDownload(Request $request, Offer $offer): void
+    private function handleDownload(Request $request, OfferEntityInterface $offer): void
     {
         $files = [];
         if ($offer->getAgreementLetter()) {

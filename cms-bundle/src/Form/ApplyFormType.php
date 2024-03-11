@@ -23,7 +23,8 @@ use Ferienpass\CmsBundle\Form\SimpleType\ContaoRequestTokenType;
 use Ferienpass\CoreBundle\ApplicationSystem\ApplicationSystemInterface;
 use Ferienpass\CoreBundle\ApplicationSystem\FirstComeApplicationSystem;
 use Ferienpass\CoreBundle\Entity\Attendance;
-use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\Offer\BaseOffer;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Entity\OfferDate;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Exception\IneligibleParticipantException;
@@ -94,11 +95,11 @@ class ApplyFormType extends AbstractType
 
         $resolver->setDefined('offer');
         $resolver->setDefined('application_system');
-        $resolver->setAllowedTypes('offer', Offer::class);
+        $resolver->setAllowedTypes('offer', OfferEntityInterface::class);
         $resolver->setAllowedTypes('application_system', ApplicationSystemInterface::class);
     }
 
-    private function participantIsApplied(Participant $participant, Offer $offer): bool
+    private function participantIsApplied(Participant $participant, BaseOffer $offer): bool
     {
         return $participant->getAttendances()->filter(fn (Attendance $a) => $offer === $a->getOffer() && !$a->isWithdrawn())->count() > 0;
     }
@@ -106,7 +107,7 @@ class ApplyFormType extends AbstractType
     /**
      * @throws IneligibleParticipantException
      */
-    private function ineligibility(Offer $offer, Participant $participant, ApplicationSystemInterface $applicationSystem): void
+    private function ineligibility(BaseOffer $offer, Participant $participant, ApplicationSystemInterface $applicationSystem): void
     {
         $this->unconfirmed($offer, $participant, $applicationSystem);
         $this->noAccessCode($offer, $participant, $applicationSystem);
@@ -116,7 +117,7 @@ class ApplyFormType extends AbstractType
         $this->dayLimitReached($offer, $participant, $applicationSystem);
     }
 
-    private function ageValid(Offer $offer, Participant $participant, ApplicationSystemInterface $applicationSystem): void
+    private function ageValid(BaseOffer $offer, Participant $participant, ApplicationSystemInterface $applicationSystem): void
     {
         if (!$offer->getMinAge() && !$offer->getMaxAge()) {
             return;
@@ -152,7 +153,7 @@ class ApplyFormType extends AbstractType
         }
     }
 
-    private function overlappingOffer(Participant $participant, Offer $offer): void
+    private function overlappingOffer(Participant $participant, BaseOffer $offer): void
     {
         /** @var EntityRepository $repo */
         $repo = $this->doctrine->getRepository(OfferDate::class);
@@ -160,7 +161,7 @@ class ApplyFormType extends AbstractType
         // All dates of offers the participant is participating (expect current offer)
         /** @var iterable<int, OfferDate> $participatingDates */
         $participatingDates = $repo->createQueryBuilder('d')
-            ->innerJoin(Offer::class, 'o', Join::WITH, 'o.id = d.offer')
+            ->innerJoin(OfferEntityInterface::class, 'o', Join::WITH, 'o.id = d.offer')
             ->innerJoin(Attendance::class, 'a', Join::WITH, 'a.offer = o.id')
             ->where('a.participant = :participant')
             ->andWhere('a.offer <> :offer')
@@ -185,7 +186,7 @@ class ApplyFormType extends AbstractType
         }
     }
 
-    private function limitReached(Offer $offer, Participant $participant, ApplicationSystemInterface $applicationSystem): void
+    private function limitReached(BaseOffer $offer, Participant $participant, ApplicationSystemInterface $applicationSystem): void
     {
         $task = $applicationSystem->getTask();
         if (!$task?->getMaxApplications() || $task->isSkipMaxApplications()) {
@@ -202,7 +203,7 @@ class ApplyFormType extends AbstractType
         }
     }
 
-    private function dayLimitReached(Offer $offer, Participant $participant, ApplicationSystemInterface $applicationSystem): void
+    private function dayLimitReached(BaseOffer $offer, Participant $participant, ApplicationSystemInterface $applicationSystem): void
     {
         if (!$applicationSystem instanceof FirstComeApplicationSystem) {
             return;
@@ -227,7 +228,7 @@ class ApplyFormType extends AbstractType
         }
     }
 
-    private function unconfirmed(Offer $offer, Participant $participant, ApplicationSystemInterface $applicationSystem): void
+    private function unconfirmed(BaseOffer $offer, Participant $participant, ApplicationSystemInterface $applicationSystem): void
     {
         if (null !== $participant->getUser()) {
             return;
@@ -240,7 +241,7 @@ class ApplyFormType extends AbstractType
         }
     }
 
-    private function noAccessCode(Offer $offer, Participant $participant, ApplicationSystemInterface $applicationSystem): void
+    private function noAccessCode(BaseOffer $offer, Participant $participant, ApplicationSystemInterface $applicationSystem): void
     {
         if (null === $applicationSystem->getTask()?->getAccessCodeStrategy() || $applicationSystem->getTask()?->getAccessCodeStrategy()?->isEnabledParticipant($participant)) {
             return;

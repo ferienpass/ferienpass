@@ -13,14 +13,40 @@ declare(strict_types=1);
 
 namespace Ferienpass\CoreBundle\Repository;
 
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
-use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 
-class OfferRepository extends ServiceEntityRepository
+class OfferRepository extends EntityRepository implements OfferRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
+    public function createCopy(OfferEntityInterface $original): OfferEntityInterface
     {
-        parent::__construct($registry, Offer::class);
+        $new = $this->createNew();
+
+        $new->setName($original->getName().' (Kopie)');
+        $new->setDescription($original->getDescription());
+        $new->setMeetingPoint($original->getMeetingPoint());
+        $new->setBring($original->getBring());
+        $new->setMinParticipants($original->getMinParticipants());
+        $new->setMaxParticipants($original->getMaxParticipants());
+        $new->setMinAge($original->getMinAge());
+        $new->setMaxAge($original->getMaxAge());
+        $new->setRequiresApplication($original->requiresApplication());
+        $new->setOnlineApplication($original->isOnlineApplication());
+        $new->setApplyText($original->getApplyText());
+        $new->setContactUser($original->getContactUser());
+        $new->setFee($original->getFee());
+        $new->setImage($original->getImage());
+        foreach ($original->getHosts() as $host) {
+            $new->addHost($host);
+        }
+
+        return $new;
+    }
+
+    public function createVariant(OfferEntityInterface $original): OfferEntityInterface
+    {
+        $new = $this->createCopy($original);
+        $new->setVariantBase($original);
+
+        return $new;
     }
 }

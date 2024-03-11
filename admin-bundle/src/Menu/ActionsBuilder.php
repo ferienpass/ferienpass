@@ -18,7 +18,7 @@ use Ferienpass\CoreBundle\Entity\AccessCodeStrategy;
 use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Host;
-use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Entity\Participant;
 use Ferienpass\CoreBundle\Entity\Payment;
 use Ferienpass\CoreBundle\Entity\User;
@@ -44,7 +44,7 @@ class ActionsBuilder
 
         $menu = $this->factory->createItem('root');
 
-        if ($item instanceof Offer) {
+        if ($item instanceof OfferEntityInterface) {
             $this->offers($menu, $item);
 
             return $menu;
@@ -94,7 +94,7 @@ class ActionsBuilder
         return $menu;
     }
 
-    private function offers(ItemInterface $root, Offer $item)
+    private function offers(ItemInterface $root, OfferEntityInterface $item)
     {
         $root->addChild('edit', [
             'label' => 'offers.action.edit',

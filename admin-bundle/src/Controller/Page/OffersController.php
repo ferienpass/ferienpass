@@ -13,15 +13,15 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Controller\Page;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Export\XlsxExport;
 use Ferienpass\CoreBundle\Entity\Edition;
-use Ferienpass\CoreBundle\Entity\Offer;
-use Ferienpass\CoreBundle\Entity\OfferEntityInterface;
+use Ferienpass\CoreBundle\Entity\Offer\OfferEntityInterface;
 use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Export\Offer\PrintSheet\PdfExports;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
-use Ferienpass\CoreBundle\Repository\OfferRepository;
+use Ferienpass\CoreBundle\Repository\OfferRepositoryInterface;
 use Knp\Menu\FactoryInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,14 +32,14 @@ use Symfony\Component\Routing\Attribute\Route;
 final class OffersController extends AbstractController
 {
     #[Route('{_suffix?}', name: 'admin_offers_index')]
-    public function index(#[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, ?string $_suffix, OfferRepository $repository, Breadcrumb $breadcrumb, FactoryInterface $factory, EditionRepository $editionRepository, XlsxExport $xlsxExport, EntityManagerInterface $entityManager): Response
+    public function index(#[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, ?string $_suffix, OfferRepositoryInterface $repository, Breadcrumb $breadcrumb, FactoryInterface $factory, EditionRepository $editionRepository, XlsxExport $xlsxExport, EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
             throw new \RuntimeException('No user');
         }
 
-        $qb = $entityManager->getRepository(OfferEntityInterface::class)->createQueryBuilder('i');
+        $qb = $repository->createQueryBuilder('i');
 
         $_suffix = ltrim((string) $_suffix, '.');
         if ('' !== $_suffix) {
@@ -70,14 +70,14 @@ final class OffersController extends AbstractController
             'searchable' => ['name'],
             'items' => $qb->getQuery()->getResult(),
             'edition' => $edition,
-            'uncompletedOffers' => (clone $qb)->select('COUNT(i)')->andWhere('i.state = :status')->setParameter('status', Offer::STATE_DRAFT)->getQuery()->getSingleResult() > 0,
+            'uncompletedOffers' => (clone $qb)->select('COUNT(i)')->andWhere('i.state = :status')->setParameter('status', OfferEntityInterface::STATE_DRAFT)->getQuery()->getSingleResult() > 0,
             'aside_nav' => $menu,
             'breadcrumb' => $breadcrumb->generate('offers.title', $edition?->getName()),
         ]);
     }
 
     #[Route('/{id}', name: 'admin_offer_proof', requirements: ['id' => '\d+'])]
-    public function show(Offer $offer, PdfExports $pdfExports, Breadcrumb $breadcrumb): Response
+    public function show(OfferEntityInterface $offer, PdfExports $pdfExports, Breadcrumb $breadcrumb): Response
     {
         $this->denyAccessUnlessGranted('view', $offer);
 

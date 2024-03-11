@@ -18,7 +18,7 @@ use Ferienpass\AdminBundle\ApplicationSystem\ParticipantList;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
 use Ferienpass\AdminBundle\Form\MultiSelectType;
 use Ferienpass\AdminBundle\State\PrivacyConsent;
-use Ferienpass\CoreBundle\Entity\Offer;
+use Ferienpass\CoreBundle\Entity\Offer\BaseOffer;
 use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Export\ParticipantList\PdfExport;
 use Ferienpass\CoreBundle\Facade\AttendanceFacade;
@@ -35,7 +35,7 @@ final class OfferParticipantsController extends AbstractController
     {
     }
 
-    public function __invoke(string $_suffix, Offer $offer, Request $request, PdfExport $pdfExport, EntityManagerInterface $em, AttendanceFacade $attendanceFacade, Breadcrumb $breadcrumb, \Ferienpass\CoreBundle\Session\Flash $flash): Response
+    public function __invoke(string $_suffix, BaseOffer $offer, Request $request, PdfExport $pdfExport, EntityManagerInterface $em, AttendanceFacade $attendanceFacade, Breadcrumb $breadcrumb, \Ferienpass\CoreBundle\Session\Flash $flash): Response
     {
         $this->denyAccessUnlessGranted('participants.view', $offer);
 

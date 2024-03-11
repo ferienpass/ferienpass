@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ferienpass\CmsBundle\Controller\Frontend;
 
 use Ferienpass\CoreBundle\Export\Offer\ICal\ICalExport;
-use Ferienpass\CoreBundle\Repository\OfferRepository;
+use Ferienpass\CoreBundle\Repository\OfferRepositoryInterface;
 use Ferienpass\CoreBundle\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -31,7 +31,7 @@ class ExportAttendancesController extends AbstractController
     }
 
     #[Route(path: '/anmeldungen-{memberId}-{token}.{_format}', requirements: ['memberId' => '\d+'], defaults: ['format' => 'ics'])]
-    public function __invoke(int $memberId, string $token, string $_format, Request $request, ICalExport $iCal, UserRepository $userRepository, OfferRepository $offerRepository)
+    public function __invoke(int $memberId, string $token, string $_format, Request $request, ICalExport $iCal, UserRepository $userRepository, OfferRepositoryInterface $offerRepository)
     {
         $user = $userRepository->find($memberId);
         if (null === $user) {

@@ -17,13 +17,13 @@ use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Repository\AttendanceRepository;
 use Ferienpass\CoreBundle\Repository\EditionRepository;
-use Ferienpass\CoreBundle\Repository\OfferRepository;
+use Ferienpass\CoreBundle\Repository\OfferRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 
 class FiguresController extends AbstractController
 {
-    public function __construct(private readonly AttendanceRepository $attendanceRepository, private readonly OfferRepository $offerRepository, private readonly EditionRepository $editionRepository)
+    public function __construct(private readonly AttendanceRepository $attendanceRepository, private readonly OfferRepositoryInterface $offerRepository, private readonly EditionRepository $editionRepository)
     {
     }
 
