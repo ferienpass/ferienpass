@@ -16,6 +16,7 @@ namespace Ferienpass\CoreBundle\Entity\Offer;
 use Doctrine\Common\Collections\Collection;
 use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Entity\Edition;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 interface OfferInterface
 {
@@ -52,6 +53,9 @@ interface OfferInterface
     // TODO refactor to own interface, make non-nullable
     public function getEdition(): ?Edition;
 
+    // TODO refactor to own interface, make non-nullable
+    public function getFee(): ?int;
+
     public function getDates(): Collection;
 
     public function isPublished(): bool;
@@ -59,4 +63,6 @@ interface OfferInterface
     public function getAttendances(): Collection;
 
     public function addAttendance(Attendance $attendance): void;
+
+    public function generateAlias(SluggerInterface $slugger);
 }

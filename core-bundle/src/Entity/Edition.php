@@ -18,9 +18,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 use Ferienpass\CoreBundle\Exception\AmbiguousHolidayTaskException;
+use Ferienpass\CoreBundle\Repository\EditionRepository;
 use Symfony\Component\Serializer\Attribute\Groups;
 
-#[ORM\Entity(repositoryClass: 'Ferienpass\CoreBundle\Repository\EditionRepository')]
+#[ORM\Entity(repositoryClass: EditionRepository::class)]
 class Edition
 {
     #[ORM\Id]

@@ -47,7 +47,7 @@ class MessengerLog
 
     #[ORM\ManyToMany(targetEntity: OfferInterface::class)]
     #[ORM\JoinColumn(name: 'log_id', onDelete: 'CASCADE')]
-    #[ORM\InverseJoinColumn(nullable: true, onDelete: 'SET NULL')]
+    #[ORM\InverseJoinColumn(name: 'offer_id', nullable: true, onDelete: 'SET NULL')]
     #[ORM\JoinTable(name: 'OfferMessengerLog')]
     private Collection $offers;
 
