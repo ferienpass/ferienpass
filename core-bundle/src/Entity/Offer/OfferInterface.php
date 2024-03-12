@@ -62,6 +62,10 @@ interface OfferInterface
 
     public function isPublished(): bool;
 
+    public function requiresApplication(): bool;
+
+    public function isOnlineApplication(): bool;
+
     public function getAttendances(): Collection;
 
     public function addAttendance(Attendance $attendance): void;

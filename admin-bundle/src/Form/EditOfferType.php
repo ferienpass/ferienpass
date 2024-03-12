@@ -66,7 +66,6 @@ class EditOfferType extends AbstractType implements FormSubscriberAwareInterface
         $builder
             ->add('name', null, ['fieldset_group' => 'base', 'width' => '2/3', 'required' => true])
             ->add('description', TextareaType::class, ['fieldset_group' => 'base'])
-//            ->add('parent', EntityType::class, [ 'class' => User::class ])
             ->add('dates', OfferDatesType::class, ['help' => 'Sie können eine zusätzliche Zeit eintragen, wenn die gleiche Gruppe von Kindern an mehreren Terminen erscheinen muss. Wenn Sie das Angebot mehrmals anbieten, verwenden Sie stattdessen die Kopierfunktion auf der Übersichtsseite.', 'fieldset_group' => 'dates'])
             ->add('applicationDeadline', DateType::class, ['help' => 'offers.help.applicationDeadline', 'input_format' => 'd.m.Y', 'widget' => 'single_text', 'fieldset_group' => 'dates', 'width' => '1/3'])
             ->add('minAge', IntegerType::class, ['attr' => ['placeholder' => 'kein Mindestalter'], 'fieldset_group' => 'details', 'width' => '1/3'])

@@ -94,15 +94,6 @@
 
 {% endblock live_collection_button_add_widget %}
 
-
-{% block estimated_expense_widget %}
-    <div class="grid grid-cols-3 gap-4">
-        {% for widget in form.children %}
-            {{ form_row(widget) }}
-        {% endfor %}
-    </div>
-{% endblock estimated_expense_widget %}
-
 {% block postal_address_row %}
 
     {{ form_row(form.street) }}

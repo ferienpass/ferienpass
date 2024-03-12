@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\DependencyInjection\Compiler;
 
+use Ferienpass\AdminBundle\Form\FormSubscriberAwareInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -30,7 +31,7 @@ class FormSubscriberPass implements CompilerPassInterface
                 }
 
                 $formType = $container->findDefinition($attributes['type']);
-                if (!is_subclass_of($formType->getClass(), 'SomeInterface')) {
+                if (!is_subclass_of($formType->getClass(), FormSubscriberAwareInterface::class)) {
                     continue;
                 }
 
