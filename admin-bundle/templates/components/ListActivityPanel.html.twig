@@ -4,12 +4,7 @@
 
     {% if item is not null %}
 
-        {% set templateSuffix = {
-            'Ferienpass\\CoreBundle\\Entity\\Attendance': 'attendance',
-            'Ferienpass\\CoreBundle\\Entity\\Participant': 'participant',
-            'Ferienpass\\CoreBundle\\Entity\\Offer': 'offer'
-        } %}
-        {% set templateSuffix = attribute(templateSuffix, entity) %}
+        {% set templateSuffix = entity|split('\\')|last|lower %}
         {% include "@FerienpassAdmin/components/_list_panel_#{templateSuffix}.html.twig" %}
 
         <!-- New comment form -->

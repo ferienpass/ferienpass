@@ -613,6 +613,7 @@ outbox:
     Ferienpass\CoreBundle\Message\AccountResendActivation: Aktivierungsmail erneut versenden
     Ferienpass\CoreBundle\Message\AccountActivated: Account aktiviert
     Ferienpass\CoreBundle\Message\HostCreated: Veranstalter registriert
+    Ferienpass\CoreBundle\Message\AttendanceCreated: Veranstaltungsanmeldung
 
 accessCodes:
   title: Zugangscodes

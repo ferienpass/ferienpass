@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle;
 
+use Ferienpass\AdminBundle\DependencyInjection\Compiler\FormSubscriberPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class FerienpassAdminBundle extends Bundle
@@ -20,5 +22,10 @@ class FerienpassAdminBundle extends Bundle
     public function getPath(): string
     {
         return \dirname(__DIR__);
+    }
+
+    public function build(ContainerBuilder $container)
+    {
+        $container->addCompilerPass(new FormSubscriberPass());
     }
 }

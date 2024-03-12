@@ -18,9 +18,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ferienpass\CoreBundle\Entity\Attendance;
-use Ferienpass\CoreBundle\Entity\Edition;
 use Ferienpass\CoreBundle\Entity\Host;
-use Ferienpass\CoreBundle\Entity\OfferCategory;
 use Ferienpass\CoreBundle\Entity\OfferDate;
 use Ferienpass\CoreBundle\Entity\OfferLog;
 use Ferienpass\CoreBundle\Entity\OfferMemberAssociation;
@@ -32,15 +30,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\MappedSuperclass]
 class BaseOffer
 {
+    use OfferEditionTrait;
+    use OfferVariantsTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
     #[Groups('docx_export')]
     private ?int $id = null;
-
-    #[ORM\ManyToOne(targetEntity: Edition::class, inversedBy: 'offers')]
-    #[ORM\JoinColumn(name: 'edition', referencedColumnName: 'id')]
-    private ?Edition $edition = null;
 
     #[ORM\Column(type: 'datetime_immutable', options: ['default' => 'CURRENT_TIMESTAMP'])]
     #[Groups(['notification', 'admin_list'])]
@@ -49,9 +46,6 @@ class BaseOffer
     #[ORM\Column(type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
     private \DateTimeInterface $modifiedAt;
 
-    /**
-     * @psalm-var Collection<int, Host>
-     */
     #[ORM\ManyToMany(targetEntity: Host::class, inversedBy: 'offers', cascade: ['persist'])]
     #[ORM\JoinTable(name: 'HostOfferAssociation')]
     #[ORM\JoinColumn(name: 'offer_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
@@ -96,12 +90,6 @@ class BaseOffer
 
     #[ORM\Column(type: 'binary_string', nullable: true)]
     private ?string $downloads = null;
-
-    #[ORM\Column(type: 'string', length: 16, nullable: false, options: ['default' => ''])]
-    private string $label = '';
-
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $aktivPass = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $requiresAgreementLetter = null;
@@ -148,12 +136,6 @@ class BaseOffer
     #[Groups('docx_export')]
     private ?string $applyText = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $calculationNotes = null;
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $datesExport = null;
-
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'contact_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
     #[Groups('docx_export')]
@@ -163,19 +145,9 @@ class BaseOffer
     #[Groups('docx_export')]
     private ?string $bring = null;
 
-    /**
-     * @psalm-var Collection<int, OfferDate>
-     */
     #[ORM\OneToMany(mappedBy: 'offer', targetEntity: OfferDate::class, cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['begin' => 'ASC'])]
     private Collection $dates;
-
-    /**
-     * @psalm-var Collection<int, OfferCategory>
-     */
-    #[ORM\ManyToMany(targetEntity: OfferCategory::class, inversedBy: 'offers')]
-    #[ORM\JoinTable(name: 'OfferCategoryAssociation', joinColumns: new ORM\JoinColumn('offer_id', 'id', onDelete: 'CASCADE'), inverseJoinColumns: new ORM\JoinColumn('category_id', 'id'))]
-    private Collection $categories;
 
     #[ORM\Column(type: 'json', nullable: true)]
     private ?array $accessibility = null;
@@ -183,22 +155,9 @@ class BaseOffer
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $wheelchairAccessible = null;
 
-    /**
-     * @psalm-var Collection<int, BaseOffer>
-     */
-    #[ORM\OneToMany(mappedBy: 'variantBase', targetEntity: OfferInterface::class)]
-    private Collection $variants;
-
-    /**
-     * @psalm-var Collection<int, Attendance>
-     */
     #[ORM\OneToMany(mappedBy: 'offer', targetEntity: Attendance::class, cascade: ['remove'])]
     #[ORM\OrderBy(['status' => 'ASC', 'sorting' => 'ASC'])]
     private Collection $attendances;
-
-    #[ORM\ManyToOne(targetEntity: OfferInterface::class, inversedBy: 'variants')]
-    #[ORM\JoinColumn(name: 'varbase', referencedColumnName: 'id', onDelete: 'SET NULL')]
-    private ?OfferInterface $variantBase = null;
 
     #[ORM\OneToMany(mappedBy: 'offer', targetEntity: OfferLog::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['createdAt' => 'DESC'])]
@@ -211,7 +170,6 @@ class BaseOffer
         $this->hosts = new ArrayCollection();
         $this->dates = new ArrayCollection();
         $this->variants = new ArrayCollection();
-        $this->categories = new ArrayCollection();
         $this->attendances = new ArrayCollection();
         $this->activity = new ArrayCollection();
         $this->state = OfferInterface::STATE_DRAFT;
@@ -232,64 +190,9 @@ class BaseOffer
         $this->dates->removeElement($offerDate);
     }
 
-    /**
-     * @return Collection|OfferDate[]
-     *
-     * @psalm-return Collection<int, OfferDate>
-     */
     public function getDates(): Collection
     {
         return $this->dates;
-    }
-
-    public function isVariantBase(): bool
-    {
-        return null === $this->variantBase;
-    }
-
-    public function isVariant(): bool
-    {
-        return !$this->isVariantBase();
-    }
-
-    public function hasVariants(): bool
-    {
-        return $this->isVariantBase() && \count($this->variants) > 0;
-    }
-
-    /**
-     * @return Collection|BaseOffer[]
-     *
-     * @psalm-return Collection<int, BaseOffer>
-     */
-    public function getVariants(bool $include = false): Collection
-    {
-        if ($this->isVariantBase()) {
-            $variants = $this->variants->filter(fn (OfferInterface $v) => true);
-
-            if ($include) {
-                $variants->add($this);
-            }
-
-            return $variants;
-        }
-
-        $variants = $this->variantBase->getVariants(true);
-        if ($include) {
-            return $variants;
-        }
-
-        return $variants->filter(fn (OfferInterface $v) => $v->getId() !== $this->getId());
-    }
-
-    public function getEdition(): ?Edition
-    {
-        return $this->edition;
-    }
-
-    public function setEdition(?Edition $edition): void
-    {
-        $this->edition = $edition;
     }
 
     public function getHosts(): Collection
@@ -461,113 +364,41 @@ class BaseOffer
         $this->applicationDeadline = $applicationDeadline;
     }
 
-    /**
-     * @return Collection|OfferCategory[]
-     *
-     * @psalm-return Collection<int, OfferCategory>
-     */
-    public function getCategories(): Collection
-    {
-        return $this->categories;
-    }
-
-    /**
-     * @param  Collection|OfferCategory[]
-     *
-     * @psalm-param  Collection<int, OfferCategory>
-     */
-    public function setCategories(Collection $categories): void
-    {
-        $this->categories = $categories;
-    }
-
-    public function addCategory(OfferCategory $category): void
-    {
-        $this->categories->add($category);
-    }
-
-    public function removeCategory(OfferCategory $category): void
-    {
-        $this->categories->removeElement($category);
-    }
-
-    /**
-     * @return Collection|Attendance[]
-     *
-     * @psalm-return Collection<int, Attendance>
-     */
     public function getAttendances(): Collection
     {
         return $this->attendances;
     }
 
-    /**
-     * @return Collection|Attendance[]
-     *
-     * @psalm-return Collection<int, Attendance>
-     */
     public function getAttendancesNotWithdrawn(): Collection
     {
         return $this->getAttendances()->filter(fn (Attendance $attendance) => Attendance::STATUS_WITHDRAWN !== $attendance->getStatus());
     }
 
-    /**
-     * @return Collection|Attendance[]
-     *
-     * @psalm-return Collection<int, Attendance>
-     */
     public function getAttendancesConfirmed(): Collection
     {
         return $this->getAttendancesWithStatus(Attendance::STATUS_CONFIRMED);
     }
 
-    /**
-     * @return Collection|Attendance[]
-     *
-     * @psalm-return Collection<int, Attendance>
-     */
     public function getAttendancesWaiting(): Collection
     {
         return $this->getAttendancesWithStatus(Attendance::STATUS_WAITING);
     }
 
-    /**
-     * @return Collection|Attendance[]
-     *
-     * @psalm-return Collection<int, Attendance>
-     */
     public function getAttendancesWaitlisted(): Collection
     {
         return $this->getAttendancesWithStatus(Attendance::STATUS_WAITLISTED);
     }
 
-    /**
-     * @return Collection|Attendance[]
-     *
-     * @psalm-return Collection<int, Attendance>
-     */
     public function getAttendancesConfirmedOrWaitlisted(): Collection
     {
         return $this->getAttendancesWithStatuses([Attendance::STATUS_CONFIRMED, Attendance::STATUS_WAITLISTED]);
     }
 
-    /**
-     * @return Collection|Attendance[]
-     *
-     * @psalm-return Collection<int, Attendance>
-     */
     public function getAttendancesWithStatus(string $status): Collection
     {
         return $this->getAttendances()->filter(fn (Attendance $attendance) => $status === $attendance->getStatus());
     }
 
-    /**
-     * @param array<string> $status
-     *
-     * @return Collection|Attendance[]
-     *
-     * @psalm-return Collection<int, Attendance>
-     */
     public function getAttendancesWithStatuses(array $status): Collection
     {
         return $this->getAttendances()->filter(fn (Attendance $attendance) => \in_array($attendance->getStatus(), $status, true));
@@ -576,20 +407,6 @@ class BaseOffer
     public function addAttendance(Attendance $attendance): void
     {
         $this->attendances->add($attendance);
-    }
-
-    public function getVariantBase(): ?OfferInterface
-    {
-        return $this->variantBase;
-    }
-
-    public function setVariantBase(?OfferInterface $variantBase): void
-    {
-        if (null !== $variantBase && $variantBase->getVariantBase() && $variantBase->getVariantBase()->getId() !== $variantBase->getId()) {
-            throw new \LogicException('Not allowed to set non-varbase as varbase');
-        }
-
-        $this->variantBase = $variantBase;
     }
 
     public function getBring(): ?string
@@ -622,16 +439,6 @@ class BaseOffer
         $this->state = $state;
     }
 
-    public function isAktivPass(): ?bool
-    {
-        return $this->aktivPass;
-    }
-
-    public function setAktivPass(?bool $aktivPass): void
-    {
-        $this->aktivPass = $aktivPass;
-    }
-
     public function getApplyText(): ?string
     {
         return $this->applyText;
@@ -640,16 +447,6 @@ class BaseOffer
     public function setApplyText(?string $applyText): void
     {
         $this->applyText = $applyText;
-    }
-
-    public function getCalculationNotes(): ?string
-    {
-        return $this->calculationNotes;
-    }
-
-    public function setCalculationNotes(?string $calculationNotes): void
-    {
-        $this->calculationNotes = $calculationNotes;
     }
 
     public function getContactUser(): ?User
@@ -665,11 +462,6 @@ class BaseOffer
     public function getActivity(): Collection
     {
         return $this->activity;
-    }
-
-    public function getDatesExport(): ?string
-    {
-        return $this->datesExport;
     }
 
     #[Groups(['docx_export', 'notification'])]
