@@ -63,7 +63,15 @@ class AddAttendance extends AbstractController
         $dto = $this->getForm()->getData();
         $attendanceFacade->create($dto->getOffer(), $dto->getParticipant(), $dto->getStatus(), $dto->shallNotify());
 
-        return $this->redirectToRoute('admin_participants_attendances', ['id' => $this->participant->getId()]);
+        if (null !== $this->offer) {
+            return $this->redirectToRoute('admin_offer_participants', ['id' => $this->offer->getId()]);
+        }
+
+        if (null !== $this->participant) {
+            return $this->redirectToRoute('admin_participants_attendances', ['id' => $this->participant->getId()]);
+        }
+
+        return $this->redirectToRoute('admin_index');
     }
 
     protected function instantiateForm(): FormInterface

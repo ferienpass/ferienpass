@@ -5,8 +5,8 @@
 
     {{ form_start(form, {
         attr: {
-            'data-action': 'live#action',
-            'data-action-name': 'prevent|submit'
+            'data-action': 'live#action:prevent',
+            'data-live-action-param': 'submit'
         }
     }) }}
 
@@ -28,7 +28,7 @@
     <div class="mt-4 space-y-6">
 
         {% if form.offer is defined %}
-            {{ form_row(form.offer, { attr: { 'data-action': 'change->live#action', 'data-action-name': 'preview'} }) }}
+            {{ form_row(form.offer, { attr: { 'data-action': 'change->live#action', 'data-live-action-param': 'preview'} }) }}
         {% endif %}
 
         {% if dto.offer %}
