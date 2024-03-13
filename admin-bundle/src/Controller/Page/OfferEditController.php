@@ -48,7 +48,7 @@ final class OfferEditController extends AbstractController
     #[Route('/variante/{id}', name: 'admin_offers_new_variant')]
     public function __invoke(?int $id, #[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, EntityManagerInterface $em, Request $request, Breadcrumb $breadcrumb): Response
     {
-        $offer = $this->getOffer($this->offerRepository->find($id), $edition, $request);
+        $offer = $this->getOffer($id, $edition, $request);
 
         $form = $this->createForm(EditOfferType::class, $offer, ['is_variant' => !$offer->isVariantBase()]);
         $form->handleRequest($request);
@@ -80,15 +80,6 @@ final class OfferEditController extends AbstractController
                 }
             }
 
-            //            if ($imgCopyright = $form->get('imgCopyright')->getData()) {
-            //                $fileModel = FilesModel::findByPk($offer->getImage());
-            //                if (null !== $fileModel) {
-            //                    /** @psalm-suppress UndefinedMagicPropertyAssignment */
-            //                    $fileModel->imgCopyright = $imgCopyright;
-            //                    $fileModel->save();
-            //                }
-            //            }
-
             $this->addFlash(...Flash::confirmation()->text('Die Daten wurden erfolgreich gespeichert.')->create());
 
             foreach ($this->offerStateMachine->getEnabledTransitions($offer) as $enabledTransition) {
@@ -114,8 +105,14 @@ final class OfferEditController extends AbstractController
         ]);
     }
 
-    private function getOffer(?OfferInterface $offer, ?Edition $edition, Request $request): OfferInterface
+    private function getOffer(?int $offerId, ?Edition $edition, Request $request): OfferInterface
     {
+        $offer = null;
+        if (null !== $offerId) {
+            /** @var OfferInterface $offer */
+            $offer = $this->offerRepository->find($offerId);
+        }
+
         if ('admin_offers_edit' === $request->get('_route') && null === $offer) {
             throw new PageNotFoundException('Item not found');
         }
