@@ -58,6 +58,7 @@ accounts:
     adminRoles: Die Rollen definieren, auf wie welche Funktionen dieser Account Zugriff hat.
     disabled: Der Account darf sich nicht mehr anmelden.
   deleteModal.headline: Account löschen
+  deleteModal.submit: Account löschen
   deleteModal.confirm: Sind Sie sicher, dass Sie folgenden Nutzer-Account löschen möchten?
 
 
@@ -159,6 +160,7 @@ offers:
   dropzonePlaceholder: Wählen Sie ein Bild aus oder platzieren Sie es hier mittels Drag'n'Drop
   uncompletedOffers: Sie haben Angebote im Entwurfsmodus. Bitte markieren Sie alle Angebote als vollständig, damit sie im Ferienpass berücksichtigt werden können.
   deleteModal.headline: Angebot löschen
+  deleteModal.submit: Angebot löschen
   deleteModal.confirm: Sind Sie sicher, dass Sie folgendes Angebot löschen möchten?
   status.draft: Entwurf
   status.completed: Vom Veranstalter freigegeben
@@ -213,6 +215,7 @@ hosts:
   help:
     alias: Der Alias wird automatisch generiert.
   deleteModal.headline: Veranstalter löschen
+  deleteModal.submit: Veranstalter löschen
   deleteModal.confirm: Sind Sie sicher, dass Sie folgenden Veranstalter löschen möchten?
 
 editions:
@@ -279,6 +282,7 @@ editions:
   edit_edition_tasks_entry_delete: Phase löschen
   edit_edition_tasks_add: Neue Phase definieren
   deleteModal.headline: Saison löschen
+  deleteModal.submit: Saison löschen
   deleteModal.confirm: Sind Sie sicher, dass Sie folgende Saison löschen möchten?
 
 participants:
@@ -327,6 +331,7 @@ participants:
   th.attendances: Anmeldungen
   th.paid: Zahlungen
   deleteModal.headline: Teilnehmer löschen
+  deleteModal.submit: Teilnehmer löschen
   deleteModal.confirm: Sind Sie sicher, dass Sie folgenden Teilnehmer löschen möchten?
 
 payments:
@@ -631,6 +636,7 @@ accessCodes:
   action.edit: Bearbeiten
   action.delete: Löschen
   deleteModal.headline: Zugangscodes löschen
+  deleteModal.submit: Zugangscodes löschen
   deleteModal.confirm: Sind Sie sicher, dass Sie folgenden Zugangscodes löschen möchten?
   edit_access_codes_codes_add: Neuer Code
   edit_access_codes_codes_entry_delete: Code löschen
