@@ -41,8 +41,7 @@ final class PrintSheetProofController extends AbstractController
             throw new PageNotFoundException('No print template');
         }
 
-        $offer = $offerRepository->find($id);
-        if (null === $offer) {
+        if (null === $offer = $offerRepository->find($id)) {
             return new Response('Item not found', Response::HTTP_NOT_FOUND);
         }
 
@@ -57,7 +56,7 @@ final class PrintSheetProofController extends AbstractController
         if ('pdf' === $_format) {
             $response = new BinaryFileResponse($pdfPath);
             $response->headers->add([
-                'X-Frame-Options' => 'SAMEORIGIN',
+                'Content-Security-Policy' => "frame-ancestors 'self'",
                 'Content-Type' => 'application/pdf',
                 'Content-Disposition' => $response->headers->makeDisposition($contentDisposition, $downloadName.'.pdf'),
             ]);

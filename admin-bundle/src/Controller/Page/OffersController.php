@@ -79,8 +79,12 @@ final class OffersController extends AbstractController
     }
 
     #[Route('/{id}', name: 'admin_offer_proof', requirements: ['id' => '\d+'])]
-    public function show(OfferInterface $offer, PdfExports $pdfExports, Breadcrumb $breadcrumb): Response
+    public function show(int $id, OfferRepositoryInterface $repository, PdfExports $pdfExports, Breadcrumb $breadcrumb): Response
     {
+        if (null === $offer = $repository->find($id)) {
+            throw $this->createNotFoundException();
+        }
+
         $this->denyAccessUnlessGranted('view', $offer);
 
         return $this->render('@FerienpassAdmin/page/offers/proof.html.twig', [
