@@ -15,6 +15,7 @@ namespace Ferienpass\CmsBundle\Controller\Frontend;
 
 use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\CoreBundle\Exception\PageNotFoundException;
+use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
 use Ferienpass\CoreBundle\Repository\OfferRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,6 +26,7 @@ class RedirectShortUrlController extends AbstractController
 {
     public function __invoke(int $id, OfferRepositoryInterface $repository)
     {
+        /** @var OfferInterface $offer */
         $offer = $repository->find($id);
         if (null === $offer) {
             throw new PageNotFoundException();
