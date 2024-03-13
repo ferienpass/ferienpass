@@ -27,8 +27,8 @@
 {% set formAttr = {} %}
 {% if useLiveActionSubmit|default(false) %}
     {% set formAttr = formAttr|merge({
-        'data-action': 'live#action',
-        'data-action-name': 'prevent|save'
+        'data-action': 'live#action:prevent',
+        'data-live-action-param': 'save'
     }) %}
 {% endif %}
 

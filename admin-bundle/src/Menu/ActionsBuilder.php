@@ -169,7 +169,7 @@ class ActionsBuilder
         $root->addChild('delete', [
             'label' => 'accounts.action.delete',
             'display' => $this->isGranted('delete', $item),
-            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
+            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-live-event-param' => 'delete', 'data-live-id-param' => $item->getId(), 'data-live-class-param' => $class]],
         ]);
     }
 
@@ -205,7 +205,7 @@ class ActionsBuilder
         $root->addChild('delete', [
             'label' => 'participants.action.delete',
             'display' => $this->isGranted('delete', $item),
-            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
+            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-live-event-param' => 'delete', 'data-live-id-param' => $item->getId(), 'data-live-class-param' => $class]],
         ]);
 
         /** @var Payment $payment */
@@ -241,7 +241,7 @@ class ActionsBuilder
         $root->addChild('delete', [
             'label' => 'hosts.action.delete',
             'display' => $this->isGranted('delete', $item),
-            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
+            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-live-event-param' => 'delete', 'data-live-id-param' => $item->getId(), 'data-live-class-param' => $class]],
         ]);
     }
 
@@ -267,7 +267,7 @@ class ActionsBuilder
         $root->addChild('delete', [
             'label' => 'editions.action.delete',
             'display' => $this->isGranted('delete', $item),
-            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
+            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-live-event-param' => 'delete', 'data-live-id-param' => $item->getId(), 'data-live-class-param' => $class]],
         ]);
     }
 
@@ -285,7 +285,7 @@ class ActionsBuilder
         $root->addChild('delete', [
             'label' => 'accessCodes.action.delete',
             // 'display' => $this->isGranted('delete', $item),
-            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
+            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-live-event-param' => 'delete', 'data-live-id-param' => $item->getId(), 'data-live-class-param' => $class]],
         ]);
     }
 
@@ -332,7 +332,7 @@ class ActionsBuilder
         $root->addChild('delete', [
             'label' => 'accounts.action.delete',
             'display' => $this->isGranted('delete', $item),
-            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-event' => "delete(id={$item->getId()}, class=$class)"]],
+            'extras' => ['icon' => 'trash-solid', 'attr' => ['data-action' => 'live#emit', 'data-live-event-param' => 'delete', 'data-live-id-param' => $item->getId(), 'data-live-class-param' => $class]],
         ]);
     }
 
