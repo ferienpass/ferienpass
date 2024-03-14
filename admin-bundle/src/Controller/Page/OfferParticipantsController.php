@@ -86,7 +86,7 @@ final class OfferParticipantsController extends AbstractController
                 $flash->addConfirmation(text: 'Den Teilnehmer:innen wurde abgesagt.');
             }
 
-            return $this->redirectToRoute('admin_offer_participants');
+            return $this->redirectToRoute('admin_offer_participants', ['id' => $offer->getId(), 'edition' => $offer->getEdition()?->getAlias()]);
         }
 
         return $this->render('@FerienpassAdmin/page/offers/participant_list.html.twig', [
