@@ -20,23 +20,11 @@
             <p class="mt-2 text-xs leading-4 text-gray-500">{{ ('statusDescription.'~status)|trans }}</p>
         </div>
         {% if max is not null %}
-            <div class="px-4 border-b border-t -mt-px py-2 sm:px-6"
-                    {#                    {% if max is not null %} #}
-                    {#                        :class="{ 'bg-yellow-50 border-orange-200': count > {{ max }}, 'bg-gray-50 border-gray-200': count <= {{ max }} }" #}
-                    {#                    {% else %} #}
-                    {#                        :class="{ 'bg-gray-50 border-gray-200': true }" #}
-                    {#                    {% endif %} #}
-            >
-                <p class="leading-5"
-                        {#                        {% if max is not null %} #}
-                        {#                            :class="{ 'text-orange-700': count > {{ max }}, 'text-gray-700': count <= {{ max }} }" #}
-                        {#                        {% else %} #}
-                        {#                            :class="{ 'text-gray-700': true }" #}
-                        {#                        {% endif %} #}
+            <div class="px-4 border-b border-t -mt-px py-2 sm:px-6 {% if max is not null and attendances|length > max %}bg-yellow-50 border-orange-200{% else %}bg-gray-50 border-gray-200{% endif %}">
+                <p class="leading-5 {% if max is not null and attendances|length > max %}text-orange-700{% else %}text-gray-700{% endif %}"
                 >
-                    <span class="ml-auto inline-block py-0.5 px-3 mr-1 -ml-2 text-xs leading-4 rounded-full font-medium"
-                            {#                          :class="{ 'bg-yellow-200 text-orange-700': count > {{ max }}, 'bg-gray-200 text-gray-600': count <= {{ max }} }" #}
-                    >0</span>von {% if max %}{{ max }} Kindern{% else %}∞{% endif %}
+                    <span class="ml-auto inline-block py-0.5 px-3 mr-1 -ml-2 text-xs leading-4 rounded-full font-medium {% if attendances|length > max %}bg-yellow-200 text-orange-700{% else %} bg-gray-200 text-gray-600{% endif %}"
+                    >{{ attendances|length }}</span>von {% if max %}{{ max }} Kindern{% else %}∞{% endif %}
                 </p>
             </div>
         {% endif %}
@@ -86,7 +74,7 @@
                                     {% endif %}
                                 </div>
                                 {% set firstDate = attendance.offer.dates|first %}
-                                <p class="text-gray-500 text-sm mb-1">{{ attendance.participant ? attendance.participant.age(firstDate ? firstDate.begin : null) : attendance.age ~ ' Jahre' }}</p>
+                                <p class="text-gray-500 text-sm mb-1">{{ attendance.participant ? attendance.participant.age(firstDate ? firstDate.begin : null) : attendance.age }} Jahre</p>
                                 <p class="text-gray-500 text-xs flex items-center">
                                     <span>{{ 'enrolledBefore'|trans({days: date(attendance.createdAt).diff(date()).days}) }}</span>
                                 </p>
