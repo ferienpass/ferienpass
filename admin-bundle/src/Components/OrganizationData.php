@@ -19,6 +19,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Message\HostInvite;
 use Ferienpass\AdminBundle\Service\FileUploader;
 use Ferienpass\CoreBundle\Entity\Host;
+use Ferienpass\CoreBundle\Entity\User;
 use Ferienpass\CoreBundle\Session\Flash;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -111,6 +112,7 @@ final class OrganizationData extends AbstractController
     {
         $this->validate();
 
+        /** @var User $user */
         $user = $this->getUser();
         $messageBus->dispatch(new HostInvite($this->inviteeEmail, $this->host->getId(), $user->getId()));
 

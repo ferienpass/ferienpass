@@ -15,13 +15,13 @@ namespace Ferienpass\AdminBundle\Message;
 
 class HostInvite
 {
-    public function __construct(private readonly string $email, private readonly int $hostId, private readonly int $userId)
+    public function __construct(private readonly string $inviteeEmail, private readonly int $hostId, private readonly int $userId)
     {
     }
 
-    public function getEmail(): string
+    public function getInviteeEmail(): string
     {
-        return $this->email;
+        return $this->inviteeEmail;
     }
 
     public function getHostId(): int

@@ -41,14 +41,14 @@ class WhenHostInviteThenNotify
             return;
         }
 
-        $notification = $this->notifier->userInvitation($user, $host, $message->getEmail());
+        $notification = $this->notifier->userInvitation($user, $host, $message->getInviteeEmail());
         if (null === $notification) {
             return;
         }
 
         $this->notifier->send(
-            $notification->actionUrl($this->uriSigner->sign($this->urlGenerator->generate('admin_invitation', ['email' => $message->getEmail(), 'host' => $host->getAlias()], UrlGeneratorInterface::ABSOLUTE_URL))),
-            new Recipient($message->getEmail())
+            $notification->actionUrl($this->uriSigner->sign($this->urlGenerator->generate('admin_invitation', ['email' => $message->getInviteeEmail(), 'host' => $host->getAlias()], UrlGeneratorInterface::ABSOLUTE_URL))),
+            new Recipient($message->getInviteeEmail())
         );
     }
 }
