@@ -69,19 +69,25 @@ final class OfferParticipantsController extends AbstractController
 
         $ms->handleRequest($request);
         if ($ms->isSubmitted() && $ms->isValid()) {
-            $action = $ms->getClickedButton()->getName();
-            $this->denyAccessUnlessGranted(sprintf('participants.%s', substr($action, 0, 6)), $offer);
+            $action = match ($ms->getClickedButton()->getName()) {
+                'confirm', 'confirmAndInform' => 'confirm',
+                'reject', 'rejectAndInform' => 'reject',
+                default => throw new \InvalidArgumentException('Button not found'),
+            };
 
+            $this->denyAccessUnlessGranted("participants.$action", $offer);
+
+            $notify = \in_array($ms->getClickedButton()->getName(), ['confirmAndInform', 'rejectAndInform'], true);
             $selectedParticipants = $ms->get('items')->getData()->toArray();
 
-            if ('confirm' === $action || 'confirmAndInform' === $action) {
-                $this->participantList->confirm($selectedParticipants, reorder: false, notify: 'confirmAndInform' === $action);
+            if ('confirm' === $action) {
+                $this->participantList->confirm($selectedParticipants, reorder: false, notify: $notify);
 
                 $flash->addConfirmation(text: 'Den Teilnehmer:innen wurde zugesagt.');
             }
 
-            if ('reject' === $action || 'rejectAndInform' === $action) {
-                $this->participantList->reject($selectedParticipants, reorder: false, notify: 'rejectAndInform' === $action);
+            if ('reject' === $action) {
+                $this->participantList->reject($selectedParticipants, reorder: false, notify: $notify);
 
                 $flash->addConfirmation(text: 'Den Teilnehmer:innen wurde abgesagt.');
             }
