@@ -74,9 +74,10 @@ class OfferAssignController extends AbstractController
             $session->set('admin--auto-assign', $autoAssign);
         }
 
+        /** @noinspection FormViewTemplate `createView()` messes ups error handling/redirect */
         return $this->render('@FerienpassAdmin/page/offers/assign.html.twig', [
             'offer' => $offer,
-            'toggleMode' => $toggleMode->createView(),
+            'toggleMode' => $toggleMode,
             'emails' => array_unique(array_filter([])),
             'hasWordExport' => $this->wordExport->hasTemplate(),
             'breadcrumb' => $breadcrumb->generate(['offers.title', ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], [$offer->getEdition()->getName(), ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], $offer->getName(), 'Anmeldungen'),

@@ -91,9 +91,10 @@ final class HostsController extends AbstractController
 
         $breadcrumbTitle = $host ? $host->getName().' (bearbeiten)' : 'hosts.new';
 
+        /** @noinspection FormViewTemplate `createView()` messes ups error handling/redirect */
         return $this->render('@FerienpassAdmin/page/hosts/edit.html.twig', [
             'item' => $host,
-            'form' => $form->createView(),
+            'form' => $form,
             'breadcrumb' => $breadcrumb->generate(['hosts.title', ['route' => 'admin_hosts_index']], $breadcrumbTitle),
         ]);
     }

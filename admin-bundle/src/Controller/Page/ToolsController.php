@@ -157,9 +157,10 @@ final class ToolsController extends AbstractController
 
         $breadcrumbTitle = $accessCodeStrategy ? $accessCodeStrategy->getName().' (bearbeiten)' : 'accessCodes.new';
 
+        /** @noinspection FormViewTemplate `createView()` messes ups error handling/redirect */
         return $this->render('@FerienpassAdmin/page/tools/access_codes_edit.html.twig', [
             'item' => $accessCodeStrategy,
-            'form' => $form->createView(),
+            'form' => $form,
             'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], 'settings.title', 'accessCodes.title', $breadcrumbTitle),
         ]);
     }

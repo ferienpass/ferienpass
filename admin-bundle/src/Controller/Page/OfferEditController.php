@@ -98,9 +98,10 @@ final class OfferEditController extends AbstractController
             return $this->redirectToRoute('admin_offers_edit', array_filter(['id' => $offer->getId(), 'edition' => $offer->getEdition()?->getAlias()]));
         }
 
+        /** @noinspection FormViewTemplate `createView()` messes ups error handling/redirect */
         return $this->render('@FerienpassAdmin/page/offers/edit.html.twig', [
             'item' => $offer,
-            'form' => $form->createView(),
+            'form' => $form,
             'breadcrumb' => $breadcrumb->generate(['offers.title', ['route' => 'admin_offers_index', 'routeParameters' => array_filter(['edition' => $offer->getEdition()?->getAlias()])]], $offer->getEdition() ? [$offer->getEdition()->getName(), ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]] : [], $offer->getName().' (bearbeiten)'),
         ]);
     }

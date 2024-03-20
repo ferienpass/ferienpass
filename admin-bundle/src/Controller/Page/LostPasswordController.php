@@ -54,8 +54,9 @@ final class LostPasswordController extends AbstractController
             return $this->redirectToRoute('admin_lost_password_check_email');
         }
 
+        /** @noinspection FormViewTemplate `createView()` messes ups error handling/redirect */
         return $this->render('@FerienpassAdmin/page/reset_password/request.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
@@ -130,8 +131,9 @@ final class LostPasswordController extends AbstractController
             return $this->redirectToRoute('admin_index');
         }
 
+        /** @noinspection FormViewTemplate `createView()` messes ups error handling/redirect */
         return $this->render('@FerienpassAdmin/page/reset_password/reset.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 }

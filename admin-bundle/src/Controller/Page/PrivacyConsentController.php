@@ -77,11 +77,12 @@ class PrivacyConsentController extends AbstractController
             }
         }
 
+        /** @noinspection FormViewTemplate `createView()` messes ups error handling/redirect */
         return $this->render('@FerienpassAdmin/fragment/privacy_consent.html.twig', [
             'signed' => $isSigned,
             'error' => $error ?? null,
             'statement' => $this->consentState->getFormattedConsentText(),
-            'form' => null !== $form ? $form->createView() : null,
+            'form' => $form,
         ]);
     }
 

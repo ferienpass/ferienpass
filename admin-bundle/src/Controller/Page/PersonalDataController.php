@@ -40,9 +40,10 @@ final class PersonalDataController extends AbstractController
             return $this->redirectToRoute('admin_user_index');
         }
 
+        /** @noinspection FormViewTemplate `createView()` messes ups error handling/redirect */
         return $this->render('@FerienpassAdmin/page/user/index.html.twig', [
             'headline' => 'user.title',
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 }

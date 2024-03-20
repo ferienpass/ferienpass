@@ -131,10 +131,11 @@ final class AccountsController extends AbstractController
 
         $breadcrumbTitle = $user->getId() ? sprintf('%s (bearbeiten)', $user->getName()) : 'accounts.new';
 
+        /** @noinspection FormViewTemplate `createView()` messes ups error handling/redirect */
         return $this->render('@FerienpassAdmin/page/accounts/edit.html.twig', [
             'item' => $user,
             'headline' => $user->getId() ? $user->getName() : 'accounts.new',
-            'form' => $form->createView(),
+            'form' => $form,
             'breadcrumb' => $breadcrumb->generate(['accounts.title', ['route' => 'admin_accounts_index', 'routeParameters' => ['role' => $role]]], ['accounts.'.self::ROLES[$role], ['route' => 'admin_accounts_index', 'routeParameters' => ['role' => $role]]], $breadcrumbTitle),
         ]);
     }

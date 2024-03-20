@@ -50,9 +50,10 @@ final class ChangePasswordController extends AbstractController
             $flash->addConfirmation(text: new TranslatableMessage('MSC.newPasswordSet', [], 'contao_default'));
         }
 
+        /** @noinspection FormViewTemplate `createView()` messes ups error handling/redirect */
         return $this->render('@FerienpassAdmin/page/user/change_password.html.twig', [
             'headline' => 'user.password.title',
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 }

@@ -89,9 +89,10 @@ final class ParticipantsController extends AbstractController
 
         $breadcrumbTitle = $participant ? $participant->getName().' (bearbeiten)' : 'participants.new';
 
+        /** @noinspection FormViewTemplate `createView()` messes ups error handling/redirect */
         return $this->render('@FerienpassAdmin/page/participants/edit.html.twig', [
             'item' => $participant,
-            'form' => $form->createView(),
+            'form' => $form,
             'breadcrumb' => $breadcrumb->generate(['participants.title', ['route' => 'admin_participants_index']], $breadcrumbTitle),
         ]);
     }
@@ -150,8 +151,9 @@ final class ParticipantsController extends AbstractController
             return $this->redirectToRoute('admin_payments_receipt', ['id' => $payment->getId()]);
         }
 
+        /** @noinspection FormViewTemplate `createView()` messes ups error handling/redirect */
         return $this->render('@FerienpassAdmin/page/participants/settle.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'payment' => $draftPayment,
             'breadcrumb' => $breadcrumb->generate(['participants.title', ['route' => 'admin_participants_index']], 'Anmeldungen abrechnen'),
         ]);

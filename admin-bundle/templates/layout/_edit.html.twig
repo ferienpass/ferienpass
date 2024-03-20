@@ -34,7 +34,17 @@
 
 {{ form_start(form, { attr: formAttr }) }}
 
-        {{ form_errors(form) }}
+          {% if not form.vars.valid %}
+
+              <twig:Admin:Alert type="error" class="mt-4">
+
+                  <strong class="font-semibold">Bitte beheben Sie die Fehler im Formular.</strong>
+
+                  {{ form_errors(form) }}
+
+              </twig:Admin:Alert>
+
+          {% endif %}
 
         {% set fieldsets = form.children|map(
             f => f.vars['fieldset_group'] is defined ? "#{f.vars['fieldset_group']}" : null)|reduce(

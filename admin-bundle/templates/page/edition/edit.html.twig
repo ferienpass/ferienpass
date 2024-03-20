@@ -11,10 +11,7 @@
 
         {{ partials.h1(headline|default(item.name|default("#{translationPrefix}.new"))|trans) }}
 
-        {{ component('Admin:EditEditionForm', {
-            initialFormData: item,
-            form: form
-        }) }}
+        <twig:Admin:EditEditionForm initialFormData="{{ item }}" form="{{ form }}"/>
 
     </div>
 

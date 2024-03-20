@@ -115,8 +115,9 @@ final class NotificationsController extends AbstractController
         $mockNotification = $notifier->createMock($type, $entity->getEmailSubject() ?? '', $entity->getEmailText() ?? '');
         $mockEmail = $mockNotification instanceof EmailNotificationInterface ? $mockNotification->asEmailMessage(new Recipient('example@example.org')) : null;
 
+        /** @noinspection FormViewTemplate `createView()` messes ups error handling/redirect */
         return $this->render('@FerienpassAdmin/page/notifications/index.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'edition' => $edition,
             'editions' => $editions,
             'canEditEditions' => is_subclass_of($notificationClass, EditionAwareNotificationInterface::class),

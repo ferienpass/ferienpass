@@ -51,9 +51,10 @@ final class EditionsEditController extends AbstractController
 
         $breadcrumbTitle = $edition ? $edition->getName().' (bearbeiten)' : 'editions.new';
 
+        /** @noinspection FormViewTemplate `createView()` messes ups error handling/redirect */
         return $this->render('@FerienpassAdmin/page/edition/edit.html.twig', [
             'item' => $edition,
-            'form' => $form->createView(),
+            'form' => $form,
             'breadcrumb' => $breadcrumb->generate(['tools.title', ['route' => 'admin_tools']], ['editions.title', ['route' => 'admin_editions_index']], $breadcrumbTitle),
         ]);
     }

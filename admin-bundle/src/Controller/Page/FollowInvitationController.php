@@ -71,9 +71,10 @@ final class FollowInvitationController extends AbstractController
             return $this->redirectToRoute('admin_index');
         }
 
+        /** @noinspection FormViewTemplate `createView()` messes ups error handling/redirect */
         return $this->render('@FerienpassAdmin/page/login/follow_invitation.html.twig', [
             'host' => $host,
-            'form' => $form->createView(),
+            'form' => $form,
             'invitee_email' => $email,
         ]);
     }

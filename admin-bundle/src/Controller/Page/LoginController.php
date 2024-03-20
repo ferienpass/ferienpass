@@ -32,9 +32,10 @@ final class LoginController extends AbstractController
     {
         $form = $this->createForm(UserLoginType::class, null, ['target_path' => base64_encode($this->targetPath($request))]);
 
+        /** @noinspection FormViewTemplate `createView()` messes ups error handling/redirect */
         return $this->render('@FerienpassAdmin/page/login/index.html.twig', [
             'error' => $authenticationUtils->getLastAuthenticationError(),
-            'login' => $form->createView(),
+            'login' => $form,
         ]);
     }
 

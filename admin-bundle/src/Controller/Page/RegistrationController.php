@@ -62,8 +62,9 @@ final class RegistrationController extends AbstractController
             return $this->redirectToRoute('admin_registration');
         }
 
+        /** @noinspection FormViewTemplate `createView()` messes ups error handling/redirect */
         return $this->render('@FerienpassAdmin/page/login/registration.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 }
