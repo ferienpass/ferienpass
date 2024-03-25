@@ -63,7 +63,7 @@ class SendDecisions extends AbstractController
     #[ExposeInTemplate]
     public function attendances(): array
     {
-        if (null === $this->edition) {
+        if (null === $this->edition || null === $this->edition->getId()) {
             return [];
         }
 

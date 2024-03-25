@@ -37,15 +37,14 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[IsGranted('ROLE_ADMIN')]
-#[Route('/benachrichtigungen')]
 final class NotificationsController extends AbstractController
 {
     public function __construct(private readonly TranslatorInterface $translator, private readonly NormalizerInterface $normalizer)
     {
     }
 
-    #[Route('/{type?}/{edition?}', name: 'admin_notifications')]
-    #[Route('/{type?}/neu', name: 'admin_notifications_new', priority: 2)]
+    #[Route('/benachrichtigungen/{type?}/{edition?}', name: 'admin_notifications')]
+    #[Route('/benachrichtigungen/{type?}/neu', name: 'admin_notifications_new', priority: 2)]
     public function index(?string $type, #[MapEntity(mapping: ['edition' => 'alias'])] ?Edition $edition, Request $request, Notifier $notifier, NotificationRepository $repository, Breadcrumb $breadcrumb, EntityManagerInterface $em, Flash $flash): Response
     {
         if (null === $type) {
@@ -129,7 +128,7 @@ final class NotificationsController extends AbstractController
         ]);
     }
 
-    #[Route('/zulassungsbescheide', name: 'admin_send_decisions', priority: 2)]
+    #[Route('/zulassungsbescheide', name: 'admin_send_decisions')]
     public function sendDecisions(Breadcrumb $breadcrumb)
     {
         return $this->render('@FerienpassAdmin/page/notifications/send_decisions.html.twig', [
