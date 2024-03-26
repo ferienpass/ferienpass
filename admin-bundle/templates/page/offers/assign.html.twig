@@ -348,15 +348,21 @@
 
         {% if autoAssign %}
             <div class="mb-10">
-                <twig:Admin:Alert type="warning" class="shadow border border-yellow-400/50">
+                <twig:Admin:Alert type="warning" class="shadow border border-yellow-700/30">
                     <strong>Automatischer Modus ist aktiviert!</strong> Alle Teilnehmer:innen, die Sie zu- oder absagen
                     erhalten eine E-Mail! Nachrücken ist aktiviert. Wenn Sie das nicht wollen, beenden Sie den
                     automatischen Modus.
                 </twig:Admin:Alert>
             </div>
+        {% else %}
+            <div class="mb-10">
+                <twig:Admin:Alert type="info" class="shadow border border-blue-700/30">
+                    <strong class="font-medium">Es werden keine Benachrichtigungen versendet.</strong> Nutzen Sie im Anschluss die Funktion »<a class="underline hover:no-underline" href="{{ path('admin_send_decisions') }}">Zulassungsbescheide versenden</a>«.
+                </twig:Admin:Alert>
+            </div>
         {% endif %}
 
-        <twig:Admin:OfferAssign offer="{{ offer }}" autoAssign="{{ autoAssign }}" />
+        <twig:Admin:OfferAssign offer="{{ offer }}" autoAssign="{{ autoAssign }}"/>
 
     </div>
 

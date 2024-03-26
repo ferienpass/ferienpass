@@ -20,7 +20,7 @@
 
     {% if edition is null or edition.id is null %}
 
-        <twig:Admin:Alert class="mt-10" type="info"
+        <twig:Admin:Alert class="mt-10 shadow border border-blue-700/30" type="info"
                           message="Bitte wählen Sie eine Saision aus, für die Sie die Zulassungsbescheide versenden wollen."/>
 
     {% else %}
@@ -29,6 +29,7 @@
 
             {% if attendances is empty %}
                 <twig:Admin:Alert type="confirm"
+                                  class="shadow border border-green-700/30"
                                   message="Alle Teilnehmer:innen wurden bereits über Ihre Teilnahme informiert. Das ist sehr gut!"/>
 
             {% else %}
