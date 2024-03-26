@@ -12,17 +12,11 @@
 
     {% set dto = form.vars.data %}
 
-    {% if dto.participant %}
+    {{ partials.h2('Neue Anmeldung') }}
 
-        {{ partials.h2('Neue Anmeldung') }}
-        {% if dto.participant %}
-            <p class="text-base leading-6 text-gray-500">{{ dto.participant.name }} ({{ dto.participant.age }}
-                Jahre)</p>
-        {% endif %}
-        {% if dto.offer %}
-            <p class="text-base leading-6 text-gray-500">{{ dto.offer.name }} ({{ "##{dto.offer.id}" }})</p>
-        {% endif %}
-
+    {% if participant is not null %}
+        <p class="text-base leading-6 text-gray-500">{{ participant.name }} ({{ participant.age }}
+            Jahre)</p>
     {% endif %}
 
     <div class="mt-4 space-y-6">
@@ -33,7 +27,8 @@
 
         {% if dto.offer %}
             <div>
-                <h4 class="truncate text-gray-900 font-medium leading-5">{{ dto.offer.name }}</h4>
+                <h4 class="truncate text-gray-900 font-medium leading-5">{{ dto.offer.name }} ({{ "##{dto.offer.id}" }}
+                    )</h4>
                 <p class="text-sm text-gray-500 leading-3">{{ dto.offer.hosts|map(h => h.name)|join(', ') }}</p>
                 <p class="mt-3 text-sm text-gray-900 font-medium leading-3">
 
@@ -65,7 +60,53 @@
         {% endif %}
 
         {% if form.participant is defined %}
-            {{ form_row(form.participant) }}
+            {% if isNewParticipant %}
+                <div class="grid grid-cols-3 gap-6">
+                    <div>
+                        {{ form_row(form.participant.firstname) }}
+                    </div>
+                    <div>
+                        {{ form_row(form.participant.lastname) }}
+                    </div>
+                    <div class="col-start-1">
+                        {{ form_row(form.participant.dateOfBirth) }}
+                    </div>
+                    <div>
+                        {{ form_row(form.participant.user) }}
+                    </div>
+                    <div class="col-start-1">
+                        {{ form_row(form.participant.ownEmail) }}
+                    </div>
+                    <div>
+                        {{ form_row(form.participant.ownMobile) }}
+                    </div>
+                    <div>
+                        {{ form_row(form.participant.ownPhone) }}
+                    </div>
+                    {{ form_rest(form.participant) }}
+                </div>
+            {% else %}
+                {{ form_row(form.participant) }}
+            {% endif %}
+        {% endif %}
+
+        {% if not isNewParticipant and participant is null and dto.participant is null %}
+            <button type="button"
+                    data-action="live#action"
+                    data-live-action-param="newParticipant"
+                    class="rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                Neuen Teilnehmer anlegen
+            </button>
+        {% endif %}
+
+        {% if dto.participant %}
+            <div>
+                <h4 class="truncate text-gray-900 font-medium leading-5">{{ dto.participant.name }}
+                    ({{ "#{dto.participant.age} Jahre" }})</h4>
+                {% if dto.participant.user is not null %}
+                    <p class="text-sm text-gray-500 leading-3">{{ dto.participant.user.name }}</p>
+                {% endif %}
+            </div>
         {% endif %}
 
         {% if dto.participant and dto.offer and dto.offer.dates is not empty %}
@@ -86,6 +127,10 @@
         {# TODO add warning overlapping offer, see @{ApplyForm_overlappingOffer} #}
 
         {{ form_row(form.status) }}
+
+        {{ form_row(form.notify) }}
+
+        {{ form_row(form.submit) }}
 
     </div>
 

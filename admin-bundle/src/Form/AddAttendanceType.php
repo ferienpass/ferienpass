@@ -39,6 +39,8 @@ class AddAttendanceType extends AbstractType
         $resolver->setDefault('add_participant', false);
         $resolver->setDefined('add_offer');
         $resolver->setDefault('add_offer', false);
+        $resolver->setDefined('new_participant');
+        $resolver->setDefault('new_participant', false);
 
         $resolver->setDefaults([
             'data_class' => AddAttendanceDto::class,
@@ -58,17 +60,27 @@ class AddAttendanceType extends AbstractType
                     ->andWhere('o.onlineApplication = 1')
                     ->orderBy('o.name'),
                 'choice_label' => 'name',
+                'autocomplete' => true,
                 'placeholder' => '-',
             ]);
         }
 
-        if ($options['add_participant']) {
+        if ($options['add_participant'] && !$options['new_participant']) {
             $builder->add('participant', EntityType::class, [
                 'class' => Participant::class,
                 'query_builder' => fn (EntityRepository $er) => $er->createQueryBuilder('p')
                     ->orderBy('p.lastname'),
                 'choice_label' => 'name',
+                'autocomplete' => true,
                 'placeholder' => '-',
+            ]);
+        }
+
+        if ($options['new_participant']) {
+            $builder->add('participant', EditParticipantType::class, [
+                'label' => false,
+                'show_submit' => false,
+                'error_bubbling' => true,
             ]);
         }
 

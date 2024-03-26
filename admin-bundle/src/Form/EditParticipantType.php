@@ -30,11 +30,14 @@ class EditParticipantType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver): void
     {
+        $resolver->setDefined('show_submit');
+
         $resolver->setDefaults([
             'data_class' => Participant::class,
             'label_format' => 'participants.label.%name%',
             'translation_domain' => 'admin',
             'required' => false,
+            'show_submit' => true,
         ]);
     }
 
@@ -60,9 +63,12 @@ class EditParticipantType extends AbstractType
             ->add('ownMobile', null, ['fieldset_group' => 'contact', 'width' => '1/2', 'help' => 'participants.help.mobile'])
             ->add('ownPhone', null, ['fieldset_group' => 'contact', 'width' => '1/2'])
             ->add('discounted', CheckboxType::class, ['fieldset_group' => 'allowance', 'help' => 'participants.help.discounted'])
-            ->add('submit', SubmitType::class, [
-                'label' => 'Daten speichern',
-            ])
         ;
+
+        if ($options['show_submit']) {
+            $builder->add('submit', SubmitType::class, [
+                'label' => 'Daten speichern',
+            ]);
+        }
     }
 }

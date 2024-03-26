@@ -97,8 +97,8 @@
 
 {% else %}
 
-    <div class="py-6">
-    {% include '@FerienpassAdmin/components/alert/info.html.twig' with {'message': "#{translationPrefix}.#{action}.empty"|trans } %}
-    </div>
+    <twig:Admin:Alert type="info"
+                      class="mt-6 shadow border border-blue-700/30"
+                      message="{{ "#{translationPrefix}.#{action}.empty"|trans }}"/>
 
 {% endif %}

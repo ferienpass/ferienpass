@@ -4,7 +4,9 @@
 
     {% if not is_granted('ROLE_ADMIN') and offerOptions is empty %}
 
-        <twig:Admin:Alert type="error" message="Bitte rufen Sie die Rundmail-Funktion direkt über das Angebot auf."/>
+        <twig:Admin:Alert type="error"
+                          class="shadow border border-red-700/30"
+                          message="Bitte rufen Sie die Rundmail-Funktion direkt über das Angebot auf."/>
 
     {% else %}
 
@@ -304,7 +306,7 @@
                                           class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                           placeholder="E-Mail verfassen..."></textarea>
                                     </div>
-                                        <p class="mt-1 text-gray-500 text-sm">Markdown wird unterstützt.</p>
+                                    <p class="mt-1 text-gray-500 text-sm">Markdown wird unterstützt.</p>
                                 </div>
                                 <div x-show="preview"
                                      id="tabs-1-panel-2"
@@ -313,16 +315,17 @@
                                      role="tabpanel"
                                      tabindex="0">
                                     <div class="border-b">
-                                        <div class="mx-px mt-px px-3 pb-12 pt-2 text-sm leading-5 text-gray-800">
-                                            {% if preview == false %}
-                                                <twig:Admin:Alert type="error"
-                                                                  message="Es gibt einen Fehler mit dem E-Mail-Text. Die E-Mail kann so nicht versendet werden."/>
-                                            {% else %}
+                                        {% if preview == false %}
+                                            <twig:Admin:Alert type="error"
+                                                              class="mt-2 shadow border border-red-700/30"
+                                                              message="Es gibt einen Fehler mit dem E-Mail-Text. Die E-Mail kann so nicht versendet werden."/>
+                                        {% else %}
+                                            <div class="mx-px mt-px px-3 pb-12 pt-2 text-sm leading-5 text-gray-800">
                                                 <div class="prose prose-sm">
                                                     {{ preview|raw }}
                                                 </div>
-                                            {% endif %}
-                                        </div>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -340,7 +343,9 @@
 
                 {% else %}
 
-                    <twig:Admin:Alert class="mt-6" type="info" message="mailing.noRecipients"/>
+                    <twig:Admin:Alert type="info"
+                                      class="mt-6 shadow border border-blue-700/30"
+                                      message="mailing.noRecipients"/>
 
                 {% endif %}
 

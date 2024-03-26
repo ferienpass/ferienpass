@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ferienpass\AdminBundle\Components;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Ferienpass\AdminBundle\Dto\AddAttendanceDto;
 use Ferienpass\AdminBundle\Form\AddAttendanceType;
 use Ferienpass\CoreBundle\Entity\Offer\OfferInterface;
@@ -35,33 +36,53 @@ class AddAttendance extends AbstractController
 
     #[LiveProp]
     public OfferInterface|null $offer = null;
+
     #[LiveProp]
     public Participant|null $participant = null;
+
+    #[LiveProp]
+    public bool $isNewParticipant = false;
 
     public function __construct(private readonly FormFactoryInterface $formFactory)
     {
     }
 
     #[LiveAction]
-    public function preview(AttendanceFacade $attendanceFacade)
+    public function newParticipant(): void
     {
-        if (!$this->offer || !$this->participant) {
+        $this->isNewParticipant = true;
+    }
+
+    #[LiveAction]
+    public function preview(AttendanceFacade $attendanceFacade): void
+    {
+        /** @var AddAttendanceDto $dto */
+        $dto = $this->getForm()->getData();
+
+        if (!$dto->getOffer() || !$dto->getParticipant()) {
             return;
         }
 
-        $preview = $attendanceFacade->preview($this->offer, $this->participant);
+        $preview = $attendanceFacade->preview($dto->getOffer(), $dto->getParticipant());
 
         $this->formValues['status'] = $preview->getStatus();
     }
 
     #[LiveAction]
-    public function submit(AttendanceFacade $attendanceFacade)
+    public function submit(AttendanceFacade $attendanceFacade, EntityManagerInterface $entityManager)
     {
         $this->submitForm();
 
         /** @var AddAttendanceDto $dto */
         $dto = $this->getForm()->getData();
+
+        if ($this->isNewParticipant) {
+            $entityManager->persist($dto->getParticipant());
+        }
+
         $attendanceFacade->create($dto->getOffer(), $dto->getParticipant(), $dto->getStatus(), $dto->shallNotify());
+
+        $this->isNewParticipant = false;
 
         if (null !== $this->offer) {
             return $this->redirectToRoute('admin_offer_participants', ['id' => $this->offer->getId(), 'edition' => $this->offer->getEdition()?->getAlias()]);
@@ -79,6 +100,7 @@ class AddAttendance extends AbstractController
         return $this->formFactory->create(AddAttendanceType::class, new AddAttendanceDto($this->participant, $this->offer), [
             'add_participant' => null === $this->participant,
             'add_offer' => null === $this->offer,
+            'new_participant' => $this->isNewParticipant ?? false,
         ]);
     }
 }
