@@ -619,6 +619,8 @@ outbox:
     Ferienpass\CoreBundle\Message\AccountActivated: Account aktiviert
     Ferienpass\CoreBundle\Message\HostCreated: Veranstalter registriert
     Ferienpass\CoreBundle\Message\AttendanceCreated: Veranstaltungsanmeldung
+    Ferienpass\CoreBundle\Message\SendAttendanceDecisions: Zulassungsbescheid
+    Ferienpass\CoreBundle\Message\AttendanceStatusChanged: Teilnahme-Status geändert
 
 accessCodes:
   title: Zugangscodes

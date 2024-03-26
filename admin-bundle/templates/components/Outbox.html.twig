@@ -53,34 +53,36 @@
                                         {{ user.name }}
                                     </a>
                                 {% endfor %}
-                                {% for attendance in message.logEntry.attendances %}
-                                    <a href="{{ path('admin_participants_index', {id: attendance.participant.id}) }}"
-                                       target="_blank"
-                                       class="inline-flex items-center gap-x-1 rounded px-2 py-1 text-xs font-medium text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100">
-                                        <span class="h-4 w-4">
-                                            {{ source('@FerienpassAdmin/icons/user.micro.svg') }}
-                                        </span>
-                                        {{ attendance.participant.name }}
-                                    </a>
-                                    <a href="{{ path('admin_offers_edit', {id: attendance.offer.id}) }}"
-                                       target="_blank"
-                                       class="inline-flex items-center gap-x-1 rounded px-2 py-1 text-xs font-medium text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100">
-                                        <span class="h-4 w-4">
-                                            {{ source('@FerienpassAdmin/icons/user.micro.svg') }}
-                                        </span>
-                                        {{ attendance.offer.name }}
-                                    </a>
-                                {% endfor %}
-                                {% for offer in message.logEntry.offers %}
-                                    <a href="{{ path('admin_offers_edit', {id: attendance.offer.id}) }}"
-                                       target="_blank"
-                                       class="inline-flex items-center gap-x-1 rounded px-2 py-1 text-xs font-medium text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100">
-                                        <span class="h-4 w-4">
-                                            {{ source('@FerienpassAdmin/icons/user.micro.svg') }}
-                                        </span>
-                                        {{ attendance.offer.name }}
-                                    </a>
-                                {% endfor %}
+                                {% if message.logEntry.message != "Ferienpass\\CoreBundle\\Message\\SendAttendanceDecisions" %}
+                                    {% for attendance in message.logEntry.attendances %}
+                                        <a href="{{ path('admin_participants_index', {id: attendance.participant.id}) }}"
+                                           target="_blank"
+                                           class="inline-flex items-center gap-x-1 rounded px-2 py-1 text-xs font-medium text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100">
+                                            <span class="h-4 w-4">
+                                                {{ source('@FerienpassAdmin/icons/user.micro.svg') }}
+                                            </span>
+                                            {{ attendance.participant.name }}
+                                        </a>
+                                        <a href="{{ path('admin_offers_edit', {id: attendance.offer.id}) }}"
+                                           target="_blank"
+                                           class="inline-flex items-center gap-x-1 rounded px-2 py-1 text-xs font-medium text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100">
+                                            <span class="h-4 w-4">
+                                                {{ source('@FerienpassAdmin/icons/user.micro.svg') }}
+                                            </span>
+                                            {{ attendance.offer.name }}
+                                        </a>
+                                    {% endfor %}
+                                    {% for offer in message.logEntry.offers %}
+                                        <a href="{{ path('admin_offers_edit', {id: attendance.offer.id}) }}"
+                                           target="_blank"
+                                           class="inline-flex items-center gap-x-1 rounded px-2 py-1 text-xs font-medium text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100">
+                                            <span class="h-4 w-4">
+                                                {{ source('@FerienpassAdmin/icons/user.micro.svg') }}
+                                            </span>
+                                            {{ attendance.offer.name }}
+                                        </a>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
                         {% endif %}
 

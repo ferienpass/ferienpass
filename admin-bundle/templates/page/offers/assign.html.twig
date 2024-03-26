@@ -309,8 +309,6 @@
             </div>
         </div>
 
-        {% set autoAssign = toggleMode.auto.vars.checked %}
-
         <div class="mb-12">
 
             {{ form_start(toggleMode) }}
@@ -348,9 +346,17 @@
 
         </div>
 
-        {{ component('Admin:OfferAssign', {
-            offer: offer
-        }) }}
+        {% if autoAssign %}
+            <div class="mb-10">
+                <twig:Admin:Alert type="warning" class="shadow border border-yellow-400/50">
+                    <strong>Automatischer Modus ist aktiviert!</strong> Alle Teilnehmer:innen, die Sie zu- oder absagen
+                    erhalten eine E-Mail! Nachrücken ist aktiviert. Wenn Sie das nicht wollen, beenden Sie den
+                    automatischen Modus.
+                </twig:Admin:Alert>
+            </div>
+        {% endif %}
+
+        <twig:Admin:OfferAssign offer="{{ offer }}" autoAssign="{{ autoAssign }}" />
 
     </div>
 

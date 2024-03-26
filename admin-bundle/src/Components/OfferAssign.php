@@ -21,6 +21,7 @@ use Ferienpass\CoreBundle\Message\ParticipantListChanged;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveListener;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -42,8 +43,26 @@ class OfferAssign extends AbstractController
         $this->autoAssign = false;
     }
 
+    #[LiveAction]
+    public function confirmAllWaiting(EntityManagerInterface $em, MessageBusInterface $messageBus): void
+    {
+        $attendances = $this->offer->getAttendancesWaiting();
+
+        $lastAttendance = $this->offer->getAttendancesConfirmed()->last();
+        $sorting = $lastAttendance ? $lastAttendance->getSorting() : 0;
+
+        foreach ($attendances as $attendance) {
+            $attendance->setStatus(Attendance::STATUS_CONFIRMED, user: $this->getUser());
+            $attendance->setSorting($sorting += 128);
+
+            $messageBus->dispatch(new AttendanceStatusChanged($attendance->getId(), Attendance::STATUS_WAITING, $attendance->getStatus(), notify: $this->autoAssign));
+        }
+
+        $em->flush();
+    }
+
     #[LiveListener('statusChanged')]
-    public function changeStatus(#[LiveArg] Attendance $attendance, #[LiveArg] string $newStatus, #[LiveArg] int $newIndex, MessageBusInterface $messageBus, EntityManagerInterface $em)
+    public function changeStatus(#[LiveArg] Attendance $attendance, #[LiveArg] string $newStatus, #[LiveArg] int $newIndex, MessageBusInterface $messageBus, EntityManagerInterface $em): void
     {
         $this->denyAccessUnlessGranted('participants.view', $attendance->getOffer());
 
@@ -57,9 +76,7 @@ class OfferAssign extends AbstractController
         $attendance->setStatus($newStatus, $this->getUser());
         $attendance->setSorting(($newIndex * 128) + 64);
 
-        if ($this->autoAssign) {
-            $messageBus->dispatch(new AttendanceStatusChanged($attendance->getId(), $oldStatus, $attendance->getStatus()));
-        }
+        $messageBus->dispatch(new AttendanceStatusChanged($attendance->getId(), $oldStatus, $attendance->getStatus(), notify: $this->autoAssign));
 
         // Update participant list (move-up participants)
         // WHEN the current participant was not added to the wait-list explicitly,
@@ -72,7 +89,7 @@ class OfferAssign extends AbstractController
     }
 
     #[LiveListener('indexUpdated')]
-    public function changeIndex(#[LiveArg] Attendance $attendance, #[LiveArg] int $newIndex, EntityManagerInterface $em)
+    public function changeIndex(#[LiveArg] Attendance $attendance, #[LiveArg] int $newIndex, EntityManagerInterface $em): void
     {
         $this->denyAccessUnlessGranted('participants.view', $attendance->getOffer());
 

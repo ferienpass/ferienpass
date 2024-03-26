@@ -15,7 +15,6 @@ namespace Ferienpass\AdminBundle\Controller\Page;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Ferienpass\AdminBundle\Breadcrumb\Breadcrumb;
-use Ferienpass\CoreBundle\Entity\Attendance;
 use Ferienpass\CoreBundle\Export\ParticipantList\PdfExport;
 use Ferienpass\CoreBundle\Export\ParticipantList\WordExport;
 use Ferienpass\CoreBundle\Repository\OfferRepositoryInterface;
@@ -44,22 +43,6 @@ class OfferAssignController extends AbstractController
             $this->denyAccessUnlessGranted('ROLE_ADMIN');
         }
 
-        if ($request->isMethod('POST') && 'confirm_all_waiting' === $request->request->get('FORM_SUBMIT')) {
-            $attendances = $offer->getAttendancesWaiting();
-
-            $lastAttendance = $offer->getAttendancesConfirmed()->last();
-            $sorting = $lastAttendance ? $lastAttendance->getSorting() : 0;
-
-            foreach ($attendances as $a) {
-                $a->setStatus(Attendance::STATUS_CONFIRMED, user: $this->getUser());
-                $a->setSorting($sorting += 128);
-            }
-
-            $doctrine->getManager()->flush();
-
-            return $this->redirect($request->getRequestUri());
-        }
-
         $autoAssign = $session->get('admin--auto-assign', false);
 
         $toggleMode = $this->createFormBuilder(['auto' => $autoAssign])
@@ -78,6 +61,7 @@ class OfferAssignController extends AbstractController
         return $this->render('@FerienpassAdmin/page/offers/assign.html.twig', [
             'offer' => $offer,
             'toggleMode' => $toggleMode,
+            'autoAssign' => $autoAssign,
             'emails' => array_unique(array_filter([])),
             'hasWordExport' => $this->wordExport->hasTemplate(),
             'breadcrumb' => $breadcrumb->generate(['offers.title', ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], [$offer->getEdition()->getName(), ['route' => 'admin_offers_index', 'routeParameters' => ['edition' => $offer->getEdition()->getAlias()]]], $offer->getName(), 'Anmeldungen'),
